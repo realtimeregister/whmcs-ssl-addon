@@ -1,23 +1,23 @@
 ![logo-horizontal-270x81_powered](https://github.com/gogetssl/whmcs-addon/assets/36668842/e48a2918-bb30-46bb-9f56-19e040ea5fea)
-# SSLCENTER WHMCS SSL Addon
-Free of charge SSL Addon for WHMCS to automate SSL certificate sales/distribution of via GoGetSSL.com platform
+# Realtime Register SSL WHMCS SSL Addon
+Free of charge SSL Addon for WHMCS to automate SSL certificate sales/distribution via realtimeregister.com platform
 
 ***
 **Note:** This version is fully compatible with 8.x.x versions of WHMCS.
 ***
 
 ### Prerequisites
-- Account at [GOGETSSL.com](https://www.gogetssl.com)
+- Account at [realtimeregister.com](https://realtimeregister.com)
 - Access to WHMCS admin area
 
 ### Releases/Downloads
-Please check the latest [Releases](https://github.com/gogetssl/whmcs-addon/releases) and Download files 
+Please check the latest [Releases](https://github.com/realtimeregister/whmcs-ssl-addon/releases) and Download files 
 
 ### WIKI
-Check [WIKI](https://github.com/gogetssl/whmcs-addon/wiki) for manuals and description of all features
+Check [WIKI](https://github.com/realtimeregister/whmcs-ssl-addon/wiki) for manuals and description of all features
 
 ### API Credentials
-- Please generate API password at [Client area](https://my.gogetssl.com) -> Reseller Modules -> API settings
+- Please generate API password at [Client area](https://dm.realtimeregister.com) -> Reseller Modules -> API settings
 - Login is the same as login for Client area
 
 ### Suggestions, Bugs, Issues, New Features
@@ -46,7 +46,7 @@ You are highly welcome to send us requests for new features, suggestions, issues
 We support ["Products Reseller For WHMCS"](https://www.modulesgarden.com/products/whmcs/products-reseller#features) module from Modules Garden allowing to have own Sub-Resellers using WHMCS to expand your network. Please review [documentation](https://github.com/gogetssl/whmcs-addon/wiki/Sub-Resellers-module) for more details
 
 ### cPanel AutoSSL Installation 
-Starting at v2.9.0, we provide ["cPanel AutoSSL installation"](https://github.com/gogetssl/whmcs-addon/wiki/cPanel-AutoSSL), allowing to validate and install SSL certificates automatically. 
+We provide ["cPanel AutoSSL installation"](https://github.com/gogetssl/whmcs-addon/wiki/cPanel-AutoSSL), allowing to validate and install SSL certificates automatically. 
 ***
 
 ### License
