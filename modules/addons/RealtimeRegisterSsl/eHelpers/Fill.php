@@ -7,5 +7,5 @@ class Fill {
         foreach ($array as $key => $value) {
             $object->$key = $value;
         }
-    } 
+    }
 }

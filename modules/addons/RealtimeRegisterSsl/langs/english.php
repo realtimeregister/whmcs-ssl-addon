@@ -41,7 +41,7 @@ $_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['info']  
 $_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['commandLine']['cronFrequency']           = '0 0 * * *';
 //
 $_LANG['addonAA']['apiConfiguration']['item']['header']                                                = 'API Configuration';
-$_LANG['addonAA']['apiConfiguration']['item']['api_login']['label']                                    = 'Login';
+$_LANG['addonAA']['apiConfiguration']['item']['api_login']['label']                                    = 'API Key';
 $_LANG['addonAA']['apiConfiguration']['item']['api_password']['label']                                 = 'Password';
 $_LANG['addonAA']['apiConfiguration']['item']['tech_legend']['label']                                  = 'Technical Contact';
 $_LANG['addonAA']['apiConfiguration']['item']['csr_generator_legend']['label']                         = 'CSR Generator';
@@ -169,7 +169,7 @@ $_LANG['addonAA']['productsConfiguration']['paymentTypeRecurring'] = 'Recurring'
 $_LANG['addonAA']['productsConfiguration']['paymentTypeOneTime']   = 'One Time';
 
 $_LANG['addonAA']['productsConfiguration']['pricing']             = 'Pricing:';
-$_LANG['addonAA']['productsConfiguration']['pricingMonthly']      = 'Monthly/One Time';
+$_LANG['addonAA']['productsConfiguration']['pricingMonthly']      = 'One Time';
 $_LANG['addonAA']['productsConfiguration']['pricingQuarterly']    = 'Quarterly';
 $_LANG['addonAA']['productsConfiguration']['pricingSemiAnnually'] = 'Semi-Annually';
 $_LANG['addonAA']['productsConfiguration']['pricingAnnually']     = 'Annually';
@@ -204,7 +204,7 @@ $_LANG['addonAA']['productsCreator']['enableSans']   = 'Enable SANs:';
 $_LANG['addonAA']['productsCreator']['includedSans'] = 'Included SANs:';
 
 $_LANG['addonAA']['productsCreator']['pricing']             = 'Pricing:';
-$_LANG['addonAA']['productsCreator']['pricingMonthly']      = 'Monthly/One Time';
+$_LANG['addonAA']['productsCreator']['pricingMonthly']      = 'One Time';
 $_LANG['addonAA']['productsCreator']['pricingQuarterly']    = 'Quarterly';
 $_LANG['addonAA']['productsCreator']['pricingSemiAnnually'] = 'Semi-Annually';
 $_LANG['addonAA']['productsCreator']['pricingAnnually']     = 'Annually';

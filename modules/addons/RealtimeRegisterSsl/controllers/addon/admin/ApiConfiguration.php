@@ -50,12 +50,6 @@ class ApiConfiguration extends main\mgLibs\process\AbstractController
         $field->error = $this->getFieldError('api_login');
         $form->addField($field);
 
-        $field        = new main\mgLibs\forms\PasswordField();
-        $field->name  = 'api_password';
-        $field->value = $input['api_password'];
-        $field->error = $this->getFieldError('api_password');
-        $form->addField($field);
-
         $form->addField('button', 'testConnection', array(
             'value' => 'testConnection',
         ));
@@ -65,16 +59,14 @@ class ApiConfiguration extends main\mgLibs\process\AbstractController
         $realtimeRegisterSslCurrency = '';
         
         try{
-            
-            $api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl();
-            $authKey = $api->auth($input['api_login'], $input['api_password']);
+            $apiKeyRecord = \Illuminate\Database\Capsule\Manager::table('mgfw_REALTIMEREGISTERSSL_api_configuration')->first();
+            $api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl($apiKeyRecord->api_login);
+
             $details = $api->getAccountDetails();
             $realtimeRegisterSslCurrency = $details['currency'];
             
         } catch (\Exception $e) {
-            
             $realtimeRegisterSslCurrency = 'Not set';
-            
         }
         
         $vars['whmcsCurrency'] = $whmcsDefaultCurrency;
@@ -563,8 +555,9 @@ class ApiConfiguration extends main\mgLibs\process\AbstractController
 
         $api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl();
 
-        $authKey = $api->auth($input['api_login'], $input['api_password']);
+//        $authKey = $api->auth($input['api_login'], $input['api_password']);
 
+        $api->getAllProductPrices();
         return [
             'success' => main\mgLibs\Lang::T('messages', 'api_connection_success')
         ];

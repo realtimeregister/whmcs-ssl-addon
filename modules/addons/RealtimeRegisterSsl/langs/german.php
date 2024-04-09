@@ -167,7 +167,7 @@ $_LANG['addonAA']['productsConfiguration']['paymentTypeRecurring'] = 'Wiederkehr
 $_LANG['addonAA']['productsConfiguration']['paymentTypeOneTime']   = 'Einmalig';
 
 $_LANG['addonAA']['productsConfiguration']['pricing']             = 'Preisgestaltung:';
-$_LANG['addonAA']['productsConfiguration']['pricingMonthly']      = 'Einmalig/Monatlich';
+$_LANG['addonAA']['productsConfiguration']['pricingMonthly']      = 'Einmalig';
 $_LANG['addonAA']['productsConfiguration']['pricingQuarterly']    = 'Vierteljährlich';
 $_LANG['addonAA']['productsConfiguration']['pricingSemiAnnually'] = 'Halbjährlich';
 $_LANG['addonAA']['productsConfiguration']['pricingAnnually']     = 'Jährlich';
@@ -201,7 +201,7 @@ $_LANG['addonAA']['productsCreator']['enableSans']   = 'SANs aktivieren:';
 $_LANG['addonAA']['productsCreator']['includedSans'] = 'Enthaltene SANs:';
 
 $_LANG['addonAA']['productsCreator']['pricing']             = 'Preisgestaltung:';
-$_LANG['addonAA']['productsCreator']['pricingMonthly']      = 'Einmalig/Monatlich';
+$_LANG['addonAA']['productsCreator']['pricingMonthly']      = 'Einmalig';
 $_LANG['addonAA']['productsCreator']['pricingQuarterly']    = 'Vierteljährlich';
 $_LANG['addonAA']['productsCreator']['pricingSemiAnnually'] = 'Halbjährlich';
 $_LANG['addonAA']['productsCreator']['pricingAnnually']     = 'Jährlich';

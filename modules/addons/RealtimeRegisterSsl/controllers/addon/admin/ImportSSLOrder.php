@@ -92,8 +92,8 @@ class ImportSSLOrder extends main\mgLibs\process\AbstractController
             $sslOrderID = trim($input['order_id']);
             $clientID   = trim($input['client_id']);
 
-
-            $api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl();
+            $apiKeyRecord = Capsule::table('mgfw_REALTIMEREGISTERSSL_api_configuration')->first();
+            $api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl($apiKeyRecord->api_login);
 
             //get order details from API
             $orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslOrderID);

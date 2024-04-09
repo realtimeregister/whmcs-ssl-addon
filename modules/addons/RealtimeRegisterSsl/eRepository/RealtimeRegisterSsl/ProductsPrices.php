@@ -2,8 +2,6 @@
 
 namespace MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
-use Exception;
-
 class ProductsPrices {
 
     /**
@@ -35,13 +33,16 @@ class ProductsPrices {
         if ($this->prices !== null) {
             return $this->prices;
         }
-        $apiProducts = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getAllProductPrices();
-        
+        $apiProducts = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()
+            ->getAllProductPrices();
+
         $this->prices = [];
-        foreach ($apiProducts['product_prices'] as $apiProductPrice) {        
-            $pp = new \MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\ProductPrice();
-            \MGModule\RealtimeRegisterSsl\eHelpers\Fill::fill($pp, $apiProductPrice);
-            $this->prices[] = $pp;
+        foreach ($apiProducts['prices'] as $vval => $apiProductPrice) {
+            if (strpos($apiProductPrice['product'], 'ssl') !== false) {
+                $pp = new \MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\ProductPrice();
+                \MGModule\RealtimeRegisterSsl\eHelpers\Fill::fill($pp, $apiProductPrice);
+                $this->prices[] = $pp;
+            }
         }
         return $this->prices;
     }

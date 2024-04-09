@@ -61,7 +61,7 @@ class ProductsConfiguration extends main\mgLibs\process\AbstractController {
                 $vars['success'] = main\mgLibs\Lang::T('messages', 'product_saved');
             }
             $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
-            $products = $productModel->getModuleProducts(); 
+            $products = $productModel->getModuleProducts();
             foreach ($products as $key => $product) {
                 try
                 {				

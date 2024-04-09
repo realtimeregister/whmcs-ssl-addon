@@ -29,12 +29,12 @@ class ProductsCreator extends main\mgLibs\process\AbstractController {
                 throw new Exception('no_product_group_found');
             }
             
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' AND isset($input['createMass'])) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($input['createMass'])) {
                 $this->saveProducts($vars['currencies'], $input);
                 $vars['success'] = main\mgLibs\Lang::T('messages', 'mass_product_created');
             }
             
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' AND isset($input['createSingle'])) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($input['createSingle'])) {
                 $this->saveProduct($input, $vars);
                 $vars['success'] = main\mgLibs\Lang::T('messages', 'single_product_created');
             }

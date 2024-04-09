@@ -3,6 +3,7 @@
 namespace MGModule\RealtimeRegisterSsl\eProviders;
 
 use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 class ApiProvider {
 
@@ -49,18 +50,7 @@ class ApiProvider {
      * @throws Exception
      */
     private function initApi() {
-        new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl(); // need fix and remove that line xD
-        $apiData = $this->getCredencials();
-        $this->api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl();
-        $this->api->auth($apiData->api_login, $apiData->api_password);
-    }
-    
-    private function getCredencials() {
-        $apiConfigRepo = new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository();
-        $apiData       = $apiConfigRepo->get();
-        if (empty($apiData->api_login) || empty($apiData->api_password)) {
-            throw new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterException('api_configuration_empty');
-        }
-        return $apiData;
+        $apiKeyRecord = Capsule::table('mgfw_REALTIMEREGISTERSSL_api_configuration')->first();
+        $this->api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl($apiKeyRecord->api_login);
     }
 }

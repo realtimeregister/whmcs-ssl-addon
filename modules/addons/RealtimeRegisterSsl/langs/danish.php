@@ -154,7 +154,7 @@ $_LANG['addonAA']['productsConfiguration']['paymentTypeRecurring'] = 'Gentagende
 $_LANG['addonAA']['productsConfiguration']['paymentTypeOneTime']   = 'Én gang';
 
 $_LANG['addonAA']['productsConfiguration']['pricing']             = 'Pris:';
-$_LANG['addonAA']['productsConfiguration']['pricingMonthly']      = 'Én gang/Månedlig';
+$_LANG['addonAA']['productsConfiguration']['pricingMonthly']      = 'Én gang';
 $_LANG['addonAA']['productsConfiguration']['pricingQuarterly']    = 'Kvartalvis';
 $_LANG['addonAA']['productsConfiguration']['pricingSemiAnnually'] = 'Halvårlig';
 $_LANG['addonAA']['productsConfiguration']['pricingAnnually']     = 'Årlig';
@@ -187,7 +187,7 @@ $_LANG['addonAA']['productsCreator']['enableSans']   = 'Aktiver SANs:';
 $_LANG['addonAA']['productsCreator']['includedSans'] = 'Inkluderede SANs:';
 
 $_LANG['addonAA']['productsCreator']['pricing']             = 'Pris:';
-$_LANG['addonAA']['productsCreator']['pricingMonthly']      = 'Én gang/Månedlig';
+$_LANG['addonAA']['productsCreator']['pricingMonthly']      = 'Én gang';
 $_LANG['addonAA']['productsCreator']['pricingQuarterly']    = 'Kvartalvis';
 $_LANG['addonAA']['productsCreator']['pricingSemiAnnually'] = 'Halvårlig';
 $_LANG['addonAA']['productsCreator']['pricingAnnually']     = 'årlig';

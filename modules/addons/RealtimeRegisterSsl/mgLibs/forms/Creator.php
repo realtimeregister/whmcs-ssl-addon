@@ -45,7 +45,7 @@ class Creator{
     
     /**
      * 
-     * @param \MGModule\RealtimeRegisterSsl\mgLibs\forms\className $field
+     * @param \MGModule\RealtimeRegisterSsl\mgLibs\forms\AbstractField $field
      * @param type $dataOrName
      * @param type $data
      * @throws main\mgLibs\exceptions\System

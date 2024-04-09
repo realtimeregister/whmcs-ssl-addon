@@ -4,8 +4,8 @@ namespace MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl;
 
 use Exception;
 
-class Product {
-
+class Product
+{
     private $webServerMap = [
         'comodo'          => 1,
         'comodo_REALTIMEREGISTERSSL'    => 1,
@@ -28,7 +28,10 @@ class Product {
     }
     
     public function isOrganizationRequired() {
-        return $this->org_required === 1;
+        if (this->validationType === 'ORGANIZATION_VALIDATION' || $this->validationType === 'EXTENDED_VALIDATION') {
+            return true;
+        }
+        return false;
     }
     
     public function isSanEnabled() {
@@ -36,17 +39,11 @@ class Product {
     }
     
     public function isSanWildcardEnabled() {
-        return $this->wildcard_san_enabled === 1;
+        return in_array('WILDCARD', $this->features);
     }
     
     public function getPeriods() {
-        $peroids = [];
-        foreach ($this->prices['vendor'] as $peroid => $price) {
-            if($peroid <= $this->max_period){
-                $peroids[] = $peroid;
-            }
-        }
-        return $peroids;
+        return $this->periods;
     }
     
     public function getMinimalPeriods() {

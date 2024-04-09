@@ -12,26 +12,26 @@ class ProductPrice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      * 
      * @Column(id)
-     * @var type 
+     * @var integer
      */
     public $id;
 
     /**
      * 
      * @Column(api_product_id)
-     * @var type 
+     * @var string
      */
     public $api_product_id;
 
     /**
      * @Column(varchar=32)
-     * @var type 
+     * @var string|float
      */
     public $price;
 
     /**
      * @Column(varchar=32)
-     * @var type 
+     * @var string
      */
     public $period;
 

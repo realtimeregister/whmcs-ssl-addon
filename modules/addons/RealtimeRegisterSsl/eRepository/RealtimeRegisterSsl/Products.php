@@ -48,7 +48,8 @@ class Products {
         return reset($this->products);
     }
 
-    private function fetchAllProducts() {
+    private function fetchAllProducts()
+    {
         if ($this->products !== null) {
             return $this->products;
         }
@@ -58,7 +59,7 @@ class Products {
         {
             Capsule::schema()->create('mgfw_REALTIMEREGISTERSSL_product_brand', function ($table) {
                 $table->increments('id');
-                $table->integer('pid');
+                $table->string('pid');
                 $table->string('brand');
                 $table->text('data');
             });
@@ -69,42 +70,49 @@ class Products {
             if (Capsule::schema()->hasColumn('mgfw_REALTIMEREGISTERSSL_product_brand', 'data'))
             {
                 $products = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->get();
-                if(isset($products[0]->id))
-                {
+                if(isset($products[0]->id)) {
                     $this->products = [];
-                    foreach ($products as $apiProduct) {
-
+                    foreach ($products as $i => $apiProduct)
+                    {
                         $apiProduct = json_decode($apiProduct->data, true);
                         $p = new \MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product();
                         \MGModule\RealtimeRegisterSsl\eHelpers\Fill::fill($p, $apiProduct);
-                        $this->products[$p->id] = $p;
-                    }
+                        $p->pid = $apiProduct['product'];
 
+                        $this->products[$products[$i]->id] = $p;
+                    }
                     return $this->products;
                 
                 }
                 
             }
         }
-        
-        $apiProducts = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getProducts();
-        $this->products = [];
+
         Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->truncate();
-        foreach ($apiProducts['products'] as $apiProduct) {
-            
-            
-            Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->insert([
-                'pid' => $apiProduct['id'],
-                'brand' => $apiProduct['brand'],
-                'data' => json_encode($apiProduct)
-            ]);
-            
-            $p = new \MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product();
-            \MGModule\RealtimeRegisterSsl\eHelpers\Fill::fill($p, $apiProduct);
-            
-            $this->products[$p->id] = $p;
+        $this->products = [];
+
+        $i = 0;
+        $total = 0;
+
+        while ($apiProducts = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getProducts($i)) {
+            foreach ($apiProducts['entities'] as $apiProduct) {
+                $id = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->insertGetId([
+                    'brand' => $apiProduct['brand'],
+                    'pid' => $apiProduct['product'],
+                    'data' => json_encode($apiProduct)
+                ]);
+                $p = new \MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product();
+                \MGModule\RealtimeRegisterSsl\eHelpers\Fill::fill($p, $apiProduct);
+                $this->products[$id] = $p;
+            }
+            $i +=10;
+
+            $total = $apiProducts['pagination']['total'];
+            if ($total < $i) {
+                break;
+            }
         }
-        
+
         return $this->products;
     }
 }

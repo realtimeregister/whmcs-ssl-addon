@@ -118,12 +118,12 @@ function RealtimeRegisterSsl_FlashErrorStepOne() {
     }
 }
 
-if (isset($_POST['changeEmailModal'], $_SESSION['adminid']) AND $_POST['changeEmailModal'] === 'yes' AND $_SESSION['adminid']) {
+if (isset($_POST['changeEmailModal'], $_SESSION['adminid']) AND $_POST['changeEmailModal'] === 'yes' && $_SESSION['adminid']) {
     $adminChangeApproverEmail = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminChangeApproverEmail($_POST);
     $adminChangeApproverEmail->run();
 }
 
-if (isset($_POST['action'], $_SESSION['adminid']) AND $_POST['action'] === 'getApprovalEmailsForDomain' AND $_SESSION['adminid']) {
+if (isset($_POST['action'], $_SESSION['adminid']) AND $_POST['action'] === 'getApprovalEmailsForDomain' && $_SESSION['adminid']) {
     
     try{
         $serviceid = $_REQUEST['id'];

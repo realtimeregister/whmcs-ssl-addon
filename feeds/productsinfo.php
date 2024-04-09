@@ -7,7 +7,7 @@ use WHMCS\Product\Product;
 use WHMCS\Session;
 use WHMCS\User\Client;
 
-require("../init.php");
+require "../init.php";
 
 /*
 *** USAGE SAMPLES ***
@@ -32,7 +32,7 @@ $name = $description = '';
 // Verify user input for pid exists, is greater than 0, and as is a valid id
 if ($pid > 0) {
     $result = select_query("tblproducts", "", array("id" => $pid));
-    $data = mysql_fetch_array($result);
+    $data = mysqli_fetch_array($result);
 
     
     $pid = (int) $data['id'];
@@ -109,7 +109,7 @@ if ($get=="name") {
 
     }
     $result = select_query("tblpricing", "", array("type" => "product", "currency" => $currencyID, "relid" => $pid));
-    $data = mysql_fetch_array($result);
+    $data = mysqli_fetch_array($result);
     $price = $data[$billingCycle];
     $price = formatCurrency($price);
     widgetOutput($price);

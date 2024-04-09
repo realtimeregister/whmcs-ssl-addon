@@ -9,6 +9,7 @@ namespace MGModule\RealtimeRegisterSsl\eHelpers;
 
 use \DateInterval;
 use \DateTime;
+use Illuminate\Database\Schema\Blueprint;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
@@ -28,35 +29,36 @@ class Invoice
     const INVOICE_PENDINGPAYMENT_TABLE_NAME = 'mgfw_REALTIMEREGISTERSSL_invoices_pendingpayment';
     
     public static function createInfosTable() {
-        
-        Query::query('CREATE TABLE IF NOT EXISTS `' . self::INVOICE_INFOS_TABLE_NAME . '` (
-                        `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-                        `user_id` int(10) unsigned NOT NULL,
-                        `invoice_id` int(10) unsigned NOT NULL,
-                        `service_id` int(10) unsigned NOT NULL,
-                        `product_id` int(10) unsigned NOT NULL,
-                        `order_id` int(10) unsigned NOT NULL,
-                        `new_service_id` int(10) unsigned NOT NULL,
-                        `status` varchar(10) NOT NULL,
-                        `created_at` datetime NOT NULL,
-                        `updated_at` datetime NOT NULL,
-                        PRIMARY KEY (`id`),
-                        KEY `service_id` (`service_id`),
-                        KEY `new_service_id` (`new_service_id`,`order_id`),
-                        KEY `invoice_id` (`invoice_id`,`order_id`)
-                       ) ENGINE=InnoDB ');
+
+        if (!Capsule::schema()->hasTable(self::INVOICE_INFOS_TABLE_NAME)) {
+            Capsule::schema()->create(self::INVOICE_INFOS_TABLE_NAME, function (Blueprint $table) {
+                $table->increments('id');
+                $table->integer('user_id')->unsigned();
+                $table->integer('invoice_id')->unsigned();
+                $table->integer('service_id')->unsigned()->index();
+                $table->integer('product_id')->unsigned();
+                $table->integer('order_id')->unsigned();
+                $table->integer('new_service_id')->unsigned();
+                $table->string('status');
+                $table->dateTime('created_at');
+                $table->dateTime('updated_at');
+                $table->index(['new_service_id', 'order_id']);
+                $table->index(['invoice_id', 'order_id']);
+            });
+        }
     }
 
-    public static function createPendingPaymentInvoice() {
-
-        Query::query('CREATE TABLE IF NOT EXISTS `' . self::INVOICE_PENDINGPAYMENT_TABLE_NAME . '` (
-                        `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-                        `user_id` int(10) unsigned NOT NULL,
-                        `invoice_id` int(10) unsigned NOT NULL,
-                        `created_at` datetime NOT NULL,
-                        `updated_at` datetime NOT NULL,
-                        PRIMARY KEY (`id`)
-                       ) ENGINE=InnoDB ');
+    public static function createPendingPaymentInvoice()
+    {
+        if (!Capsule::schema()->hasTable(self::INVOICE_PENDINGPAYMENT_TABLE_NAME)) {
+            Capsule::schema()->create(self::INVOICE_PENDINGPAYMENT_TABLE_NAME, function (Blueprint $table) {
+                $table->increments('id');
+                $table->integer('user_id')->unsigned();
+                $table->integer('invoice_id')->unsigned();
+                $table->dateTime('created_at');
+                $table->dateTime('updated_at');
+            });
+        }
     }
 
     public function checkInvoiceAlreadyCreated($serviceIDs) {
@@ -154,7 +156,7 @@ class Invoice
             }            
         }
                 
-        // return highest available        
+        // return highest available
         return [
             'key' => \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle::convertPeriodToName($highestAvaialblePeriod) ,
             'price' => $highestAvaialblePeriodPrice

@@ -31,7 +31,6 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
             Capsule::table($this->tableName)->insert(
                     [
                         'api_login'                              => $params['api_login'],
-                        'api_password'                           => $params['api_password'],
                         'rate'                                   => $params['rate'],
                         'use_admin_contact'                      => $params['use_admin_contact'],
                         'display_csr_generator'                  => $params['display_csr_generator'],
@@ -81,7 +80,6 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
             Capsule::table($this->tableName)->update(
                     [
                         'api_login'                              => $params['api_login'],
-                        'api_password'                           => $params['api_password'],
                         'rate'                                   => $params['rate'],
                         'use_admin_contact'                      => $params['use_admin_contact'],
                         'display_csr_generator'                  => $params['display_csr_generator'],
@@ -129,7 +127,6 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
             Capsule::schema()->create($this->tableName, function($table)
             {
                 $table->string('api_login');
-                $table->string('api_password');
                 $table->boolean('use_admin_contact');
                 $table->boolean('display_csr_generator');
                 $table->boolean('profile_data_csr');
@@ -328,8 +325,6 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
                     $table->boolean('auto_install_cpanel');
                 });
             }
-            /* 'renew_invoice_days_reccuring'          
-              'renew_invoice_days_one_time' */
         }
     }
 

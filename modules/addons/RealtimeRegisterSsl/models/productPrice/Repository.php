@@ -54,7 +54,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
             Capsule::schema()->create($this->tableName, function($table)
             {
                 $table->increments('id');
-                $table->integer('api_product_id');
+                $table->string('api_product_id');
                 $table->string('price');
                 $table->string('period');
             });
@@ -63,23 +63,12 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
 
     public function updateApiProductsPricesTable()
     {
-        if (Capsule::schema()->hasTable($this->tableName))
-        {
-            /*if (!Capsule::schema()->hasColumn($this->tableName, 'id'))
-            {
-                Capsule::schema()->table($this->tableName, function($table)
-                {
-                    $table->integer('id');
-                });
-            }*/
-            
-        }
-        else
+        if (!Capsule::schema()->hasTable($this->tableName))
         {
             Capsule::schema()->create($this->tableName, function($table)
             {
                 $table->increments('id');
-                $table->integer('api_product_id');
+                $table->string('api_product_id');
                 $table->string('price');
                 $table->string('period');
             });
