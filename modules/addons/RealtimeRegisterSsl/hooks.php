@@ -74,8 +74,10 @@ add_hook('ClientAreaPage', 1, function($params) {
         }
     }
 
-    if($params['filename'] == 'viewinvoice' && $params['status'] == 'Payment Pending')
-    {
+    if (
+        $params['filename'] == 'viewinvoice' && ($params['status'] == 'Payment Pending'
+            ||  $params['status'] == 'Unpaid')
+    ) {
         Capsule::table('tblinvoices')->where('id', $params['invoiceid'])->update([
             'status' => 'Unpaid'
         ]);
@@ -90,7 +92,7 @@ add_hook('ClientAreaPage', 1, function($params) {
             ]);
         }
 
-        redir('id='.$params['invoiceid'], 'viewinvoice.php');
+//        redir('id='.$params['invoiceid'], 'viewinvoice.php');
     }
 });
 
