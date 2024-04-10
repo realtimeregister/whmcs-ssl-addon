@@ -2,11 +2,17 @@
 
 namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
 
+use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use \MGModule\RealtimeRegisterSsl as main;
+use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use WHMCS\Service\Service;
 
-class Cron extends main\mgLibs\process\AbstractController
+class Cron extends AbstractController
 {
     private $sslRepo = null;
 
@@ -15,7 +21,7 @@ class Cron extends main\mgLibs\process\AbstractController
 
         $updatedServices = [];
 
-        $this->sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $this->sslRepo = new SSL();
 
         //get all completed ssl orders
         $sslOrders = $this->getSSLOrders();
@@ -46,7 +52,7 @@ class Cron extends main\mgLibs\process\AbstractController
             $this->setSSLServiceAsSynchronized($serviceID);
 
             try{
-                $order = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
+                $order = ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
             } catch (\Exception $e) {
                 continue;
             }
@@ -94,7 +100,7 @@ class Cron extends main\mgLibs\process\AbstractController
         echo 'Synchronization completed.';
         echo '<br />Number of synchronized services: ' . count($updatedServices);
 
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Synchronization completed. Number of synchronized services: " . count($updatedServices));
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Synchronization completed. Number of synchronized services: " . count($updatedServices));
 
         return array();
     }
@@ -113,7 +119,7 @@ class Cron extends main\mgLibs\process\AbstractController
         $send_expiration_notification_reccuring = (bool) $apiConf->send_expiration_notification_reccuring;
         $send_expiration_notification_one_time  = (bool) $apiConf->send_expiration_notification_one_time;
 
-        $this->sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $this->sslRepo = new SSL();
 
         //get all completed ssl orders
         $sslOrders       = $this->getSSLOrders();
@@ -128,7 +134,7 @@ class Cron extends main\mgLibs\process\AbstractController
             }
             else
             {
-                $serviceonetime = \WHMCS\Service\Service::where('id', $row->serviceid)->where('billingcycle', 'One Time')->first();
+                $serviceonetime = Service::where('id', $row->serviceid)->where('billingcycle', 'One Time')->first();
                 if(isset($serviceonetime->id))
                 {
                     $synchServicesId[] = $serviceonetime->id;
@@ -138,7 +144,7 @@ class Cron extends main\mgLibs\process\AbstractController
 
         if(!empty($synchServicesId))
         {
-            $services = \WHMCS\Service\Service::whereIn('id', $synchServicesId)->get();
+            $services = Service::whereIn('id', $synchServicesId)->get();
         }
         else
         {
@@ -167,7 +173,7 @@ class Cron extends main\mgLibs\process\AbstractController
 
                 if(isset($sslOrder->remoteid) && !empty($sslOrder->remoteid)) {
 
-                    $order    = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslOrder->remoteid);
+                    $order    = ApiProvider::getInstance()->getApi()->getOrderStatus($sslOrder->remoteid);
                     $daysLeft = $this->checkOrderExpireDate($order['valid_till']);
 
                 }
@@ -216,12 +222,12 @@ class Cron extends main\mgLibs\process\AbstractController
 
                 if(!empty($itemsInvoice))
                 {
-                    $sslInvoice = Capsule::table('mgfw_REALTIMEREGISTERSSL_invoices_info')->where('invoice_id', $invoice->id)->first();
+                    $sslInvoice = Capsule::table(\MGModule\RealtimeRegisterSsl\eHelpers\Invoice::INVOICE_INFOS_TABLE_NAME)->where('invoice_id', $invoice->id)->first();
 
                     $serviceid = $sslInvoice->service_id;
 
                     $sslInfo = $this->getSSLOrders($serviceid)[0];
-                    $sslOrder    = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslInfo->remoteid);
+                    $sslOrder    = ApiProvider::getInstance()->getApi()->getOrderStatus($sslInfo->remoteid);
 
                     $today = (string)date('Y-m-d');
 
@@ -244,11 +250,11 @@ class Cron extends main\mgLibs\process\AbstractController
             echo '<br />Number of invoiced created: ' . $invoicesCreatedCount . PHP_EOL;
         }
 
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Notifier completed. Number of emails send: " . $emailSendsCount);
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Notifier completed. Number of emails send: " . $emailSendsCount);
 
         if(!$renew_new_order)
         {
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Notifier completed. Number of invoiced created: " . $invoicesCreatedCount);
+            Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Notifier completed. Number of invoiced created: " . $invoicesCreatedCount);
         }
 
         return array();
@@ -257,12 +263,12 @@ class Cron extends main\mgLibs\process\AbstractController
     public function certificateSendCRON($input, $vars = array())
     {
         echo 'Certificate Sender started.' . PHP_EOL;
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Sender started.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Sender started.");
 
         $emailSendsCount = 0;
-        $this->sslRepo   = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $this->sslRepo   = new SSL();
 
-        $services = new main\models\whmcs\service\Repository();
+        $services = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
         $services->onlyStatus(['Active']);
 
         $servicesArray = [];
@@ -276,14 +282,14 @@ class Cron extends main\mgLibs\process\AbstractController
                 continue;
             }
 
-            $SSLOrder = new main\eModels\whmcs\service\SSL();
+            $SSLOrder = new \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL();
             $ssl      = $SSLOrder->getWhere(array('serviceid' => $service->id, 'userid' => $service->clientID))->first();
 
             if ($ssl == NULL || $ssl->remoteid == '')
             {
                 continue;
             }
-            $apiOrder = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($ssl->remoteid);
+            $apiOrder = ApiProvider::getInstance()->getApi()->getOrderStatus($ssl->remoteid);
             if ($apiOrder['status'] !== 'active' || empty($apiOrder['ca_code']))
             {
                 continue;
@@ -296,14 +302,14 @@ class Cron extends main\mgLibs\process\AbstractController
             $sendCertyficateTermplate = $apiConf->send_certificate_template;
             if ($sendCertyficateTermplate == NULL)
             {
-                sendMessage(\MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID, $service->id, [
+                sendMessage(EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID, $service->id, [
                     'ssl_certyficate' => nl2br($apiOrder['ca_code']),
                     'crt_code' => nl2br($apiOrder['crt_code']),
                 ]);
             }
             else
             {
-                $templateName = \MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService::getTemplateName($sendCertyficateTermplate);
+                $templateName = EmailTemplateService::getTemplateName($sendCertyficateTermplate);
                 sendMessage($templateName, $service->id, [
                     'ssl_certyficate' => nl2br($apiOrder['ca_code']),
                     'crt_code' => nl2br($apiOrder['crt_code']),
@@ -316,21 +322,21 @@ class Cron extends main\mgLibs\process\AbstractController
         echo 'Certificate Sender completed.' . PHP_EOL;
         echo '<br />The number of messages sent: ' . $emailSendsCount . PHP_EOL;
 
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Sender completed. The number of messages sent: " . $emailSendsCount);
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Sender completed. The number of messages sent: " . $emailSendsCount);
         return array();
     }
 
     public function certificateDetailsUpdateCRON($input, $vars = array())
     {
         echo 'Certificate Details Updating.' . PHP_EOL;
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Details Updating started.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Details Updating started.");
 
-        $this->sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $this->sslRepo = new SSL();
 
-        $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if($checkTable === false)
         {
-            Capsule::schema()->create('mgfw_REALTIMEREGISTERSSL_product_brand', function ($table) {
+            Capsule::schema()->create(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, function ($table) {
                 $table->increments('id');
                 $table->integer('pid');
                 $table->string('brand');
@@ -338,20 +344,20 @@ class Cron extends main\mgLibs\process\AbstractController
             });
         }
 
-        if (!Capsule::schema()->hasColumn('mgfw_REALTIMEREGISTERSSL_product_brand', 'data'))
+        if (!Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
         {
-            Capsule::schema()->table('mgfw_REALTIMEREGISTERSSL_product_brand', function($table)
+            Capsule::schema()->table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, function($table)
             {
                 $table->text('data');
             });
         }
 
-        Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->truncate();
+        Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
 
-        $apiProducts = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getProducts();
+        $apiProducts = ApiProvider::getInstance()->getApi()->getProducts();
 
         foreach ($apiProducts['products'] as $apiProduct) {
-            Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->insert(array(
+            Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert(array(
                 'pid' => $apiProduct['id'],
                 'brand' => $apiProduct['brand'],
                 'data' => json_encode($apiProduct)
@@ -371,19 +377,19 @@ class Cron extends main\mgLibs\process\AbstractController
 
         echo '<br/ >';
         echo 'Certificate Details Updating completed.' . PHP_EOL;
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Details Updating completed.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Details Updating completed.");
         return array();
     }
 
     public function loadCertificateStatsCRON($input, $vars = array())
     {
         echo 'Certificate Stats Loader started.' . PHP_EOL;
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Stats Loader started.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Stats Loader started.");
 
         $emailSendsCount = 0;
-        $this->sslRepo   = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $this->sslRepo   = new SSL();
 
-        $services = new main\models\whmcs\service\Repository();
+        $services = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
         $services->onlyStatus(['Active', 'Suspended']);
 
         $servicesArray = [];
@@ -397,28 +403,28 @@ class Cron extends main\mgLibs\process\AbstractController
                 continue;
             }
 
-            $SSLOrder = new main\eModels\whmcs\service\SSL();
+            $SSLOrder = new \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL();
             $ssl      = $SSLOrder->getWhere(array('serviceid' => $service->id, 'userid' => $service->clientID))->first();
 
             if ($ssl == NULL || $ssl->remoteid == '')
             {
                 continue;
             }
-            $apiOrder = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($ssl->remoteid);
+            $apiOrder = ApiProvider::getInstance()->getApi()->getOrderStatus($ssl->remoteid);
 
             $this->setSSLCertificateValidTillDate($service->id, $apiOrder['valid_till']);
             $this->setSSLCertificateStatus($service->id, $apiOrder['status']);
         }
         echo '<br/ >';
         echo 'Certificate Stats Loader completed.' . PHP_EOL;
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Stats Loader completed.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Stats Loader completed.");
         return array();
     }
 
     public function updateProductPricesCRON($input, $vars = array())
     {
         echo 'Products Price Updater started.' . PHP_EOL;
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Products Price Updater started.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Products Price Updater started.");
 
         try
         {
@@ -449,12 +455,12 @@ class Cron extends main\mgLibs\process\AbstractController
         }
         catch (\Exception $e)
         {
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS Products Price Updater Error: " . $e->getMessage());
+            Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS Products Price Updater Error: " . $e->getMessage());
         }
 
         echo '<br/ >';
         echo 'Products Price Updater completed.' . PHP_EOL;
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Products Price Updater completed.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Products Price Updater completed.");
         return array();
     }
     private function checkOrdersStatus($sslorders, $processingOnly = false)
@@ -474,13 +480,13 @@ class Cron extends main\mgLibs\process\AbstractController
         }
         catch (\Exception $e)
         {
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS Products Price Updater Error: " . $e->getMessage());
+            Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS Products Price Updater Error: " . $e->getMessage());
         }
     }
     public function dailyStatusCheckCRON($input, $vars = array())
     {
         echo 'Certificates (ssl status Completed) Data Updater started.' . PHP_EOL;
-        $this->sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $this->sslRepo = new SSL();
         $sslorders = Capsule::table('tblhosting')
         ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
         ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
@@ -488,19 +494,19 @@ class Cron extends main\mgLibs\process\AbstractController
         ->whereIn('tblsslorders.status', ['Completed', 'Configuration Submitted'])
         ->get(['tblsslorders.*']);
 
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificates (ssl status Completed) Data Updater started.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificates (ssl status Completed) Data Updater started.");
 
         $this->checkOrdersStatus($sslorders);
 
         echo '<br/ >';
         echo 'Certificates (ssl status Completed) Data Updater completed.' . PHP_EOL;
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificates (ssl status Completed) Data Updater completed.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificates (ssl status Completed) Data Updater completed.");
         return array();
     }
     public function processingOrdersCheckCRON($input, $vars = array())
     {
         echo 'Certificates (ssl status Processing) Data Updater started.' . PHP_EOL;
-        $this->sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $this->sslRepo = new SSL();
         $sslorders = Capsule::table('tblhosting')
         ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
         ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
@@ -508,13 +514,13 @@ class Cron extends main\mgLibs\process\AbstractController
         ->where('tblsslorders.configdata', 'like', '%"ssl_status":"processing"%')
         ->get(['tblsslorders.*']);
 
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificates (ssl status Processing) Data Updater started.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificates (ssl status Processing) Data Updater started.");
 
         $this->checkOrdersStatus($sslorders, true);
 
         echo '<br/ >';
         echo 'Certificates (ssl status Processing) Data Updater completed.' . PHP_EOL;
-        main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificates (ssl status Processing) Data Updater completed.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificates (ssl status Processing) Data Updater completed.");
         return array();
     }
     private function generateNewPricesBasedOnAPI($currentPrices, $apiPrices)
@@ -603,7 +609,7 @@ class Cron extends main\mgLibs\process\AbstractController
 
     private function updateServiceNextDueDate($serviceID, $date)
     {
-        $service = \WHMCS\Service\Service::find($serviceID);
+        $service = Service::find($serviceID);
         if (!empty($service))
         {
             $createInvoiceDaysBefore = Capsule::table("tblconfiguration")->where('setting', 'CreateInvoiceDaysBefore')->first();
@@ -612,7 +618,7 @@ class Cron extends main\mgLibs\process\AbstractController
             $service->nextinvoicedate = $nextinvoicedate;
             $service->save();
 
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Service #$serviceID nextduedate set to ".$date." and nextinvoicedate to". $nextinvoicedate);
+            Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Service #$serviceID nextduedate set to ".$date." and nextinvoicedate to". $nextinvoicedate);
         }
     }
 
@@ -625,13 +631,13 @@ class Cron extends main\mgLibs\process\AbstractController
 
     private function setSSLServiceAsTerminated($serviceID)
     {
-        $service = \WHMCS\Service\Service::find($serviceID);
+        $service = Service::find($serviceID);
         if (!empty($service))
         {
             $service->status = 'terminated';
             $service->save();
 
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Service #$serviceID set as Terminated");
+            Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Service #$serviceID set as Terminated");
         }
     }
 
@@ -655,7 +661,7 @@ class Cron extends main\mgLibs\process\AbstractController
     {
         $result        = false;
         if ($this->sslRepo == NULL)
-            $this->sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+            $this->sslRepo = new SSL();
 
         $sslService = $this->sslRepo->getByServiceId((int) $serviceID);
         if ($sslService->getConfigdataKey('certificateSent'))
@@ -669,7 +675,7 @@ class Cron extends main\mgLibs\process\AbstractController
     public function setSSLCertificateAsSent($serviceID)
     {
         if ($this->sslRepo == NULL)
-            $this->sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+            $this->sslRepo = new SSL();
         $sslService    = $this->sslRepo->getByServiceId((int) $serviceID);
         $sslService->setConfigdataKey('certificateSent', true);
         $sslService->save();
@@ -693,7 +699,7 @@ class Cron extends main\mgLibs\process\AbstractController
     {
         $skipPeriods = ['Monthly', 'One Time', 'Free Account'];
         $skip        = false;
-        $service     = \WHMCS\Service\Service::find($serviceID);
+        $service     = Service::find($serviceID);
 
         if (in_array($service->billingcycle, $skipPeriods) || $service == null)
         {
@@ -751,18 +757,18 @@ class Cron extends main\mgLibs\process\AbstractController
 
         $postData = array(
             'id'          => $serviceId,
-            'messagename' => main\eServices\EmailTemplateService::EXPIRATION_TEMPLATE_ID,
+            'messagename' => EmailTemplateService::EXPIRATION_TEMPLATE_ID,
             'customvars'  => base64_encode(serialize(array("expireDaysLeft" => $daysLeft))),
         );
 
-        $adminUserName = main\eHelpers\Admin::getAdminUserName();
+        $adminUserName = \MGModule\RealtimeRegisterSsl\eHelpers\Admin::getAdminUserName();
 
         $results = localAPI($command, $postData, $adminUserName);
 
         $resultSuccess = $results['result'] == 'success';
         if (!$resultSuccess)
         {
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl('Realtime Register Ssl WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message'], 0);
+            Whmcs::savelogActivityRealtimeRegisterSsl('Realtime Register Ssl WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message'], 0);
         }
         return $resultSuccess;
     }
@@ -773,17 +779,17 @@ class Cron extends main\mgLibs\process\AbstractController
 
         $postData = array(
             'serviceid'          => $serviceId,
-            'messagename' => main\eServices\EmailTemplateService::REISSUE_TEMPLATE_ID,
+            'messagename' => EmailTemplateService::REISSUE_TEMPLATE_ID,
         );
 
-        $adminUserName = main\eHelpers\Admin::getAdminUserName();
+        $adminUserName = \MGModule\RealtimeRegisterSsl\eHelpers\Admin::getAdminUserName();
 
         $results = localAPI($command, $postData, $adminUserName);
 
         $resultSuccess = $results['result'] == 'success';
         if (!$resultSuccess)
         {
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl('Realtime Register Ssl WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message'], 0);
+            Whmcs::savelogActivityRealtimeRegisterSsl('Realtime Register Ssl WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message'], 0);
         }
         return $resultSuccess;
     }
@@ -796,7 +802,7 @@ class Cron extends main\mgLibs\process\AbstractController
         }
 
         $products             = \WHMCS\Product\Product::whereIn('id', array_keys($packages))->get();
-        $invoiceGenerator     = new main\eHelpers\Invoice();
+        $invoiceGenerator     = new \MGModule\RealtimeRegisterSsl\eHelpers\Invoice();
         $servicesAlreadyAdded = $invoiceGenerator->checkInvoiceAlreadyCreated($serviceIds);
         $getInvoiceID         = false;
         if ($jsonAction)

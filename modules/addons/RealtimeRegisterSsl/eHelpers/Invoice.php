@@ -15,6 +15,7 @@ use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
 use \MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use MGModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
 
 /**
  * Description of Invoice
@@ -40,8 +41,7 @@ class Invoice
                 $table->integer('order_id')->unsigned();
                 $table->integer('new_service_id')->unsigned();
                 $table->string('status');
-                $table->dateTime('created_at');
-                $table->dateTime('updated_at');
+                $table->timestamps();
                 $table->index(['new_service_id', 'order_id']);
                 $table->index(['invoice_id', 'order_id']);
             });
@@ -55,8 +55,7 @@ class Invoice
                 $table->increments('id');
                 $table->integer('user_id')->unsigned();
                 $table->integer('invoice_id')->unsigned();
-                $table->dateTime('created_at');
-                $table->dateTime('updated_at');
+                $table->timestamps();
             });
         }
     }
@@ -125,41 +124,41 @@ class Invoice
         //get client currency
         $clientCurrencyID = $this->getClientCurrencyID($service->userid);
         //get product pricing
-        $productPricing = $this->getProductPricing($service->packageid);   
+        $productPricing = $this->getProductPricing($service->packageid);
         foreach($productPricing as $pricing)
-        {            
+        {
             //check if pricing currency is clients currency and if service pricing period is setted
-            if($pricing->currency == $clientCurrencyID && $pricing->{strtolower($service->billingcycle)} != '-1.00')
+            if ($pricing->currency == $clientCurrencyID && $pricing->{strtolower($service->billingcycle)} != '-1.00') {
                 return [
-                    'key' => $service->billingcycle, 
+                    'key' => $service->billingcycle,
                     'price' => $pricing->{strtolower($service->billingcycle)}
                 ];
+            }
         }
-        $highestAvaialblePeriod = $highestAvaialblePeriodPrice = 0;
+        $highestAvailablePeriod = $highestAvailablePeriodPrice = 0;
         foreach($productPricing as $pricing)
-        { 
+        {
             if($pricing->currency == $clientCurrencyID)
             {
                 foreach($pricing as $key => $priceFieldValue)
-                { 
-                    if(key_exists($key, \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle::PERIODS) && $priceFieldValue != '-1.00')
-                    {                        
-                        $period = \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle::convertStringToPeriod($key);
-                        
-                        if($highestAvaialblePeriod < $period)
+                {
+                    if(key_exists($key, BillingCycle::PERIODS) && $priceFieldValue != '-1.00') {
+                        $period = BillingCycle::convertStringToPeriod($key);
+
+                        if($highestAvailablePeriod < $period)
                         {
-                            $highestAvaialblePeriod = $period;  
-                            $highestAvaialblePeriodPrice = $priceFieldValue;
+                            $highestAvailablePeriod = $period;
+                            $highestAvailablePeriodPrice = $priceFieldValue;
                         }
-                    }                    
+                    }
                 }
-            }            
+            }
         }
                 
         // return highest available
         return [
-            'key' => \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle::convertPeriodToName($highestAvaialblePeriod) ,
-            'price' => $highestAvaialblePeriodPrice
+            'key' => BillingCycle::convertPeriodToName($highestAvailablePeriod) ,
+            'price' => $highestAvailablePeriodPrice
         ];
     }
     
@@ -208,7 +207,7 @@ class Invoice
                 $timeShift = 'P' . $productConfiguration->{ConfigOptions::API_PRODUCT_MONTHS} . 'M';            
             }
             else
-                $timeShift = 'P' . \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle::convertStringToPeriod($availableBillingCycle['key']) . 'M';
+                $timeShift = 'P' . BillingCycle::convertStringToPeriod($availableBillingCycle['key']) . 'M';
             
             //get current product amount
             $itemamount = $availableBillingCycle['price'];          

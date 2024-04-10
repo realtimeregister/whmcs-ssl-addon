@@ -4,6 +4,7 @@ namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 
 class ClientReissueCertificate {
 
@@ -207,12 +208,12 @@ class ClientReissueCertificate {
         $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
 
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if($checkTable)
         {
-            if (Capsule::schema()->hasColumn('mgfw_REALTIMEREGISTERSSL_product_brand', 'data'))
+            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
             {
-                $productsslDB = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->where('pid', $product->configuration()->text_name)->first();
+                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->configuration()->text_name)->first();
                 if(isset($productsslDB->data))
                 {
                     $productssl['product'] = json_decode($productsslDB->data, true);
@@ -326,12 +327,12 @@ class ClientReissueCertificate {
         }
 
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if($checkTable)
         {
-            if (Capsule::schema()->hasColumn('mgfw_REALTIMEREGISTERSSL_product_brand', 'data'))
+            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
             {
-                $productsslDB = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->where('pid', $product->configuration()->text_name)->first();
+                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->configuration()->text_name)->first();
                 if(isset($productsslDB->data))
                 {
                     $productssl['product'] = json_decode($productsslDB->data, true);
@@ -590,7 +591,7 @@ class ClientReissueCertificate {
     private function getCertificateBrand()
     {
         if(!empty($this->p[ConfigOptions::API_PRODUCT_ID])) {
-            $apiRepo       = new \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products();
+            $apiRepo       = new Products();
             $apiProduct    = $apiRepo->getProduct($this->p[ConfigOptions::API_PRODUCT_ID]);
             return $apiProduct->brand;
         }
@@ -684,7 +685,7 @@ class ClientReissueCertificate {
     private function loadServerList() {
 
         try {
-            $apiRepo                  = new \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products();
+            $apiRepo                  = new Products();
             $apiProduct               = $apiRepo->getProduct($this->p[\MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions::API_PRODUCT_ID]);
 
             if($apiProduct->brand == 'comodo')

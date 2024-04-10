@@ -4,6 +4,10 @@ namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Exception;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use MGModule\RealtimeRegisterSsl\eServices\FlashService;
+use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
 
 class SSLStepTwo {
 
@@ -21,12 +25,12 @@ class SSLStepTwo {
         $product = new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($service->productID);
         
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if($checkTable)
         {
-            if (Capsule::schema()->hasColumn('mgfw_REALTIMEREGISTERSSL_product_brand', 'data'))
+            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
             {
-                $productsslDB = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->where('pid', $product->configuration()->text_name)->first();
+                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->configuration()->text_name)->first();
                 if(isset($productsslDB->data))
                 {
                     $productssl['product'] = json_decode($productsslDB->data, true); 
@@ -35,7 +39,7 @@ class SSLStepTwo {
         }
         if(!$productssl)
         {
-            $productssl = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->getProductDetails($params['configoption1']);
+            $productssl = ApiProvider::getInstance()->getApi(false)->getProductDetails($params['configoption1']);
         }
         
         if(isset($productssl['product_san_wildcard']) && $productssl['product_san_wildcard'] == 'yes')
@@ -65,12 +69,12 @@ class SSLStepTwo {
         $product = new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($service->productID);
         
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if($checkTable)
         {
-            if (Capsule::schema()->hasColumn('mgfw_REALTIMEREGISTERSSL_product_brand', 'data'))
+            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
             {
-                $productsslDB = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->where('pid', $product->configuration()->text_name)->first();
+                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->configuration()->text_name)->first();
                 if(isset($productsslDB->data))
                 {
                     $productssl['product'] = json_decode($productsslDB->data, true); 
@@ -79,7 +83,7 @@ class SSLStepTwo {
         }
         if(!$productssl)
         {
-            $productssl = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
+            $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
         }
 
         $ValidationMethods = ['email', 'dns', 'http', 'https'];        
@@ -108,7 +112,7 @@ class SSLStepTwo {
 
         if(empty($this->csrDecode))
         {
-            $this->csrDecode   = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->decodeCSR(trim(rtrim($_POST['csr'])));
+            $this->csrDecode   = ApiProvider::getInstance()->getApi(false)->decodeCSR(trim(rtrim($_POST['csr'])));
         }
         $decodedCSR = $this->csrDecode;
         $_SESSION['csrDecode'] = $decodedCSR;
@@ -206,7 +210,7 @@ class SSLStepTwo {
         
         $sansLimit = $includedSans + $boughtSans;
         if (count($sansDomainsWildcard) > $sansLimit) {
-            throw new Exception(\MGModule\RealtimeRegisterSsl\mgLibs\Lang::T('sanLimitExceededWildcard'));
+            throw new Exception(Lang::T('sanLimitExceededWildcard'));
         }
     }
     
@@ -221,7 +225,7 @@ class SSLStepTwo {
         if($apiProductId != '144') {
             
             if (count($invalidDomains)) {
-                throw new Exception(\MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('incorrectSans') . implode(', ', $invalidDomains));
+                throw new Exception(Lang::getInstance()->T('incorrectSans') . implode(', ', $invalidDomains));
             }
             
         } else {
@@ -245,22 +249,22 @@ class SSLStepTwo {
         $boughtSans   = (int) $this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
         $sansLimit = $includedSans + $boughtSans;
         if (count($sansDomains) > $sansLimit) {
-            throw new Exception(\MGModule\RealtimeRegisterSsl\mgLibs\Lang::T('sanLimitExceeded'));
+            throw new Exception(Lang::T('sanLimitExceeded'));
         }
     }
 
     private function validateCSR() {
         $csr = trim(rtrim($this->p['csr']));
-        $this->csrDecode = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->decodeCSR($csr);
+        $this->csrDecode = ApiProvider::getInstance()->getApi(false)->decodeCSR($csr);
         $decodedCSR = $this->csrDecode;
         $_SESSION['csrDecode'] = $decodedCSR;
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if($checkTable)
         {
-            if (Capsule::schema()->hasColumn('mgfw_REALTIMEREGISTERSSL_product_brand', 'data'))
+            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
             {
-                $productsslDB = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->where('pid', $this->p['configoption1'])->first();
+                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $this->p['configoption1'])->first();
                 if(isset($productsslDB->data))
                 {
                     $productssl['product'] = json_decode($productsslDB->data, true); 
@@ -270,7 +274,7 @@ class SSLStepTwo {
         
         if(!$productssl)
         {
-            $productssl = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->getProduct($this->p['configoption1']);
+            $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($this->p['configoption1']);
         }
         
         if($productssl['product']['wildcard_enabled'])
@@ -285,7 +289,7 @@ class SSLStepTwo {
                     throw new Exception($decodedCSR['csrResult']['errorMessage']);
                 
                 
-                throw new Exception(\MGModule\RealtimeRegisterSsl\mgLibs\Lang::T('incorrectCSR'));
+                throw new Exception(Lang::T('incorrectCSR'));
             }
         }
         
@@ -302,13 +306,13 @@ class SSLStepTwo {
     
     private function validateFields() {
         if (empty(trim($this->p['jobtitle']))) {
-            $this->errors[] = \MGModule\RealtimeRegisterSsl\mgLibs\Lang::T('adminJobTitleMissing');
+            $this->errors[] = Lang::T('adminJobTitleMissing');
         }
         if (empty(trim($this->p['orgname']))) {
-            $this->errors[] = \MGModule\RealtimeRegisterSsl\mgLibs\Lang::T('organizationNameMissing');
+            $this->errors[] = Lang::T('organizationNameMissing');
         }
         if (empty(trim($this->p['fields']['order_type']))) {
-            $this->errors[] = \MGModule\RealtimeRegisterSsl\mgLibs\Lang::T('orderTypeMissing');
+            $this->errors[] = Lang::T('orderTypeMissing');
         }
     }
     
@@ -347,7 +351,7 @@ class SSLStepTwo {
             
         }   
 
-        \MGModule\RealtimeRegisterSsl\eServices\FlashService::setFieldsMemory($_GET['cert'], $fields);
+        FlashService::setFieldsMemory($_GET['cert'], $fields);
     }
     
     private function errorsToWhmcsError() {

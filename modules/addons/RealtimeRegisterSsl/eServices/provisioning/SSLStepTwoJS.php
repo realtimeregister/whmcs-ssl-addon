@@ -4,6 +4,17 @@ namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
+use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary;
+use MGModule\RealtimeRegisterSsl\eServices\FlashService;
+use MGModule\RealtimeRegisterSsl\eServices\ScriptService;
+use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
+use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 
 class SSLStepTwoJS {
 
@@ -30,17 +41,17 @@ class SSLStepTwoJS {
             $this->setBrand($_POST);
             $this->setDisabledValidationMethods($_POST);
             
-            $service = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Service($this->p['serviceid']);
+            $service = new Service($this->p['serviceid']);
 
-            $product = new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($service->productID);
+            $product = new Product($service->productID);
             
             $productssl = false;
-            $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+            $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
             if($checkTable)
             {
-                if (Capsule::schema()->hasColumn('mgfw_REALTIMEREGISTERSSL_product_brand', 'data'))
+                if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
                 {
-                    $productsslDB = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->where('pid', $product->configuration()->text_name)->first();
+                    $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->configuration()->text_name)->first();
                     if(isset($productsslDB->data))
                     {
                         $productssl['product'] = json_decode($productsslDB->data, true); 
@@ -50,7 +61,7 @@ class SSLStepTwoJS {
 
             if(!$productssl)
             {
-                $productssl = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
+                $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
             }
 
             if(!$productssl['product']['dcv_email'])
@@ -77,7 +88,7 @@ class SSLStepTwoJS {
 //            }
             $this->SSLStepTwoJS($this->p);
             
-            return \MGModule\RealtimeRegisterSsl\eServices\ScriptService::getSanEmailsScript(json_encode($this->domainsEmailApprovals), json_encode(\MGModule\RealtimeRegisterSsl\eServices\FlashService::getFieldsMemory($_GET['cert'])), json_encode($this->brand), json_encode($this->disabledValidationMethods));
+            return ScriptService::getSanEmailsScript(json_encode($this->domainsEmailApprovals), json_encode(FlashService::getFieldsMemory($_GET['cert'])), json_encode($this->brand), json_encode($this->disabledValidationMethods));
         } catch (Exception $ex) {
             return '';
         }
@@ -101,7 +112,7 @@ class SSLStepTwoJS {
     }
     
     private function setDisabledValidationMethods($params) {
-        $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+        $apiConf = (new Repository())->get();
         if($apiConf->disable_email_validation)
         {
             array_push($this->disabledValidationMethods, 'email');
@@ -109,7 +120,7 @@ class SSLStepTwoJS {
     }
     
     private function isValidModule() {
-        return \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary::getInstance()->get($_GET['cert']) === true;
+        return SSLTemplorary::getInstance()->get($_GET['cert']) === true;
 
     }
 
@@ -117,7 +128,7 @@ class SSLStepTwoJS {
         
         if(!isset($_SESSION['csrDecode']) || empty($_SESSION['csrDecode']))
         {
-            $this->csrDecode   = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->decodeCSR(trim(rtrim($_POST['csr'])));
+            $this->csrDecode   = ApiProvider::getInstance()->getApi(false)->decodeCSR(trim(rtrim($_POST['csr'])));
         }
         else 
         {
@@ -131,16 +142,16 @@ class SSLStepTwoJS {
             'domain' => $decodedCSR['csrResult']['CN']
         ]);
         
-        $service = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Service($this->p['serviceid']);
-        $product = new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($service->productID);
+        $service = new Service($this->p['serviceid']);
+        $product = new Product($service->productID);
         
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if($checkTable)
         {
-            if (Capsule::schema()->hasColumn('mgfw_REALTIMEREGISTERSSL_product_brand', 'data'))
+            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
             {
-                $productsslDB = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->where('pid', $product->configuration()->text_name)->first();
+                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->configuration()->text_name)->first();
                 if(isset($productsslDB->data))
                 {
                     $productssl['product'] = json_decode($productsslDB->data, true); 
@@ -150,7 +161,7 @@ class SSLStepTwoJS {
         
         if(!$productssl)
         {
-            $productssl = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
+            $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
         }
         
         $mainDomain = '';
@@ -172,15 +183,15 @@ class SSLStepTwoJS {
                     if(isset($decodedCSR['csrResult']['errorMessage']))
                         throw new Exception($decodedCSR['csrResult']['errorMessage']);
 
-                    throw new Exception(\MGModule\RealtimeRegisterSsl\mgLibs\Lang::T('incorrectCSR'));
+                    throw new Exception(Lang::T('incorrectCSR'));
                 }
             }
         }
 
         $domains = $mainDomain . PHP_EOL . $_POST['fields']['sans_domains'];
         
-        $sansDomains = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains(strtolower($domains));
-        $wildcardDomains = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains(strtolower($_POST['fields']['wildcard_san']));
+        $sansDomains = SansDomains::parseDomains(strtolower($domains));
+        $wildcardDomains = SansDomains::parseDomains(strtolower($_POST['fields']['wildcard_san']));
         
         if(isset($_SESSION['approveremails']) && !empty($_SESSION['approveremails']))
         {
@@ -191,14 +202,13 @@ class SSLStepTwoJS {
         {
             $this->fetchApprovalEmailsForSansDomains($sansDomains);
         }
-        
-        //$this->fetchApprovalEmailsForSansDomains($sansDomains);       
+
         $this->fetchApprovalEmailsForSansDomains($wildcardDomains);
         
-        if(\MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::isWHMCS73()) {
+        if(Whmcs::isWHMCS73()) {
             if(isset($_POST['privateKey']) && $_POST['privateKey'] != null) {            
                 $privKey = decrypt($_POST['privateKey']);
-                $GenerateSCR = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR($this->p, $_POST);
+                $GenerateSCR = new GenerateCSR($this->p, $_POST);
                 $GenerateSCR->savePrivateKeyToDatabase($this->p['serviceid'], $privKey);  
             }
         }
@@ -212,15 +222,15 @@ class SSLStepTwoJS {
             
             try{
             
-                $apiDomainEmails = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getDomainEmails($sansDomain);
+                $apiDomainEmails = ApiProvider::getInstance()->getApi()->getDomainEmails($sansDomain);
             
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 
                 continue;
                 
             }
             
-            $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+            $apiConf = (new Repository())->get();
             if($apiConf->email_whois)
             {
                 foreach($apiDomainEmails['ComodoApprovalEmails'] as $emailkey => $email)

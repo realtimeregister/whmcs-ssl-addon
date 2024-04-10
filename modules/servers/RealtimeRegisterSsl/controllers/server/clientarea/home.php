@@ -2,7 +2,19 @@
 
 namespace MGModule\RealtimeRegisterSsl\controllers\server\clientarea;
 
+use Exception;
 use MGModule\RealtimeRegisterSsl as main;
+use MGModule\RealtimeRegisterSsl\controllers\addon\admin\Cron;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
+use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails;
+use MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
+use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use WHMCS\Database\Capsule;
 use MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service;
 use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
@@ -31,25 +43,25 @@ class home extends main\mgLibs\process\AbstractController {
             $serviceId  = $input['params']['serviceid'];
             $serviceBillingCycle = $input['params']['templatevars']['billingcycle'];
             $userid = $input['params']['userid'];
-            $ssl        = new main\eRepository\whmcs\service\SSL();
+            $ssl        = new SSL();
             $sslService = $ssl->getByServiceId($serviceId);
         
             if(($sslService->configdata->ssl_status == 'pending' || $sslService->configdata->ssl_status == 'reissue' || $sslService->configdata->ssl_status == 'new_order' || $sslService->configdata->ssl_status == 'processing' || $sslService->configdata->ssl_status == '') && $sslService->remoteid != '')
             {
-                $sslRepo    = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+                $sslRepo    = new SSL();
                 $sslService = $sslRepo->getByServiceId($serviceId);
 
                 if (is_null($sslService)) {
-                    throw new \Exception('Create has not been initialized');
+                    throw new Exception('Create has not been initialized');
                 }
 
                 if ($input['params']['userid'] != $sslService->userid) {
-                    throw new \Exception('An error occurred');
+                    throw new Exception('An error occurred');
                 }
 
-                $apicertdata = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
+                $apicertdata = ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
 
-                $configDataUpdate = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData($sslService, $apicertdata);
+                $configDataUpdate = new UpdateConfigData($sslService, $apicertdata);
                 $configDataUpdate->run();
 
                // if($apicertdata['status'] != 'new_order')
@@ -68,10 +80,10 @@ class home extends main\mgLibs\process\AbstractController {
             $vars['brandsWithOnlyEmailValidation'] = ['geotrust','thawte','rapidssl','symantec',];
 
             if(is_null($sslService)) {
-                throw new \Exception('An error occurred please contact support');
+                throw new Exception('An error occurred please contact support');
             }
 
-            $url = \MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config::getInstance()->getConfigureSSLUrl($sslService->id, $serviceId);
+            $url = Config::getInstance()->getConfigureSSLUrl($sslService->id, $serviceId);
 
             $vars['privateKey'] = '';
             $privateKey = $sslService->getPrivateKey();
@@ -203,16 +215,16 @@ class home extends main\mgLibs\process\AbstractController {
                         $vars['displayRenewButton'] = true;
 
                     $disabledValidationMethods = [];
-                    $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+                    $apiConf = (new Repository())->get();
                     
-                    $product = new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($input['params']['pid']);
+                    $product = new Product($input['params']['pid']);
                     $productssl = false;
-                    $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+                    $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
                     if($checkTable)
                     {
-                        if (Capsule::schema()->hasColumn('mgfw_REALTIMEREGISTERSSL_product_brand', 'data'))
+                        if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
                         {
-                            $productsslDB = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->where('pid', $product->configuration()->text_name)->first();
+                            $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->configuration()->text_name)->first();
                             if(isset($productsslDB->data))
                             {
                                 $productssl['product'] = json_decode($productsslDB->data, true); 
@@ -222,7 +234,7 @@ class home extends main\mgLibs\process\AbstractController {
 
                     if(!$productssl)
                     {
-                        $productssl = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
+                        $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
                     }
 
                     if(!$productssl['product']['dcv_email'])
@@ -242,12 +254,12 @@ class home extends main\mgLibs\process\AbstractController {
                         array_push($disabledValidationMethods, 'https');
                     }
                     
-                } catch (\Exception $ex) {
+                } catch (Exception $ex) {
                     $vars['error'] = 'Can not load order details';
                 }
             }
 
-            $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+            $apiConf = (new Repository())->get();
             
             $vars['custom_guide'] = $apiConf->custom_guide;
             $vars['visible_renew_button'] = $apiConf->visible_renew_button;
@@ -333,7 +345,7 @@ class home extends main\mgLibs\process\AbstractController {
             {
                 $pemfile = '';
                 
-                $sslRepo   = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+                $sslRepo   = new SSL();
                 $sslService = $sslRepo->getByServiceId($input['params']['serviceid']);
                 $privateKey = $sslService->getPrivateKey();
 
@@ -392,7 +404,7 @@ class home extends main\mgLibs\process\AbstractController {
                 }
             }
 
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $vars['error'] = $ex->getMessage();
         }
 
@@ -423,13 +435,13 @@ class home extends main\mgLibs\process\AbstractController {
             main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: The renewal action was initiated for the Service ID: " . $input['id']);
 
             $errorInvoiceExist = false;
-            $cron = new \MGModule\RealtimeRegisterSsl\controllers\addon\admin\Cron();
+            $cron = new Cron();
             $service = \WHMCS\Service\Service::where('id', $input['id'])->get();
             $result = $cron->createAutoInvoice(array($input['params']['pid'] => $service), $input['id'], true);
             if(is_array($result) && isset($result['invoiceID']))
             {
                 $existInvoiceID = $result['invoiceID'];
-                $errorInvoiceExist =  \MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('Related invoice already exist.');
+                $errorInvoiceExist =  Lang::getInstance()->T('Related invoice already exist.');
             }
         }
         catch(Exception $e)
@@ -452,15 +464,15 @@ class home extends main\mgLibs\process\AbstractController {
         main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMC Renew Action: A new invoice has been successfully created for the Service ID: " . $input['id']);
         return array(
             'success' => true,
-            'msg' =>  main\mgLibs\Lang::getInstance()->T('A new invoice has been successfully created. '),
+            'msg' =>  Lang::getInstance()->T('A new invoice has been successfully created. '),
             'invoiceID' => $result
         );
     }
 
     public function resendValidationEmailJSON($input, $vars = array()) {
-        $ssl = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $ssl = new SSL();
         $serviceSSL = $ssl->getByServiceId($input['id']);
-        $response = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->resendValidationEmail($serviceSSL->remoteid);
+        $response = ApiProvider::getInstance()->getApi()->resendValidationEmail($serviceSSL->remoteid);
 
         return array(
             'success' => $response['message']
@@ -468,18 +480,18 @@ class home extends main\mgLibs\process\AbstractController {
     }
 
     public function sendCertificateEmailJSON($input, $vars = array()) {
-        $ssl = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $ssl = new SSL();
         $serviceSSL = $ssl->getByServiceId($input['id']);
-        $orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($serviceSSL->remoteid);
+        $orderStatus = ApiProvider::getInstance()->getApi()->getOrderStatus($serviceSSL->remoteid);
 
         if($orderStatus['status'] !== 'active') {
-            throw new \Exception( \MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('orderNotActiveError')); //Can not send certificate. Order status is different than active.
+            throw new Exception( Lang::getInstance()->T('orderNotActiveError')); //Can not send certificate. Order status is different than active.
         }
 
         if(empty($orderStatus['ca_code'])) {
-            throw new \Exception(\MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('CACodeEmptyError')); //An error occurred. Certificate body is empty.
+            throw new Exception(Lang::getInstance()->T('CACodeEmptyError')); //An error occurred. Certificate body is empty.
         }
-        $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+        $apiConf = (new Repository())->get();
         $sendCertyficateTermplate = $apiConf->send_certificate_template;
 
         $pathAttachemts = false;
@@ -582,7 +594,7 @@ class home extends main\mgLibs\process\AbstractController {
 
         if($sendCertyficateTermplate == NULL)
         {
-            $result = sendMessage(\MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID, $input['id'], [
+            $result = sendMessage(EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID, $input['id'], [
                 'domain' => $orderStatus['domain'],
                 'ssl_certyficate' => nl2br($orderStatus['ca_code']),
                 'crt_code' => nl2br($orderStatus['crt_code']),
@@ -590,7 +602,7 @@ class home extends main\mgLibs\process\AbstractController {
         }
         else
         {
-            $templateName = \MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService::getTemplateName($sendCertyficateTermplate);
+            $templateName = EmailTemplateService::getTemplateName($sendCertyficateTermplate);
             $result = sendMessage($templateName, $input['id'], [
                 'domain' => $orderStatus['domain'],
                 'ssl_certyficate' => nl2br($orderStatus['ca_code']),
@@ -619,16 +631,16 @@ class home extends main\mgLibs\process\AbstractController {
         if($result === true)
         {
              return array(
-                'success' => \MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('sendCertificateSuccess')
+                'success' => Lang::getInstance()->T('sendCertificateSuccess')
             );
         }
 
-        throw new \Exception(\MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T($result));
+        throw new Exception(Lang::getInstance()->T($result));
     }
 
     function revalidateJSON($input, $vars = array()) {
         $serviceId  = $input['params']['serviceid'];
-        $ssl        = new main\eRepository\whmcs\service\SSL();
+        $ssl        = new SSL();
         $sslService = $ssl->getByServiceId($serviceId);
 
         $brand = $input['brand'];
@@ -669,8 +681,8 @@ class home extends main\mgLibs\process\AbstractController {
 
                 try
                 {
-                    $response = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->changeDomainValidationMethod($sslService->remoteid, $data);
-                } catch (\Exception $ex) {
+                    $response = ApiProvider::getInstance()->getApi()->changeDomainValidationMethod($sslService->remoteid, $data);
+                } catch (Exception $ex) {
                     if(strpos($ex->getMessage(), 'Function is locked for') !== false ) {
                         if(strpos($domain, '___') !== FALSE)
                         {
@@ -729,8 +741,8 @@ class home extends main\mgLibs\process\AbstractController {
             
             try
             {
-                $response = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->changeDomainValidationMethod($sslService->remoteid, $data);
-            } catch (\Exception $ex) {
+                $response = ApiProvider::getInstance()->getApi()->changeDomainValidationMethod($sslService->remoteid, $data);
+            } catch (Exception $ex) {
                 if(strpos($ex->getMessage(), 'Function is locked for') !== false ) {
                     if(strpos($domain, '___') !== FALSE)
                     {
@@ -777,10 +789,10 @@ class home extends main\mgLibs\process\AbstractController {
         $domainEmails = [];
 
         if($input['brand'] == 'geotrust') {
-            $apiDomainEmails             = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getDomainEmailsForGeotrust($input['domain']);
+            $apiDomainEmails             = ApiProvider::getInstance()->getApi()->getDomainEmailsForGeotrust($input['domain']);
             $domainEmails = $apiDomainEmails['GeotrustApprovalEmails'];
         } else {
-            $apiDomainEmails             = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getDomainEmails($input['domain']);
+            $apiDomainEmails             = ApiProvider::getInstance()->getApi()->getDomainEmails($input['domain']);
             $domainEmails = $apiDomainEmails['ComodoApprovalEmails'];
         }
         $result = [
@@ -793,14 +805,14 @@ class home extends main\mgLibs\process\AbstractController {
 
     function changeApproverEmailJSON($input, $vars = array()) {
 
-        $sslRepo   = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $sslRepo   = new SSL();
         $ssService = $sslRepo->getByServiceId($input['serviceId']);
 
         $data = [
             'approver_email' => $input['newEmail']
         ];
 
-        $response = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->changeValidationEmail($ssService->remoteid, $data);
+        $response = ApiProvider::getInstance()->getApi()->changeValidationEmail($ssService->remoteid, $data);
 
         $ssService->setConfigdataKey("approveremail", $data['approver_email']);
         $ssService->save();
@@ -812,7 +824,7 @@ class home extends main\mgLibs\process\AbstractController {
     }
 
     function getPrivateKeyJSON($input, $vars = array()) {
-        $sslRepo   = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $sslRepo   = new SSL();
         $sslService = $sslRepo->getByServiceId($input['params']['serviceid']);
         $privateKey = $sslService->getPrivateKey();
 
@@ -829,7 +841,7 @@ class home extends main\mgLibs\process\AbstractController {
         } else {
             $result = array(
                 'success'   => 0,
-                'message'   => main\mgLibs\Lang::getInstance()->T('Can not get Private Key, please refresh page or contact support')
+                'message'   => Lang::getInstance()->T('Can not get Private Key, please refresh page or contact support')
             );
         }
 
@@ -840,7 +852,7 @@ class home extends main\mgLibs\process\AbstractController {
 
         $logsRepo = new LogsRepo();
         $orderRepo = new OrderRepo();
-        $sslRepo   = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $sslRepo   = new SSL();
         $sslService = $sslRepo->getByServiceId($input['params']['serviceid']);
 
         $details = (array)$sslService->configdata;
@@ -860,30 +872,30 @@ class home extends main\mgLibs\process\AbstractController {
                 $orderRepo->updateStatus($sslService->serviceid, 'Success');
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $logsRepo->addLog($sslService->userid, $sslService->serviceid, 'error', '['.$details['domain'].'] Error: '.$e->getMessage());
             return ['success' => 0, 'message' => $e->getMessage()];
         }
-        return ['success' => 1, 'message' => main\mgLibs\Lang::getInstance()->T('The certificate has been installed correctly')];
+        return ['success' => 1, 'message' => Lang::getInstance()->T('The certificate has been installed correctly')];
     }
 
     function revalidateNewJSON($input, $vars = array()) {
 
-        $sslRepo   = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $sslRepo   = new SSL();
         $sslService = $sslRepo->getByServiceId($input['id']);
 
         $data = [
             'domain' => $input['params']['domain']
         ];
 
-        $response = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->revalidate($sslService->remoteid, $data);
+        $response = ApiProvider::getInstance()->getApi()->revalidate($sslService->remoteid, $data);
 
         return $response;
     }
 
     function getCertificateDetailsJSON($input, $vars = array()) {
 
-        $clientCheckCertificateDetails = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails($input);
+        $clientCheckCertificateDetails = new ClientRecheckCertificateDetails($input);
         $details = $clientCheckCertificateDetails->run();
     }
 

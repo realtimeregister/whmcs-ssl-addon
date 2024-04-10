@@ -63,13 +63,13 @@ add_hook('ClientAreaPage', 1, function($params) {
     if($params['templatefile'] != 'invoice-payment' && $params['filename'] != 'viewinvoice')
     {
         \MGModule\RealtimeRegisterSsl\eHelpers\Invoice::createPendingPaymentInvoice();
-        $checkInvoicePending = Capsule::table('mgfw_REALTIMEREGISTERSSL_invoices_pendingpayment')->where('user_id', $_SESSION['uid'])->get();
+        $checkInvoicePending = Capsule::table(\MGModule\RealtimeRegisterSsl\eHelpers\Invoice::INVOICE_PENDINGPAYMENT_TABLE_NAME)->where('user_id', $_SESSION['uid'])->get();
         foreach($checkInvoicePending as $invoiceToPending)
         {
             $checkUnpaid = Capsule::table('tblinvoices')->where('id', $invoiceToPending->invoice_id)->where('status', 'Unpaid')->first();
             if(isset($checkUnpaid->id)) {
                 Capsule::table('tblinvoices')->where('id', $invoiceToPending->invoice_id)->update(['status' => 'Payment Pending']);
-                Capsule::table('mgfw_REALTIMEREGISTERSSL_invoices_pendingpayment')->where('invoice_id', $invoiceToPending->invoice_id)->delete();
+                Capsule::table(\MGModule\RealtimeRegisterSsl\eHelpers\Invoice::INVOICE_PENDINGPAYMENT_TABLE_NAME)->where('invoice_id', $invoiceToPending->invoice_id)->delete();
             }
         }
     }
@@ -83,12 +83,16 @@ add_hook('ClientAreaPage', 1, function($params) {
         ]);
 
         \MGModule\RealtimeRegisterSsl\eHelpers\Invoice::createPendingPaymentInvoice();
-        $check = Capsule::table('mgfw_REALTIMEREGISTERSSL_invoices_pendingpayment')->where('user_id', $_SESSION['uid'])->where('invoice_id', $params['invoiceid'])->first();
-        if(!isset($check->id))
+        $check = Capsule::table(
+            'mgfw_REALTIMEREGISTERSSL_invoices_pendingpayment'
+        )->where('user_id', $_SESSION['uid'])->where('invoice_id', $params['invoiceid'])->first();
+        if (!isset($check->id))
         {
-            Capsule::table('mgfw_REALTIMEREGISTERSSL_invoices_pendingpayment')->insert([
+            Capsule::table(\MGModule\RealtimeRegisterSsl\eHelpers\Invoice::INVOICE_PENDINGPAYMENT_TABLE_NAME)->insert([
                 'user_id' => $_SESSION['uid'],
-                'invoice_id' => $params['invoiceid']
+                'invoice_id' => $params['invoiceid'],
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ]);
         }
 
@@ -355,7 +359,7 @@ function REALTIMEREGISTERSSL_displaySSLSummaryInSidebar($secondarySidebar)
         \MGModule\RealtimeRegisterSsl\Addon::I(true);
 
         $apiConf           = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
-        
+
         if(!isset($apiConf->sidebar_templates) || empty($apiConf->sidebar_templates))
         {
             if (in_array($smarty->tpl_vars['templatefile']->value, array('clientareahome')) || !isset($_SESSION['uid']))

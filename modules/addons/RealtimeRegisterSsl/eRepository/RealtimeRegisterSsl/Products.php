@@ -6,6 +6,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use Exception;
 
 class Products {
+    public const MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND = 'mgfw_REALTIMEREGISTERSSL_product_brand';
 
     /**
      *
@@ -54,22 +55,22 @@ class Products {
             return $this->products;
         }
 
-        $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+        $checkTable = Capsule::schema()->hasTable(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if($checkTable === false)
         {
-            Capsule::schema()->create('mgfw_REALTIMEREGISTERSSL_product_brand', function ($table) {
+            Capsule::schema()->create(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, function ($table) {
                 $table->increments('id');
                 $table->string('pid');
                 $table->string('brand');
                 $table->text('data');
             });
         }
-        $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+        $checkTable = Capsule::schema()->hasTable(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if($checkTable)
         {
-            if (Capsule::schema()->hasColumn('mgfw_REALTIMEREGISTERSSL_product_brand', 'data'))
+            if (Capsule::schema()->hasColumn(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
             {
-                $products = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->get();
+                $products = Capsule::table(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->get();
                 if(isset($products[0]->id)) {
                     $this->products = [];
                     foreach ($products as $i => $apiProduct)
@@ -88,7 +89,7 @@ class Products {
             }
         }
 
-        Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->truncate();
+        Capsule::table(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
         $this->products = [];
 
         $i = 0;
@@ -96,7 +97,7 @@ class Products {
 
         while ($apiProducts = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getProducts($i)) {
             foreach ($apiProducts['entities'] as $apiProduct) {
-                $id = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->insertGetId([
+                $id = Capsule::table(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insertGetId([
                     'brand' => $apiProduct['brand'],
                     'pid' => $apiProduct['product'],
                     'data' => json_encode($apiProduct)

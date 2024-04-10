@@ -2,6 +2,7 @@
 
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use WHMCS\Database\Capsule;
 
 class UpdateConfigData
@@ -40,16 +41,16 @@ class UpdateConfigData
             $order = $this->orderdata;
         }
            
-        $apiRepo = new \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products();
+        $apiRepo = new Products();
         
         if(!isset($this->sslService->configdata->product_brand) || empty($this->sslService->configdata->product_brand))
         {
-            $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_product_brand');
+            $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
             
             $brandName = null;
             if($checkTable !== false)
             {
-                $productData = Capsule::table('mgfw_REALTIMEREGISTERSSL_product_brand')->where('pid', $order['product_id'])->first();
+                $productData = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $order['product_id'])->first();
                 
                 if(isset($productData->brand) && !empty($productData->brand))
                 {
