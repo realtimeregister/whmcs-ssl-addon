@@ -8,7 +8,7 @@ use WHMCS\Database\Capsule;
 /**
  * Use any way you want. Free for all
  *
- * @version 1.1
+ * @version 1.0
  * */
 error_reporting(E_ALL);
 ini_set('display_errors', 'on');
@@ -19,15 +19,15 @@ define('DEBUG', false);
 
 class RealtimeRegisterSsl
 {
-    protected $apiUrl = 'https://api.yoursrs-ote.com';
-    protected $key;
+    protected string $apiUrl = 'https://api.yoursrs-ote.com';
+    protected string $key;
     protected $lastStatus;
     protected $lastResponse;
     protected $lastRequest;
     protected $apiExceptions = true;
     protected $exceptionType;
 
-    public function __construct($key = null, $apiUrl = null)
+    public function __construct($key = null)
     {
         $this->key = isset($key) ? $key : null;
 
@@ -159,15 +159,21 @@ class RealtimeRegisterSsl
         $this->apiUrl = $url;
     }
 
-    public function decodeCSR($csr, $brand = 1, $wildcard = 0)
+    /**
+     * @see https://dm.realtimeregister.com/docs/api/ssl/decocdecsr
+     *
+     * @param string $csr
+     * @return mixed
+     * @throws RealtimeRegisterApiException
+     * @throws RealtimeRegisterException
+     */
+    public function decodeCSR(string $csr)
     {
         if ($csr) {
             $postData ['csr'] = $csr;
-            $postData ['brand'] = $brand;
-            $postData ['wildcard'] = $wildcard;
         }
 
-        return $this->call('/tools/csr/decode/', null, $postData);
+        return $this->call('/v2/ssl/decodecsr', null, $postData);
     }
 
     public function getWebServers($type)
@@ -200,6 +206,13 @@ class RealtimeRegisterSsl
         return $this->call('/tools/domain/emails/geotrust', null, $postData);
     }
 
+    /**
+     * @see https://dm.realtimeregister.com/docs/api/customers/pricelist
+     *
+     * @return mixed
+     * @throws RealtimeRegisterApiException
+     * @throws RealtimeRegisterException
+     */
     public function getAllProductPrices()
     {
         $apiKeyRecord = \Illuminate\Database\Capsule\Manager::table(
@@ -218,6 +231,15 @@ class RealtimeRegisterSsl
         return $this->call('/products/ssl/' . $productId, null);
     }
 
+    /**
+     * https://dm.realtimeregister.com/docs/api/ssl/products/list
+     *
+     * @param int $offset
+     * @param int $limit
+     * @return mixed
+     * @throws RealtimeRegisterApiException
+     * @throws RealtimeRegisterException
+     */
     public function getProducts(int $offset = 0, int $limit = 10)
     {
         return $this->call('/v2/ssl/products', ['offset' => $offset, 'limit' => $limit]);
@@ -398,7 +420,7 @@ class RealtimeRegisterSsl
             print_r($getData) . "\n\n";
             echo "postData = \n";
             print_r($postData) . "\n\n";
-            echo "result SSLCenterApi = \n";
+            echo "result Realtime Register SSL API = \n";
             print_r(json_decode($result, true));
             echo "</pre>";
         }

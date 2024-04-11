@@ -19,7 +19,7 @@
                 <div class="col-sm-10">
                     <select name="configoption1" class="form-control" id="api_product">
                         {foreach from=$apiProducts item=product}
-                            <option data-peroids="{','|implode:$product->getPeriods()}" data-is_multidomain="{$product->san_enabled}" value="{$product->id}">{$product->product}</option>
+                            <option data-peroids="{','|implode:$product->getPeriods()}" data-is_multidomain="{$product->san_enabled}" value="{$product->product}">{$product->product}</option>
                         {/foreach}
                     </select>
                 </div>

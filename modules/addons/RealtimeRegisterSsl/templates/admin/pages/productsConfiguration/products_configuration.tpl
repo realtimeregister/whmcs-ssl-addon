@@ -123,7 +123,7 @@
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{$MGLANG->T('realtimeRegisterSslProduct')}</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" value="{$product->apiConfig->name}" disabled>
+                                    <input type="text" class="form-control" value="{$product->configoption1}" disabled>
                                 </div>
                             </div>
 
