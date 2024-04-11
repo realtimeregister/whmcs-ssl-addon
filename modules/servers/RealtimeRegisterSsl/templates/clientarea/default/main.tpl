@@ -28,6 +28,7 @@
             </div>
         </div>
         <div id="mg-container">
+            {$content|unescape: "html" nofilter}
             {$content}
         </div>
         {literal}

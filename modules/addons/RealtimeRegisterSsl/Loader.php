@@ -16,20 +16,20 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
     class Loader {
         static $whmcsDir;
         static $myName;
-        static $avaiableDirs = array();
+        static $availableDirs = array();
 
         /**
          * Set Paths
          * 
          * @param string $dir
          */
-        function __construct($dir = null){
+        public function __construct($dir = null){
             if(empty($dir))
             {
                 $checkDirs = array(
                         'modules'.DS.'addons'.DS
                         ,'modules'.DS.'servers'.DS
-                ); 
+                );
 
                 self::$myName = substr(__NAMESPACE__, 9);
 
@@ -40,7 +40,7 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
                         self::$whmcsDir = substr(__DIR__,0,$pos);
                         break;
                     }
-                }       
+                }
 
                 if(self::$whmcsDir)
                 {
@@ -49,7 +49,7 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
                         $tmp = self::$whmcsDir.$dir.self::$myName;
                         if(file_exists($tmp))
                         {
-                            self::$avaiableDirs[] = $tmp.DS;
+                            self::$availableDirs[] = $tmp.DS;
                         }
                     }
                 }
@@ -95,7 +95,7 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
 
             $error = array();
 
-            foreach(self::$avaiableDirs as $dir)
+            foreach(self::$availableDirs as $dir)
             {
                 $tmp = $dir.$fileName;
 
@@ -150,7 +150,7 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
 
             $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className);
 
-            foreach(self::$avaiableDirs as $dir)
+            foreach(self::$availableDirs as $dir)
             {
                 $tmp = $dir.$fileName;
                 if(file_exists($tmp))

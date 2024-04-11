@@ -28,7 +28,7 @@ class Product
     }
     
     public function isOrganizationRequired() {
-        if (this->validationType === 'ORGANIZATION_VALIDATION' || $this->validationType === 'EXTENDED_VALIDATION') {
+        if ($this->validationType === 'ORGANIZATION_VALIDATION' || $this->validationType === 'EXTENDED_VALIDATION') {
             return true;
         }
         return false;
