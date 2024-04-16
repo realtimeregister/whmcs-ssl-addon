@@ -54,7 +54,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
             Capsule::schema()->create($this->tableName, function($table)
             {
                 $table->increments('id');
-                $table->string('api_product_id');
+                $table->integer('api_product_id');
                 $table->string('price');
                 $table->string('period');
             });
@@ -68,7 +68,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
             Capsule::schema()->create($this->tableName, function($table)
             {
                 $table->increments('id');
-                $table->string('api_product_id');
+                $table->integer('api_product_id');
                 $table->string('price');
                 $table->string('period');
             });

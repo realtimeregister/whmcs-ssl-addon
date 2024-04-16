@@ -20,20 +20,21 @@ class SSLStepTwo {
     private $csrDecode = []; 
     
     function __construct(&$params) {
-        
         $service = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Service($params['serviceid']);
         $product = new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($service->productID);
-        
+
         $productssl = false;
         $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if($checkTable)
         {
             if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
             {
-                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->configuration()->text_name)->first();
-                if(isset($productsslDB->data))
+                $productsslDB = Capsule::table(
+                    Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND
+                )->where('pid', $product->id)->first();
+                if (isset($productsslDB->data))
                 {
-                    $productssl['product'] = json_decode($productsslDB->data, true); 
+                    $productssl['product'] = json_decode($productsslDB->data, true);
                 }
             }
         }
@@ -54,17 +55,14 @@ class SSLStepTwo {
         try {
             $this->SSLStepTwo();
             
-        } catch (Exception $ex) {            
-            return ['error' => $ex->getMessage()]; 
+        } catch (Exception $ex) {
+            return ['error' => $ex->getMessage()];
         }
         
         if (!empty($this->errors)) { 
             return ['error' => $this->errorsToWhmcsError()];
         }
-        /*if(!isset($this->p['fields']['sans_domains']) || $this->p['fields']['sans_domains'] == '') {            
-            $this->redirectToStepThree();                    
-        }*/
-        
+
         $service = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Service($this->p['serviceid']);
         $product = new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($service->productID);
         
@@ -74,10 +72,10 @@ class SSLStepTwo {
         {
             if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
             {
-                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->configuration()->text_name)->first();
+                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->id)->first();
                 if(isset($productsslDB->data))
                 {
-                    $productssl['product'] = json_decode($productsslDB->data, true); 
+                    $productssl['product'] = json_decode($productsslDB->data, true);
                 }
             }
         }
@@ -85,30 +83,7 @@ class SSLStepTwo {
         {
             $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
         }
-
-        $ValidationMethods = ['email', 'dns', 'http', 'https'];        
-        if(!$productssl['product']['dcv_email'])
-        {
-            $ValidationMethods = array_diff($ValidationMethods, ['email']);
-        }
-        if(!$productssl['product']['dcv_dns'])
-        {
-            $ValidationMethods = array_diff($ValidationMethods, ['dns']);
-        }
-        if(!$productssl['product']['dcv_http'])
-        {
-            $ValidationMethods = array_diff($ValidationMethods, ['http']);
-        }
-        if(!$productssl['product']['dcv_https'])
-        {
-            $ValidationMethods = array_diff($ValidationMethods, ['https']);
-        }
-        
-        if($product->configuration()->text_name == '144') 
-        {
-            $ValidationMethods = array_diff($ValidationMethods, ['email']);
-            $ValidationMethods = array_diff($ValidationMethods, ['dns']);
-        }
+        $ValidationMethods = ['email', 'dns', 'file'];
 
         if(empty($this->csrDecode))
         {
@@ -148,14 +123,14 @@ class SSLStepTwo {
                 }
             }
         }
-        
         return [
-            'approveremails' => 'loading...', 
-            'approveremails2' => $approveremails, 
+            'approveremails' => 'loading...',
+            'approveremails2' => $approveremails,
             'approvalmethods' => $ValidationMethods,
             'brand' => $productssl['product']['brand']
         ];
     }
+
     public function setPrivateKey($privKey) {
         $this->p['privateKey'] = $privKey;
     }
@@ -168,10 +143,11 @@ class SSLStepTwo {
         header('Location: configuressl.php?cert='. $_GET['cert'] . '&step=3&token=' . $token);
         die();
     }
+
     private function SSLStepTwo() {
         \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary::getInstance()->setByParams($this->p);
         
-        $this->storeFieldsAutoFill();        
+        $this->storeFieldsAutoFill();
         $this->validateSansDomains();
         $this->validateSansDomainsWildcard();
         $this->validateFields();
@@ -179,10 +155,10 @@ class SSLStepTwo {
         {
             $this->validateCSR();
         }
-        if(isset($this->p['privateKey']) && $this->p['privateKey'] != null) {            
+        if(isset($this->p['privateKey']) && $this->p['privateKey'] != null) {
             $privKey = decrypt($this->p['privateKey']);
             $GenerateSCR = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR($this->p, $_POST);
-            $GenerateSCR->savePrivateKeyToDatabase($this->p['serviceid'], $privKey);  
+            $GenerateSCR->savePrivateKeyToDatabase($this->p['serviceid'], $privKey);
         }
       
     }
@@ -264,7 +240,7 @@ class SSLStepTwo {
         {
             if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
             {
-                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $this->p['configoption1'])->first();
+                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $this->p['serviceid'])->first();
                 if(isset($productsslDB->data))
                 {
                     $productssl['product'] = json_decode($productsslDB->data, true); 

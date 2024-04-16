@@ -3,8 +3,18 @@
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use \MGModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
-use \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product as Product;
+use MGModule\DNSManager2\addon;
+use MGModule\DNSManager2\loader;
+use MGModule\DNSManager2\mgLibs\custom\helpers\DomainHelper;
+use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
+use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
+use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use MGModule\RealtimeRegisterSsl\eServices\FlashService;
+use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
+use stdClass;
 use WHMCS\Database\Capsule;
 use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
@@ -13,84 +23,88 @@ class SSLStepThree {
 
     /**
      *
-     * @var array 
+     * @var array
      */
     private $p;
-    
+
     /**
      *
      * @var \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     private $sslConfig;
-    
+
     private $invoiceGenerator;
-    
+
     /**
      *
      * @var \MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product
      */
     private $apiProduct;
-    
-    function __construct(&$params) {
+
+    public function __construct(&$params) {
         $this->p = &$params;
         if(!isset($this->p['model'])) {
             $this->p['model'] = \WHMCS\Service\Service::find($this->p['serviceid']);
         }
-        
-        $this->invoiceGenerator = new \MGModule\RealtimeRegisterSsl\eHelpers\Invoice();
+
+        $this->invoiceGenerator = new Invoice();
     }
 
     public function run() {
         try {
-            \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::decodeSanAprroverEmailsAndMethods($_POST);
-            $this->setMainDomainDcvMethod($_POST); 
-            $this->setSansDomainsDcvMethod($_POST);    
+            SansDomains::decodeSanAprroverEmailsAndMethods($_POST);
+            $this->setMainDomainDcvMethod($_POST);
+            $this->setSansDomainsDcvMethod($_POST);
             $this->SSLStepThree();
-        } catch (Exception $ex) {            
+        } catch (Exception $ex) {
+            echo '<pre>';
+            print_r($ex->getTrace());
+            die($ex->getMessage());
             $this->redirectToStepOne($ex->getMessage());
         }
     }
-    
+
     private function setMainDomainDcvMethod($post) {
-        $this->p['fields']['dcv_method']  = $post['dcvmethodMainDomain']; 
+        $this->p['fields']['dcv_method']  = $post['dcvmethodMainDomain'];
     }
 
-    private function setSansDomainsDcvMethod($post) {  
-        if(isset($post['dcvmethod']) && is_array($post['dcvmethod'])) {            
+    private function setSansDomainsDcvMethod($post) {
+        if(isset($post['dcvmethod']) && is_array($post['dcvmethod'])) {
             $this->p['sansDomansDcvMethod'] = $post['dcvmethod'];
         }
     }
-    
+
     private function SSLStepThree() {
-        
+
         $this->loadSslConfig();
         $this->loadApiProduct();
         $this->orderCertificate();
     }
-    
+
     private function loadSslConfig() {
-        $repo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $repo = new SSL();
         $this->sslConfig  = $repo->getByServiceId($this->p['serviceid']);
         if (is_null($this->sslConfig)) {
             throw new Exception('Record for ssl service not exist.');
         }
     }
-    
+
     private function loadApiProduct() {
         $apiProductId     = $this->p[ConfigOptions::API_PRODUCT_ID];
-       
-        $apiRepo          = new \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products();
+
+        $apiRepo          = new Products();
         $this->apiProduct = $apiRepo->getProduct($apiProductId);
     }
 
-    private function orderCertificate() { 
-        
+    private function orderCertificate()
+    {
+        echo '<pre>';
         if(isset($_POST['approveremail']) && $_POST['approveremail'] == 'defaultemail@defaultemail.com')
         {
             unset($_POST['approveremail']);
         }
-        
-        $billingPeriods = array(
+
+        $billingPeriods = [
             'Free Account'  =>  $this->p[ConfigOptions::API_PRODUCT_MONTHS],
             'One Time'      =>  $this->p[ConfigOptions::API_PRODUCT_MONTHS],
             'Monthly'       =>  12,
@@ -99,109 +113,68 @@ class SSLStepThree {
             'Annually'      =>  12,
             'Biennially'    =>  24,
             'Triennially'   =>  36,
-        );
-        
-        $brandsWithOnlyEmailValidation = ['geotrust','thawte','rapidssl','symantec'];        
+        ];
+
         if(!empty($this->p[ConfigOptions::API_PRODUCT_ID])) {
-            $apiRepo       = new \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products();
+            $apiRepo       = new Products();
             $apiProduct    = $apiRepo->getProduct($this->p[ConfigOptions::API_PRODUCT_ID]);
-            $brand = $apiProduct->brand;
-            
+
             //get available periods for product
-            $productAvailavlePeriods = $apiProduct->getPeriods();
+            $productAvailablePeriods = $apiProduct->getPeriods();
             //if certificate have monthly billing cycle available
-            if(in_array('1', $productAvailavlePeriods)) {
+            if(in_array('1', $productAvailablePeriods)) {
                 $billingPeriods['Monthly'] = 1;
             } else {
-                if(!in_array('12', $productAvailavlePeriods)) {
-                    $billingPeriods['Monthly'] = $productAvailavlePeriods[0];
-                }                
+                if(!in_array('12', $productAvailablePeriods)) {
+                    $billingPeriods['Monthly'] = $productAvailablePeriods[0];
+                }
             }
-            
+
             //one time billing set period to 12 months if avaiable else leave max period
-            if(in_array('12', $productAvailavlePeriods)) {
+            if(in_array('12', $productAvailablePeriods)) {
                 $billingPeriods['One Time'] = 12;
             }
         }
-        
+
         if($this->p[ConfigOptions::MONTH_ONE_TIME] && !empty($this->p[ConfigOptions::MONTH_ONE_TIME]))
         {
             $billingPeriods['One Time'] = $this->p[ConfigOptions::MONTH_ONE_TIME];
         }
-        
-        $apiRepo       = new \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products();
-        $apiProduct    = $apiRepo->getProduct($this->p[ConfigOptions::API_PRODUCT_ID]);
-        $brand = $apiProduct->brand;
 
-        $order               = [];
-        $order['dcv_method'] = strtolower($this->p['fields']['dcv_method']);
-       
-        $order['product_id'] = $this->p[ConfigOptions::API_PRODUCT_ID]; // Required
-        $order['period']     = $billingPeriods[$this->p['model']->billingcycle];//$this->p[ConfigOptions::API_PRODUCT_MONTHS]; // Required  
-        $order['csr']        = $this->p['csr']; // Required
-        $order['server_count']       = -1; // Required . amount of servers, for Unlimited pass “-1”
-        $order['approver_email']     = ($order['dcv_method'] == 'email') ? $this->p['approveremail'] : ''; // Required . amount of servers, for Unlimited pass “-1”
-        
-        $order['webserver_type']     = $this->p['servertype']; // Required . webserver type, can be taken from getWebservers method
-        if($brand == 'geotrust' || $brand == 'rapidssl' || $brand == 'digicert' || $brand == 'thawte')
-        {
-            $order['webserver_type']     = '18'; // Required . webserver type, can be taken from getWebservers method
-        }
-        else
-        {
-            $order['webserver_type']     = '-1'; // Required . webserver type, can be taken from getWebservers method
-        }
-              
-        $order['admin_firstname']    = $this->p['firstname']; // Required
-        $order['admin_lastname']     = $this->p['lastname']; // Required
-        $order['admin_organization'] = $this->p['orgname']; // required for OV SSL certificates
-        $order['admin_title']        = $this->p['jobtitle']; // Required
-        $order['admin_addressline1'] = $this->p['address1'];
-        $order['admin_phone']        = $this->p['phonenumber']; // Required
-        $order['admin_email']        = $this->p['email']; // Required
-        $order['admin_city']         = $this->p['city']; // required for OV SSL certificates
-        $order['admin_country']      = $this->p['country']; // required for OV SSL certificates
-        $order['admin_postalcode']   = $this->p['postcode'];
-        $order['admin_region']       = $this->p['state'];
-        //$order['admin_fax']          = $cf['firstname']; // required for OV SSL certificates
+        $apiRepo = new Products();
 
-        $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
-        
-        $useAdminContact = $apiConf->use_admin_contact;
-        
-        $order['tech_firstname']    = ($useAdminContact) ? $order['admin_firstname'] : $apiConf->tech_firstname; // Required
-        $order['tech_lastname']     = ($useAdminContact) ? $order['admin_lastname']:$apiConf->tech_lastname; // Required
-        $order['tech_organization'] = ($useAdminContact) ? $order['admin_organization'] : $apiConf->tech_organization; // required for OV SSL certificates
-        $order['tech_addressline1'] = ($useAdminContact) ? $order['admin_addressline1'] : $apiConf->tech_addressline1;
-        $order['tech_phone']        = ($useAdminContact) ? $order['admin_phone'] : $apiConf->tech_phone; // Required
-        $order['tech_title']        = ($useAdminContact) ? $order['admin_title'] : $apiConf->tech_title; // Required
-        $order['tech_email']        = ($useAdminContact) ? $order['admin_email'] : $apiConf->tech_email; // Required
-        $order['tech_city']         = ($useAdminContact) ? $order['admin_city'] : $apiConf->tech_city; // required for OV SSL certificates
-        $order['tech_country']      = ($useAdminContact) ? $order['admin_country'] : $apiConf->tech_country; // required for OV SSL certificates
-        $order['tech_fax']          = ($useAdminContact) ? '' : $apiConf->tech_fax;
-        $order['tech_postalcode']   = ($useAdminContact) ? $order['admin_postalcode'] : $apiConf->tech_postalcode;
-        $order['tech_region']       = ($useAdminContact) ? $order['admin_region'] : $apiConf->tech_region;
-        
-        $template = Capsule::table('tblconfiguration')->where('setting', 'Template')->first();
-        if(isset($template->value) && $template->value == 'twenty-one')
-        {
-            $order['tech_country'] = \MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries::getInstance()->getCountryCodeByName($order['tech_country']);
-            $order['admin_country'] = \MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries::getInstance()->getCountryCodeByName($order['admin_country']);
-        }
-        
-        if ($this->apiProduct->isOrganizationRequired()) {
-            $org                       = &$this->p['fields'];
-            $order['org_name']         = $org['org_name'];
-            $order['org_division']     = $org['org_division'];
-            $order['org_lei']          = $org['org_lei'];
-            $order['org_duns']         = $org['org_duns'];
-            $order['org_addressline1'] = $org['org_addressline1'];
-            $order['org_city']         = $org['org_city'];
-            $order['org_country']      = \MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries::getInstance()->getCountryCodeByName($org['org_country']);
-            $order['org_fax']          = $org['org_fax'];
-            $order['org_phone']        = $org['org_phone'];
-            $order['org_postalcode']   = $org['org_postalcode'];
-            $order['org_region']       = $org['org_regions'];
+        $order = [];
+
+        $apiRepo = new Products();
+        $productDetails = $apiRepo->getProduct($order['product_id']);
+
+        $order['product'] = $productDetails->product;
+        $order['period'] = $billingPeriods[$this->p['model']->billingcycle];
+        $order['csr'] = str_replace('\n', "\n", $this->p['csr']); // Fix for RT-14675
+        $productDetails = ApiProvider::getInstance()->getApi()->getProductDetails($productDetails->product);
+
+        $mapping = [
+            'organization' => 'orgname',
+            'country' => 'country',
+            'state' => 'state',
+            'address' => 'address1',
+            'postalCode' => 'postcode',
+            'city' => 'city',
+            'saEmail' => 'email',
+            'dcv' => 'dcv'
+        ]; // 'coc','language', 'uniqueValue','authKey' == missing
+
+        foreach ($productDetails['requiredFields'] as $value) {
+            if ($value === 'approver') {
+                $order['approver'] = [
+                    'firstName' => $this->p['firstname'],
+                    'lastName' => $this->p['lastname'],
+                    'email' => $this->p['email'],
+                    'voice' => $this->p['phonenumber']
+                ];
+            } else {
+                $order[$value] = $this->p[$mapping[$value]];
+            }
         }
 
         $sanEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN] === 'on';
@@ -212,107 +185,70 @@ class SSLStepThree {
 
         $decodedCSR = [];
         $decodedCSR['csrResult']['CN'] = $this->p['domain'];
-        
-        //$decodedCSR   = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->decodeCSR($this->p['csr']);
-        if ($sanEnabledForWHMCSProduct AND count($all_san)) {
-                 
+
+        if ($sanEnabledForWHMCSProduct && count($all_san)) {
             $sansDomains = $this->p['configdata']['fields']['sans_domains'];
-            $sansDomains = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains($sansDomains);
-            
+            $sansDomains = SansDomains::parseDomains($sansDomains);
+
             $sansDomainsWildcard = $this->p['configdata']['fields']['wildcard_san'];
-            $sansDomainsWildcard = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains($sansDomainsWildcard);
-            
+            $sansDomainsWildcard = SansDomains::parseDomains($sansDomainsWildcard);
+
             $sansDomains = array_merge($sansDomains, $sansDomainsWildcard);
 
-
-
+            foreach ($sansDomains as $sansDomain) {
+                $order['san'][] = $sansDomain;
+            }
             //if entered san is the same as main domain
-            if(is_array($_POST['approveremails'])){
-
-                if(count($sansDomains) != count($_POST['approveremails'])) {
-                    foreach($sansDomains as $key => $domain) {
-                        if($decodedCSR['csrResult']['CN'] == $domain) {
+            if (is_array($_POST['approveremails'])) {
+                if (count($sansDomains) != count($_POST['approveremails'])) {
+                    foreach ($sansDomains as $key => $domain) {
+                        if ($decodedCSR['csrResult']['CN'] == $domain) {
                             unset($sansDomains[$key]);
                         }
                     }
                 }
-
             }
 
-            $order['dns_names']       = implode(',', $sansDomains);
-            $approver_emails_method = [];
-            foreach ($sansDomains as $d)
-            {
-                if($_POST['approval_method'] == 'email')
-                {
-                    $approver_emails_method[] = $_POST['approveremail'];
-                }
-                else
-                {
-                    $approver_emails_method[] = $order['dcv_method'];
-                }
-            }
-            $order['approver_emails'] = implode(',', $approver_emails_method);
-
-            if(!empty($sanDcvMethods = $this->getSansDomainsValidationMethods())) {
+            if (!empty($sanDcvMethods = $this->getSansDomainsValidationMethods())) {
                 $i = 0;
-                foreach($_POST['approveremails'] as $domain => $approveremail) {
-                    if($sanDcvMethods[$i] != 'EMAIL') {
-                        $_POST['approveremails']["$domain"] = strtolower($sanDcvMethods[$i]);
+                foreach ($_POST['approveremails'] as $approverDomain => $approveremail) {
+                    if ($sanDcvMethods[$i] != 'EMAIL') {
+                        $order['dcv'][] = ['commonName' => $approverDomain, 'type' => strtoupper($sanDcvMethods[$i])];
+                    } else {
+                        $order['dcv'][] = ['commonName' => $approverDomain, 'type' => 'EMAIL', 'email' => $approveremail];
                     }
                     $i++;
                 }
-                $order['approver_emails'] = implode(',', $_POST['approveremails']);
-            } 
-            
-            $apiRepo       = new \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products();
-            $apiProduct    = $apiRepo->getProduct($order['product_id']);
-        }
-        
-        if($order['product_id'] == '144')
-        {
-            $sansDomains = $this->p['configdata']['fields']['sans_domains'];
-            $sansDomains = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains($sansDomains);
-
-            $sansDomainsWildcard = $this->p['configdata']['fields']['wildcard_san'];
-            $sansDomainsWildcard = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains($sansDomainsWildcard);
-
-            $sansDomains = array_merge($sansDomains, $sansDomainsWildcard);
-            
-            $order['dns_names'] = implode(',', $sansDomains);
-            $order['approver_emails'] = strtolower($_POST['dcvmethodMainDomain']);
-
-            $approver_emails_method = [];
-            foreach ($sansDomains as $d)
-            {
-                $approver_emails_method[] = $order['dcv_method'];
             }
-            $order['approver_emails'] = implode(',', $approver_emails_method);
+
+            // TODO cleanup
+            if ($_POST['dcvmethodMainDomain'] === 'EMAIL') {
+                $order['dcv'][] = ['commonName' => $sansDomains[0], 'type' => $_POST['dcvmethodMainDomain'], 'email' => $_POST['approveremail']];
+            } else {
+                $order['dcv'][] = ['commonName' => $sansDomains[0], 'type' => $_POST['dcvmethodMainDomain']];
+            }
+            $apiRepo = new Products();
+            $apiProduct = $apiRepo->getProduct($order['product_id']);
         }
 
-        //if brand is 'geotrust','thawte','rapidssl','symantec' do not send dcv method for sans
-//        if(in_array($brand, $brandsWithOnlyEmailValidation)) {
-//            unset($order['approver_emails']);
-//        }
-
-        $orderType = $this->p['fields']['order_type'];        
+        $orderType = $this->p['fields']['order_type'];
         switch ($orderType)
         {
             case 'renew':
-                $addedSSLOrder = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->addSSLRenewOrder($order);
-                break;            
+                $addedSSLOrder = ApiProvider::getInstance()->getApi()->addSSLRenewOrder($order);
+                break;
             case 'new':
-            default:                
-                $addedSSLOrder = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->addSSLOrder($order);
+            default:
+                $addedSSLOrder = ApiProvider::getInstance()->getApi()->addSSLOrder($order);
                 break;
         }
         //update domain column in tblhostings
         $service = new Service($this->p['serviceid']);
-        $service->save(array('domain' => $decodedCSR['csrResult']['CN']));
+        $service->save(['domain' => $decodedCSR['csrResult']['CN']]);
 
         // dns manager
         sleep(2);
-        $dnsmanagerfile = dirname(dirname(dirname(dirname(dirname(__DIR__))))).DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'api'.DIRECTORY_SEPARATOR.'dnsmanager.php';
+        $dnsmanagerfile = dirname(dirname(dirname(dirname(dirname(__DIR__))))) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . 'dnsmanager.php';
         $checkTable = Capsule::schema()->hasTable('dns_manager2_zone');
         if(file_exists($dnsmanagerfile) && $checkTable !== false)
         {
@@ -320,16 +256,16 @@ class SSLStepThree {
             $loaderDNS = dirname(dirname(dirname(dirname(dirname(__DIR__))))) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'addons' .DIRECTORY_SEPARATOR.'DNSManager2'.DIRECTORY_SEPARATOR.'loader.php';
             if(file_exists($loaderDNS)) {
                 require_once $loaderDNS;
-                $loader = new \MGModule\DNSManager2\loader();
-                \MGModule\DNSManager2\addon::I(true);
-                $helper = new \MGModule\DNSManager2\mgLibs\custom\helpers\DomainHelper($decodedCSR['csrResult']['CN']);
+                $loader = new loader();
+                addon::I(true);
+                $helper = new DomainHelper($decodedCSR['csrResult']['CN']);
                 $zoneDomain = $helper->getDomainWithTLD();
             }
 
             $records = [];
             if(isset($addedSSLOrder['approver_method']['dns']['record']) && !empty($addedSSLOrder['approver_method']['dns']['record']))
             {
-                if (strpos($addedSSLOrder['approver_method']['dns']['record'], 'CNAME') !== false) 
+                if (strpos($addedSSLOrder['approver_method']['dns']['record'], 'CNAME') !== false)
                 {
                     $dnsrecord = explode("CNAME", $addedSSLOrder['approver_method']['dns']['record']);
                     $records[] = array(
@@ -386,12 +322,12 @@ class SSLStepThree {
                     if(isset($sanrecord['validation']['dns']['record']) && !empty($sanrecord['validation']['dns']['record']))
                     {
                         if(file_exists($loaderDNS)) {
-                            $helper = new \MGModule\DNSManager2\mgLibs\custom\helpers\DomainHelper(str_replace('*.', '',$sanrecord['san_name']));
+                            $helper = new DomainHelper(str_replace('*.', '',$sanrecord['san_name']));
                             $zoneDomain = $helper->getDomainWithTLD();
                         }
 
-                        
-                        if (strpos($sanrecord['validation']['dns']['record'], 'CNAME') !== false) 
+
+                        if (strpos($sanrecord['validation']['dns']['record'], 'CNAME') !== false)
                         {
                             $dnsrecord = explode("CNAME", $sanrecord['validation']['dns']['record']);
                             $records[] = array(
@@ -443,8 +379,7 @@ class SSLStepThree {
                 }
             }
         }
-        
-        $orderDetails = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($addedSSLOrder['order_id']);
+        $orderDetails = ApiProvider::getInstance()->getApi()->getOrderStatus($addedSSLOrder['order_id']);
         if($this->p[ConfigOptions::MONTH_ONE_TIME] && !empty($this->p[ConfigOptions::MONTH_ONE_TIME]))
         {
             $service = new Service($this->p['serviceid']);
@@ -465,14 +400,13 @@ class SSLStepThree {
         $this->sslConfig->setDcvMethod($orderDetails['dcv_method']);
         $this->sslConfig->setProductId($orderDetails['product_id']);
         $this->sslConfig->setSanDetails($orderDetails['san']);
-        //$this->sslConfig->setSanDetails($orderDetails['san']);
         $this->sslConfig->setSSLStatus($orderDetails['status']);
         $this->sslConfig->save();   
         //try to mark previous order as completed if it is autoinvoiced and autocreated product
         $this->invoiceGenerator->markPreviousOrderAsCompleted($this->p['serviceid']);
-        
-        \MGModule\RealtimeRegisterSsl\eServices\FlashService::set('REALTIMEREGISTERSSL_WHMCS_SERVICE_TO_ACTIVE', $this->p['serviceid']);
-        \MGModule\RealtimeRegisterSsl\eHelpers\Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $decodedCSR['csrResult']['CN']);
+
+        FlashService::set('REALTIMEREGISTERSSL_WHMCS_SERVICE_TO_ACTIVE', $this->p['serviceid']);
+        Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $decodedCSR['csrResult']['CN']);
 
         $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->first();
         $orderRepo = new OrderRepo();
@@ -502,7 +436,7 @@ class SSLStepThree {
 
                 $cPanelService = new \MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service();
                 $cpanelDetails = $cPanelService->getServiceByDomain($service->userid, $service->domain);
-                $cpanel = new \MGModule\RealtimeRegisterSsl\eHelpers\Cpanel();
+                $cpanel = new Cpanel();
 
                 if ($cpanelDetails === false) continue;
 
@@ -532,7 +466,7 @@ class SSLStepThree {
                     if (strpos($data['record'], 'CNAME') !== false) {
                         $cpanel->setService($cpanelDetails);
                         $records = explode('CNAME', $data['record']);
-                        $record = new \stdClass();
+                        $record = new stdClass();
                         $record->domain = $service->domain;
                         $record->name = trim($records[0]).'.';
                         $record->cname = trim($records[1]);
@@ -545,7 +479,7 @@ class SSLStepThree {
                     if (strpos($data['record'], 'IN   TXT') !== false) {
                         $cpanel->setService($cpanelDetails);
                         $records = explode('IN   TXT', $data['record']);
-                        $record = new \stdClass();
+                        $record = new stdClass();
                         $record->domain = $service->domain;
                         $record->name = trim($records[0]);
                         $record->type = 'TXT';
@@ -558,7 +492,7 @@ class SSLStepThree {
 
                 }
 
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $logs-> addLog($this->p['userid'], $this->p['serviceid'], 'error', '['.$service->domain.'] Error:'.$e->getMessage());
                 continue;
             }
@@ -575,7 +509,7 @@ class SSLStepThree {
 
                     if($cpanelDetails === false) continue;
 
-                    $cpanel = new \MGModule\RealtimeRegisterSsl\eHelpers\Cpanel();
+                    $cpanel = new Cpanel();
                     $cpanel->setService($cpanelDetails);
 
                     if($san['validation_method'] == 'http' || $san['validation_method'] == 'https')
@@ -604,7 +538,7 @@ class SSLStepThree {
 
                         if (strpos($san['validation'][$san['validation_method']]['record'], 'CNAME') !== false) {
                             $records = explode('CNAME', $san['validation'][$san['validation_method']]['record']);
-                            $record = new \stdClass();
+                            $record = new stdClass();
                             $record->domain = $san['san_name'];
                             $record->name = trim($records[0]).'.';
                             $record->cname = trim($records[1]);
@@ -616,7 +550,7 @@ class SSLStepThree {
 
                         if (strpos($san['validation'][$san['validation_method']]['record'], 'IN   TXT') !== false) {
                             $records = explode('IN   TXT', $san['validation'][$san['validation_method']]['record']);
-                            $record = new \stdClass();
+                            $record = new stdClass();
                             $record->domain = $san['san_name'];
                             $record->name = trim($records[0]);
                             $record->type = 'TXT';
@@ -629,7 +563,7 @@ class SSLStepThree {
 
                     }
 
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
 
                     $logs-> addLog($this->p['userid'], $this->p['serviceid'], 'error', '['.$san['san_name'].'] Error:'.$e->getMessage());
                     continue;
@@ -643,7 +577,7 @@ class SSLStepThree {
                 $dataAPI = [
                     'domain' => $service->domain
                 ];
-                $response = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->revalidate($sslOrder->remoteid, $dataAPI);
+                $response = ApiProvider::getInstance()->getApi()->revalidate($sslOrder->remoteid, $dataAPI);
 
                 $logs->addLog($this->p['userid'], $this->p['serviceid'], 'info', '[' . $service->domain . '] Revalidate,');
 
@@ -652,16 +586,16 @@ class SSLStepThree {
                     $logs->addLog($this->p['userid'], $this->p['serviceid'], 'success', '[' . $service->domain . '] Revalidate Succces.');
                 }
 
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $logs->addLog($this->p['userid'], $this->p['serviceid'], 'error', '[' . $service->domain . '] Error:' . $e->getMessage());
             }
         }
 }
-        
-    private function getSansDomainsValidationMethods() {  
+
+    private function getSansDomainsValidationMethods() {
         $data = [];
-        foreach ($this->p['sansDomansDcvMethod'] as  $newMethod) { 
-            $data[] = $newMethod;   
+        foreach ($this->p['sansDomansDcvMethod'] as  $newMethod) {
+            $data[] = $newMethod;
         }
         return $data;
     }
@@ -670,5 +604,18 @@ class SSLStepThree {
         $_SESSION['REALTIMEREGISTERSSL_FLASH_ERROR_STEP_ONE'] = $error;
         header('Location: configuressl.php?cert='. $_GET['cert']);
         die();
+    }
+
+    /**
+     * @param string $name
+     * @param int $numberOfMonths
+     * @return string
+     */
+    private function createProductName(string $name, int $numberOfMonths)
+    {
+        if ($numberOfMonths > 12) {
+            $postFix = '_' . ($numberOfMonths/12) . 'years';
+        }
+        return $name . $postFix;
     }
 }

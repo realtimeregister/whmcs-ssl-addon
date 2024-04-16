@@ -19,7 +19,7 @@ class ProductPrice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      * 
      * @Column(api_product_id)
-     * @var string
+     * @var int
      */
     public $api_product_id;
 

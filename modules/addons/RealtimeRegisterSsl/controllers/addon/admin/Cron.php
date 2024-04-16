@@ -339,15 +339,8 @@ class Cron extends AbstractController
             Capsule::schema()->create(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, function ($table) {
                 $table->increments('id');
                 $table->integer('pid');
+                $table->string('pid_identifier');
                 $table->string('brand');
-                $table->text('data');
-            });
-        }
-
-        if (!Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
-        {
-            Capsule::schema()->table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, function($table)
-            {
                 $table->text('data');
             });
         }
@@ -357,11 +350,11 @@ class Cron extends AbstractController
         $apiProducts = ApiProvider::getInstance()->getApi()->getProducts();
 
         foreach ($apiProducts['products'] as $apiProduct) {
-            Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert(array(
-                'pid' => $apiProduct['id'],
+            Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
+                'pid_identifier' => $apiProduct['id'],
                 'brand' => $apiProduct['brand'],
                 'data' => json_encode($apiProduct)
-            ));
+            ]);
         }
 
         $sslOrders = $this->getSSLOrders();

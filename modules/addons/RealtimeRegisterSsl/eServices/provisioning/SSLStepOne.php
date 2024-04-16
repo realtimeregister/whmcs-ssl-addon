@@ -21,8 +21,7 @@ class SSLStepOne {
         }
     }
 
-    private function SSLStepOne() {    
-        
+    private function SSLStepOne() {
         $fields['additionalfields'] = [];
         $apiProductId  = $this->p[ConfigOptions::API_PRODUCT_ID];
         $apiRepo       = new \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products();
@@ -51,14 +50,14 @@ class SSLStepOne {
         $includedSansWildcard = (int) $this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
         
         $boughtSans   = (int) $this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
-        
+
         $orderTypes = ['new', 'renew'];
         
-        $sansLimit    = $includedSans + $boughtSans;        
+        $sansLimit    = $includedSans + $boughtSans;
 
-        
+        $sansLimit = 10;
         $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
-        $displayCsrGenerator = $apiConf->display_csr_generator;    
+        $displayCsrGenerator = $apiConf->display_csr_generator;
         
         if (!$sanEnabledForWHMCSProduct) {
             $sansLimit = 0;
@@ -71,7 +70,7 @@ class SSLStepOne {
             $fields['additionalfields'][\MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Organization::getTitle()] = \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Organization::getFields();
         }
         $countriesForGenerateCsrForm = \MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries::getInstance()->getCountriesForMgAddonDropdown();
-        
+
         //get selected default country for CSR Generator
         $defaultCsrGeneratorCountry = ($displayCsrGenerator) ? $apiConf->default_csr_generator_country : '';
         if(key_exists($defaultCsrGeneratorCountry, $countriesForGenerateCsrForm) AND $defaultCsrGeneratorCountry != NULL)
@@ -83,7 +82,7 @@ class SSLStepOne {
             //insert default country on the begin of countries list
             $countriesForGenerateCsrForm = array_merge(array($defaultCsrGeneratorCountry => $elementValue), $countriesForGenerateCsrForm);
         }
-        
+
         $wildCard = false;
         $apiProducts = \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products::getInstance()->getAllProducts();
         if(isset($apiProducts[$this->p['configoption1']]->wildcard_enabled) && $apiProducts[$this->p['configoption1']]->wildcard_enabled == '1')
@@ -122,6 +121,5 @@ class SSLStepOne {
     }
     private function getErrorForClient() {
         return \MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('canNotFetchWebServer');
-
-    }  
+    }
 }

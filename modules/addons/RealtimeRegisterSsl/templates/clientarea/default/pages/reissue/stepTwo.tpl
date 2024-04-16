@@ -38,20 +38,12 @@
         </form>
     </div>
 </div>
-            
  <script type="text/javascript">
-    $(document).ready(function () {        
+    $(document).ready(function () {
         //var fillVars = JSON.parse('{$fillVars}');
         var brand = JSON.parse('{$brand}');        
-        var onlyEmailValidationFoBrands = ['geotrust','thawte','rapidssl','symantec'];
-        var disabledValidationMethods = JSON.parse('{$disabledValidationMethods}'); 
-        
-        /*var mainDomainDcvMethod = '';
-        for (var i = 0; i < fillVars.length; i++) {
-             if(fillVars[i].name === "fields[dcv_method]") {
-                mainDomainDcvMethod = fillVars[i].value;
-             }
-        }*/
+        var disabledValidationMethods = JSON.parse('{$disabledValidationMethods}');
+
         function getSelectHtml(value, checked) {
             if (checked) {
                 var ck = ' selected';
@@ -106,8 +98,7 @@
             }
             
             template.hide();
-            //$('input[value="loading..."]').remove();
-            
+
             $.each(sanEmails, function (domain, emails) {
                 
                 
@@ -144,8 +135,7 @@
                 partHtml = partHtml + selectDcvMethod.replace('name="selectName"', getNameForSelectMethod(x, domain));
                 selectEmailHtml = selectBegin.replace('name="selectName"', getNameForSelectEmail(x, domain));
                 
-                if(jQuery.inArray('email', disabledValidationMethods) >= 0 && jQuery.inArray(brand, onlyEmailValidationFoBrands) < 0)
-                    selectEmailHtml = selectEmailHtml.replace(getNameForSelectEmail(x, domain) + ' class="form-control"', getNameForSelectEmail(x, domain) + ' class="form-control hidden"');
+                selectEmailHtml = selectEmailHtml.replace(getNameForSelectEmail(x, domain) + ' class="form-control"', getNameForSelectEmail(x, domain) + ' class="form-control hidden"');
                 
                 
                 for (var i = 0; i < emails.length; i++) {
@@ -163,12 +153,9 @@
         
         replaceRadioInputs(JSON.parse('{$approvalEmails}'));
         
-        if(brand == 'digicert' || brand == 'thawte' || brand == 'rapidssl')
-        {
-            $('select[name^="dcvmethod["]').remove();
-            $('select[name^="approveremails"]').remove();
-        }
-        
+        $('select[name^="dcvmethod["]').remove();
+        $('select[name^="approveremails"]').remove();
+
         $('select[name^="dcvmethod"]').change( function (){
             
             var product144 = $('select[name="approveremail"] option').length; 
@@ -186,11 +173,8 @@
                     }
                     
                     $('select[name="approveremail"]').addClass('hidden');
-                    //$('select[name="approveremail"]').append('<option value="defaultemail@defaultemail.com"></option>');
-                    //$('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').attr("selected", "selected");
                 } else {                    
                     $('select[name="approveremail"]').removeClass('hidden');
-                    //$('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').remove();
                 }
             } else {
                 if(method !== 'EMAIL') {
@@ -200,21 +184,16 @@
                         $('select[name="approveremail"]').append('<option value="defaultemail@defaultemail.com"></option>');
                         $('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').attr("selected", "selected");
                     }
-                    $('select[name="approveremails'+domain+'"]').addClass('hidden'); 
-                    //$('select[name="approveremail"]').append('<option value="defaultemail@defaultemail.com"></option>');
-                    //$('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').attr("selected", "selected");
+                    $('select[name="approveremails'+domain+'"]').addClass('hidden');
                 } else {
                     $('select[name="approveremails'+domain+'"]').removeClass('hidden');
-                    //$('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').remove();
+
                 }                 
             }
         });
         $('select[name^="dcvmethod"]').change();
-        if(jQuery.inArray(brand, onlyEmailValidationFoBrands) >= 0){
-           // $('select[name^="approveremails"]').closest('tr').prop('hidden', true);
-        }
         
-        if(jQuery.inArray('email', disabledValidationMethods) >= 0 && jQuery.inArray(brand, onlyEmailValidationFoBrands) < 0)
+        if(jQuery.inArray('email', disabledValidationMethods) >= 0)
         {
             $('#selectDcvMethodsTable').find('th:eq(2)').text('');
             $('#selectDcvMethodsTable').closest('.row').parent().find('h3:first').text('{$MGLANG->T('reissueSelectVerificationMethodTitle')}');  

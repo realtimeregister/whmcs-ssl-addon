@@ -2,9 +2,8 @@
     $(document).ready(function () {
         var fillVars = JSON.parse('{$fillVars}');
         var brand = JSON.parse('{$brand}');
-        var onlyEmailValidationFoBrands = ['geotrust','thawte','rapidssl','symantec'];
-        var disabledValidationMethods = JSON.parse('{$disabledValidationMethods}'); 
-        
+        var disabledValidationMethods = JSON.parse('{$disabledValidationMethods}');
+
         var mainDomainDcvMethod = '';
         for (var i = 0; i < fillVars.length; i++) {
              if(fillVars[i].name === "fields[dcv_method]") {
@@ -70,8 +69,6 @@
             template.hide();
             $('input[value="Array"]').remove();
 
-
-
             $.each(sanEmails, function (domain, emails) {
 
                 if(domain.includes('*.'))
@@ -80,21 +77,9 @@
                 }
 
                 selectDcvMethod = '<div class="form-group"><select style="width:65%;" type="text" name="selectName" class="form-control">';
-
-                //if not disabled display
-                if(jQuery.inArray('email', disabledValidationMethods) < 0)  {
-                    selectDcvMethod +='<option value="EMAIL">'+'{$MGLANG->T('dropdownDcvMethodEmail')}'+'</option>';
-                }
-                if(jQuery.inArray('http', disabledValidationMethods) < 0)  { 
-                selectDcvMethod += '<option value="HTTP">'+'{$MGLANG->T('dropdownDcvMethodHttp')}'+'</option>';
-                }
-                if(jQuery.inArray('https', disabledValidationMethods) < 0)  {
+                selectDcvMethod +='<option value="EMAIL">'+'{$MGLANG->T('dropdownDcvMethodEmail')}'+'</option>';
                 selectDcvMethod += '<option value="HTTPS">'+'{$MGLANG->T('dropdownDcvMethodHttps')}'+'</option>';
-                }
-                if(jQuery.inArray('dns', disabledValidationMethods) < 0)
-                {
-                        selectDcvMethod += '<option value="DNS">'+'{$MGLANG->T('dropdownDcvMethodDns')}'+'</option>';
-                }
+                selectDcvMethod += '<option value="DNS">'+'{$MGLANG->T('dropdownDcvMethodDns')}'+'</option>';
 
                 selectDcvMethod += '</select>';
 
@@ -103,10 +88,9 @@
                 partHtml = partHtml + selectDcvMethod.replace('name="selectName"', getNameForSelectMethod(x, domain));                                
                 selectEmailHtml = selectBegin.replace('name="selectName"', getNameForSelectEmail(x, domain));
                 
-                if(jQuery.inArray('email', disabledValidationMethods) >= 0 && jQuery.inArray(brand, onlyEmailValidationFoBrands) < 0)
+                if(jQuery.inArray('email', disabledValidationMethods) >= 0)
                     selectEmailHtml = selectEmailHtml.replace(getNameForSelectEmail(x, domain) + ' class="form-control"', getNameForSelectEmail(x, domain) + ' class="form-control hidden"');
-                
-                
+
                 for (var i = 0; i < emails.length; i++) {
                     selectEmailHtml = selectEmailHtml +  getSelectHtml(emails[i], i === 0);
                 }
@@ -121,7 +105,7 @@
         }
         
         replaceRadioInputs(JSON.parse('{$sanEmails}'));
-        
+
         $('#containerApprovalMethodEmail').parent('div').prev('label').prev('h2').hide();
         $('#containerApprovalMethodEmail').parent('div').prev('label').hide();
         $('#containerApprovalMethodEmail p').next('div').removeClass('col-sm-offset-1');
@@ -192,11 +176,8 @@
             }
             
         });
-        
-        if(jQuery.inArray(brand, onlyEmailValidationFoBrands) >= 0){
-           // $('select[name^="approveremails"]').closest('tr').prop('hidden', true);
-        }
-        if(jQuery.inArray('email', disabledValidationMethods) >= 0 && jQuery.inArray(brand, onlyEmailValidationFoBrands) < 0)
+
+        if(jQuery.inArray('email', disabledValidationMethods) >= 0)
         {
             $('#selectDcvMethodsTable').find('th:eq(2)').text('');
             //replace page langs if email method disabled

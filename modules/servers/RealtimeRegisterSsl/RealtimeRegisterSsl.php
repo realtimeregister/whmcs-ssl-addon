@@ -55,7 +55,7 @@ function RealtimeRegisterSsl_SSLStepTwo($params) {
         return $step2;
         
     } catch (\Exception $e) {
-        
+
         return $e->getMessage();
         
     }
@@ -129,7 +129,7 @@ if (isset($_POST['action'], $_SESSION['adminid']) AND $_POST['action'] === 'getA
         $serviceid = $_REQUEST['id'];
         $ssl        = new MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $sslService = $ssl->getByServiceId($serviceid);
-        
+
         $orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
             
         
@@ -142,19 +142,10 @@ if (isset($_POST['action'], $_SESSION['adminid']) AND $_POST['action'] === 'getA
             $apiProduct    = $apiRepo->getProduct($orderStatus['product_id']);
             $brand = $apiProduct->brand;
         }
-            
-        $domainEmails = [];
-        if($brand == 'geotrust') {
-            $apiDomainEmails = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getDomainEmailsForGeotrust($domain);
-            $domainEmails = $apiDomainEmails['GeotrustApprovalEmails'];
-        } else {
-            $apiDomainEmails = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getDomainEmails($domain);
-            $domainEmails = $apiDomainEmails['ComodoApprovalEmails'];
-        }  
 
         $result = [
             'success' => 1,
-            'domainEmails' => $domainEmails
+            'domainEmails' => \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getDomainEmails($domain)
         ];
           
     } catch(Exception $ex)  {

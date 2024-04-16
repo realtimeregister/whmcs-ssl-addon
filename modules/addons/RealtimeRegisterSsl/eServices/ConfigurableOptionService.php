@@ -187,7 +187,7 @@ class ConfigurableOptionService {
                 ->where('description', '=', $optionGroup['description'])
                 ->first();
         
-        if($optionGroupResult === NULL)
+        if($optionGroupResult === null)
         {
             self::createForProduct ($productId, $name);
             $optionGroupResult = self::getForProduct($productId);
@@ -234,7 +234,7 @@ class ConfigurableOptionService {
             ->where('id', '=', $groupid)
             ->first();
 
-        if($optionGroupResult === NULL)
+        if($optionGroupResult === null)
         {
             self::createForProduct ($productId, $name);
             $optionGroupResult = self::getForProductWildcard($productId);

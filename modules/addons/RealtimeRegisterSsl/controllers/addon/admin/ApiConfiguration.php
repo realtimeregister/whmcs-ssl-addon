@@ -58,16 +58,16 @@ class ApiConfiguration extends main\mgLibs\process\AbstractController
         $whmcsDefaultCurrency = $tblcurrencies->code;
         $realtimeRegisterSslCurrency = '';
         
-        try{
-            $apiKeyRecord = \Illuminate\Database\Capsule\Manager::table('mgfw_REALTIMEREGISTERSSL_api_configuration')->first();
-            $api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl($apiKeyRecord->api_login);
-
-            $details = $api->getAccountDetails();
-            $realtimeRegisterSslCurrency = $details['currency'];
-            
-        } catch (\Exception $e) {
-            $realtimeRegisterSslCurrency = 'Not set';
-        }
+//        try{
+//            $apiKeyRecord = \Illuminate\Database\Capsule\Manager::table('mgfw_REALTIMEREGISTERSSL_api_configuration')->first();
+//            $api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl($apiKeyRecord->api_login);
+//
+//            $details = $api->getAccountDetails();
+//            $realtimeRegisterSslCurrency = $details['currency'];
+//
+//        } catch (\Exception $e) {
+//            $realtimeRegisterSslCurrency = 'Not set';
+//        }
         
         $vars['whmcsCurrency'] = $whmcsDefaultCurrency;
         $vars['realtimeregistersslCurrency'] = $realtimeRegisterSslCurrency;

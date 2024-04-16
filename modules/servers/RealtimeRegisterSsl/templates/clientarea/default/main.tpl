@@ -29,7 +29,6 @@
         </div>
         <div id="mg-container">
             {$content|unescape: "html" nofilter}
-            {$content}
         </div>
         {literal}
             <script type="text/javascript">

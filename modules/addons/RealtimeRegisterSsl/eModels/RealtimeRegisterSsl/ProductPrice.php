@@ -2,6 +2,8 @@
 
 namespace MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl;
 
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+
 class ProductPrice
 {
     public function saveToDatabase()
@@ -10,13 +12,13 @@ class ProductPrice
 
         $period = $this->getPeriodFromName($this->product);
 
-        $productPriceRepo->onlyApiProductID($this->getCleanProductName($this->product))->onlyPeriod((string)$period);
+        $productPriceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($this->getCleanProductName($this->product)))->onlyPeriod((string)$period);
 
         if (!$productPriceRepo->count())
         {
             $productPrice = new \MGModule\RealtimeRegisterSsl\models\productPrice\ProductPrice();
 
-            $productPrice->setApiProductID($this->getCleanProductName($this->product));
+            $productPrice->setApiProductID(KeyToIdMapping::getIdByKey($this->getCleanProductName($this->product)));
             $productPrice->setPeriod($period);
             $productPrice->setPrice($this->price);
         }

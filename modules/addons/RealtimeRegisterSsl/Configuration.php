@@ -15,6 +15,7 @@ use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
 use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
 use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs as LogsHelper;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 
 /**
  * Module Configuration
@@ -155,6 +156,7 @@ class Configuration extends AbstractConfiguration
         (new UserCommissionRepo())->createUserCommissionTable();
         (new LogsRepo())->createLogsTable();
         (new OrdersRepo())->createOrdersTable();
+        (new KeyToIdMapping())->createTable();
         EmailTemplateService::createConfigurationTemplate();
         EmailTemplateService::createCertyficateTemplate();
         EmailTemplateService::createExpireNotificationTemplate();
@@ -175,6 +177,7 @@ class Configuration extends AbstractConfiguration
         (new UserCommissionRepo())->dropUserCommissionTable();
         (new LogsRepo())->dropLogsTable();
         (new OrdersRepo())->dropOrdersTable();
+        (new KeyToIdMapping())->dropTable();
         EmailTemplateService::deleteConfigurationTemplate();
         EmailTemplateService::deleteCertyficateTemplate();
         EmailTemplateService::deleteExpireNotificationTemplate();

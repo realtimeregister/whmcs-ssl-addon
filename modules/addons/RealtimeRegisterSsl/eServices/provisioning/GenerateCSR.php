@@ -115,7 +115,6 @@ class GenerateCSR
             $sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
 
             $sslService = $sslRepo->getByServiceId((int) $serviceid);
-           
             $sslService->setConfigdataKey('private_key', encrypt($privKey));
             $sslService->save();
         }

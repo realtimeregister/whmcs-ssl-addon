@@ -105,7 +105,7 @@ abstract class Base {
      * @param string $input
      * @return string
      */
-    function encrypt($input) {
+    static function encrypt($input) {
         if(empty($input))
         {
             return false;

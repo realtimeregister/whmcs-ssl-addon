@@ -10,12 +10,12 @@ use WHMCS\Database\Capsule;
  *
  * @version 1.0
  * */
-error_reporting(E_ALL);
-ini_set('display_errors', 'on');
+//error_reporting(E_ALL);
+//ini_set('display_errors', 'on');
+//
+//define('DEBUG', true);
 
 define('DEBUG', false);
-
-//define('DEBUG', false);
 
 class RealtimeRegisterSsl
 {
@@ -60,42 +60,9 @@ class RealtimeRegisterSsl
         $this->apiExceptions = false;
     }
 
-    public function auth($user, $pass)
-    {
-        $checkKey = Capsule::table('tblconfiguration')->where('setting', 'realtimeregisterssl_authkey')->first();
-        if (!isset($checkKey->value) || empty($checkKey->value)) {
-            $response = $this->call('/auth/', null , [
-                'user' => $user,
-                'pass' => $pass
-            ]);
-
-            if (!empty($response['key'])) {
-
-                if (!isset($checkKey->value)) {
-                    Capsule::table('tblconfiguration')->insert([
-                        'setting' => 'realtimeregisterssl_authkey',
-                        'value' => $response['key']
-                    ]);
-                } else if (empty($checkKey->value)) {
-                    Capsule::table('tblconfiguration')->where('setting', 'realtimeregisterssl_authkey')->update([
-                        'value' => $response['key']
-                    ]);
-                }
-
-                $this->key = $response ['key'];
-                return $response;
-            }
-            Capsule::table('tblconfiguration')->where('setting', 'realtimeregisterssl_authkey')->delete();
-            return $response;
-        } else {
-            $this->key = $checkKey->value;
-            return ['key' => $checkKey->value];
-        }
-    }
-
     public function addSslSan($orderId, $count, $single, $wildcard)
     {
-
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         $postData['order_id'] = $orderId;
         $postData['count'] = $count;
         $postData['single_san_count'] = $single;
@@ -116,6 +83,7 @@ class RealtimeRegisterSsl
 
     public function cancelSSLOrder($orderId, $reason)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         $postData ['order_id'] = $orderId;
         $postData ['reason'] = $reason;
 
@@ -124,26 +92,32 @@ class RealtimeRegisterSsl
 
     public function changeDcv($orderId, $data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/ssl/change_dcv/' . (int)$orderId, null, $data);
     }
 
     public function changeValidationMethod($orderId, $data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/ssl/change_validation_method/' . (int)$orderId, null, $data);
     }
 
     public function changeDomainValidationMethod($orderId, $data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/ssl/change_domains_validation_method/' . (int)$orderId, null, $data);
     }
 
     public function revalidate($orderId, $data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/ssl/revalidate/' . (int)$orderId, null, $data);
     }
 
     public function changeValidationEmail($orderId, $data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
+
         return $this->call('/orders/ssl/change_validation_email/' . (int)$orderId, null, $data);
     }
 
@@ -169,6 +143,7 @@ class RealtimeRegisterSsl
      */
     public function decodeCSR(string $csr)
     {
+        $postData = [];
         if ($csr) {
             $postData ['csr'] = $csr;
         }
@@ -178,32 +153,30 @@ class RealtimeRegisterSsl
 
     public function getWebServers($type)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
+
         return $this->call('/tools/webservers/' . (int)$type, null);
     }
 
     public function getDomainAlternative($csr = null)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         $postData['csr'] = $csr;
 
         return $this->call('/tools/domain/alternative/', null, $postData);
     }
 
-    public function getDomainEmails($domain)
+    /**
+     * @see https://dm.yoursrs-ote.com/docs/api/ssl/dcvemailaddresslist
+     *
+     * @param string $domain
+     * @return array|null
+     * @throws RealtimeRegisterApiException
+     * @throws RealtimeRegisterException
+     */
+    public function getDomainEmails(string $domain): array
     {
-        if ($domain) {
-            $postData ['domain'] = $domain;
-        }
-
-        return $this->call('/tools/domain/emails/', null, $postData);
-    }
-
-    public function getDomainEmailsForGeotrust($domain)
-    {
-        if ($domain) {
-            $postData ['domain'] = $domain;
-        }
-
-        return $this->call('/tools/domain/emails/geotrust', null, $postData);
+        return $this->call('/v2/ssl/dcvemailaddresslist/' . $domain);
     }
 
     /**
@@ -223,12 +196,21 @@ class RealtimeRegisterSsl
 
     public function getAllProducts()
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/products/', null);
     }
 
-    public function getProduct($productId)
+    /**
+     * @see https://dm.yoursrs-ote.com/docs/api/ssl/products/get
+     *
+     * @param string $productId
+     * @return mixed|null
+     * @throws RealtimeRegisterApiException
+     * @throws RealtimeRegisterException
+     */
+    public function getProduct(string $productId)
     {
-        return $this->call('/products/ssl/' . $productId, null);
+        return $this->call('/v2/ssl/products/' . $productId);
     }
 
     /**
@@ -245,129 +227,175 @@ class RealtimeRegisterSsl
         return $this->call('/v2/ssl/products', ['offset' => $offset, 'limit' => $limit]);
     }
 
-    public function getProductDetails($productId)
+    /**
+     * @see https://dm.realtimeregister.com/docs/api/ssl/products/get
+     *
+     * @param string $productId
+     * @return mixed
+     * @throws RealtimeRegisterApiException
+     * @throws RealtimeRegisterException
+     */
+    public function getProductDetails(string $productId)
     {
-        return $this->call('/products/details/' . $productId, null);
+        return $this->call('/v2/ssl/products/' . $productId, null);
     }
 
     public function getProductPrice($productId)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/products/price/' . $productId, null);
     }
 
     public function getUserAgreement($productId)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/products/agreement/' . $productId, null);
     }
 
     public function getAccountBalance()
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/account/balance/', null);
     }
 
     public function getAccountDetails()
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/account/', null);
     }
 
     public function getTotalOrders()
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/account/total_orders/', null);
     }
 
     public function getAllInvoices()
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/account/invoices/', null);
     }
 
     public function getUnpaidInvoices()
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/account/invoices/unpaid/', null);
     }
 
     public function getTotalTransactions()
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/account/total_transactions/', null);
     }
 
     public function addSSLOrder1($data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/add_ssl_order1/', null, $data);
     }
 
+    /**
+     * @see https://dm.realtimeregister.com/docs/api/ssl/request
+     *
+     * @param $data
+     * @return mixed
+     * @throws RealtimeRegisterApiException
+     * @throws RealtimeRegisterException
+     */
     public function addSSLOrder($data)
     {
-        return $this->call('/orders/add_ssl_order/', null, $data);
+        $data['customer'] = $this->getCustomer($this->key);
+        return $this->call('/v2/ssl/certificates', null, $data);
     }
 
     public function addSSLRenewOrder($data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
+        $data['customer'] = $this->getCustomer($this->key);
         return $this->call('/orders/add_ssl_renew_order/', null, $data);
     }
 
     public function reIssueOrder($orderId, $data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/ssl/reissue/' . (int)$orderId, null, $data);
     }
 
     public function activateSSLOrder($orderId)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/ssl/activate/' . (int)$orderId, null);
     }
 
     public function addSandboxAccount($data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/accounts/sandbox/add/', null, $data);
     }
 
-    public function getOrderStatus($orderId)
+    /**
+     * @see https://dm.yoursrs-ote.com/docs/api/processes/info
+     *
+     * @param int $orderId
+     * @return mixed|null
+     * @throws RealtimeRegisterApiException
+     * @throws RealtimeRegisterException
+     */
+    public function getOrderStatus(int $orderId)
     {
-        return $this->call('/orders/status/' . (int)$orderId, null);
+        return $this->call('/v2/processes/' . $orderId . '/info', null);
     }
 
     public function getOrderStatuses($ordersId)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/statuses/', null, $ordersId);
     }
 
     public function comodoClaimFreeEV($orderId, $data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/ssl/comodo_claim_free_ev/' . (int)$orderId, null, $data);
     }
 
     public function getOrderInvoice($orderId)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/invoice/' . (int)$orderId, null);
     }
 
     public function getUnpaidOrders()
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/list/unpaid/', null);
     }
 
     public function resendEmail($orderId)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/ssl/resend_validation_email/' . (int)$orderId, null);
     }
 
     public function resendValidationEmail($orderId)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/orders/ssl/resend_validation_email/' . (int)$orderId, null);
     }
 
     public function getCSR($data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/tools/csr/get/', null, $data);
     }
 
     public function generateCSR($data)
     {
+        die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/tools/csr/generate/', null, $data);
     }
 
     protected function call($uri, $getData = [], $postData = [], $forcePost = false, $isFile = false)
     {
-
         $this->lastRequest = [
             'uri' => $uri,
             'post' => $postData,
@@ -388,7 +416,7 @@ class RealtimeRegisterSsl
 
         $queryData = '';
         if (!empty($postData)) {
-            $queryData = $isFile ? $postData : http_build_query($postData);
+            $queryData = $isFile ? $postData : json_encode($postData);
             curl_setopt($c, CURLOPT_POSTFIELDS, $queryData);
         }
 
@@ -397,6 +425,8 @@ class RealtimeRegisterSsl
         $headers = [];
         $headers[] = 'user_agent: realtime-register-ssl-whmcs/' . $configuration->version;
         $headers[] = 'Authorization: ApiKey ' . $this->key;
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Accept: application/json';
 
         curl_setopt($c, CURLOPT_HTTPHEADER, $headers);
 

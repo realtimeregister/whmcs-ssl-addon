@@ -51,10 +51,11 @@ class SSLStepTwoJS {
             {
                 if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
                 {
-                    $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->configuration()->text_name)->first();
+                    $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)
+                        ->where('pid_identifier', $product->configuration()->text_name)->first();
                     if(isset($productsslDB->data))
                     {
-                        $productssl['product'] = json_decode($productsslDB->data, true); 
+                        $productssl['product'] = json_decode($productsslDB->data, true);
                     }
                 }
             }
@@ -163,28 +164,25 @@ class SSLStepTwoJS {
         {
             $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
         }
-        
+
         $mainDomain = '';
-        if(isset($decodedCSR['csrResult']['CN']))
+        if (isset($decodedCSR['csrResult']['CN']))
         {
             $mainDomain       = $decodedCSR['csrResult']['CN'];
         }
-        if(isset($decodedCSR['csrResult']['dnsName(s)'][0]) && strpos($decodedCSR['csrResult']['dnsName(s)'][0], '*.') !== false)
+        if (isset($decodedCSR['csrResult']['dnsName(s)'][0]) && strpos($decodedCSR['csrResult']['dnsName(s)'][0], '*.') !== false)
         {
             $mainDomain = $decodedCSR['csrResult']['dnsName(s)'][0];
         }
-        
-        if($product->configuration()->text_name != '144')
-        {
-            if($productssl['product']['wildcard_enabled'])
-            {
-                if(strpos($mainDomain, '*.') === false)
-                {
-                    if(isset($decodedCSR['csrResult']['errorMessage']))
-                        throw new Exception($decodedCSR['csrResult']['errorMessage']);
 
-                    throw new Exception(Lang::T('incorrectCSR'));
+        if (in_array('WILDCARD', $productssl['features']))
+        {
+            if (strpos($mainDomain, '*.') === false)
+            {
+                if (isset($decodedCSR['csrResult']['errorMessage'])) {
+                    throw new Exception($decodedCSR['csrResult']['errorMessage']);
                 }
+                throw new Exception(Lang::T('incorrectCSR'));
             }
         }
 
@@ -214,41 +212,17 @@ class SSLStepTwoJS {
         }
     }
 
-    public function fetchApprovalEmailsForSansDomains($sansDomains) {
-        
+    public function fetchApprovalEmailsForSansDomains($sansDomains)
+    {
         foreach ($sansDomains as $sansDomain) {
-            
             $this->domainsEmailApprovals[$sansDomain] = [];
             
             try{
-            
                 $apiDomainEmails = ApiProvider::getInstance()->getApi()->getDomainEmails($sansDomain);
-            
             } catch (Exception $e) {
-                
                 continue;
-                
             }
-            
-            $apiConf = (new Repository())->get();
-            if($apiConf->email_whois)
-            {
-                foreach($apiDomainEmails['ComodoApprovalEmails'] as $emailkey => $email)
-                {
-                    if (strpos($email, 'admin@') === false && 
-                            strpos($email, 'administrator@') === false && 
-                            strpos($email, 'hostmaster@') === false && 
-                            strpos($email, 'postmaster@') === false && 
-                            strpos($email, 'webmaster@') === false) 
-                    {
-                        unset($apiDomainEmails['ComodoApprovalEmails'][$emailkey]);
-                        
-                    }
-                }
-                $apiDomainEmails['ComodoApprovalEmails'] = array_values($apiDomainEmails['ComodoApprovalEmails']);
-            }
-            
-            $this->domainsEmailApprovals[$sansDomain] = $apiDomainEmails['ComodoApprovalEmails'];
+            $this->domainsEmailApprovals[$sansDomain] = $apiDomainEmails;
         }
         
         return $this->domainsEmailApprovals;

@@ -15,6 +15,7 @@ use MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
 use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use WHMCS\Database\Capsule;
 use MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service;
 use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
@@ -75,7 +76,6 @@ class home extends main\mgLibs\process\AbstractController {
                 $vars['activationStatus'] = $apicertdata['status'];
                 //var_dump($apicertdata);
             }
-            //var_dump(\MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid)); die;
 
             $vars['brandsWithOnlyEmailValidation'] = ['geotrust','thawte','rapidssl','symantec',];
 
@@ -224,10 +224,10 @@ class home extends main\mgLibs\process\AbstractController {
                     {
                         if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data'))
                         {
-                            $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', $product->configuration()->text_name)->first();
+                            $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where('pid', KeyToIdMapping::getIdByKey($product->configuration()->text_name))->first();
                             if(isset($productsslDB->data))
                             {
-                                $productssl['product'] = json_decode($productsslDB->data, true); 
+                                $productssl['product'] = json_decode($productsslDB->data, true);
                             }
                         }
                     }
@@ -779,25 +779,13 @@ class home extends main\mgLibs\process\AbstractController {
                 'msg'     => $response['message']
             );
         }
-        
-        
-  
     }
 
-    public function getApprovalEmailsForDomainJSON($input, $vars = array()) {
-
-        $domainEmails = [];
-
-        if($input['brand'] == 'geotrust') {
-            $apiDomainEmails             = ApiProvider::getInstance()->getApi()->getDomainEmailsForGeotrust($input['domain']);
-            $domainEmails = $apiDomainEmails['GeotrustApprovalEmails'];
-        } else {
-            $apiDomainEmails             = ApiProvider::getInstance()->getApi()->getDomainEmails($input['domain']);
-            $domainEmails = $apiDomainEmails['ComodoApprovalEmails'];
-        }
+    public function getApprovalEmailsForDomainJSON($input, $vars = array())
+    {
         $result = [
             'success' => 1,
-            'domainEmails' => $domainEmails
+            'domainEmails' => ApiProvider::getInstance()->getApi()->getDomainEmails($input['domain'])
         ];
 
         return $result;
