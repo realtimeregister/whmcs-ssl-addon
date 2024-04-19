@@ -7,6 +7,7 @@ use Exception;
 use MGModule\RealtimeRegisterSsl\eHelpers\Fill;
 use MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 
 class Products {
     public const MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND = 'mgfw_REALTIMEREGISTERSSL_product_brand';
@@ -46,9 +47,14 @@ class Products {
      */
     public function getProduct($id) {
         $this->fetchAllProducts();
-        if (isset($this->products[$id])) {
-            return $this->products[$id];
+
+        /** @var Product $product */
+        foreach ($this->products as $product) {
+            if ($product->product == $id) {
+                return $product;
+            }
         }
+
         return reset($this->products);
     }
 
@@ -92,23 +98,22 @@ class Products {
         $this->products = [];
 
         $i = 0;
-        $total = 0;
 
-        while ($apiProducts = ApiProvider::getInstance()->getApi()->getProducts($i)) {
-            foreach ($apiProducts['entities'] as $apiProduct) {
-                $id = Capsule::table(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insertGetId([
-                    'brand' => $apiProduct['brand'],
+        /** @var CertificatesApi $certificatedApi */
+        $certificatedApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+        while ($apiProducts = $certificatedApi->listProducts(10, $i)) {
+            /** @var \SandwaveIo\RealtimeRegister\Domain\Product $apiProduct */
+            foreach ($apiProducts->toArray() as $apiProduct) {
+                Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
                     'pid' => KeyToIdMapping::getIdByKey($apiProduct['product']),
                     'pid_identifier' => $apiProduct['product'],
+                    'brand' => $apiProduct['brand'],
                     'data' => json_encode($apiProduct)
                 ]);
-                $p = new Product();
-                Fill::fill($p, $apiProduct);
-                $this->products[$id] = $p;
             }
             $i +=10;
 
-            $total = $apiProducts['pagination']['total'];
+            $total = $apiProducts->pagination->total;
             if ($total < $i) {
                 break;
             }

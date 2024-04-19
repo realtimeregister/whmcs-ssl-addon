@@ -3,6 +3,9 @@
 namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use MGModule\RealtimeRegisterSsl as main;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use SandwaveIo\RealtimeRegister\Api\CustomersApi;
+use SandwaveIo\RealtimeRegister\Domain\PriceCollection;
 use WHMCS\Database\Capsule;
 
 /*
@@ -552,12 +555,9 @@ class ApiConfiguration extends main\mgLibs\process\AbstractController
 
     public function testConnectionJSON($input = [], $vars = [])
     {
-
-        $api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl();
-
-//        $authKey = $api->auth($input['api_login'], $input['api_password']);
-
-        $api->getAllProductPrices();
+        $customersApi = ApiProvider::getInstance()->getApi(CustomersApi::class);
+        /** @var PriceCollection $apiProducts */
+        $customersApi->priceList(ApiProvider::getCustomer());
         return [
             'success' => main\mgLibs\Lang::T('messages', 'api_connection_success')
         ];

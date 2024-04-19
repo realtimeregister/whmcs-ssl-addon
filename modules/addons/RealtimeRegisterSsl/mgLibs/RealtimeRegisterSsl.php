@@ -133,24 +133,6 @@ class RealtimeRegisterSsl
         $this->apiUrl = $url;
     }
 
-    /**
-     * @see https://dm.realtimeregister.com/docs/api/ssl/decocdecsr
-     *
-     * @param string $csr
-     * @return mixed
-     * @throws RealtimeRegisterApiException
-     * @throws RealtimeRegisterException
-     */
-    public function decodeCSR(string $csr)
-    {
-        $postData = [];
-        if ($csr) {
-            $postData ['csr'] = $csr;
-        }
-
-        return $this->call('/v2/ssl/decodecsr', null, $postData);
-    }
-
     public function getWebServers($type)
     {
         die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
@@ -164,34 +146,6 @@ class RealtimeRegisterSsl
         $postData['csr'] = $csr;
 
         return $this->call('/tools/domain/alternative/', null, $postData);
-    }
-
-    /**
-     * @see https://dm.yoursrs-ote.com/docs/api/ssl/dcvemailaddresslist
-     *
-     * @param string $domain
-     * @return array|null
-     * @throws RealtimeRegisterApiException
-     * @throws RealtimeRegisterException
-     */
-    public function getDomainEmails(string $domain): array
-    {
-        return $this->call('/v2/ssl/dcvemailaddresslist/' . $domain);
-    }
-
-    /**
-     * @see https://dm.realtimeregister.com/docs/api/customers/pricelist
-     *
-     * @return mixed
-     * @throws RealtimeRegisterApiException
-     * @throws RealtimeRegisterException
-     */
-    public function getAllProductPrices()
-    {
-        $apiKeyRecord = \Illuminate\Database\Capsule\Manager::table(
-            'mgfw_REALTIMEREGISTERSSL_api_configuration'
-        )->first();
-        return $this->call('/v2/customers/' . $this->getCustomer($apiKeyRecord->api_login) . '/pricelist', null);
     }
 
     public function getAllProducts()
@@ -211,20 +165,6 @@ class RealtimeRegisterSsl
     public function getProduct(string $productId)
     {
         return $this->call('/v2/ssl/products/' . $productId);
-    }
-
-    /**
-     * https://dm.realtimeregister.com/docs/api/ssl/products/list
-     *
-     * @param int $offset
-     * @param int $limit
-     * @return mixed
-     * @throws RealtimeRegisterApiException
-     * @throws RealtimeRegisterException
-     */
-    public function getProducts(int $offset = 0, int $limit = 10)
-    {
-        return $this->call('/v2/ssl/products', ['offset' => $offset, 'limit' => $limit]);
     }
 
     /**
@@ -311,7 +251,6 @@ class RealtimeRegisterSsl
     public function addSSLRenewOrder($data)
     {
         die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
-        $data['customer'] = $this->getCustomer($this->key);
         return $this->call('/orders/add_ssl_renew_order/', null, $data);
     }
 
@@ -331,19 +270,6 @@ class RealtimeRegisterSsl
     {
         die(__LINE__ . ' ' . __FILE__ . ' to be implemented');
         return $this->call('/accounts/sandbox/add/', null, $data);
-    }
-
-    /**
-     * @see https://dm.yoursrs-ote.com/docs/api/processes/info
-     *
-     * @param int $orderId
-     * @return mixed|null
-     * @throws RealtimeRegisterApiException
-     * @throws RealtimeRegisterException
-     */
-    public function getOrderStatus(int $orderId)
-    {
-        return $this->call('/v2/processes/' . $orderId . '/info', null);
     }
 
     public function getOrderStatuses($ordersId)

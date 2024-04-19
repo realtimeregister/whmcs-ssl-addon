@@ -3,6 +3,8 @@
 namespace MGModule\RealtimeRegisterSsl\eHelpers;
 
 use \MGModule\RealtimeRegisterSsl as main;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 class SSLSummary
 {
@@ -169,6 +171,8 @@ class SSLSummary
     private function loadSSLOrdersFromAPI()
     {
         $this->apiOrders = array();
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
         foreach ($this->services as $service)
         {
             $SSLOrder = new main\eModels\whmcs\service\SSL();
@@ -181,7 +185,7 @@ class SSLSummary
             }
 
             //get order details from API
-            $this->apiOrders[] = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($ssl->remoteid);
+            $this->apiOrders[] = $processesApi->get($ssl->remoteid);
         }
     }
 }

@@ -4,6 +4,22 @@ namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use MGModule\DNSManager2\addon;
+use MGModule\DNSManager2\loader;
+use MGModule\DNSManager2\mgLibs\custom\helpers\DomainHelper;
+use MGModule\RealtimeRegisterSsl\eHelpers\Domains;
+use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
+use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\WebServers;
+use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
+use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use function ModuleBuildParams;
 
 class AdminReissueCertificate extends Ajax {
 
@@ -45,7 +61,7 @@ class AdminReissueCertificate extends Ajax {
         $this->validateSanDomains();
         $this->validateServerType();
 
-        $sslRepo    = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $sslRepo    = new SSL();
         $sslService = $sslRepo->getByServiceId($this->p['serviceId']);
 
         if (is_null($sslService)) {
@@ -68,8 +84,8 @@ class AdminReissueCertificate extends Ajax {
 
         if ($sanEnabledForWHMCSProduct AND count($_POST['approveremails'])) {
             $this->validateSanDomains();
-            $sansDomains             = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains($this->p['sanDomains']);
-            $sansDomainsWildCard     = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains($this->p['sanDomainsWildcard']);
+            $sansDomains             = SansDomains::parseDomains($this->p['sanDomains']);
+            $sansDomainsWildCard     = SansDomains::parseDomains($this->p['sanDomainsWildcard']);
 
             $sansDomains = array_merge($sansDomains, $sansDomainsWildCard);
 
@@ -83,12 +99,12 @@ class AdminReissueCertificate extends Ajax {
             $data['approver_emails'] = $approverEmailsText;
         }
 
-        $service = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Service($this->p['serviceId']);
-        $product = new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($service->productID);
+        $service = new Service($this->p['serviceId']);
+        $product = new Product($service->productID);
 
         if($product->configuration()->text_name == '144')
         {
-            $sansDomains             = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains($this->p['sanDomains']);
+            $sansDomains             = SansDomains::parseDomains($this->p['sanDomains']);
 
             $data['dns_names'] = implode(',', $sansDomains);
             $data['approver_emails'] = $sslService->configdata->dcv_method;
@@ -100,7 +116,9 @@ class AdminReissueCertificate extends Ajax {
             $data['dcv_method'] = $sslService->configdata->dcv_method;
         }
 
-        $orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderStatus = $processesApi->get($sslService->remoteid);
 
         $singleDomainsCount = $orderStatus['single_san_count'];
         $wildcardDomainsCount = $orderStatus['wildcard_san_count'];
@@ -124,7 +142,7 @@ class AdminReissueCertificate extends Ajax {
                     $allToAdd = 0;
                 }
 
-                \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->addSslSan(
+                ApiProvider::getInstance()->getApi()->addSslSan(
                     $sslService->remoteid,
                     $allToAdd,
                     $singleToAdd,
@@ -133,10 +151,13 @@ class AdminReissueCertificate extends Ajax {
             }
         }
 
-        $reissueData = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->reIssueOrder($sslService->remoteid, $data);
+        $reissueData = ApiProvider::getInstance()->getApi()->reIssueOrder($sslService->remoteid, $data);
         sleep(2);
-        $orderDetails = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
-        $decodedCSR   = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->decodeCSR($this->p['csr']);
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderDetails = $processesApi->get($sslService->remoteid);
+
+        $decodedCSR   = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->p['csr']);
 
         // dns manager
         $dnsmanagerfile = dirname(dirname(dirname(dirname(dirname(__DIR__))))).DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'api'.DIRECTORY_SEPARATOR.'dnsmanager.php';
@@ -147,9 +168,9 @@ class AdminReissueCertificate extends Ajax {
             $loaderDNS = dirname(dirname(dirname(dirname(dirname(__DIR__))))) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'addons' .DIRECTORY_SEPARATOR.'DNSManager2'.DIRECTORY_SEPARATOR.'loader.php';
             if(file_exists($loaderDNS)) {
                 require_once $loaderDNS;
-                $loader = new \MGModule\DNSManager2\loader();
-                \MGModule\DNSManager2\addon::I(true);
-                $helper = new \MGModule\DNSManager2\mgLibs\custom\helpers\DomainHelper($decodedCSR['csrResult']['CN']);
+                $loader = new loader();
+                addon::I(true);
+                $helper = new DomainHelper($decodedCSR['csrResult']['CN']);
                 $zoneDomain = $helper->getDomainWithTLD();
             }
 
@@ -214,7 +235,7 @@ class AdminReissueCertificate extends Ajax {
                     if(isset($sanrecord['validation']['dns']['record']) && !empty($sanrecord['validation']['dns']['record']))
                     {
                         if(file_exists($loaderDNS)) {
-                            $helper = new \MGModule\DNSManager2\mgLibs\custom\helpers\DomainHelper(str_replace('*.', '',$sanrecord['san_name']));
+                            $helper = new DomainHelper(str_replace('*.', '',$sanrecord['san_name']));
                             $zoneDomain = $helper->getDomainWithTLD();
                         }
 
@@ -281,13 +302,13 @@ class AdminReissueCertificate extends Ajax {
 
         try
         {
-            $decodedCSR   = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->decodeCSR($this->p['csr']);
-            \MGModule\RealtimeRegisterSsl\eHelpers\Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceId'], $decodedCSR['csrResult']['CN'], true);
+            $decodedCSR   = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->p['csr']);
+            Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceId'], $decodedCSR['csrResult']['CN'], true);
 
-            $service = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Service($this->p['serviceId']);
+            $service = new Service($this->p['serviceId']);
             $service->save(array('domain' => $decodedCSR['csrResult']['CN']));
 
-            $configDataUpdate = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData($sslService);
+            $configDataUpdate = new UpdateConfigData($sslService);
             $configDataUpdate->run();
         }
         catch(Exception $e)
@@ -302,15 +323,15 @@ class AdminReissueCertificate extends Ajax {
     private function webServers() {
         $this->moduleBuildParams();
         $apiProductId  = $this->serviceParams[ConfigOptions::API_PRODUCT_ID];
-        $apiRepo       = new \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products();
+        $apiRepo       = new Products();
         $apiProduct    = $apiRepo->getProduct($apiProductId);
-        $apiWebServers = \MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\WebServers::getAll($apiProduct->getWebServerTypeId());
+        $apiWebServers = WebServers::getAll($apiProduct->getWebServerTypeId());
         $this->response(true, 'Web Servers', $apiWebServers);
 
     }
 
     private function moduleBuildParams() {
-        $this->serviceParams = \ModuleBuildParams($this->p['serviceId']);
+        $this->serviceParams = ModuleBuildParams($this->p['serviceId']);
         if (empty($this->serviceParams)) {
             throw new Exception('Can not build module params.');
         }
@@ -320,10 +341,10 @@ class AdminReissueCertificate extends Ajax {
         $this->validateSanDomains();
         $this->validateSansDomainsWildcard();
         $this->validateServerType();
-        $decodeCSR    = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->decodeCSR($this->p['csr']);
+        $decodeCSR = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->p['csr']);
 
-        $service = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Service($this->p['serviceId']);
-        $product = new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($service->productID);
+        $service = new Service($this->p['serviceId']);
+        $product = new Product($service->productID);
 
         if($product->configuration()->text_name != '144')
         {
@@ -333,7 +354,7 @@ class AdminReissueCertificate extends Ajax {
         }
         $mainDomain   = $decodeCSR['csrResult']['CN'];
         $domains      = $mainDomain . PHP_EOL . $this->p['sanDomains'].PHP_EOL.$this->p['sanDomainsWildcard'];
-        $parseDomains = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains($domains);
+        $parseDomains = SansDomains::parseDomains($domains);
         $SSLStepTwoJS = new SSLStepTwoJS($this->p);
         $this->response(true, 'Approve Emails', $SSLStepTwoJS->fetchApprovalEmailsForSansDomains($parseDomains));
 
@@ -342,16 +363,16 @@ class AdminReissueCertificate extends Ajax {
     private function validateSanDomains() {
         $this->moduleBuildParams();
         $sansDomains = $this->p['sanDomains'];
-        $sansDomains = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains($sansDomains);
+        $sansDomains = SansDomains::parseDomains($sansDomains);
 
         $apiProductId     = $this->serviceParams[ConfigOptions::API_PRODUCT_ID];
 
-        $invalidDomains = \MGModule\RealtimeRegisterSsl\eHelpers\Domains::getInvalidDomains($sansDomains, in_array($apiProductId, array(100, 99, 63)));
+        $invalidDomains = Domains::getInvalidDomains($sansDomains, in_array($apiProductId, array(100, 99, 63)));
 
         if($apiProductId != '144') {
 
             if (count($invalidDomains)) {
-                throw new Exception(\MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('incorrectSans') . implode(', ', $invalidDomains));
+                throw new Exception(Lang::getInstance()->T('incorrectSans') . implode(', ', $invalidDomains));
             }
 
         } else {
@@ -378,13 +399,13 @@ class AdminReissueCertificate extends Ajax {
         $boughtSans   = $this->serviceParams['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
         $sansLimit    = $this->getSansLimit();
         if (count($sansDomains) > $sansLimit) {
-            throw new Exception(\MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('exceededLimitOfSans'));
+            throw new Exception(Lang::getInstance()->T('exceededLimitOfSans'));
         }
     }
 
     private function validateSansDomainsWildcard() {
         $sansDomainsWildcard = $this->p['sanDomainsWildcard'];
-        $sansDomainsWildcard = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains($sansDomainsWildcard);
+        $sansDomainsWildcard = SansDomains::parseDomains($sansDomainsWildcard);
 
         foreach($sansDomainsWildcard as $domain)
         {
@@ -393,7 +414,7 @@ class AdminReissueCertificate extends Ajax {
             {
                 throw new Exception('SAN\'s Wildcard are incorrect');
             }
-            $domaincheck = \MGModule\RealtimeRegisterSsl\eHelpers\Domains::validateDomain(substr($domain, 2));
+            $domaincheck = Domains::validateDomain(substr($domain, 2));
             if($domaincheck !== true)
             {
                 throw new Exception('SAN\'s Wildcard are incorrect');
@@ -405,7 +426,7 @@ class AdminReissueCertificate extends Ajax {
 
         $sansLimit = $includedSans + $boughtSans;
         if (count($sansDomainsWildcard) > $sansLimit) {
-            throw new Exception(\MGModule\RealtimeRegisterSsl\mgLibs\Lang::T('sanLimitExceededWildcard'));
+            throw new Exception(Lang::T('sanLimitExceededWildcard'));
         }
     }
 

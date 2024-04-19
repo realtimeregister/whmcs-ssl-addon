@@ -3,6 +3,8 @@
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 class AdminResendCertificate {
 
@@ -32,9 +34,11 @@ class AdminResendCertificate {
         if(empty($serviceSSL->remoteid)) {
             throw new Exception('Product not ordered in RealtimeRegisterSsl.');
         }
-        
-        $orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($serviceSSL->remoteid);
-        
+
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderStatus = $processesApi->get($serviceSSL->remoteid);
+
         if($orderStatus['status'] !== 'active') {
             throw new Exception('Can not resend certificate. Order status is different than active.');
         }

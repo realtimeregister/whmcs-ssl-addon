@@ -3,6 +3,8 @@
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 class GetCertificate {
 
@@ -29,8 +31,12 @@ class GetCertificate {
         return 'success';
     }
 
-    public function GetCertificate() {
-        $orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($this->ssl->remoteid);
+    public function GetCertificate()
+    {
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderStatus = $processesApi->get($this->ssl->remoteid);
+
         $this->ssl->setOrderStatus($orderStatus['status']);
         $this->ssl->save();
 

@@ -2,6 +2,9 @@
 
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+
 class UpdateConfigs
 {
     private $sslService;
@@ -25,7 +28,10 @@ class UpdateConfigs
     }
     private function writeNewConfigdata($apiRepo, $order)
     {
-        $orderDetails = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($order['order_id']);
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderDetails = $processesApi->get($order['order_id']);
+
         $apiProduct = $apiRepo->getProduct($orderDetails['product_id']);
         
         $sslOrder             = \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL::whereRemoteId($order['order_id'])->first();

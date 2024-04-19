@@ -1,5 +1,8 @@
 <?php
 
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+
 if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
 
 require_once __DIR__ . DS . 'Loader.php';
@@ -130,9 +133,10 @@ if (isset($_POST['action'], $_SESSION['adminid']) AND $_POST['action'] === 'getA
         $ssl        = new MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $sslService = $ssl->getByServiceId($serviceid);
 
-        $orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
-            
-        
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderStatus = $processesApi->get($sslService->remoteid);
+
         if (!empty($orderStatus['domain'])) {
             $domain = $orderStatus['domain'];
         }

@@ -8,6 +8,7 @@ use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eServices\FlashService;
 use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 
 class SSLStepTwo {
 
@@ -45,7 +46,7 @@ class SSLStepTwo {
         
         if(isset($productssl['product_san_wildcard']) && $productssl['product_san_wildcard'] == 'yes')
         {
-            $this->additional_san_validation[] = $params['configoption1']; 
+            $this->additional_san_validation[] = $params['configoption1'];
         }
           
         $this->p = &$params;
@@ -81,28 +82,30 @@ class SSLStepTwo {
         }
         if(!$productssl)
         {
-            $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
+            /** @var CertificatesApi $certificatesApi */
+            $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+            $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
         }
         $ValidationMethods = ['email', 'dns', 'file'];
 
         if(empty($this->csrDecode))
         {
-            $this->csrDecode   = ApiProvider::getInstance()->getApi(false)->decodeCSR(trim(rtrim($_POST['csr'])));
+            $this->csrDecode = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr(trim(rtrim($_POST['csr'])));
         }
         $decodedCSR = $this->csrDecode;
         $_SESSION['csrDecode'] = $decodedCSR;
         $step2js = new SSLStepTwoJS($this->p);
-        $mainDomain       = $decodedCSR['csrResult']['CN'];
-        
+        $mainDomain       = $decodedCSR['commonName'];
+
         if(empty($mainDomain))
         {
-            $mainDomain = $decodedCSR['csrResult']['dnsName(s)'][0];
+            $mainDomain = $decodedCSR['csrResult']['altNames'][0];
         }
         
         $domains = $mainDomain . PHP_EOL . $_POST['fields']['sans_domains'];
         $sansDomains = \MGModule\RealtimeRegisterSsl\eHelpers\SansDomains::parseDomains(strtolower($domains));
         $approveremails = $step2js->fetchApprovalEmailsForSansDomains($sansDomains);
-        
+
         $_SESSION['approveremails'] = $approveremails;
         
         $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
@@ -112,11 +115,11 @@ class SSLStepTwo {
             {
                 foreach($approveremail_domain as $emailkey => $email)
                 {
-                    if (strpos($email, 'admin@') === false && 
-                        strpos($email, 'administrator@') === false && 
-                        strpos($email, 'hostmaster@') === false && 
-                        strpos($email, 'postmaster@') === false && 
-                        strpos($email, 'webmaster@') === false) 
+                    if (strpos($email, 'admin@') === false &&
+                        strpos($email, 'administrator@') === false &&
+                        strpos($email, 'hostmaster@') === false &&
+                        strpos($email, 'postmaster@') === false &&
+                        strpos($email, 'webmaster@') === false)
                     {
                         unset($approveremails[$domainkey][$emailkey]);
                     }
@@ -127,7 +130,7 @@ class SSLStepTwo {
             'approveremails' => 'loading...',
             'approveremails2' => $approveremails,
             'approvalmethods' => $ValidationMethods,
-            'brand' => $productssl['product']['brand']
+            'brand' => $productssl->brand
         ];
     }
 
@@ -231,7 +234,7 @@ class SSLStepTwo {
 
     private function validateCSR() {
         $csr = trim(rtrim($this->p['csr']));
-        $this->csrDecode = ApiProvider::getInstance()->getApi(false)->decodeCSR($csr);
+        $this->csrDecode = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($csr);
         $decodedCSR = $this->csrDecode;
         $_SESSION['csrDecode'] = $decodedCSR;
         $productssl = false;

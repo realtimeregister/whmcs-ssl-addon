@@ -4,12 +4,17 @@ namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use SandwaveIo\RealtimeRegister\Domain\Product;
+use SandwaveIo\RealtimeRegister\Domain\ProductCollection;
 use WHMCS\Service\Service;
 
 class Cron extends AbstractController
@@ -52,7 +57,9 @@ class Cron extends AbstractController
             $this->setSSLServiceAsSynchronized($serviceID);
 
             try{
-                $order = ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
+                /** @var ProcessesApi $processesApi */
+                $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+                $order = $processesApi->get($sslService->remoteid);
             } catch (\Exception $e) {
                 continue;
             }
@@ -172,8 +179,9 @@ class Cron extends AbstractController
                 $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $srv->id)->first();
 
                 if(isset($sslOrder->remoteid) && !empty($sslOrder->remoteid)) {
-
-                    $order    = ApiProvider::getInstance()->getApi()->getOrderStatus($sslOrder->remoteid);
+                    /** @var ProcessesApi $processesApi */
+                    $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+                    $order = $processesApi->get($sslOrder->remoteid);
                     $daysLeft = $this->checkOrderExpireDate($order['valid_till']);
 
                 }
@@ -227,7 +235,10 @@ class Cron extends AbstractController
                     $serviceid = $sslInvoice->service_id;
 
                     $sslInfo = $this->getSSLOrders($serviceid)[0];
-                    $sslOrder    = ApiProvider::getInstance()->getApi()->getOrderStatus($sslInfo->remoteid);
+
+                    /** @var ProcessesApi $processesApi */
+                    $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+                    $sslOrder = $processesApi->get($sslInfo->remoteid);
 
                     $today = (string)date('Y-m-d');
 
@@ -289,7 +300,10 @@ class Cron extends AbstractController
             {
                 continue;
             }
-            $apiOrder = ApiProvider::getInstance()->getApi()->getOrderStatus($ssl->remoteid);
+            /** @var ProcessesApi $processesApi */
+            $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+            $apiOrder = $processesApi->get($ssl->remoteid);
+
             if ($apiOrder['status'] !== 'active' || empty($apiOrder['ca_code']))
             {
                 continue;
@@ -347,15 +361,27 @@ class Cron extends AbstractController
 
         Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
 
-        $apiProducts = ApiProvider::getInstance()->getApi()->getProducts();
+        $certificatedApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+        $i = 0;
+        /** @var ProductCollection $apiProducts */
+        while ($apiProducts = $certificatedApi->listProducts(10, $i)) {
+            /** @var Product $apiProduct */
+            foreach ($apiProducts->toArray() as $apiProduct) {
+                Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
+                    'pid' => KeyToIdMapping::getIdByKey($apiProduct['product']),
+                    'pid_identifier' => $apiProduct['product'],
+                    'brand' => $apiProduct['brand'],
+                    'data' => json_encode($apiProduct)
+                ]);
+            }
+            $i +=10;
 
-        foreach ($apiProducts['products'] as $apiProduct) {
-            Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
-                'pid_identifier' => $apiProduct['id'],
-                'brand' => $apiProduct['brand'],
-                'data' => json_encode($apiProduct)
-            ]);
+            $total = $apiProducts->pagination->total;
+            if ($total < $i) {
+                break;
+            }
         }
+
 
         $sslOrders = $this->getSSLOrders();
 
@@ -403,7 +429,9 @@ class Cron extends AbstractController
             {
                 continue;
             }
-            $apiOrder = ApiProvider::getInstance()->getApi()->getOrderStatus($ssl->remoteid);
+            /** @var ProcessesApi $processesApi */
+            $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+            $apiOrder = $processesApi->get($ssl->remoteid);
 
             $this->setSSLCertificateValidTillDate($service->id, $apiOrder['valid_till']);
             $this->setSSLCertificateStatus($service->id, $apiOrder['status']);

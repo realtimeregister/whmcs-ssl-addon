@@ -2,7 +2,9 @@
 
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Database\Capsule;
 
 class UpdateConfigData
@@ -34,7 +36,9 @@ class UpdateConfigData
 
         if(empty($this->orderdata))
         {
-            $order = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($this->sslService->remoteid);
+            /** @var ProcessesApi $processesApi */
+            $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+            $order = $processesApi->get($this->sslService->remoteid);
         }
         else
         {

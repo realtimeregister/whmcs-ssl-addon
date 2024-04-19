@@ -1,6 +1,8 @@
 <?php
 use Illuminate\Database\Capsule\Manager as Capsule;
 
+require_once __DIR__ . '/vendor/autoload.php';
+
 if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
 
 add_hook("ClientAreaPage",1 ,function($vars) {
@@ -519,7 +521,10 @@ function REALTIMEREGISTERSSL_unableDowngradeConfigOption($vars)
 
         try
         {
-            $orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
+            /** @var \SandwaveIo\RealtimeRegister\Api\ProcessesApi $processApi */
+            $processApi = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(\SandwaveIo\RealtimeRegister\Api\ProcessesApi::class);
+
+            $orderStatus = $processApi->get($sslService->remoteid);
         }
         catch (MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterApiException $e)
         {

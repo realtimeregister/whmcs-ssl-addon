@@ -3,6 +3,8 @@
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 class AdminViewCertyfifcate extends Ajax {
 
@@ -33,8 +35,10 @@ class AdminViewCertyfifcate extends Ajax {
             throw new Exception('An error occurred');
         }
 
-        $orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
-        
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderStatus = $processesApi->get($sslService->remoteid);
+
         $return = [];
        
         if (!empty($orderStatus['csr_code'])) {

@@ -1,28 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MGModule\RealtimeRegisterSsl\eProviders;
 
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use SandwaveIo\RealtimeRegister\Api\AbstractApi;
+use SandwaveIo\RealtimeRegister\Support\AuthorizedClient;
 
-class ApiProvider {
-
-    /**
-     *
-     * @var type 
-     */
+class ApiProvider
+{
     private static $instance;
-    
-    /**
-     *
-     * @var \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl
-     */
-    private $api;
+
+    private string $apiUrl = 'https://api.yoursrs-ote.com';
 
     /**
-     * @return ApiProvider
+     * @var AbstractApi[]
      */
-    public static function getInstance() {
+    private array $api = [];
+    private static string $customer;
+
+    public static function getInstance(): ApiProvider
+    {
         if (self::$instance === null) {
             self::$instance = new ApiProvider();
         }
@@ -30,27 +30,36 @@ class ApiProvider {
     }
 
     /**
-     * @return \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl
+     * @throws Exception
      */
-    public function getApi($exception = true) {
-        if ($this->api === null) {
-            $this->initApi();
+    public function getApi(string $className): AbstractApi
+    {
+        if ($this->api[$className] === null) {
+            $this->initApi($className);
         }
         
-        if($exception) {
-            $this->api->setRealtimeRegisterSslApiException();
-        } else {
-            $this->api->setNoneException();
-        }
-        
-        return $this->api;
+        return $this->api[$className];
     }
 
     /**
      * @throws Exception
      */
-    private function initApi() {
+    private function initApi(string $className): void
+    {
         $apiKeyRecord = Capsule::table('mgfw_REALTIMEREGISTERSSL_api_configuration')->first();
-        $this->api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl($apiKeyRecord->api_login);
+
+        $this->api[$className] = new $className(new AuthorizedClient($this->apiUrl, $apiKeyRecord->api_login));
+        self::$customer = $this->setCustomer($apiKeyRecord->api_login);
+    }
+
+    private function setCustomer(string $apiKey): string
+    {
+        $tmp = base64_decode($apiKey);
+        return explode('/', $tmp)[0];
+    }
+
+    public static function getCustomer(): string
+    {
+        return self::$customer;
     }
 }

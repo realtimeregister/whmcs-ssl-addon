@@ -3,8 +3,10 @@
 namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use MGModule\RealtimeRegisterSsl as main;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 /*
  * Base example
@@ -96,7 +98,9 @@ class ImportSSLOrder extends main\mgLibs\process\AbstractController
             $api = new \MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterSsl($apiKeyRecord->api_login);
 
             //get order details from API
-            $orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslOrderID);
+            /** @var ProcessesApi $processesApi */
+            $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+            $orderStatus = $processesApi->get($sslOrderID);
             if($orderStatus['status'] == 'cancelled')
                 throw new \Exception(main\mgLibs\Lang::T('messages', 'order_cancelled_import_unable'));
          

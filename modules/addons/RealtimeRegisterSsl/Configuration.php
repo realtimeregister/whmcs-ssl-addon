@@ -16,6 +16,7 @@ use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
 use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs as LogsHelper;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 /**
  * Module Configuration
@@ -232,7 +233,10 @@ class Configuration extends AbstractConfiguration
                     continue;
                 }
 
-                $apiOrder = ApiProvider::getInstance()->getApi()->getOrderStatus($ssl->remoteid);
+                /** @var ProcessesApi $processesApi */
+                $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+                $apiOrder = $processesApi->get($ssl->remoteid);
+
                 if ($apiOrder['status'] !== 'active' || empty($apiOrder['ca_code']))
                 {
                     continue;

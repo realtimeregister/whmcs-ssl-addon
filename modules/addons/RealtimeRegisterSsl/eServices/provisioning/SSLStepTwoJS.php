@@ -15,6 +15,7 @@ use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
 use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 
 class SSLStepTwoJS {
 
@@ -62,7 +63,9 @@ class SSLStepTwoJS {
 
             if(!$productssl)
             {
-                $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
+                /** @var CertificatesApi $certificatesApi */
+                $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+                $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
             }
 
             if(!$productssl['product']['dcv_email'])
@@ -81,12 +84,7 @@ class SSLStepTwoJS {
             {
                 array_push($this->disabledValidationMethods, 'https');
             }
-            
-//            if($product->configuration()->text_name == '144')
-//            {
-//                array_push($this->disabledValidationMethods, 'email');
-//                array_push($this->disabledValidationMethods, 'dns');
-//            }
+
             $this->SSLStepTwoJS($this->p);
             
             return ScriptService::getSanEmailsScript(json_encode($this->domainsEmailApprovals), json_encode(FlashService::getFieldsMemory($_GET['cert'])), json_encode($this->brand), json_encode($this->disabledValidationMethods));
@@ -129,7 +127,7 @@ class SSLStepTwoJS {
         
         if(!isset($_SESSION['csrDecode']) || empty($_SESSION['csrDecode']))
         {
-            $this->csrDecode   = ApiProvider::getInstance()->getApi(false)->decodeCSR(trim(rtrim($_POST['csr'])));
+            $this->csrDecode = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr(trim(rtrim($_POST['csr'])));
         }
         else 
         {
@@ -162,7 +160,9 @@ class SSLStepTwoJS {
         
         if(!$productssl)
         {
-            $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
+            /** @var CertificatesApi $certificatesApi */
+            $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+            $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
         }
 
         $mainDomain = '';
@@ -175,7 +175,7 @@ class SSLStepTwoJS {
             $mainDomain = $decodedCSR['csrResult']['dnsName(s)'][0];
         }
 
-        if (in_array('WILDCARD', $productssl['features']))
+        if (in_array('WILDCARD', $productssl->features))
         {
             if (strpos($mainDomain, '*.') === false)
             {
@@ -204,21 +204,23 @@ class SSLStepTwoJS {
         $this->fetchApprovalEmailsForSansDomains($wildcardDomains);
         
         if(Whmcs::isWHMCS73()) {
-            if(isset($_POST['privateKey']) && $_POST['privateKey'] != null) {            
+            if(isset($_POST['privateKey']) && $_POST['privateKey'] != null) {
                 $privKey = decrypt($_POST['privateKey']);
                 $GenerateSCR = new GenerateCSR($this->p, $_POST);
-                $GenerateSCR->savePrivateKeyToDatabase($this->p['serviceid'], $privKey);  
+                $GenerateSCR->savePrivateKeyToDatabase($this->p['serviceid'], $privKey);
             }
         }
     }
 
-    public function fetchApprovalEmailsForSansDomains($sansDomains)
+    public function fetchApprovalEmailsForSansDomains($sansDomains): array
     {
         foreach ($sansDomains as $sansDomain) {
             $this->domainsEmailApprovals[$sansDomain] = [];
             
             try{
-                $apiDomainEmails = ApiProvider::getInstance()->getApi()->getDomainEmails($sansDomain);
+                /** @var CertificatesApi $certificatesApi */
+                $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+                $apiDomainEmails = $certificatesApi->listDcvEmailAddresses($sansDomain);
             } catch (Exception $e) {
                 continue;
             }

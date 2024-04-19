@@ -3,6 +3,8 @@
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 class ClientContactDetails {
 
@@ -75,7 +77,9 @@ class ClientContactDetails {
     }
 
     private function loadOrder() {
-        $this->vars['order'] = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($this->sslService->remoteid);
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $this->vars['order'] = $processesApi->get($this->sslService->remoteid);
     }
 
     private function build() {

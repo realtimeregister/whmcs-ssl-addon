@@ -16,6 +16,7 @@ use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
 use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use WHMCS\Database\Capsule;
 use MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service;
 use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
@@ -60,7 +61,9 @@ class home extends main\mgLibs\process\AbstractController {
                     throw new Exception('An error occurred');
                 }
 
-                $apicertdata = ApiProvider::getInstance()->getApi()->getOrderStatus($sslService->remoteid);
+                /** @var ProcessesApi $processesApi */
+                $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+                $apicertdata = $processesApi->get($sslService->remoteid);
 
                 $configDataUpdate = new UpdateConfigData($sslService, $apicertdata);
                 $configDataUpdate->run();
@@ -234,7 +237,9 @@ class home extends main\mgLibs\process\AbstractController {
 
                     if(!$productssl)
                     {
-                        $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
+                        /** @var CertificatesApi $certificatesApi */
+                        $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+                        $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
                     }
 
                     if(!$productssl['product']['dcv_email'])
@@ -482,7 +487,10 @@ class home extends main\mgLibs\process\AbstractController {
     public function sendCertificateEmailJSON($input, $vars = array()) {
         $ssl = new SSL();
         $serviceSSL = $ssl->getByServiceId($input['id']);
-        $orderStatus = ApiProvider::getInstance()->getApi()->getOrderStatus($serviceSSL->remoteid);
+
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderStatus = $processesApi->get($serviceSSL->remoteid);
 
         if($orderStatus['status'] !== 'active') {
             throw new Exception( Lang::getInstance()->T('orderNotActiveError')); //Can not send certificate. Order status is different than active.

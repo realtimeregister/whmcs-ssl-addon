@@ -14,6 +14,9 @@ use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use MGModule\RealtimeRegisterSsl\eServices\FlashService;
 use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use SandwaveIo\RealtimeRegister\Domain\Product;
 use stdClass;
 use WHMCS\Database\Capsule;
 use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
@@ -57,18 +60,17 @@ class SSLStepThree {
             $this->setSansDomainsDcvMethod($_POST);
             $this->SSLStepThree();
         } catch (Exception $ex) {
-            echo '<pre>';
-            print_r($ex->getTrace());
-            die($ex->getMessage());
             $this->redirectToStepOne($ex->getMessage());
         }
     }
 
-    private function setMainDomainDcvMethod($post) {
+    private function setMainDomainDcvMethod($post): void
+    {
         $this->p['fields']['dcv_method']  = $post['dcvmethodMainDomain'];
     }
 
-    private function setSansDomainsDcvMethod($post) {
+    private function setSansDomainsDcvMethod($post): void
+    {
         if(isset($post['dcvmethod']) && is_array($post['dcvmethod'])) {
             $this->p['sansDomansDcvMethod'] = $post['dcvmethod'];
         }
@@ -141,17 +143,17 @@ class SSLStepThree {
             $billingPeriods['One Time'] = $this->p[ConfigOptions::MONTH_ONE_TIME];
         }
 
-        $apiRepo = new Products();
-
         $order = [];
 
         $apiRepo = new Products();
         $productDetails = $apiRepo->getProduct($order['product_id']);
 
-        $order['product'] = $productDetails->product;
+        $order['product'] = $apiProduct->product;
         $order['period'] = $billingPeriods[$this->p['model']->billingcycle];
         $order['csr'] = str_replace('\n', "\n", $this->p['csr']); // Fix for RT-14675
-        $productDetails = ApiProvider::getInstance()->getApi()->getProductDetails($productDetails->product);
+        /** @var Product $productDetails */
+        $productDetails = ApiProvider::getInstance()->getApi(CertificatesApi::class)
+            ->getProduct($productDetails->product);
 
         $mapping = [
             'organization' => 'orgname',
@@ -164,7 +166,7 @@ class SSLStepThree {
             'dcv' => 'dcv'
         ]; // 'coc','language', 'uniqueValue','authKey' == missing
 
-        foreach ($productDetails['requiredFields'] as $value) {
+        foreach ($productDetails->requiredFields as $value) {
             if ($value === 'approver') {
                 $order['approver'] = [
                     'firstName' => $this->p['firstname'],
@@ -221,11 +223,16 @@ class SSLStepThree {
                 }
             }
 
-            // TODO cleanup
+            $csrDecode = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($order['csr']);
+
             if ($_POST['dcvmethodMainDomain'] === 'EMAIL') {
-                $order['dcv'][] = ['commonName' => $sansDomains[0], 'type' => $_POST['dcvmethodMainDomain'], 'email' => $_POST['approveremail']];
+                $order['dcv'][] = [
+                    'commonName' => $csrDecode['commonName'],
+                    'type' => $_POST['dcvmethodMainDomain'],
+                    'email' => $_POST['approveremail']
+                ];
             } else {
-                $order['dcv'][] = ['commonName' => $sansDomains[0], 'type' => $_POST['dcvmethodMainDomain']];
+                $order['dcv'][] = ['commonName' => $csrDecode['commonName'], 'type' => $_POST['dcvmethodMainDomain']];
             }
             $apiRepo = new Products();
             $apiProduct = $apiRepo->getProduct($order['product_id']);
@@ -235,26 +242,53 @@ class SSLStepThree {
         switch ($orderType)
         {
             case 'renew':
-                $addedSSLOrder = ApiProvider::getInstance()->getApi()->addSSLRenewOrder($order);
+                $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->addSSLRenewOrder($order);
                 break;
             case 'new':
             default:
-                $addedSSLOrder = ApiProvider::getInstance()->getApi()->addSSLOrder($order);
+                $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->requestCertificate(
+                    ApiProvider::getCustomer(),
+                    $order['product'],
+                    $order['period'],
+                    $order['csr'],
+                    $order['san'],
+                    $order['organization'],
+                    null,
+                    $order['address'],
+                    $order['postalCode'],
+                    $order['city'],
+                    null,
+                    $order['approver']['email'],
+                    $order['approver'],
+                    $order['country'],
+                    null,
+                    $order['dcv'],
+                    null,
+                    null,
+                    null,
+                );
                 break;
         }
+
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $addedSSLOrderInformation = $processesApi->get($addedSSLOrder);
+
         //update domain column in tblhostings
         $service = new Service($this->p['serviceid']);
         $service->save(['domain' => $decodedCSR['csrResult']['CN']]);
 
         // dns manager
         sleep(2);
-        $dnsmanagerfile = dirname(dirname(dirname(dirname(dirname(__DIR__))))) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . 'dnsmanager.php';
+        $dnsmanagerfile = dirname(dirname(dirname(dirname(dirname(__DIR__))))) . DIRECTORY_SEPARATOR . 'includes'
+            . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . 'dnsmanager.php';
         $checkTable = Capsule::schema()->hasTable('dns_manager2_zone');
-        if(file_exists($dnsmanagerfile) && $checkTable !== false)
+        if (file_exists($dnsmanagerfile) && $checkTable !== false)
         {
             $zoneDomain = $decodedCSR['csrResult']['CN'];
-            $loaderDNS = dirname(dirname(dirname(dirname(dirname(__DIR__))))) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'addons' .DIRECTORY_SEPARATOR.'DNSManager2'.DIRECTORY_SEPARATOR.'loader.php';
-            if(file_exists($loaderDNS)) {
+            $loaderDNS = dirname(dirname(dirname(dirname(dirname(__DIR__))))) . DIRECTORY_SEPARATOR . 'modules'
+                . DIRECTORY_SEPARATOR . 'addons' .DIRECTORY_SEPARATOR.'DNSManager2'.DIRECTORY_SEPARATOR.'loader.php';
+            if (file_exists($loaderDNS)) {
                 require_once $loaderDNS;
                 $loader = new loader();
                 addon::I(true);
@@ -263,8 +297,10 @@ class SSLStepThree {
             }
 
             $records = [];
-            if(isset($addedSSLOrder['approver_method']['dns']['record']) && !empty($addedSSLOrder['approver_method']['dns']['record']))
-            {
+            if (
+                isset($addedSSLOrder['approver_method']['dns']['record'])
+                && !empty($addedSSLOrder['approver_method']['dns']['record'])
+            ) {
                 if (strpos($addedSSLOrder['approver_method']['dns']['record'], 'CNAME') !== false)
                 {
                     $dnsrecord = explode("CNAME", $addedSSLOrder['approver_method']['dns']['record']);
@@ -287,7 +323,7 @@ class SSLStepThree {
                     );
                 }
                 $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
-                if(!isset($zone->id) || empty($zone->id))
+                if (!isset($zone->id) || empty($zone->id))
                 {
                     $postfields = array(
                         'action' => 'dnsmanager',
@@ -299,7 +335,12 @@ class SSLStepThree {
                         'userid' => $this->p['userid']
                     );
                     $createZoneResults = localAPI('dnsmanager' ,$postfields);
-                    logModuleCall('RealtimeRegisterSsl [dns]', 'createZone', print_r($postfields, true), print_r($createZoneResults, true));
+                    logModuleCall(
+                        'RealtimeRegisterSsl [dns]',
+                        'createZone',
+                        print_r($postfields, true),
+                        print_r($createZoneResults, true)
+                    );
                 }
 
                 $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
@@ -310,17 +351,24 @@ class SSLStepThree {
                         'zone_id' => $zone->id,
                         'records' => $records);
                     $createRecordCnameResults = localAPI('dnsmanager' ,$postfields);
-                    logModuleCall('RealtimeRegisterSsl [dns]', 'updateZone', print_r($postfields, true), print_r($createRecordCnameResults, true));
+                    logModuleCall(
+                        'RealtimeRegisterSsl [dns]',
+                        'updateZone',
+                        print_r($postfields, true),
+                        print_r($createRecordCnameResults, true)
+                    );
                 }
 
             }
-            if(isset($addedSSLOrder['san']) && !empty($addedSSLOrder['san']))
+            if (isset($addedSSLOrder['san']) && !empty($addedSSLOrder['san']))
             {
                 foreach($addedSSLOrder['san'] as $sanrecord)
                 {
                     $records = [];
-                    if(isset($sanrecord['validation']['dns']['record']) && !empty($sanrecord['validation']['dns']['record']))
-                    {
+                    if (
+                        isset($sanrecord['validation']['dns']['record'])
+                        && !empty($sanrecord['validation']['dns']['record'])
+                    ) {
                         if(file_exists($loaderDNS)) {
                             $helper = new DomainHelper(str_replace('*.', '',$sanrecord['san_name']));
                             $zoneDomain = $helper->getDomainWithTLD();
@@ -336,9 +384,7 @@ class SSLStepThree {
                                 'ttl' => '3600',
                                 'data' => trim(rtrim($dnsrecord[1]))
                             );
-                        }
-                        else
-                        {
+                        } else {
                             $dnsrecord = explode("IN   TXT", $sanrecord['validation']['dns']['record']);
                             $length = strlen(trim(rtrim($dnsrecord[1])));
                             $records[] = array(
@@ -349,7 +395,7 @@ class SSLStepThree {
                             );
                         }
                         $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
-                        if(!isset($zone->id) || empty($zone->id))
+                        if (!isset($zone->id) || empty($zone->id))
                         {
                             $postfields = array(
                                 'action' => 'dnsmanager',
@@ -361,32 +407,45 @@ class SSLStepThree {
                                 'userid' => $this->p['userid']
                             );
                             $createZoneResults = localAPI('dnsmanager' ,$postfields);
-                            logModuleCall('RealtimeRegisterSsl [dns]', 'createZone', print_r($postfields, true), print_r($createZoneResults, true));
+                            logModuleCall(
+                                'RealtimeRegisterSsl [dns]',
+                                'createZone',
+                                print_r($postfields, true),
+                                print_r($createZoneResults, true)
+                            );
                         }
 
                         $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
-                        if(isset($zone->id) && !empty($zone->id))
+                        if (isset($zone->id) && !empty($zone->id))
                         {
                             $postfields =  array(
                                 'dnsaction' => 'createRecords',
                                 'zone_id' => $zone->id,
                                 'records' => $records);
                             $createRecordCnameResults = localAPI('dnsmanager' ,$postfields);
-                            logModuleCall('RealtimeRegisterSsl [dns]', 'updateZone', print_r($postfields, true), print_r($createRecordCnameResults, true));
+                            logModuleCall(
+                                'RealtimeRegisterSsl [dns]',
+                                'updateZone',
+                                print_r($postfields, true),
+                                print_r($createRecordCnameResults, true)
+                            );
                         }
 
                     }
                 }
             }
         }
-        $orderDetails = ApiProvider::getInstance()->getApi()->getOrderStatus($addedSSLOrder['order_id']);
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderDetails = $processesApi->get($addedSSLOrder['order_id']);
+
         if($this->p[ConfigOptions::MONTH_ONE_TIME] && !empty($this->p[ConfigOptions::MONTH_ONE_TIME]))
         {
             $service = new Service($this->p['serviceid']);
             $service->save(array('termination_date' => $orderDetails['valid_till']));
         }
 
-        $this->sslConfig->setRemoteId($addedSSLOrder['order_id']); 
+        $this->sslConfig->setRemoteId($addedSSLOrder['order_id']);
         $this->sslConfig->setApproverEmails($order['approver_emails']);
        
         $this->sslConfig->setCa($orderDetails['ca_code']);
@@ -401,7 +460,7 @@ class SSLStepThree {
         $this->sslConfig->setProductId($orderDetails['product_id']);
         $this->sslConfig->setSanDetails($orderDetails['san']);
         $this->sslConfig->setSSLStatus($orderDetails['status']);
-        $this->sslConfig->save();   
+        $this->sslConfig->save();
         //try to mark previous order as completed if it is autoinvoiced and autocreated product
         $this->invoiceGenerator->markPreviousOrderAsCompleted($this->p['serviceid']);
 
@@ -433,12 +492,13 @@ class SSLStepThree {
         foreach ($orderDetails['approver_method'] as $method => $data)
         {
             try {
-
                 $cPanelService = new \MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service();
                 $cpanelDetails = $cPanelService->getServiceByDomain($service->userid, $service->domain);
                 $cpanel = new Cpanel();
 
-                if ($cpanelDetails === false) continue;
+                if ($cpanelDetails === false) {
+                    continue;
+                }
 
                 if ($method == 'http' || $method == 'https') {
                     $cpanel->setService($cpanelDetails);

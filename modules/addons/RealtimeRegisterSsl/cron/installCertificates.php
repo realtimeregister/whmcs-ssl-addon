@@ -31,31 +31,34 @@ foreach ($orders as $order)
     $key = decrypt($details['private_key']);
 
     try {
-
         $service = new Service();
         $serviceCpanel = $service->getServiceByDomain($order->client_id, $order->domain);
 
-        if($serviceCpanel === false) continue;
+        if ($serviceCpanel === false) {
+            continue;
+        }
 
         $cpanel = new Cpanel();
         $cpanel->setService($serviceCpanel);
         $cpanel->installSSL($serviceCpanel->user, $order->domain, $cert, $key, $cabundle);
 
-        $logsRepo->addLog($order->client_id, $order->service_id, 'success', 'The certificate for the '.$order->domain.' domain has been installed correctly.');
+        $logsRepo->addLog(
+            $order->client_id,
+            $order->service_id,
+            'success',
+            'The certificate for the '.$order->domain.' domain has been installed correctly.'
+        );
         $orderRepo->updateStatus($order->service_id, 'Success');
-
     } catch (\Exception $e) {
-
-        $logsRepo->addLog($order->client_id, $order->service_id, 'error', '['.$order->domain.'] Error: '.$e->getMessage());
+        $logsRepo->addLog(
+            $order->client_id,
+            $order->service_id,
+            'error',
+            '['.$order->domain.'] Error: '.$e->getMessage()
+        );
         continue;
 
     }
-    //$rootdirectory = $cpanel->getRootDirectory($serviceCpanel->user, $service['domain']);
-    //$cpanel->saveFile($serviceCpanel->user, '.htaccess', $rootdirectory, 'RewriteEngine On
-    //RewriteCond %{SERVER_PORT} 80
-    //RewriteRule ^(.*)$ https://www.'.$service['domain'].'/$1 [R,L]');
-
-
 }
 
 die();

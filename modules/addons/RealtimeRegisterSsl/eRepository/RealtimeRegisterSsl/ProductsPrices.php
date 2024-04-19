@@ -2,18 +2,23 @@
 
 namespace MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
-class ProductsPrices {
+use MGModule\RealtimeRegisterSsl\eHelpers\Fill;
+use MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\ProductPrice;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use SandwaveIo\RealtimeRegister\Api\CustomersApi;
+use SandwaveIo\RealtimeRegister\Domain\PriceCollection;
 
+class ProductsPrices
+{
     /**
      *
-     * @var Products 
+     * @var Products
      */
     private static $instance;
     
     private $prices;
     
     /**
-     * 
      * @return Products
      */
     public static function getInstance() {
@@ -28,19 +33,22 @@ class ProductsPrices {
         return $this->prices;
     }
 
-
-    private function fetchAllProductsPrices() {
+    private function fetchAllProductsPrices(): array
+    {
         if ($this->prices !== null) {
             return $this->prices;
         }
-        $apiProducts = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()
-            ->getAllProductPrices();
+
+        /** @var CustomersApi $customersApi */
+        $customersApi = ApiProvider::getInstance()->getApi(CustomersApi::class);
+        /** @var PriceCollection $apiProducts */
+        $apiProducts = $customersApi->priceList(ApiProvider::getCustomer());
 
         $this->prices = [];
-        foreach ($apiProducts['prices'] as $vval => $apiProductPrice) {
+        foreach ($apiProducts->toArray() as $apiProductPrice) {
             if (strpos($apiProductPrice['product'], 'ssl') !== false) {
-                $pp = new \MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\ProductPrice();
-                \MGModule\RealtimeRegisterSsl\eHelpers\Fill::fill($pp, $apiProductPrice);
+                $pp = new ProductPrice();
+                Fill::fill($pp, $apiProductPrice);
                 $this->prices[] = $pp;
             }
         }

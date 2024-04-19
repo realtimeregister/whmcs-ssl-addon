@@ -4,7 +4,10 @@ namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 class ClientReissueCertificate {
 
@@ -173,7 +176,7 @@ class ClientReissueCertificate {
         $this->validateWebServer();
         $this->validateSanDomains();
         $this->validateSansDomainsWildcard();
-        $decodeCSR = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->decodeCSR($this->post['csr']);
+        $decodeCSR = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->post['csr']);
 
         $_SESSION['decodeCSR'] = $decodeCSR;
 
@@ -223,7 +226,9 @@ class ClientReissueCertificate {
 
         if(!$productssl)
         {
-            $productssl = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
+            /** @var CertificatesApi $certificatesApi */
+            $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+            $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
         }
 
         if(!$productssl['product']['dcv_email'])
@@ -243,15 +248,11 @@ class ClientReissueCertificate {
             array_push($disabledValidationMethods, 'https');
         }
 
-        $brand = $productssl['product']['brand'];
-        if($brand == 'digicert' || $brand == 'geotrust' || $brand == 'thawte' || $brand == 'rapidssl')
+        foreach($SSLStepTwoJS->fetchApprovalEmailsForSansDomains($parseDomains) as $sandomain => $appreveEmails)
         {
-            foreach($SSLStepTwoJS->fetchApprovalEmailsForSansDomains($parseDomains) as $sandomain => $appreveEmails)
-            {
-                if (strpos($sandomain, '*.') !== false) {
-                    array_push($disabledValidationMethods, 'http');
-                    array_push($disabledValidationMethods, 'https');
-                }
+            if (strpos($sandomain, '*.') !== false) {
+                array_push($disabledValidationMethods, 'http');
+                array_push($disabledValidationMethods, 'https');
             }
         }
 
@@ -277,7 +278,7 @@ class ClientReissueCertificate {
         }
         else
         {
-            $decodedCSR   = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->decodeCSR($this->post['csr']);
+            $decodedCSR   = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->post['csr']);
         }
 
         if ($this->getSansLimit()) {
@@ -341,31 +342,24 @@ class ClientReissueCertificate {
         }
         if(!$productssl)
         {
-            $productssl = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi(false)->getProduct($product->configuration()->text_name);
+            /** @var CertificatesApi $certificatesApi */
+            $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+            $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
         }
 
-        $brand = $productssl['product']['brand'];
-
-        if($brand == 'digicert' || $brand == 'geotrust' || $brand == 'thawte' || $brand == 'rapidssl')
+        $sansDomainsMethod = [];
+        foreach($sansDomains as $sd)
         {
-
-            $sansDomainsMethod = [];
-            foreach($sansDomains as $sd)
-            {
-                $sansDomainsMethod[] =  strtolower($this->post['dcv_method']);
-            }
-            $data['approver_emails'] = implode(',', $sansDomainsMethod);
+            $sansDomainsMethod[] =  strtolower($this->post['dcv_method']);
         }
-        //if brand is 'geotrust','thawte','rapidssl','symantec' do not send dcv method for sans
-//        if(in_array($brand, $brandsWithOnlyEmailValidation)) {
-//            unset($data['approver_emails']);
-//        }
-//
+        $data['approver_emails'] = implode(',', $sansDomainsMethod);
+
 
         $ssl        = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $sslService = $ssl->getByServiceId($this->p['serviceid']);
 
-        $orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($this->sslService->remoteid);
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderStatus = $processesApi->get($this->sslService->remoteid);
 
         $singleDomainsCount = $orderStatus['single_san_count'];
         $wildcardDomainsCount = $orderStatus['wildcard_san_count'];
@@ -400,7 +394,9 @@ class ClientReissueCertificate {
         }
 
         $reissueData = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->reIssueOrder($this->sslService->remoteid, $data);
-        $orderDetails = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($this->sslService->remoteid);
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderDetails = $processesApi->get($this->sslService->remoteid);
 
         // dns manager
         sleep(2);

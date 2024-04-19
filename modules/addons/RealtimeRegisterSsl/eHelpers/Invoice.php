@@ -10,12 +10,14 @@ namespace MGModule\RealtimeRegisterSsl\eHelpers;
 use \DateInterval;
 use \DateTime;
 use Illuminate\Database\Schema\Blueprint;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
 use \MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 /**
  * Description of Invoice
@@ -396,8 +398,9 @@ class Invoice
         {
             return false;
         }
-
-        $sslOrder = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($sslOrderInfo->remoteid);
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $sslOrder = $processesApi->get($sslOrderInfo->remoteid);
 
         $sslOrderResults = json_decode($sslOrderInfo->configdata, true);
 
