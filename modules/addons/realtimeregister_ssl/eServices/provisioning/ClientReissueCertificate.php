@@ -260,14 +260,10 @@ class ClientReissueCertificate
         if (!$productssl['product']['dcv_http']) {
             array_push($disabledValidationMethods, 'http');
         }
-        if (!$productssl['product']['dcv_https']) {
-            array_push($disabledValidationMethods, 'https');
-        }
 
         foreach ($SSLStepTwoJS->fetchApprovalEmailsForSansDomains($parseDomains) as $sandomain => $appreveEmails) {
             if (strpos($sandomain, '*.') !== false) {
                 array_push($disabledValidationMethods, 'http');
-                array_push($disabledValidationMethods, 'https');
             }
         }
 
@@ -280,8 +276,6 @@ class ClientReissueCertificate
         $data['webserver_type'] = $this->post['webservertype'];
         $data['approver_email'] = ($data['dcv_method'] == 'email') ? $this->post['approveremail'] : '';
         $data['csr'] = $this->post['csr'];
-
-        $brandsWithOnlyEmailValidation = ['geotrust', 'thawte', 'rapidssl', 'symantec'];
 
         $sansDomains = [];
 

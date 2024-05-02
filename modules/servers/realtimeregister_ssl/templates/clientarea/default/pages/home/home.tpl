@@ -558,9 +558,6 @@
                                                         {if !'http'|in_array:$disabledValidationMethods}
                                                             <option value="http">{$MGLANG->T('revalidateModalMethodHttp')}</option>
                                                         {/if}
-                                                        {if !'https'|in_array:$disabledValidationMethods}
-                                                            <option value="https">{$MGLANG->T('revalidateModalMethodHttps')}</option>
-                                                        {/if}
                                                         {if !'dns'|in_array:$disabledValidationMethods}
                                                         <option value="dns">{$MGLANG->T('revalidateModalMethodDns')}</option>
                                                         {/if}
@@ -595,9 +592,6 @@
                                                                     {/if}
                                                                     {if !'http'|in_array:$disabledValidationMethods}
                                                                         <option value="http">{$MGLANG->T('revalidateModalMethodHttp')}</option>
-                                                                    {/if}
-                                                                    {if !'https'|in_array:$disabledValidationMethods}
-                                                                        <option value="https">{$MGLANG->T('revalidateModalMethodHttps')}</option>
                                                                     {/if}
                                                                     {if !'dns'|in_array:$disabledValidationMethods}
                                                                         <option value="dns">{$MGLANG->T('revalidateModalMethodDns')}</option>

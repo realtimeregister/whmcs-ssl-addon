@@ -72,13 +72,6 @@ class ClientRecheckCertificateDetails extends Ajax
                         $san['validation']['http']['content']
                     );
                     break;
-                case 'https':
-                    $return['sans'][$san['san_name']]['san_validation'] = $san['validation']['https'];
-                    $return['sans'][$san['san_name']]['san_validation']['content'] = explode(
-                        PHP_EOL,
-                        $san['validation']['https']['content']
-                    );
-                    break;
                 default:
                     $return['sans'][$san['san_name']]['san_validation'] = $san['validation']['email'];
                     break;
@@ -95,7 +88,7 @@ class ClientRecheckCertificateDetails extends Ajax
 
         if ($dcv_method[0] != null) {
             $return['dcv_method'] = $dcv_method[0];
-            if ($dcv_method[0] == 'http' || $dcv_method[0] == 'https') {
+            if ($dcv_method[0] == 'http') {
                 $return['approver_method'][$dcv_method[0]] = $return['approver_method'][$dcv_method[0]];
                 $return['approver_method'][$dcv_method[0]]['content'] = explode(
                     PHP_EOL,

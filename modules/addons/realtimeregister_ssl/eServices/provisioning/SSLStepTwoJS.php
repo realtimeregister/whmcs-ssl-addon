@@ -76,10 +76,6 @@ class SSLStepTwoJS
                 array_push($this->disabledValidationMethods, 'http');
             }
 
-            if (!$productssl['product']['dcv_https']) {
-                array_push($this->disabledValidationMethods, 'https');
-            }
-
             $this->SSLStepTwoJS($this->p);
             
             return ScriptService::getSanEmailsScript(

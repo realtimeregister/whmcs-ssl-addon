@@ -78,7 +78,7 @@
 
                 selectDcvMethod = '<div class="form-group"><select style="width:65%;" type="text" name="selectName" class="form-control">';
                 selectDcvMethod +='<option value="EMAIL">'+'{$MGLANG->T('dropdownDcvMethodEmail')}'+'</option>';
-                selectDcvMethod += '<option value="HTTPS">'+'{$MGLANG->T('dropdownDcvMethodHttps')}'+'</option>';
+                selectDcvMethod += '<option value="HTTP">'+'{$MGLANG->T('dropdownDcvMethodHttp')}'+'</option>';
                 selectDcvMethod += '<option value="DNS">'+'{$MGLANG->T('dropdownDcvMethodDns')}'+'</option>';
 
                 selectDcvMethod += '</select>';
@@ -122,7 +122,6 @@
             if(checkwildcard)
             {
                 $('select[name="dcvmethodMainDomain"] option[value="HTTP"]').remove();
-                $('select[name="dcvmethodMainDomain"] option[value="HTTPS"]').remove();
             }
 
         }
@@ -172,7 +171,6 @@
             var domainname = $(this).parent('div.form-group').parent('td').prev().text();
             if(domainname.indexOf('*.') >= 0){
                 $(this).find('option[value="HTTP"]').remove();
-                $(this).find('option[value="HTTPS"]').remove();
             }
             
         });

@@ -122,9 +122,6 @@
                     if(jQuery.inArray('http', disabledValidationMethods) < 0)  {
                         selectDcvMethod += '<option value="HTTP">'+'{$MGLANG->T('dropdownDcvMethodHttp')}'+'</option>';
                     }
-                    if(jQuery.inArray('https', disabledValidationMethods) < 0)  {                
-                        selectDcvMethod += '<option value="HTTPS">'+'{$MGLANG->T('dropdownDcvMethodHttps')}'+'</option>';
-                    }
                 }
                 if(jQuery.inArray('dns', disabledValidationMethods) < 0)
                 {

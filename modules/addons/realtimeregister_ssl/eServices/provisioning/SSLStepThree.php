@@ -282,7 +282,20 @@ class SSLStepThree
                 '[' . $csrDecode['commonName'] . '] Error:' . $exception->getMessage()
             );
             $decodedMessage = json_decode(str_replace('Bad Request: ', '', $exception->getMessage()), true);
-            $this->redirectToStepOne($decodedMessage['ValidationError']);
+            switch ($decodedMessage['type']) {
+                case 'ObjectExists':
+                    $reason = 'The SSL certificate already exists';
+                    break;
+                case 'ValidationError':
+                    $reason = 'Validation error';
+                    if (strpos($decodedMessage['message'], 'try a reissue instead')) {
+                        $reason = 'Certificate already exists, try a reissue instead';
+                    }
+                    break;
+                default:
+                    $reason = 'Unknown';
+            }
+            $this->redirectToStepOne($reason);
         }
 
         /** @var ProcessesApi $processesApi */
@@ -442,28 +455,35 @@ class SSLStepThree
         }
         /** @var ProcessesApi $processesApi */
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $orderDetails = $processesApi->get($addedSSLOrder['order_id']);
+        $orderDetails = $processesApi->get($addedSSLOrder);
 
         if ($this->p[ConfigOptions::MONTH_ONE_TIME] && !empty($this->p[ConfigOptions::MONTH_ONE_TIME])) {
             $service = new Service($this->p['serviceid']);
-            $service->save(['termination_date' => $orderDetails['valid_till']]);
+            $service->save();
         }
 
-        $this->sslConfig->setRemoteId($addedSSLOrder['order_id']);
-        $this->sslConfig->setApproverEmails($order['approver_emails']);
+        $approveremails = [];
+        foreach ($order['dcv'] as $d) {
+            if ($d['type'] === 'EMAIL') {
+                $approveremails[] = $d['email'];
+            }
+        }
+        $this->sslConfig->setRemoteId($this->p['serviceid']);
+        $this->sslConfig->setApproverEmails($approveremails);
 
-        $this->sslConfig->setCa($orderDetails['ca_code']);
-        $this->sslConfig->setCrt($orderDetails['crt_code']);
-        $this->sslConfig->setPartnerOrderId($orderDetails['partner_order_id']);
-        $this->sslConfig->setValidFrom($orderDetails['valid_from']);
-        $this->sslConfig->setValidTill($orderDetails['valid_till']);
-        $this->sslConfig->setDomain($orderDetails['domain']);
-        $this->sslConfig->setOrderStatusDescription($orderDetails['status_description']);
-        $this->sslConfig->setApproverMethod($orderDetails['approver_method']);
-        $this->sslConfig->setDcvMethod($orderDetails['dcv_method']);
-        $this->sslConfig->setProductId($orderDetails['product_id']);
-        $this->sslConfig->setSanDetails($orderDetails['san']);
-        $this->sslConfig->setSSLStatus($orderDetails['status']);
+//        dd($orderDetails);
+//        $this->sslConfig->setCa($orderDetails['ca_code']);
+//        $this->sslConfig->setCrt($orderDetails['crt_code']);
+        $this->sslConfig->setPartnerOrderId($orderDetails->id);
+//        $this->sslConfig->setValidFrom($orderDetails['valid_from']);
+//        $this->sslConfig->setValidTill($orderDetails['valid_till']);
+        $this->sslConfig->setDomain($orderDetails->identifier);
+        $this->sslConfig->setOrderStatusDescription($orderDetails->status);
+        $this->sslConfig->setApproverMethod($this->p['approvalmethod']);
+        $this->sslConfig->setDcvMethod($this->p['approvalmethod']);
+        $this->sslConfig->setProductId($this->p['configoption1']);
+//        $this->sslConfig->setSanDetails($orderDetails['san']); // FIXME
+        $this->sslConfig->setSSLStatus($orderDetails->status);
         $this->sslConfig->save();
         //try to mark previous order as completed if it is autoinvoiced and autocreated product
         $this->invoiceGenerator->markPreviousOrderAsCompleted($this->p['serviceid']);
@@ -477,12 +497,11 @@ class SSLStepThree
             $this->p['userid'],
             $this->p['serviceid'],
             $sslOrder->id,
-            $orderDetails['dcv_method'],
+            json_encode($orderDetails['dcv_method']),
             'Pending Verification',
             $addedSSLOrder
         );
 
-        $logs = new LogsRepo();
         $logs->addLog($this->p['userid'], $this->p['serviceid'], 'success', 'The order has been placed.');
 
         $order = Capsule::table('REALTIMEREGISTERSSL_orders')->where('service_id', $this->p['serviceid'])->first();
@@ -490,10 +509,9 @@ class SSLStepThree
         $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();
         $orderDetails = json_decode($order->data, true);
 
-
         $revalidate = false;
 
-        foreach ($orderDetails['approver_method'] as $method => $data) {
+        foreach ($orderDetails['dcv_method'] as $method => $data) {
             try {
                 $cPanelService = new \MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service();
                 $cpanelDetails = $cPanelService->getServiceByDomain($service->userid, $service->domain);
@@ -504,7 +522,7 @@ class SSLStepThree
                     continue;
                 }
 
-                if ($method == 'http' || $method == 'https') {
+                if ($method == 'http') {
                     $cpanel->setService($cpanelDetails);
                     $directory = $cpanel->getRootDirectory($cpanelDetails->user, $service->domain);
                     $content = $data['content'];
@@ -597,7 +615,7 @@ class SSLStepThree
                     $cpanel = new Cpanel();
                     $cpanel->setService($cpanelDetails);
 
-                    if ($san['validation_method'] == 'http' || $san['validation_method'] == 'https') {
+                    if ($san['validation_method'] == 'http') {
                         $directory = $cpanel->getRootDirectory($cpanelDetails->user, $san['san_name']);
                         $content = $san['validation'][$san['validation_method']]['content'];
 
