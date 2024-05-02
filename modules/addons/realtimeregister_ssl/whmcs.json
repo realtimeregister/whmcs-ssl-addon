@@ -1,0 +1,31 @@
+{
+  "schema": "1.0",
+  "type": "whmcs-addons",
+  "name": "realtimeregister_ssl",
+  "license": "MIT",
+  "category": "addon",
+  "description": {
+    "name": "Realtime Register SSL Module",
+    "tagline": "..for all your ssl needs",
+    "long": "This module provides a clean interface for all your customers SSL needs by using the API provided by Realtime Register",
+    "features": [
+      "SSL",
+      "Easy to use",
+      "Reliable",
+      "Security"
+    ]
+  },
+  "logo": {
+    "filename": "logo.png"
+  },
+  "support": {
+    "learn_more": "https:\/\/realtimeregister.com\/integration\/platform\/modules",
+    "docs_url": "https:\/\/realtimeregister.com\/integration\/platform\/api"
+  },
+  "authors": [
+    {
+      "name": "Realtime Register",
+      "homepage": "https:\/\/realtimeregister.com\/"
+    }
+  ]
+}

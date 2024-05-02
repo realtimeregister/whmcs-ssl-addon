@@ -26,19 +26,18 @@ $whmcs = App::self();
 $pid = (int) $whmcs->get_req_var('pid');
 $get = $whmcs->get_req_var('get');
 $language = $whmcs->get_req_var('language') ?: null;
-$data = array();
+$data = [];
 $name = $description = '';
 
 // Verify user input for pid exists, is greater than 0, and as is a valid id
 if ($pid > 0) {
-    $result = select_query("tblproducts", "", array("id" => $pid));
+    $result = select_query("tblproducts", "", ["id" => $pid]);
     $data = mysqli_fetch_array($result);
 
-    
     $pid = (int) $data['id'];
     // If there is a user logged in, we will use the client language
     if (((int) $userId = Session::get('userid'))) {
-        $language = Client::find($userId, array('language'))->language ?: null;
+        $language = Client::find($userId, ['language'])->language ?: null;
     }
     $name = Product::getProductName($pid, $data['name'], $language);
     $description = Product::getProductDescription($pid, $data['description'], $language);
@@ -52,7 +51,7 @@ if ($pid < 1) {
 if ($get=="name") {
     widgetOutput($name);
 } elseif ($get=="description") {
-    $description = str_replace(array("\r", "\n", "\r\n"), "", nl2br($description));
+    $description = str_replace(["\r", "\n", "\r\n"], "", nl2br($description));
     widgetOutput($description);
 } elseif ($get=="configoption") {
     $configOptionNum = $whmcs->get_req_var('configoptionnum');
@@ -85,12 +84,11 @@ if ($get=="name") {
         $currency = getCurrency();
     }
     $currencyID = $currency['id'];
-    if($data['servertype'] == 'RealtimeRegisterSsl')
-    {
-        require_once ROOTDIR.'/modules/addons/RealtimeRegisterSsl/Loader.php';
+    if ($data['servertype'] == 'realtimeregister_ssl') {
+        require_once ROOTDIR.'/modules/addons/realtimeregister_ssl/Loader.php';
         new \MGModule\RealtimeRegisterSsl\Loader();
         MGModule\RealtimeRegisterSsl\Addon::I(true);
-        $commission = MGModule\RealtimeRegisterSsl\eHelpers\Commission::getCommissionValue(array('pid' => $pid));
+        $commission = MGModule\RealtimeRegisterSsl\eHelpers\Commission::getCommissionValue(['pid' => $pid]);
         $price = MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::getPricingInfo($pid, $commission);
 
         if(!$billingCycle || !isset($price['cycles'][$billingCycle]))
@@ -108,7 +106,7 @@ if ($get=="name") {
         widgetOutput($price['cycles'][$billingCycle]);
 
     }
-    $result = select_query("tblpricing", "", array("type" => "product", "currency" => $currencyID, "relid" => $pid));
+    $result = select_query("tblpricing", "", ["type" => "product", "currency" => $currencyID, "relid" => $pid]);
     $data = mysqli_fetch_array($result);
     $price = $data[$billingCycle];
     $price = formatCurrency($price);
