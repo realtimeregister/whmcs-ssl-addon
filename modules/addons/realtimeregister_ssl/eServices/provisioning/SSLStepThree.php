@@ -104,7 +104,6 @@ class SSLStepThree
 
     private function orderCertificate()
     {
-        echo '<pre>';
         if (isset($_POST['approveremail']) && $_POST['approveremail'] == 'defaultemail@defaultemail.com') {
             unset($_POST['approveremail']);
         }
@@ -244,34 +243,46 @@ class SSLStepThree
 
         $orderType = $this->p['fields']['order_type'];
 
-        switch ($orderType) {
-            case 'renew':
-                $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->addSSLRenewOrder($order);
-                break;
-            case 'new':
-            default:
-                $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->requestCertificate(
-                    ApiProvider::getCustomer(),
-                    $order['product'],
-                    $order['period'],
-                    $order['csr'],
-                    $order['san'],
-                    $order['organization'],
-                    null,
-                    $order['address'],
-                    $order['postalCode'],
-                    $order['city'],
-                    null,
-                    $order['approver']['email'],
-                    $order['approver'],
-                    $order['country'],
-                    null,
-                    $order['dcv'],
-                    null,
-                    null,
-                    null,
-                );
-                break;
+        $logs = new LogsRepo();
+
+        try {
+            switch ($orderType) {
+                case 'renew':
+                    $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->addSSLRenewOrder($order);
+                    break;
+                case 'new':
+                default:
+                    $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->requestCertificate(
+                        ApiProvider::getCustomer(),
+                        $order['product'],
+                        $order['period'],
+                        $order['csr'],
+                        $order['san'],
+                        $order['organization'],
+                        null,
+                        $order['address'],
+                        $order['postalCode'],
+                        $order['city'],
+                        null,
+                        $order['approver']['email'],
+                        $order['approver'],
+                        $order['country'],
+                        null,
+                        $order['dcv'],
+                        null,
+                        null,
+                        null,
+                    );
+                    break;
+            }
+        } catch (\SandwaveIo\RealtimeRegister\Exceptions\BadRequestException $exception) {
+            $logs->addLog(
+                $this->p['userid'], $this->p['serviceid'],
+                'error',
+                '[' . $csrDecode['commonName'] . '] Error:' . $exception->getMessage()
+            );
+            $decodedMessage = json_decode(str_replace('Bad Request: ', '', $exception->getMessage()), true);
+            $this->redirectToStepOne($decodedMessage['ValidationError']);
         }
 
         /** @var ProcessesApi $processesApi */
