@@ -184,12 +184,10 @@ class SSLStepTwoJS
 
         $this->fetchApprovalEmailsForSansDomains($wildcardDomains);
 
-        if (Whmcs::isWHMCS73()) {
-            if (isset($_POST['privateKey']) && $_POST['privateKey'] != null) {
-                $privKey = decrypt($_POST['privateKey']);
-                $GenerateSCR = new GenerateCSR($this->p, $_POST);
-                $GenerateSCR->savePrivateKeyToDatabase($this->p['serviceid'], $privKey);
-            }
+        if (isset($_POST['privateKey']) && $_POST['privateKey'] != null) {
+            $privKey = decrypt($_POST['privateKey']);
+            $GenerateSCR = new GenerateCSR($this->p, $_POST);
+            $GenerateSCR->savePrivateKeyToDatabase($this->p['serviceid'], $privKey);
         }
     }
 

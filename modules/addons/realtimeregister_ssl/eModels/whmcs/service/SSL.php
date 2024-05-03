@@ -21,23 +21,12 @@ class SSL extends \Illuminate\Database\Eloquent\Model
 
     public function getConfigdataAttribute($value)
     {
-        if (\MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::isWHMCS73()) {
-            $value = json_decode($value);
-        } else {
-            $value = unserialize($value);
-        }
-
-        return $value;
+        return json_decode($value);
     }
 
     public function setConfigdataAttribute($value)
     {
-        if (\MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::isWHMCS73()) {
-            $value = json_encode($value);
-        } else {
-            $value = serialize($value);
-        }
-        $this->attributes['configdata'] = $value;
+        $this->attributes['configdata'] = json_encode($value);
     }
 
     public function setConfigdataKey($key, $value)

@@ -23,21 +23,22 @@ class Countries
 
     function __construct()
     {
-        $this->loadCountres();
-    }
+        $ccPath = \MGModule\RealtimeRegisterSsl\eProviders\PathProvider::getWhmcsCountriesPatch();
 
-    private function loadCountres()
-    {
-        $whmcsVersion = Config::getInstance()->getVersionMajor();
-        if ($whmcsVersion === 6) {
-            $this->loadCountriesWhmcs6();
-        } elseif ($whmcsVersion === 7 || $whmcsVersion === 8) {
-            $this->loadCountriesWhmcs7();
-        } else {
-            throw new Exception('WHMCS version not supported');
+        if (!file_exists($ccPath)) {
+            throw new Exception('Countries file not exist');
+        }
+
+        $countries = json_decode(file_get_contents($ccPath));
+
+        if (is_null($countries)) {
+            throw new Exception('Can not decode countries JSON');
+        }
+
+        foreach ($countries as $countryCode => $country) {
+            $this->countries[$countryCode] = str_replace(',', ' -', $country->name);
         }
     }
-
     /**
      * 
      * @throws Exception
@@ -79,40 +80,5 @@ class Countries
     public function getCountriesForMgAddonDropdown()
     {
         return $this->countries;
-    }
-
-    private function loadCountriesWhmcs6()
-    {
-        $ccPath = \MGModule\RealtimeRegisterSsl\eProviders\PathProvider::getWhmcsCounriesPatch(6);
-
-        if (!file_exists($ccPath)) {
-            throw new Exception('Countries file not exist');
-        }
-
-        require $ccPath;
-
-        foreach ($countries as $countryCode => $countryName) {
-            $this->countries[$countryCode] = $countryName;
-        }
-
-    }
-
-    private function loadCountriesWhmcs7()
-    {
-        $ccPath = \MGModule\RealtimeRegisterSsl\eProviders\PathProvider::getWhmcsCounriesPatch(7);
-
-        if (!file_exists($ccPath)) {
-            throw new Exception('Countries file not exist');
-        }
-
-        $countries = json_decode(file_get_contents($ccPath));
-
-        if (is_null($countries)) {
-            throw new Exception('Can not decode countries JSON');
-        }
-
-        foreach ($countries as $countryCode => $country) {
-            $this->countries[$countryCode] = str_replace(',', ' -', $country->name);
-        }
     }
 }

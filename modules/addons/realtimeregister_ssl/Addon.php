@@ -287,7 +287,6 @@ class Addon extends AbstractMainDriver
                 'JSONCurrentUrl' => self::I()->genJSONUrl($page),
                 'currentPageName' => $page,
                 'Addon' => self::I(),
-                'isWHMCS6' => version_compare($GLOBALS['CONFIG']['Version'], '6.0.0', '>=')
             ];
 
             try {
@@ -396,7 +395,6 @@ class Addon extends AbstractMainDriver
                 'currentPageName' => strtolower($page),
                 'menu' => $menu,
                 'breadcrumbs' => $breadcrumb,
-                'isWHMCS6' => version_compare($GLOBALS['CONFIG']['Version'], '6.0.0', '>=')
             ];
 
             try {

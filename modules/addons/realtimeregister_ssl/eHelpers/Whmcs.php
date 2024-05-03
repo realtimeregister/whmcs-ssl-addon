@@ -6,13 +6,6 @@ use WHMCS\View\Formatter\Price;
 
 class Whmcs
 {
-    public static function isWHMCS73()
-    {
-        $version = explode("-", $GLOBALS['CONFIG']['Version'], 2)[0];
-
-        return version_compare($version, '7.3.0', '>=');
-    }
-
     public static function savelogActivityRealtimeRegisterSsl($msg)
     {
         $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();

@@ -20,24 +20,8 @@ class PathProvider
         return implode(DIRECTORY_SEPARATOR, array_merge([self::getWhmcsPath()], $path));
     }
 
-    public static function getWhmcs7CountriesPatch()
+    public static function getWhmcsCountriesPatch()
     {
         return self::getPath(['resources', 'country', 'dist.countries.json']);
-    }
-
-    public static function getWhmcs6CountriesPatch()
-    {
-        return self::getPath(['includes', 'countries.php']);
-    }
-
-    public static function getWhmcsCounriesPatch($whmcsVersion)
-    {
-        if ($whmcsVersion === 7) {
-            return self::getWhmcs7CountriesPatch();
-        } elseif ($whmcsVersion === 6) {
-            return self::getWhmcs6CountriesPatch();
-        } else {
-            throw new Exception('WHMCS version not supported');
-        }
     }
 }
