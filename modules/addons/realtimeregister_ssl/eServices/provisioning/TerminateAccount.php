@@ -4,6 +4,7 @@ namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 
 class TerminateAccount
 {
@@ -24,7 +25,10 @@ class TerminateAccount
         return 'success';
     }
 
-    private function terminateAccount()
+    /**
+     * @throws Exception
+     */
+    private function terminateAccount(): void
     {
         $ssl = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $serviceSSL = $ssl->getByServiceId($this->p['serviceid']);
@@ -38,8 +42,10 @@ class TerminateAccount
             return;
         }
        
-        $reason = 'Order canceled for non-payment.'; 
-        ApiProvider::getInstance()->getApi()->cancelSSLOrder($serviceSSL->remoteid, $reason);
+        $reason = 'Order canceled for non-payment.';
+        /** @var CertificatesApi $certficatesApi */
+        $certficatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+        $certficatesApi->revokeCertificate($serviceSSL->remoteid, $reason);
         $serviceSSL->delete();
     }
 }
