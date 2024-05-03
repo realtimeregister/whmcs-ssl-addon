@@ -142,7 +142,7 @@
             {/if}
 
             {if $approver_method}
-                {if $dcv_method == 'http' || $dcv_method == 'https'}
+                {if $dcv_method == 'http'}
                     <tr>
                         <td class="text-left">{$MGLANG->T('hashFile')}</td>
                         <td class="text-left" style="max-width:200px; word-wrap: break-word;">{$approver_method.$dcv_method.link}</td>
@@ -175,7 +175,7 @@
                                 <tr>
                                     <td colspan="2" class="text-center">{$MGLANG->T({$san.san_name})}</td>
                                 </tr>
-                                {if $san.method == 'http' || $san.method == 'https'}
+                                {if $san.method == 'http'}
                                     {if $activationStatus === 'processing'}
                                         <tr>
                                             <td style="width: 15%" class="text-left">{$MGLANG->T('hashFile')}</td>

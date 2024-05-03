@@ -89,8 +89,6 @@ class home extends AbstractController
                 $vars['activationStatus'] = $apicertdata['status'];
             }
 
-            $vars['brandsWithOnlyEmailValidation'] = ['geotrust', 'thawte', 'rapidssl', 'symantec',];
-
             if (is_null($sslService)) {
                 throw new Exception('An error occurred please contact support');
             }
@@ -136,7 +134,7 @@ class home extends AbstractController
                                 $vars['approver_method'][$vars['dcv_method']] = (array)$certificateDetails['approver_method']->{$vars['dcv_method']};
                             }
 
-                            if ($vars['dcv_method'] == 'http' || $vars['dcv_method'] == 'https') {
+                            if ($vars['dcv_method'] == 'http') {
                                 $vars['approver_method'][$vars['dcv_method']]['content'] = explode(
                                     PHP_EOL,
                                     $vars['approver_method'][$vars['dcv_method']]['content']
@@ -177,12 +175,6 @@ class home extends AbstractController
                                     $vars['sans'][$san->san_name]['san_validation'] = (array)$san->validation->http;
                                     $vars['sans'][$san->san_name]['san_validation']['content'] =
                                         explode(PHP_EOL, $san->validation->http->content);
-                                    break;
-                                case 'https':
-                                    $vars['san_revalidate'] = true;
-                                    $vars['sans'][$san->san_name]['san_validation'] = (array)$san->validation->https;
-                                    $vars['sans'][$san->san_name]['san_validation']['content'] =
-                                        explode(PHP_EOL, $san->validation->https->content);
                                     break;
                                 default:
                                     $vars['sans'][$san->san_name]['san_validation'] = $san->validation->email;
@@ -254,9 +246,6 @@ class home extends AbstractController
                     if (!$productssl['product']['dcv_http']) {
                         array_push($disabledValidationMethods, 'http');
                     }
-                    if (!$productssl['product']['dcv_https']) {
-                        array_push($disabledValidationMethods, 'https');
-                    }
                 } catch (Exception $ex) {
                     $vars['error'] = 'Can not load order details';
                 }
@@ -281,8 +270,7 @@ class home extends AbstractController
             if ($_GET['download'] == '1') {
                 if (
                     isset($vars['sans'][$_GET['domain']]) && !empty($vars['sans'][$_GET['domain']])
-                    && ($vars['sans'][$_GET['domain']]['method'] == 'http'
-                        || $vars['sans'][$_GET['domain']]['method'] == 'https')
+                    && ($vars['sans'][$_GET['domain']]['method'] == 'http')
                 ) {
                     header('Content-Type: application/octet-stream');
                     header(
@@ -294,19 +282,6 @@ class home extends AbstractController
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
                     print implode(PHP_EOL, $vars['sans'][$_GET['domain']]['san_validation']['content']);
-                    exit;
-                }
-
-                if (isset($vars['approver_method']['https']) && !empty($vars['approver_method']['https'])) {
-                    header('Content-Type: application/octet-stream');
-                    header(
-                        'Content-Disposition: attachment; filename='
-                        . basename($vars['approver_method']['https']['filename'])
-                    );
-                    header('Expires: 0');
-                    header('Cache-Control: must-revalidate');
-                    header('Pragma: public');
-                    print implode(PHP_EOL, $vars['approver_method']['https']['content']);
                     exit;
                 }
 
@@ -400,15 +375,12 @@ class home extends AbstractController
                 $vars['downloadpem'] = $vars['actual_link'] . '&downloadpem=1';
             }
 
-            if (
-                (isset($vars['approver_method']['http']) && !empty($vars['approver_method']['http']))
-                || (isset($vars['approver_method']['https']) && !empty($vars['approver_method']['https']))
-            ) {
+            if (isset($vars['approver_method']['http']) && !empty($vars['approver_method']['http'])) {
                 $vars['btndownload'] = $vars['actual_link'] . '&download=1';
             }
 
             foreach ($vars['sans'] as $detailssan) {
-                if ($detailssan['method'] == 'http' || $detailssan['method'] == 'https') {
+                if ($detailssan['method'] == 'http') {
                     $vars['btndownload'] = $vars['actual_link'] . '&download=1&domain=' . $detailssan['san_name'];
                 }
             }
@@ -424,8 +396,7 @@ class home extends AbstractController
             : false;
 
         return [
-            'tpl' => 'home'
-            ,
+            'tpl' => 'home',
             'vars' => $vars
         ];
     }
