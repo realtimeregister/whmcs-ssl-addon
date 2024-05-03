@@ -12,9 +12,7 @@
 
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/mg-style.css" rel="stylesheet">    
     <script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
-    {if !$isWHMCS6}
     <script type="text/javascript" src="{$assetsURL}/js/bootstrap.js"></script>
-    {/if}
     <script type="text/javascript" src="{$assetsURL}/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/dataTables.bootstrap.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/select2.min.js"></script>

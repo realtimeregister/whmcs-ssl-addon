@@ -19,6 +19,7 @@ use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\Server;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
+use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Database\Capsule;
 use MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service;
 use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
@@ -72,7 +73,7 @@ class home extends AbstractController
 
                 /** @var ProcessesApi $processesApi */
                 $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-                $apicertdata = $processesApi->get($sslService->remoteid);
+                $apicertdata = $processesApi->get($sslService->getRemoteId())->toArray();
 
                 $configDataUpdate = new UpdateConfigData($sslService, $apicertdata);
                 $configDataUpdate->run();
@@ -86,7 +87,6 @@ class home extends AbstractController
                 //    $sslService->save();
                 //}
                 $vars['activationStatus'] = $apicertdata['status'];
-                //var_dump($apicertdata);
             }
 
             $vars['brandsWithOnlyEmailValidation'] = ['geotrust', 'thawte', 'rapidssl', 'symantec',];

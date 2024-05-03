@@ -468,12 +468,13 @@ class SSLStepThree
                 $approveremails[] = $d['email'];
             }
         }
-        $this->sslConfig->setRemoteId($this->p['serviceid']);
+        $this->sslConfig->setRemoteId($orderDetails->id);
         $this->sslConfig->setApproverEmails($approveremails);
 
-//        dd($orderDetails);
 //        $this->sslConfig->setCa($orderDetails['ca_code']);
-//        $this->sslConfig->setCrt($orderDetails['crt_code']);
+//        $this->sslConfig->set
+        $this->sslConfig->setCrt($this->p['private_key']);
+        $this->sslConfig->setCsr($this->p['configdata']['csr']);
         $this->sslConfig->setPartnerOrderId($orderDetails->id);
 //        $this->sslConfig->setValidFrom($orderDetails['valid_from']);
 //        $this->sslConfig->setValidTill($orderDetails['valid_till']);
@@ -497,7 +498,7 @@ class SSLStepThree
             $this->p['userid'],
             $this->p['serviceid'],
             $sslOrder->id,
-            json_encode($orderDetails['dcv_method']),
+            json_encode($this->p['fields']['dcv_method']),
             'Pending Verification',
             $addedSSLOrder
         );
@@ -513,9 +514,9 @@ class SSLStepThree
 
         foreach ($orderDetails['dcv_method'] as $method => $data) {
             try {
+                // TODO add support for the other services
                 $cPanelService = new \MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service();
                 $cpanelDetails = $cPanelService->getServiceByDomain($service->userid, $service->domain);
-                // TODO add support for the other services
                 $cpanel = new Cpanel();
 
                 if ($cpanelDetails === false) {
