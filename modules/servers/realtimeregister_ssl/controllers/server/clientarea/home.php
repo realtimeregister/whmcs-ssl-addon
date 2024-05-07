@@ -754,26 +754,6 @@ class home extends AbstractController
         return $result;
     }
 
-    public function changeApproverEmailJSON($input, $vars = [])
-    {
-        $sslRepo = new SSL();
-        $ssService = $sslRepo->getByServiceId($input['serviceId']);
-
-        $data = [
-            'approver_email' => $input['newEmail']
-        ];
-
-        $response = ApiProvider::getInstance()->getApi()->changeValidationEmail($ssService->remoteid, $data);
-
-        $ssService->setConfigdataKey("approveremail", $data['approver_email']);
-        $ssService->save();
-
-        return [
-            'success' => $response['success'],
-            'msg' => $response['success_message']
-        ];
-    }
-
     public function getPrivateKeyJSON($input, $vars = [])
     {
         $sslRepo = new SSL();

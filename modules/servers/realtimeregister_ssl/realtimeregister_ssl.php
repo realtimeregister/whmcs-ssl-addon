@@ -1,9 +1,7 @@
 <?php
 
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eServices\FlashService;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminChangeApproverEmail;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminCustomButtonArray;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminRecheckCertificateDetails;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminReissueCertificate;
@@ -22,6 +20,7 @@ use MGModule\RealtimeRegisterSsl\eServices\provisioning\TerminateAccount;
 use MGModule\RealtimeRegisterSsl\Loader;
 use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
 use MGModule\RealtimeRegisterSsl\Server;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
@@ -136,47 +135,6 @@ function realtimeregister_ssl_FlashErrorStepOne() {
        global $smarty;
        $smarty->assign('errormessage', $errors['errormessage']);
     }
-}
-
-if (isset($_POST['changeEmailModal'], $_SESSION['adminid']) && $_POST['changeEmailModal'] === 'yes' && $_SESSION['adminid']) {
-    $adminChangeApproverEmail = new AdminChangeApproverEmail($_POST);
-    $adminChangeApproverEmail->run();
-}
-
-if (isset($_POST['action'], $_SESSION['adminid']) && $_POST['action'] === 'getApprovalEmailsForDomain' && $_SESSION['adminid']) {
-    try {
-        $serviceid = $_REQUEST['id'];
-        $ssl        = new MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
-        $sslService = $ssl->getByServiceId($serviceid);
-
-        /** @var ProcessesApi $processesApi */
-        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $orderStatus = $processesApi->get($sslService->remoteid);
-
-        if (!empty($orderStatus['domain'])) {
-            $domain = $orderStatus['domain'];
-        }
-            
-        if (!empty($orderStatus['product_id'])) {
-            $apiRepo       = new Products();
-            $apiProduct    = $apiRepo->getProduct($orderStatus['product_id']);
-            $brand = $apiProduct->brand;
-        }
-
-        $result = [
-            'success' => 1,
-            'domainEmails' => ApiProvider::getInstance()->getApi()->getDomainEmails($domain)
-        ];
-    } catch(Exception $ex)  {
-        $result = [
-            'success' => 0,
-            'error' => $ex->getMessage()
-        ];
-    }
-    
-    ob_clean();
-    echo json_encode($result);
-    die();
 }
 
 if (isset($_POST['reissueModal'], $_SESSION['adminid']) && $_POST['reissueModal'] === 'yes' && $_SESSION['adminid'] ) {
