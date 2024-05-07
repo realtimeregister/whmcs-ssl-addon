@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
-class AdminViewCertyfifcate extends Ajax
+class AdminViewCertificate extends Ajax
 {
     private $p;
 
@@ -18,13 +18,13 @@ class AdminViewCertyfifcate extends Ajax
     public function run()
     {
         try {
-            $this->viewCertyfifcate();
+            $this->viewCertificate();
         } catch (Exception $ex) {
             $this->response(false, $ex->getMessage());
         }
     }
 
-    private function viewCertyfifcate()
+    private function viewCertificate()
     {
         $sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $sslService = $sslRepo->getByServiceId($this->p['serviceId']);
@@ -37,26 +37,21 @@ class AdminViewCertyfifcate extends Ajax
             throw new Exception('An error occurred');
         }
 
-        /** @var ProcessesApi $processesApi */
-        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $orderStatus = $processesApi->get($sslService->remoteid);
-
         $return = [];
-
-        if (!empty($orderStatus['csr_code'])) {
-            $return['csr'] = $orderStatus['csr_code'];
+        if (!empty($sslService->getCsr())) {
+            $return['csr'] = $sslService->getCsr();
         }
 
-        if (!empty($orderStatus['crt_code'])) {
-            $return['crt'] = $orderStatus['crt_code'];
+        if (!empty($sslService->getCrt())) {
+            $return['crt'] = $sslService->getCrt();
         }
 
 
-        if (!empty($orderStatus['ca_code'])) {
-            $return['ca'] = $orderStatus['ca_code'];
+        if (!empty($sslService->getCa())) {
+            $return['ca'] = $sslService->getCa();
         }
 
-        if ($orderStatus['status'] !== 'active') {
+        if ($sslService->getOrderStatus() !== 'ACTIVE') {
             $this->response(false, 'Order status is not active, so can not display certificate', $return);
         } else {
             $this->response(true, 'Details', $return);

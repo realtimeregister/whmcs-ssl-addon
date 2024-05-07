@@ -8,7 +8,7 @@ use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminReissueCertificate;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminResendApproverEmail;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminResendCertificate;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminServicesTabFields;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminViewCertyfifcate;
+use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminViewCertificate;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientContactDetails;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientReissueCertificate;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
@@ -148,8 +148,8 @@ if (isset($_POST['recheckModal'], $_SESSION['adminid']) && $_POST['recheckModal'
 }
 
 if (isset($_POST['viewModal'], $_SESSION['adminid']) && $_POST['viewModal'] === 'yes' && $_SESSION['adminid']) {
-    $adminViewCertyfifcate = new AdminViewCertyfifcate($_POST);
-    $adminViewCertyfifcate->run();
+    $adminViewCertificate = new AdminViewCertificate($_POST);
+    $adminViewCertificate->run();
 }
 
 function realtimeregister_ssl_ClientAreaCustomReissueCertificate($params)
