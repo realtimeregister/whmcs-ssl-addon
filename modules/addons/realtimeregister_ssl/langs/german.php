@@ -59,7 +59,7 @@ $_LANG['addonAA']['apiConfiguration']['item']['email_whois']['label']           
 $_LANG['addonAA']['apiConfiguration']['item']['summary_expires_soon_days']['label']                    = 'Läuft bald ab';
 $_LANG['addonAA']['apiConfiguration']['item']['summary_expires_soon_days']['description']              = 'Bald ablaufende SSL-Bestellungen in Statistiken einbeziehen, wenn sie innerhalb der oben ausgewählten Anzahl von Tagen ablaufen.';
 $_LANG['addonAA']['apiConfiguration']['item']['send_certificate_template']['label']                    = 'Zertifikat-E-Mail-Vorlage senden';
-$_LANG['addonAA']['apiConfiguration']['item']['send_certificate_template']['description']              = 'Um ein SSL-Zertifikat über die ausgewählte Vorlage zu senden, bearbeiten Sie es und platzieren Sie das Feld {$ssl_certyficate} darin.';
+$_LANG['addonAA']['apiConfiguration']['item']['send_certificate_template']['description']              = 'Um ein SSL-Zertifikat über die ausgewählte Vorlage zu senden, bearbeiten Sie es und platzieren Sie das Feld {$ssl_certificate} darin.';
 //
 $_LANG['addonAA']['apiConfiguration']['item']['data_migration_legend']['label']                        = 'Daten- und Konfigurationsmigration';
 $_LANG['addonAA']['apiConfiguration']['item']['data_migration']['content']                             = 'Migrieren';

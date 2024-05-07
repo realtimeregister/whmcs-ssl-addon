@@ -12,15 +12,11 @@
     padding-right:2px;
 
     }
-    #sansTd {
-        padding: 0px !important;
-    }
+    #sansTd,
     .table {
-        margin-bottom: 0px !important;
+        margin-bottom: 0 !important;
     }
-    .modal .btn {
-        margin: 2px !important;
-    }
+    .modal .btn,
     #Action_Custom_Module_Button_Reissue_Certificate {
         margin: 2px !important;
     }
@@ -248,7 +244,7 @@
                     {if $btndownload}
                         <a href="{$btndownload}"><button type="button" class="btn btn-default" style="margin:2px">{$MGLANG->T('download')}</button></a>
                     {/if}
-                    {if isset($approver_method.https) || isset($approver_method.http) || isset($approver_method.dns) || $san_revalidate}
+                    {if isset($approver_method.http) || isset($approver_method.dns) || $san_revalidate}
                         <button type="button" id="btnRevalidateNew" class="btn btn-default" style="margin:2px">{$MGLANG->T('revalidate')}</button>
                     {/if}
                     {/if}
@@ -639,29 +635,15 @@
                     wildcard = true;
                 }
             });
-            
-            var brand = '{$brand}';
-            
-            if(brand == 'digicert' || brand == 'geotrust' || brand == 'thawte' || brand == 'rapidssl')
-            {
-                if(wildcard == true)
+
+            $('.revalidateTable tbody tr').each(function() {
+                var string = $(this).find('td:first-child').text();
+                var substring = '*.';
+                if(string.indexOf(substring) !== -1)
                 {
-                    $('.revalidateTable select option[value="http"]').remove();
-                    $('.revalidateTable select option[value="https"]').remove();
+                    $(this).find('option[value="http"]').remove();
                 }
-            }
-            else
-            {
-                $('.revalidateTable tbody tr').each(function() {
-                    var string = $(this).find('td:first-child').text();
-                    var substring = '*.';
-                    if(string.indexOf(substring) !== -1)
-                    {
-                        $(this).find('option[value="http"]').remove();
-                        $(this).find('option[value="https"]').remove();
-                    }
-                });
-            }
+            });
             var serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1',
                     revalidateBtn = $('#btnRevalidate'),
                     revalidateForm,
@@ -1478,8 +1460,7 @@
 
                         $('#sans #sansTd table').append(tr);
 
-
-                        if((data.sans[sanname].method == "http") || (data.sans[sanname].method == "https"))
+                        if(data.sans[sanname].method == "http")
                         {
                             var tr = $("<tr />");
                             tr.append($("<td />", {width: "15%", class: "text-left", text: "Hash File"}));
@@ -1528,7 +1509,7 @@
                 {
                     var dcv_method = Object.keys(data.approver_method)[0];
 
-                    if((dcv_method == "http") || (dcv_method == "https"))
+                    if(dcv_method == "http")
                     {
                         var tr = $("<tr />", {id: "approver_method_link"});
                         tr.append($("<td />", {width: "15%", class: "text-left", text: "Hash File"}));

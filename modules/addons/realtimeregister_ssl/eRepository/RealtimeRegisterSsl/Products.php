@@ -43,11 +43,9 @@ class Products
     }
 
     /**
-     * 
-     * @param type $id
      * @return Product
      */
-    public function getProduct($id)
+    public function getProduct(int $id)
     {
         $this->fetchAllProducts();
 

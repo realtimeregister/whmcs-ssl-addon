@@ -468,24 +468,19 @@ class SSLStepThree
                 $approveremails[] = $d['email'];
             }
         }
-        $this->sslConfig->setRemoteId($orderDetails->id);
+        $this->sslConfig->setRemoteId($orderDetails->id); // processid request
         $this->sslConfig->setApproverEmails($approveremails);
 
-//        $this->sslConfig->setCa($orderDetails['ca_code']);
-//        $this->sslConfig->set
         $this->sslConfig->setCrt($this->p['private_key']);
         $this->sslConfig->setCsr($this->p['configdata']['csr']);
-        $this->sslConfig->setPartnerOrderId($orderDetails->id);
-//        $this->sslConfig->setValidFrom($orderDetails['valid_from']);
-//        $this->sslConfig->setValidTill($orderDetails['valid_till']);
         $this->sslConfig->setDomain($orderDetails->identifier);
         $this->sslConfig->setOrderStatusDescription($orderDetails->status);
         $this->sslConfig->setApproverMethod($this->p['approvalmethod']);
         $this->sslConfig->setDcvMethod($this->p['approvalmethod']);
         $this->sslConfig->setProductId($this->p['configoption1']);
-//        $this->sslConfig->setSanDetails($orderDetails['san']); // FIXME
         $this->sslConfig->setSSLStatus($orderDetails->status);
         $this->sslConfig->save();
+
         //try to mark previous order as completed if it is autoinvoiced and autocreated product
         $this->invoiceGenerator->markPreviousOrderAsCompleted($this->p['serviceid']);
 

@@ -54,13 +54,13 @@ class AdminResendCertificate
         $sendCertyficateTermplate = $apiConf->send_certificate_template;
         if ($sendCertyficateTermplate == null) {
             sendMessage(EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID, $this->p['serviceid'], [
-                'ssl_certyficate' => nl2br($orderStatus['ca_code']),
+                'ssl_certificate' => nl2br($orderStatus['ca_code']),
                 'crt_code' => nl2br($orderStatus['crt_code']),
             ]);
         } else {
             $templateName = EmailTemplateService::getTemplateName($sendCertyficateTermplate);
             sendMessage($templateName, $this->p['serviceid'], [
-                'ssl_certyficate' => nl2br($orderStatus['ca_code']),
+                'ssl_certificate' => nl2br($orderStatus['ca_code']),
                 'crt_code' => nl2br($orderStatus['crt_code']),
             ]);
         }

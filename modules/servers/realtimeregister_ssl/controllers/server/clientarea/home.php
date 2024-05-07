@@ -127,7 +127,7 @@ class home extends AbstractController
                     if (!empty($certificateDetails['dcv_method'])) {
                         $vars['dcv_method'] = $certificateDetails['dcv_method'];
 
-                        if (in_array($vars['dcv_method'], ["http", "https", "dns"])) {
+                        if (in_array($vars['dcv_method'], ["http", "dns"])) {
                             if (is_array($certificateDetails['approver_method'])) {
                                 $vars['approver_method'][$vars['dcv_method']] = $certificateDetails['approver_method'][$vars['dcv_method']];
                             } else {
@@ -185,9 +185,7 @@ class home extends AbstractController
                     if (!$vars['activationStatus']) {
                         $vars['activationStatus'] = $certificateDetails['ssl_status'];
                     }
-                    //valid from
                     $vars['validFrom'] = fromMySQLDate($certificateDetails['valid_from'], false, true);
-                    //expires
                     $vars['validTill'] = fromMySQLDate($certificateDetails['valid_till'], false, true);
 
                     $now = strtotime(date('Y-m-d'));
@@ -336,7 +334,7 @@ class home extends AbstractController
                 $privateKey = $sslService->getPrivateKey();
 
                 if (!empty($privateKey)) {
-                    if (strpos($privateKey, '-----BEGIN PRIVATE KEY-----') !== false) {
+                    if (str_contains($privateKey, '-----BEGIN PRIVATE KEY-----')) {
                         $pemfile .= $privateKey;
                     } else {
                         $pemfile .= decrypt($privateKey);
@@ -582,14 +580,14 @@ class home extends AbstractController
         if ($sendCertyficateTermplate == null) {
             $result = sendMessage(EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID, $input['id'], [
                 'domain' => $orderStatus['domain'],
-                'ssl_certyficate' => nl2br($orderStatus['ca_code']),
+                'ssl_certificate' => nl2br($orderStatus['ca_code']),
                 'crt_code' => nl2br($orderStatus['crt_code']),
             ], false, $attachments);
         } else {
             $templateName = EmailTemplateService::getTemplateName($sendCertyficateTermplate);
             $result = sendMessage($templateName, $input['id'], [
                 'domain' => $orderStatus['domain'],
-                'ssl_certyficate' => nl2br($orderStatus['ca_code']),
+                'ssl_certificate' => nl2br($orderStatus['ca_code']),
                 'crt_code' => nl2br($orderStatus['crt_code']),
             ], false, $attachments);
         }

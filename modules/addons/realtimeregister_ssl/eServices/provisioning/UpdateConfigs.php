@@ -5,14 +5,19 @@ namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 use Exception;
 use MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use SandwaveIo\RealtimeRegister\Domain\Certificate;
+use SandwaveIo\RealtimeRegister\Domain\Enum\DownloadFormatEnum;
 
 class UpdateConfigs
 {
     private $sslService;
-    private $sslRepo = null;
-    private $processingOnly = false;
+    private ?\MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL $sslRepo;
+    private bool $processingOnly;
+    private array $cids;
 
     public function __construct($cids, $processingOnly)
     {
@@ -31,34 +36,34 @@ class UpdateConfigs
         return 'success';
     }
 
-    private function writeNewConfigdata($apiRepo, $order)
+    private function writeNewConfigdata(Products $apiRepo, Certificate $order, int $cid)
     {
-        /** @var ProcessesApi $processesApi */
-        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $orderDetails = $processesApi->get($order['order_id']);
+        $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($order->product));
 
-        $apiProduct = $apiRepo->getProduct($orderDetails['product_id']);
+        /** @var CertificatesApi $certificatesApi */
+        $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
 
-        $sslOrder = SSL::whereRemoteId($order['order_id'])->first();
-        $sslOrder->setCa($orderDetails['ca_code']);
-        $sslOrder->setCrt($orderDetails['crt_code']);
-        $sslOrder->setPartnerOrderId($orderDetails['partner_order_id']);
-        
-        $sslOrder->setValidFrom($orderDetails['valid_from']);
-        $sslOrder->setValidTill($orderDetails['valid_till']);
-        
-        $sslOrder->setDomain($orderDetails['domain']);
-        $sslOrder->setOrderStatusDescription($orderDetails['status_description']);
-        
-        $sslOrder->setApproverMethod($orderDetails['approver_method']);
-        $sslOrder->setDcvMethod($orderDetails['dcv_method']);
-        $sslOrder->setProductId($orderDetails['product_id']);
+        /** @var SSL $sslOrder */
+        $sslOrder = SSL::whereRemoteId($cid)->first();
+
+        $sslOrder->setCa($certificatesApi->downloadCertificate($order->id, DownloadFormatEnum::CA_FORMAT));
+        $sslOrder->setCrt($order->certificate);
+        $sslOrder->setPartnerOrderId($order->id);
+
+        $sslOrder->setStatus($order->status);
+        $sslOrder->setValidFrom(($order->startDate)->format('Y-m-d H:i:s'));
+        $sslOrder->setValidTill(($order->expiryDate)->format('Y-m-d H:i:s'));
+
+        $sslOrder->setDomain($order->domainName);
+
+        $sslOrder->setProductId(KeyToIdMapping::getIdByKey($order->product));
+        $sslOrder->setProductId($order->product);
         $sslOrder->setProductBrand($apiProduct->brand);
-        $sslOrder->setSanDetails($orderDetails['san']);
-        $sslOrder->setConfigdataKey("approveremail", $orderDetails['approver_email']);
-        $sslOrder->setConfigdataKey('ssl_status', $order['status']);
+        $sslOrder->setConfigdataKey('valid_from', ($order->startDate)->format('Y-m-d H:i:s'));
+        $sslOrder->setConfigdataKey('valid_till', ($order->expiryDate)->format('Y-m-d H:i:s'));
         $sslOrder->save();
-        logActivity($orderDetails['order_id'].':'.$orderDetails['status']);
+
+        logActivity($cid.':'.$order->product);
     }
 
     public function updateConfigData()
@@ -66,25 +71,16 @@ class UpdateConfigs
         if (!isset($this->cids) || empty($this->cids)) {
             return;
         }
-        
-        $orders = ApiProvider::getInstance()->getApi()->getOrderStatuses(['cids' => $this->cids]);
-        $apiRepo = new Products();
-        if (!$this->processingOnly) {
-            foreach ($orders['certificates'] as $order) {
-                $sslService = $this->sslRepo->getByRemoteId((int) $order['order_id']);
 
-                if ($order['status'] === $sslService->getConfigdataKey('ssl_status')) {
-                    continue;
-                } else {
-                    $this->writeNewConfigdata($apiRepo, $order);
-                }
-            }
-        } else {
-            foreach ($orders['certificates'] as $order) {
-                $sslService = $this->sslRepo->getByRemoteId((int) $order['order_id']);
-                if ($order['status'] === 'active') {
-                    $this->writeNewConfigdata($apiRepo, $order);
-                }
+        /** @var CertificatesApi $api */
+        $api = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+
+        /** @var Certificate[] $orders */
+        $apiRepo = new Products();
+        foreach ($this->cids as $cid) {
+            $res = $api->listCertificates(null, null, null,['process:eq' => $cid]);
+            foreach($res as $result) {
+                $this->writeNewConfigdata($apiRepo, $result, $cid);
             }
         }
     }

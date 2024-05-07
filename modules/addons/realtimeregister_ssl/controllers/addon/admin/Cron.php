@@ -310,50 +310,43 @@ class Cron extends AbstractController
         $services = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
         $services->onlyStatus(['Active']);
 
-        $servicesArray = [];
-        foreach ($services->get() as $service)
-        {
-            $apiOrders = null;
+        foreach ($services->get() as $service) {
             $product   = $service->product();
             //check if product is Realtime Register Ssl
-            if ($product->serverType != 'realtimeregister_ssl')
-            {
+            if ($product->serverType != 'realtimeregister_ssl') {
                 continue;
             }
 
             $SSLOrder = new \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL();
+            /** @var SSL $ssl */
             $ssl = $SSLOrder->getWhere(['serviceid' => $service->id, 'userid' => $service->clientID])->first();
 
-            if ($ssl == NULL || $ssl->remoteid == '')
-            {
+            if ($ssl == NULL || $ssl->remoteid == '') {
                 continue;
             }
             /** @var ProcessesApi $processesApi */
             $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-            $apiOrder = $processesApi->get($ssl->remoteid);
+            $apiOrder = $processesApi->get($ssl->partnerRemoteId);
 
-            if ($apiOrder['status'] !== 'active' || empty($apiOrder['ca_code']))
-            {
+            if ($apiOrder['status'] !== 'active' || empty($apiOrder['ca_code'])) {
                 continue;
             }
 
-            if ($this->checkIfCertificateSent($service->id))
+            if ($this->checkIfCertificateSent($service->id)) {
                 continue;
+            }
 
             $apiConf                  = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
             $sendCertyficateTermplate = $apiConf->send_certificate_template;
-            if ($sendCertyficateTermplate == null)
-            {
+            if ($sendCertyficateTermplate == null) {
                 sendMessage(EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID, $service->id, [
-                    'ssl_certyficate' => nl2br($apiOrder['ca_code']),
+                    'ssl_certificate' => nl2br($apiOrder['ca_code']),
                     'crt_code' => nl2br($apiOrder['crt_code']),
                 ]);
-            }
-            else
-            {
+            } else {
                 $templateName = EmailTemplateService::getTemplateName($sendCertyficateTermplate);
                 sendMessage($templateName, $service->id, [
-                    'ssl_certyficate' => nl2br($apiOrder['ca_code']),
+                    'ssl_certificate' => nl2br($apiOrder['ca_code']),
                     'crt_code' => nl2br($apiOrder['crt_code']),
                 ]);
             }
@@ -515,17 +508,13 @@ class Cron extends AbstractController
     private function checkOrdersStatus($sslorders, $processingOnly = false)
     {
         $cids = [];
-        foreach ($sslorders as $sslService) {
-            $cids[] = $sslService->remoteid;
+        foreach ($sslorders as $sslorder) {
+            $cids[] = $sslorder->remoteid;
         }
         try
         {
-
-            $cids = implode(',', $cids);
-
             $configDataUpdate = new UpdateConfigs($cids, $processingOnly);
             $configDataUpdate->run();
-
         }
         catch (Exception $e)
         {
@@ -568,6 +557,7 @@ class Cron extends AbstractController
         ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
         ->where('tblhosting.domainstatus', 'Active')
         ->where('tblsslorders.configdata', 'like', '%"ssl_status":"processing"%')
+        ->orWhere('tblsslorders.status', '=', 'Configuration Submitted')
         ->get(['tblsslorders.*']);
 
         Whmcs::savelogActivityRealtimeRegisterSsl(

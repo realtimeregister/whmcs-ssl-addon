@@ -135,7 +135,7 @@ class EmailTemplateService
         $newTemplate->name    = self::SEND_CERTIFICATE_TEMPLATE_ID;
         $newTemplate->subject = 'SSL Certificate';
         $newTemplate->message = '<p>Dear {$client_name},</p><p>Domain: </p><p>{$domain}</p><p>Intermediate certificate:'
-            . ' </p><p>{$ssl_certyficate}</p><p>CRT: </p><p>{$crt_code}</p><p>{$signature}</p>';
+            . ' </p><p>{$ssl_certificate}</p><p>CRT: </p><p>{$crt_code}</p><p>{$signature}</p>';
         $newTemplate->attachments  = '';
         $newTemplate->fromname  = '';
         $newTemplate->fromemail  = '';

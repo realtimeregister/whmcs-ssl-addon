@@ -1,14 +1,14 @@
 <?php
-
+die('why');
 use WHMCS\Database\Capsule as DB;
 
 if(!defined('DS')) {
     define('DS',DIRECTORY_SEPARATOR);
 }
 
-die('we are here');
 add_hook('ClientAreaPage', 1, function ($params)
 {
+    die('clientareapage!');
     $loaderdir = false;
     if(file_exists(__DIR__ . DS . 'Loader.php')) {
         $loaderdir = __DIR__ . DS . 'Loader.php';
