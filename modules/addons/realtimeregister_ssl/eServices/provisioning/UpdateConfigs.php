@@ -58,6 +58,7 @@ class UpdateConfigs
 
         $sslOrder->setProductId(KeyToIdMapping::getIdByKey($order->product));
         $sslOrder->setProductId($order->product);
+        $sslOrder->setSSLStatus($order->status);
         $sslOrder->setProductBrand($apiProduct->brand);
         $sslOrder->setConfigdataKey('valid_from', ($order->startDate)->format('Y-m-d H:i:s'));
         $sslOrder->setConfigdataKey('valid_till', ($order->expiryDate)->format('Y-m-d H:i:s'));
