@@ -2,9 +2,12 @@
 
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use SandwaveIo\RealtimeRegister\Domain\Certificate;
 use WHMCS\Database\Capsule;
 
 class UpdateConfigData
@@ -37,13 +40,22 @@ class UpdateConfigData
         if (empty($this->orderdata)) {
             /** @var ProcessesApi $processesApi */
             $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-            $order = $processesApi->get($this->sslService->remoteid);
+            $process = $processesApi->get($this->sslService->remoteid);
+
+            /** @var CertificatesApi $certificatesApi */
+            $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+            $certificateResults = $certificatesApi->listCertificates(null, null, null,['process:eq' => $process->id]);
+
+            if ($certificateResults->count() === 1) {
+                /** @var Certificate $order */
+                $order = $certificateResults[0];
+            }
         } else {
             $order = $this->orderdata;
         }
            
         $apiRepo = new Products();
-        
+
         if (
             !isset($this->sslService->configdata->product_brand) || empty($this->sslService->configdata->product_brand)
         ) {
@@ -53,7 +65,7 @@ class UpdateConfigData
             if ($checkTable !== false) {
                 $productData = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
                     'pid',
-                    $order['product_id']
+                    $order->product
                 )->first();
                 
                 if (isset($productData->brand) && !empty($productData->brand)) {
@@ -62,33 +74,34 @@ class UpdateConfigData
             }
             
             if ($brandName === null) {
-                $apiProduct = $apiRepo->getProduct($order['product_id']);
+                $apiProduct = $apiRepo->getProduct($order->product);
                 $apiProduct->brand = $brandName;
             }
         }
 
 //        if (($order['status'] != 'expired') && ($order['status'] != 'cancelled'))
 //        {
+            /** @var SSL $sslOrder */
             $sslOrder = $this->sslService;
 
-            $sslOrder->setCa($order['ca_code']);
-            $sslOrder->setCrt($order['crt_code']);    
-            $sslOrder->setPartnerOrderId($order['partner_order_id']);
+//            $sslOrder->setCa($order['ca_code']);
+            $sslOrder->setCrt($order->certificate);
+//            $sslOrder->setPartnerOrderId($order['partner_order_id']);
 
-            $sslOrder->setValidFrom($order['valid_from']);
-            $sslOrder->setValidTill($order['valid_till']);
+            $sslOrder->setValidFrom($order->startDate);
+            $sslOrder->setValidTill($order->expiryDate);
 
-            $sslOrder->setSubscriptionStarts($order['begin_date']);
-            $sslOrder->setSubscriptionEnds($order['end_date']);
+            $sslOrder->setSubscriptionStarts($order->startDate);
+            $sslOrder->setSubscriptionEnds($order->expiryDate);
 
-            $sslOrder->setDomain($order['domain']);
-            $sslOrder->setSSLStatus($order['status']);
-            $sslOrder->setOrderStatusDescription($order['status_description']);
+            $sslOrder->setDomain($order->domainName);
+            $sslOrder->setSSLStatus($order->status);
+//            $sslOrder->setOrderStatusDescription($order['status_description']);
 
-            $sslOrder->setApproverMethod($order['approver_method']);
-            $sslOrder->setDcvMethod($order['dcv_method']);
-            $sslOrder->setProductId($order['product_id']);
-            $sslOrder->setSSLTotalDomains($order['total_domains']);
+//            $sslOrder->setApproverMethod($order['approver_method']);
+//            $sslOrder->setDcvMethod($order['dcv_method']);
+            $sslOrder->setProductId($order->product);
+//            $sslOrder->setSSLTotalDomains($order['total_domains']);
             
             if (
                 !isset($this->sslService->configdata->product_brand)
@@ -97,8 +110,8 @@ class UpdateConfigData
                 $sslOrder->setProductBrand($brandName);
             }
             
-            $sslOrder->setSanDetails($order['san']);
-            $sslOrder->setConfigdataKey("approveremail", $order['approver_email']);
+            $sslOrder->setSanDetails($order->san);
+//            $sslOrder->setConfigdataKey("approveremail", $order['approver_email']);
 
             $sslOrder->save();
        // }

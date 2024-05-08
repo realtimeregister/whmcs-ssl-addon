@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
+use SandwaveIo\RealtimeRegister\Domain\Certificate;
 
-class AdminRecheckCertificateDetails extends Ajax 
+class AdminRecheckCertificateDetails extends Ajax
 {
     private $parameters;
 
-    function __construct(&$params) 
+    function __construct(&$params)
     {
         $this->parameters = &$params;
     }
@@ -36,24 +39,25 @@ class AdminRecheckCertificateDetails extends Ajax
         }
    
         $configDataUpdate = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData($sslService);
+        /** @var Certificate $orderStatus */
         $orderStatus = $configDataUpdate->run();
 
         $return = [];
 
-        $return['RealtimeRegisterSsl API Order ID'] = $orderStatus['order_id'];
-        $return['Comodo Order ID'] = $orderStatus['partner_order_id']?:"-";
-        $return['Configuration Status'] = $sslService->status;
-        $return['Domain'] = $orderStatus['domain'];
-        $return['Order Status'] = ucfirst($orderStatus['status']);
-        $return['Order Status Description'] = $orderStatus['status_description']?:"-";
+        $return['RealtimeRegisterSsl API Order ID'] = $sslService->id;
+        $return['Comodo Order ID'] = $orderStatus->providerId?:"-";
+        $return['Configuration Status'] = $sslService->getSSLStatus();
+        $return['Domain'] = $orderStatus->domainName;
+        $return['Order Status'] = ucfirst($orderStatus->status);
+        $return['Order Status Description'] = '-';
         
-        if($orderStatus['status'] == "active")
+        if ($orderStatus->status == 'ACTIVE')
         {
-            $return['Valid From'] = $orderStatus['valid_from'];
-            $return['Expires'] = $orderStatus['valid_till'];
+            $return['Valid From'] = $orderStatus->startDate->format('Y-m-d h:i:s');
+            $return['Expires'] = $orderStatus->expiryDate->format('Y-m-d h:i:s');
         }
         
-        foreach ($orderStatus['san'] as $key => $san) {
+        foreach ($orderStatus->san as $key => $san) {
             $return['SAN ' . ($key + 1)] = sprintf('%s / %s', $san['san_name'], $san['status_description']);
         }
             
