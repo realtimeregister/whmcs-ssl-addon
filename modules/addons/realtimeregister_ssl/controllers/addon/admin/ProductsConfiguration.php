@@ -3,7 +3,7 @@
 namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
@@ -13,8 +13,6 @@ use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
 use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
 use MGModule\RealtimeRegisterSsl\mgLibs\Smarty;
 use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
-use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 /*
  * Base example
@@ -67,7 +65,7 @@ class ProductsConfiguration extends AbstractController
             $products = $productModel->getModuleProducts();
             foreach ($products as $key => $product) {
                 try {
-                    $apiProduct = Products::getInstance()->getProduct($product->{C::API_PRODUCT_ID});
+                    $apiProduct = Products::getInstance()->getProduct(KeyToIdMapping::getIdByKey($product->{C::API_PRODUCT_ID}));
                 } catch (Exception $e) {
                     unset($products[$key]);
                     continue;

@@ -591,12 +591,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/realtimeregister/realtimeregister-php.git",
-                "reference": "6204f1fef02231a4afd4302a4fd831864d7fee33"
+                "reference": "a358a4030feb36d6ecd4b04422af4db6f7fe1956"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/realtimeregister/realtimeregister-php/zipball/6204f1fef02231a4afd4302a4fd831864d7fee33",
-                "reference": "6204f1fef02231a4afd4302a4fd831864d7fee33",
+                "url": "https://api.github.com/repos/realtimeregister/realtimeregister-php/zipball/a358a4030feb36d6ecd4b04422af4db6f7fe1956",
+                "reference": "a358a4030feb36d6ecd4b04422af4db6f7fe1956",
                 "shasum": ""
             },
             "require": {
@@ -662,7 +662,7 @@
             "support": {
                 "source": "https://github.com/realtimeregister/realtimeregister-php/tree/ssl"
             },
-            "time": "2024-04-18T07:57:09+00:00"
+            "time": "2024-05-15T07:22:40+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",

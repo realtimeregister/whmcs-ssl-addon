@@ -188,11 +188,10 @@ class home extends AbstractController
                     $vars['validFrom'] = fromMySQLDate($certificateDetails['valid_from'], false, true);
                     $vars['validTill'] = fromMySQLDate($certificateDetails['valid_till'], false, true);
 
-                    $now = strtotime(date('Y-m-d'));
-                    $end_date = strtotime($certificateDetails['valid_till']);
-                    $datediff = $now - $end_date;
 
-                    $vars['nextReissue'] = abs(round($datediff / (60 * 60 * 24)));
+                    $now = new \DateTime();
+                    $datediff = $now->diff($now, \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_from']->date)));
+                    $vars['nextReissue'] = $datediff->format('%a');
 
                     if (isset($certificateDetails['begin_date']) && !empty($certificateDetails['begin_date'])) {
                         $vars['subscriptionStarts'] = fromMySQLDate($certificateDetails['begin_date'], false, true);
@@ -205,15 +204,14 @@ class home extends AbstractController
                     //service billing cycle
                     $vars['serviceBillingCycle'] = $serviceBillingCycle;
                     $vars['displayRenewButton'] = false;
-                    $today = date('Y-m-d');
-                    $diffDays = abs(strtotime($certificateDetails['end_date']) - strtotime($today)) / 86400;
 
-                    if ($diffDays < 30) {
+                    $diffDays = $now->diff($now, \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_until']->date)));
+
+                    if ((int)$diffDays->format('%a') < 30) {
                         $vars['displayRenewButton'] = true;
                     }
 
                     $disabledValidationMethods = [];
-                    $apiConf = (new Repository())->get();
 
                     $product = new Product($input['params']['pid']);
                     $productssl = false;

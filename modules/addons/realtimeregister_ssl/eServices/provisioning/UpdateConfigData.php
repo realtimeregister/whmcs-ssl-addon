@@ -4,6 +4,7 @@ namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
@@ -63,11 +64,16 @@ class UpdateConfigData
             
             $brandName = null;
             if ($checkTable !== false) {
-                $productData = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
+                if (is_object($order)) {
+                    $id = KeyToIdMapping::getIdByKey($order->product);
+                } else {
+                    $id = KeyToIdMapping::getIdByKey($order['command']['product']);
+                }
+                $productData = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where([
                     'pid',
-                    $order->product
+                    $id
+                ]
                 )->first();
-                
                 if (isset($productData->brand) && !empty($productData->brand)) {
                     $brandName = $productData->brand;
                 }

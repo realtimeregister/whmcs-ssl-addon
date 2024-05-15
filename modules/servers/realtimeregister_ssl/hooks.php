@@ -1,5 +1,5 @@
 <?php
-die('why');
+
 use WHMCS\Database\Capsule as DB;
 
 if(!defined('DS')) {
@@ -8,7 +8,6 @@ if(!defined('DS')) {
 
 add_hook('ClientAreaPage', 1, function ($params)
 {
-    die('clientareapage!');
     $loaderdir = false;
     if(file_exists(__DIR__ . DS . 'Loader.php')) {
         $loaderdir = __DIR__ . DS . 'Loader.php';
@@ -22,7 +21,6 @@ add_hook('ClientAreaPage', 1, function ($params)
     }
     
     require_once $loaderdir;
-    new \MGModule\RealtimeRegisterSsl\Server\Loader();
     $activator = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\Activator();
     $activator->run();
 
@@ -336,7 +334,6 @@ add_hook('InvoiceCreationPreEmail', 1, function($vars)
 
 add_hook('AdminAreaFooterOutput', 1, function($vars)
 {
-    dd(__METHOD__);
 if ($vars['filename'] == 'clientsservices' && $_GET['userid'] && $_GET['id']) {
     $hosting = DB::table('tblhosting')
     ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')

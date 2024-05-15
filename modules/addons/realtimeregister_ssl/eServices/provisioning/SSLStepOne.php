@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Organization;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\San;
@@ -37,7 +38,7 @@ class SSLStepOne
         $fields['additionalfields'] = [];
         $apiProductId = $this->p[ConfigOptions::API_PRODUCT_ID];
         $apiRepo = new Products();
-        $apiProduct = $apiRepo->getProduct($apiProductId);
+        $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
         $apiWebServers = [
             ['id' => '18', 'software' => 'IIS'],
             ['id' => '18', 'software' => 'Any Other']

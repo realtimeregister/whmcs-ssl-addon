@@ -10,12 +10,14 @@ use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use MGModule\RealtimeRegisterSsl\eServices\FlashService;
 use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use SandwaveIo\RealtimeRegister\Domain\CertificateInfoProcess;
 use SandwaveIo\RealtimeRegister\Domain\Product;
 use stdClass;
 use WHMCS\Database\Capsule;
@@ -99,7 +101,7 @@ class SSLStepThree
         $apiProductId = $this->p[ConfigOptions::API_PRODUCT_ID];
 
         $apiRepo = new Products();
-        $this->apiProduct = $apiRepo->getProduct($apiProductId);
+        $this->apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
     }
 
     private function orderCertificate()
@@ -121,7 +123,7 @@ class SSLStepThree
 
         if (!empty($this->p[ConfigOptions::API_PRODUCT_ID])) {
             $apiRepo = new Products();
-            $apiProduct = $apiRepo->getProduct($this->p[ConfigOptions::API_PRODUCT_ID]);
+            $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($this->p[ConfigOptions::API_PRODUCT_ID]));
 
             //get available periods for product
             $productAvailablePeriods = $apiProduct->getPeriods();
@@ -147,14 +149,13 @@ class SSLStepThree
         $order = [];
 
         $apiRepo = new Products();
-        $productDetails = $apiRepo->getProduct($order['product_id']);
 
         $order['product'] = $apiProduct->product;
         $order['period'] = $billingPeriods[$this->p['model']->billingcycle];
         $order['csr'] = str_replace('\n', "\n", $this->p['csr']); // Fix for RT-14675
         /** @var Product $productDetails */
         $productDetails = ApiProvider::getInstance()->getApi(CertificatesApi::class)
-            ->getProduct($productDetails->product);
+            ->getProduct($apiProduct->product);
 
         $mapping = [
             'organization' => 'orgname',
@@ -243,12 +244,16 @@ class SSLStepThree
 
         $orderType = $this->p['fields']['order_type'];
 
+        if ($this->p['fields']['org_division'] !== '') {
+            $order['department'] = $this->p['fields']['org_division'];
+        }
         $logs = new LogsRepo();
 
         try {
+            /** @var CertificateInfoProcess $addedSSLOrder */
             switch ($orderType) {
                 case 'renew':
-                    $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->addSSLRenewOrder($order);
+                    $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->renewCertificate($order);
                     break;
                 case 'new':
                 default:
@@ -259,7 +264,7 @@ class SSLStepThree
                         $order['csr'],
                         $order['san'],
                         $order['organization'],
-                        null,
+                        $order['department'],
                         $order['address'],
                         $order['postalCode'],
                         $order['city'],
@@ -269,9 +274,9 @@ class SSLStepThree
                         $order['country'],
                         null,
                         $order['dcv'],
+                        $order['domain'],
                         null,
-                        null,
-                        null,
+                        $order['state'],
                     );
                     break;
             }
@@ -300,7 +305,7 @@ class SSLStepThree
 
         /** @var ProcessesApi $processesApi */
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $addedSSLOrderInformation = $processesApi->get($addedSSLOrder);
+        $addedSSLOrderInformation = $processesApi->get($addedSSLOrder->processId);
 
         //update domain column in tblhostings
         $service = new Service($this->p['serviceid']);
@@ -455,7 +460,7 @@ class SSLStepThree
         }
         /** @var ProcessesApi $processesApi */
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $orderDetails = $processesApi->get($addedSSLOrder);
+        $orderDetails = $processesApi->get($addedSSLOrder->processId);
 
         if ($this->p[ConfigOptions::MONTH_ONE_TIME] && !empty($this->p[ConfigOptions::MONTH_ONE_TIME])) {
             $service = new Service($this->p['serviceid']);
