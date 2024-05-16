@@ -4,15 +4,27 @@ namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 class AdminCustomButtonArray
 {
-    public function run()
+    private array $p;
+
+    public function __construct(array $params)
     {
-        return [
+        $this->p = &$params;
+    }
+
+    public function run(): array
+    {
+        $buttons = [
             'Manage SSL'            => 'SSLAdminManageSSL',
-            'Resend Approver Email' => 'SSLAdminResendApproverEmail',
             'Resend Certificate'    => 'SSLAdminResendCertificate',
-            'Reissue Certificate'   => 'SSLAdminReissueCertificate',
             'View Certificate'      => 'SSLAdminViewCertificate',
-            'Recheck Certificate Details' => 'SSLAdminRecheckCertificateDetails' 
         ];
+
+        if ($this->p['status'] !== 'Active') {
+            $buttons['Resend Approver Email'] = 'SSLAdminResendApproverEmail';
+            $buttons['Reissue Certificate'] = 'SSLAdminReissueCertificate';
+            $buttons['Recheck Certificate Details'] = 'SSLAdminRecheckCertificateDetails';
+        }
+
+        return $buttons;
     }
 }

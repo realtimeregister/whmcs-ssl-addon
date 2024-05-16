@@ -1,14 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use MGModule\RealtimeRegisterSsl\models\orders\Order;
+use MGModule\RealtimeRegisterSsl\models\orders\Repository;
+use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 
-class AdminResendApproverEmail
+class AdminResendApproverEmail extends Ajax
 {
-    private $p;
-    
-    function __construct(&$params)
+    private array $p;
+
+    public function __construct(array $params)
     {
         $this->p = &$params;
     }
@@ -22,16 +30,35 @@ class AdminResendApproverEmail
         }
         return 'success';
     }
-    
-    private function adminResendApproverEmail()
+
+    private function adminResendApproverEmail(): void
     {
-        $ssl = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $ssl = new SSL();
         $serviceSSL = $ssl->getByServiceId($this->p['serviceid']);
-        
+
+        $orderRepository = new Repository();
         if (is_null($serviceSSL)) {
             throw new Exception('Create has not been initialized.');
         }
-  
-        \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->resendEmail($serviceSSL->remoteid);
+
+        /** @var CertificatesApi $certificatesApi */
+        $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+
+        /** @var Order $result */
+        $result = Capsule::table($orderRepository->tableName)->where('service_id', $serviceSSL->serviceid)->first();
+        $data = json_decode((string)$result->data, true);
+
+        $domainControlValidations = [];
+        foreach ($data['validations']['dcv']['entities'] as $validation) {
+            $domainControlValidations[] = [
+                'commonName' => $validation['commonName'],
+                'type' => $validation['type'],
+                'email' => $validation['email'],
+            ];
+        }
+        $certificatesApi->resendDcv(
+            (int)$serviceSSL->getRemoteId(),
+            $domainControlValidations
+        );
     }
 }

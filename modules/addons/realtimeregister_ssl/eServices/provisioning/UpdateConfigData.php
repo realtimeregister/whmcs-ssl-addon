@@ -41,7 +41,7 @@ class UpdateConfigData
         if (empty($this->orderdata)) {
             /** @var ProcessesApi $processesApi */
             $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-            $process = $processesApi->get($this->sslService->remoteid);
+            $process = $processesApi->info($this->sslService->remoteid);
 
             /** @var CertificatesApi $certificatesApi */
             $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
@@ -61,7 +61,7 @@ class UpdateConfigData
             !isset($this->sslService->configdata->product_brand) || empty($this->sslService->configdata->product_brand)
         ) {
             $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
-            
+
             $brandName = null;
             if ($checkTable !== false) {
                 if (is_object($order)) {

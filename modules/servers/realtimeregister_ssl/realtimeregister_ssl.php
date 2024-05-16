@@ -1,6 +1,5 @@
 <?php
 
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eServices\FlashService;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminCustomButtonArray;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminRecheckCertificateDetails;
@@ -20,8 +19,6 @@ use MGModule\RealtimeRegisterSsl\eServices\provisioning\TerminateAccount;
 use MGModule\RealtimeRegisterSsl\Loader;
 use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
 use MGModule\RealtimeRegisterSsl\Server;
-use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
 
@@ -94,8 +91,8 @@ function realtimeregister_ssl_TerminateAccount($params) {
     return $terminateAccount->run();
 }
 
-function realtimeregister_ssl_AdminCustomButtonArray() {
-    $adminCustomButtonArray = new AdminCustomButtonArray();
+function realtimeregister_ssl_AdminCustomButtonArray($params) {
+    $adminCustomButtonArray = new AdminCustomButtonArray($params);
     return $adminCustomButtonArray->run();
 }
 
