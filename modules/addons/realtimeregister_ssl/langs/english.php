@@ -230,20 +230,6 @@ $_LANG['addonAA']['productsConfiguration']['messages']['configurable_generated']
 
 $_LANG['addonAA']['productsConfiguration']['messages']['api_configuration_empty'] = 'API configuration are empty';
 
-$_LANG['addonAA']['pagesLabels']['label']['importSSLOrder']                      = 'Import SSL Order';
-$_LANG['addonAA']['importSSLOrder']['header']                                    = 'Import SSL Order';
-$_LANG['addonAA']['importSSLOrder']['order_id']['label']                         = 'API Order ID';
-$_LANG['addonAA']['importSSLOrder']['client_id']['label']                        = 'Client';
-$_LANG['addonAA']['importSSLOrder']['importSSL']['content']                      = 'Import';
-$_LANG['addonAA']['importSSLOrder']['messages']['import_success']                = 'SSL order has been imported successfully.';
-$_LANG['addonAA']['importSSLOrder']['messages']['order_id_not_provided']         = 'API order ID has been not provided.';
-$_LANG['addonAA']['importSSLOrder']['messages']['client_id_not_provided']        = 'Client ID has been not provided.';
-$_LANG['addonAA']['importSSLOrder']['messages']['ssl_order_already_exist']       = 'SLL order with provided ID already exist in system.';
-$_LANG['addonAA']['importSSLOrder']['messages']['ssl_order_product_not_exist']   = 'Product for provided SSL order ID not exist in system.';
-$_LANG['addonAA']['importSSLOrder']['messages']['order_create_error']            = 'Unable to create order';
-$_LANG['addonAA']['importSSLOrder']['messages']['no_payment_gateway_error']      = 'No payment gateway has been configured.';
-$_LANG['addonAA']['importSSLOrder']['messages']['order_cancelled_import_unable'] = 'Unable to import cancelled SSL order.';
-
 $_LANG['addonAA']['userCommissions']['integrationCode']['header']         = 'Integration Code';
 $_LANG['addonAA']['userCommissions']['pleaseNote']                        = 'Please Note';
 $_LANG['addonAA']['userCommissions']['info']                              = 'To display product prices with additional commission in the Client Area: ';

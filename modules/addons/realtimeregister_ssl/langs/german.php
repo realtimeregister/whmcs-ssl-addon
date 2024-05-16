@@ -227,20 +227,6 @@ $_LANG['addonAA']['productsConfiguration']['messages']['configurable_generated']
 
 $_LANG['addonAA']['productsConfiguration']['messages']['api_configuration_empty'] = 'Die API-Konfiguration ist leer';
 
-$_LANG['addonAA']['pagesLabels']['label']['importSSLOrder']                      = 'SSL-Bestellung importieren';
-$_LANG['addonAA']['importSSLOrder']['header']                                    = 'SSL-Bestellung importieren';
-$_LANG['addonAA']['importSSLOrder']['order_id']['label']                         = 'API-Bestell-ID';
-$_LANG['addonAA']['importSSLOrder']['client_id']['label']                        = 'Kunde';
-$_LANG['addonAA']['importSSLOrder']['importSSL']['content']                      = 'Importieren';
-$_LANG['addonAA']['importSSLOrder']['messages']['import_success']                = 'Die SSL-Bestellung wurde erfolgreich importiert.';
-$_LANG['addonAA']['importSSLOrder']['messages']['order_id_not_provided']         = 'Die API-Bestell-ID wurde nicht angegeben.';
-$_LANG['addonAA']['importSSLOrder']['messages']['client_id_not_provided']        = 'Kunden-ID wurde nicht angegeben.';
-$_LANG['addonAA']['importSSLOrder']['messages']['ssl_order_already_exist']       = 'Die SSL-Bestellung mit der angegebenen ID ist bereits im System vorhanden.';
-$_LANG['addonAA']['importSSLOrder']['messages']['ssl_order_product_not_exist']   = 'Das Produkt für die angegebene SSL-Bestell-ID ist im System nicht vorhanden.';
-$_LANG['addonAA']['importSSLOrder']['messages']['order_create_error']            = 'Bestellung kann nicht erstellt werden';
-$_LANG['addonAA']['importSSLOrder']['messages']['no_payment_gateway_error']      = 'Es wurde kein Zahlungsgateway konfiguriert.';
-$_LANG['addonAA']['importSSLOrder']['messages']['order_cancelled_import_unable'] = 'Stornierte SSL-Bestellung kann nicht importiert werden.';
-
 $_LANG['addonAA']['userCommissions']['integrationCode']['header']         = 'Integrationscode';
 $_LANG['addonAA']['userCommissions']['pleaseNote']                        = 'Bitte beachten';
 $_LANG['addonAA']['userCommissions']['info']                              = 'Um die Produktpreise mit zusätzliche Kommission im Kundenbereich anzuzeigen: ';

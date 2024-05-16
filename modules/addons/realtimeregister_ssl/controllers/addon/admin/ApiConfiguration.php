@@ -135,16 +135,6 @@ class ApiConfiguration extends AbstractController
         $form->addField($field);
 
         $field = new CheckboxField();
-        $field->name = 'renew_new_order';
-        $field->options = ['renew_new_order'];
-        $field->value = $input['renew_new_order'] ? ['renew_new_order'] : [''];
-        $field->inline = true;
-        $field->colWidth = 3;
-        $field->continue = false;
-        $field->enableDescription = true;
-        $form->addField($field);
-
-        $field = new CheckboxField();
         $field->name = 'auto_renew_invoice_reccuring';
         $field->options = ['auto_renew_invoice_reccuring'];
         $field->value = $input['auto_renew_invoice_reccuring'] ? ['auto_renew_invoice_reccuring'] : [''];
@@ -523,7 +513,7 @@ class ApiConfiguration extends AbstractController
                     'display_ca_summary',
                     'disable_email_validation',
                     'email_whois',
-                    'renew_new_order',
+//                    'renew_new_order',
                     'visible_renew_button',
                     'save_activity_logs'
                 ];

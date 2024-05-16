@@ -267,14 +267,10 @@ add_hook('InvoicePaid', 1, function($vars)
         }
     }
     
-    $apiConf           = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
-    if (isset($apiConf->renew_new_order) && $apiConf->renew_new_order == '1') {
-        if (!empty($invoiceInfo)) {
-            modulecallfunction("Renew", $invoiceInfo['service_id']);
-        }
-        return true;
+    if (!empty($invoiceInfo)) {
+        modulecallfunction("Renew", $invoiceInfo['service_id']);
     }
-    $invoiceGenerator->invoicePaid($vars['invoiceid']);
+    return true;
 });
 
 

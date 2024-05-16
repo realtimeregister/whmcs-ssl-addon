@@ -39,7 +39,7 @@ class Renew
     public function run()
     {
         $apiConf = (new Repository())->get();
-        if (isset($apiConf->renew_new_order) && $apiConf->renew_new_order == '1') {
+//        if (isset($apiConf->renew_new_order) && $apiConf->renew_new_order == '1') {
             if (
                 isset($apiConf->automatic_processing_of_renewal_orders)
                 && $apiConf->automatic_processing_of_renewal_orders == '1'
@@ -67,11 +67,11 @@ class Renew
                 ]);
                 return 'success';
             }
-        } else {
-            return 'This action cannot be called, it will only be called when paying for a renew invoice. If you want ' .
-                'to run this action manually please check the "Renew order via existing order" option in the ' .
-                'RealtimeRegisterSsl module settings.';
-        }
+//        } else {
+//            return 'This action cannot be called, it will only be called when paying for a renew invoice. If you want ' .
+//                'to run this action manually please check the "Renew order via existing order" option in the ' .
+//                'RealtimeRegisterSsl module settings.';
+//        }
     }
 
     private function updateOneTime()

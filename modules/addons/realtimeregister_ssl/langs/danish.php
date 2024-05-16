@@ -213,20 +213,6 @@ $_LANG['addonAA']['productsConfiguration']['messages']['configurable_generated']
 
 $_LANG['addonAA']['productsConfiguration']['messages']['api_configuration_empty'] = 'API-konfigurationen er tom';
 
-$_LANG['addonAA']['pagesLabels']['label']['importSSLOrder']                      = 'Importer SSL Ordre';
-$_LANG['addonAA']['importSSLOrder']['header']                                    = 'Importer SSL Ordre';
-$_LANG['addonAA']['importSSLOrder']['order_id']['label']                         = 'API-Ordre ID';
-$_LANG['addonAA']['importSSLOrder']['client_id']['label']                        = 'Klient';
-$_LANG['addonAA']['importSSLOrder']['importSSL']['content']                      = 'Importer';
-$_LANG['addonAA']['importSSLOrder']['messages']['import_success']                = 'SSL-ordren blev importeret.';
-$_LANG['addonAA']['importSSLOrder']['messages']['order_id_not_provided']         = 'API-ordre ID blev ikke angivet.';
-$_LANG['addonAA']['importSSLOrder']['messages']['client_id_not_provided']        = 'Klient ID blev ikke angivet.';
-$_LANG['addonAA']['importSSLOrder']['messages']['ssl_order_already_exist']       = 'SSL-ordre med det angivne ID eksisterer allerede i systemet.';
-$_LANG['addonAA']['importSSLOrder']['messages']['ssl_order_product_not_exist']   = 'Produkt for angivne SSL-ordre ID eksiterer ikke i systemet.';
-$_LANG['addonAA']['importSSLOrder']['messages']['order_create_error']            = 'Kunne ikke oprette ordre';
-$_LANG['addonAA']['importSSLOrder']['messages']['no_payment_gateway_error']      = 'Der er ikke konfigureret nogen betalingsgateway.';
-$_LANG['addonAA']['importSSLOrder']['messages']['order_cancelled_import_unable'] = 'Kunne ikke importere annulleret SSL-ordre.';
-
 $_LANG['addonAA']['userCommissions']['integrationCode']['header']         = 'Integrationskode';
 $_LANG['addonAA']['userCommissions']['pleaseNote']                        = 'Bemærk';
 $_LANG['addonAA']['userCommissions']['info']                              = 'For at kunne vise produktpriserne med yderligere kommission i klientområdet: ';
