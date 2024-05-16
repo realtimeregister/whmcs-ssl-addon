@@ -85,42 +85,32 @@ class UpdateConfigData
             }
         }
 
-//        if (($order['status'] != 'expired') && ($order['status'] != 'cancelled'))
-//        {
-            /** @var SSL $sslOrder */
-            $sslOrder = $this->sslService;
+        /** @var SSL $sslOrder */
+        $sslOrder = $this->sslService;
 
-//            $sslOrder->setCa($order['ca_code']);
-            $sslOrder->setCrt($order->certificate);
-//            $sslOrder->setPartnerOrderId($order['partner_order_id']);
+        $sslOrder->setCrt($order->certificate);
 
-            $sslOrder->setValidFrom($order->startDate);
-            $sslOrder->setValidTill($order->expiryDate);
+        $sslOrder->setValidFrom($order->startDate);
+        $sslOrder->setValidTill($order->expiryDate);
 
-            $sslOrder->setSubscriptionStarts($order->startDate);
-            $sslOrder->setSubscriptionEnds($order->expiryDate);
+        $sslOrder->setSubscriptionStarts($order->startDate);
+        $sslOrder->setSubscriptionEnds($order->expiryDate);
 
-            $sslOrder->setDomain($order->domainName);
-            $sslOrder->setSSLStatus($order->status);
-//            $sslOrder->setOrderStatusDescription($order['status_description']);
+        $sslOrder->setDomain($order->domainName);
+        $sslOrder->setSSLStatus($order->status);
 
-//            $sslOrder->setApproverMethod($order['approver_method']);
-//            $sslOrder->setDcvMethod($order['dcv_method']);
-            $sslOrder->setProductId($order->product);
-//            $sslOrder->setSSLTotalDomains($order['total_domains']);
-            
-            if (
-                !isset($this->sslService->configdata->product_brand)
-                || empty($this->sslService->configdata->product_brand)
-            ) {
-                $sslOrder->setProductBrand($brandName);
-            }
-            
-            $sslOrder->setSanDetails($order->san);
-//            $sslOrder->setConfigdataKey("approveremail", $order['approver_email']);
+        $sslOrder->setProductId($order->product);
 
-            $sslOrder->save();
-       // }
+        if (
+            !isset($this->sslService->configdata->product_brand)
+            || empty($this->sslService->configdata->product_brand)
+        ) {
+            $sslOrder->setProductBrand($brandName);
+        }
+
+        $sslOrder->setSanDetails($order->san);
+
+        $sslOrder->save();
 
         return $order;
     }

@@ -1,7 +1,6 @@
 <?php
 
 namespace MGModule\RealtimeRegisterSsl\mgLibs\exceptions;
-use MGModule\RealtimeRegisterSsl as main;
 
 /**
  * Base Module Exception

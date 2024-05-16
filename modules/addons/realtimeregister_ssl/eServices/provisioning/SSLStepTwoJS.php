@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
-use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary;

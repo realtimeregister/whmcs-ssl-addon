@@ -525,11 +525,6 @@ class Invoice
             $order['org_addressline1'] = $sslOrder['admin_addressline1'];
         }
 
-//        if(isset($sslOrder['domains']) && !empty($sslOrder['domains']))
-//        {
-//            $order['dns_names']       = $sslOrder['domains'];
-//        }
-
         $sansmethod = [];
         $sansdomains = [];
 
@@ -546,7 +541,6 @@ class Invoice
             $order['dns_names'] = implode(',', $sansdomains);
             $order['approver_emails'] = implode(',', $sansmethod);
         }
-        //$order['approver_emails'] = $sslOrder['approver_emails'];
 
         if ($sslOrder['dcv_method'] == 'email' && empty($order['approver_email'])
             && isset($sslOrder['approver_method']['email']) && !empty($sslOrder['approver_method']['email'])) {

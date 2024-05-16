@@ -567,12 +567,9 @@ class ClientReissueCertificate
         $this->sslService->setConfigdataKey('approveremail', $data['approver_email']);
         $this->sslService->setConfigdataKey('private_key', $_POST['privateKey']);
         $this->sslService->setApproverEmails($data['approver_emails']);
-        //$this->sslService->setSansDomains($data['dns_names']);
         $this->sslService->setSanDetails($orderDetails['san']);
         $this->sslService->save();
 
-        //$configDataUpdate = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData($this->sslService);
-        //$configDataUpdate->run();
 
         try {
             Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $decodedCSR['csrResult']['CN'], true);

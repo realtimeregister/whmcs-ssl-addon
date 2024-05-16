@@ -240,61 +240,15 @@ class Cron extends AbstractController
             }
         }
 
-//        if(!$renew_new_order)
-//        {
-//            $invoicesCreatedCount = $this->createAutoInvoice($packageLists, $serviceIDs);
-//
-//            $invoices = Capsule::table('tblinvoices')->where('status', 'Payment Pending')->get();
-//            foreach($invoices as $invoice)
-//            {
-//                $itemsInvoice = Capsule::table('tblinvoiceitems')->where('invoiceid', $invoice->id)
-//                    ->where('description', 'LIKE', '%- Renewal')->get();
-//
-//                if(!empty($itemsInvoice))
-//                {
-//                    $sslInvoice = Capsule::table(Invoice::INVOICE_INFOS_TABLE_NAME)
-//                        ->where('invoice_id', $invoice->id)->first();
-//
-//                    $serviceid = $sslInvoice->service_id;
-//
-//                    $sslInfo = $this->getSSLOrders($serviceid)[0];
-//
-//                    /** @var ProcessesApi $processesApi */
-//                    $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-//                    $sslOrder = $processesApi->get($sslInfo->remoteid);
-//
-//                    $today = date('Y-m-d');
-//
-//                    if ($sslOrder['valid_till'] == $today)
-//                    {
-//                        Capsule::table('tblinvoices')->where('id', $invoice->id)
-//                            ->update(['status' => 'Cancelled']);
-//                    }
-//                }
-//            }
-//        }
-
         echo 'Notifier completed.' . PHP_EOL;
         echo '<br />Number of emails send (expire): ' . $emailSendsCount . PHP_EOL;
         echo '<br />Number of emails send (reissue): ' . $emailSendsCountReissue . PHP_EOL;
 
         logActivity('Notifier completed. Number of emails send: '.$emailSendsCount, 0);
 
-//        if(!$renew_new_order)
-//        {
-//            echo '<br />Number of invoiced created: ' . $invoicesCreatedCount . PHP_EOL;
-//        }
-
         Whmcs::savelogActivityRealtimeRegisterSsl(
             "Realtime Register Ssl WHMCS: Notifier completed. Number of emails send: " . $emailSendsCount
         );
-
-//        if(!$renew_new_order)
-//        {
-//            Whmcs::savelogActivityRealtimeRegisterSsl(
-//                "Realtime Register Ssl WHMCS: Notifier completed. Number of invoiced created: " . $invoicesCreatedCount
-//            );
-//        }
 
         return [];
     }

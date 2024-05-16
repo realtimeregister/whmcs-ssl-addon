@@ -40,7 +40,6 @@ You are highly welcome to send us requests for new features, suggestions, issues
 - Multiple Product Creator option
 - Automated Price import and commission setup
 - Multibrand For WHMCS support
-- SSL Import
 
 ### Sub-Reseller network
 We support ["Products Reseller For WHMCS"](https://www.modulesgarden.com/products/whmcs/products-reseller#features) module from Modules Garden allowing to have own Sub-Resellers using WHMCS to expand your network. Please review [documentation](https://github.com/gogetssl/whmcs-addon/wiki/Sub-Resellers-module) for more details

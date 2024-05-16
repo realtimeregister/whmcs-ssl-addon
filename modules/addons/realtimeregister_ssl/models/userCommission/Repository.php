@@ -70,15 +70,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
 
     public function updateUserCommissionTable()
     {
-        if (Capsule::schema()->hasTable($this->tableName)) {
-            /* if (!Capsule::schema()->hasColumn($this->tableName, 'id'))
-              {
-              Capsule::schema()->table($this->tableName, function($table)
-              {
-              $table->integer('id');
-              });
-              } */
-        } else {
+        if (!Capsule::schema()->hasTable($this->tableName)) {
             Capsule::schema()->create($this->tableName, function($table) {
                 $table->engine = 'InnoDB';
                 $table->increments('id');

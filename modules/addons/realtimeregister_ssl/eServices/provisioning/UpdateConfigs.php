@@ -8,7 +8,6 @@ use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\Certificate;
 use SandwaveIo\RealtimeRegister\Domain\Enum\DownloadFormatEnum;
 

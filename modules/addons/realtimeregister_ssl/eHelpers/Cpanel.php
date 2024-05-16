@@ -340,6 +340,4 @@ class Cpanel
 
         return isset($a->data)?$a->data:$a;
     }
-
-
 }

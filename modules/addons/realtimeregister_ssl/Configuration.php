@@ -11,7 +11,6 @@ use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
 use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 /**
  * Module Configuration

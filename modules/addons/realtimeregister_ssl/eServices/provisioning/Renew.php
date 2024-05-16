@@ -39,39 +39,33 @@ class Renew
     public function run()
     {
         $apiConf = (new Repository())->get();
-//        if (isset($apiConf->renew_new_order) && $apiConf->renew_new_order == '1') {
-            if (
-                isset($apiConf->automatic_processing_of_renewal_orders)
-                && $apiConf->automatic_processing_of_renewal_orders == '1'
-            ) {
-                $resellerRenew = '';
-                try {
-                    $this->checkRenew($this->p['serviceid']);
-                    $resellerRenew = $this->renewCertificate();
-                    if ($resellerRenew != 'beforeConfiguration') {
-                        $this->updateOneTime();
-                    }
-                } catch (Exception $ex) {
-                    return $ex->getMessage();
-                }
+        if (
+            isset($apiConf->automatic_processing_of_renewal_orders)
+            && $apiConf->automatic_processing_of_renewal_orders == '1'
+        ) {
+            $resellerRenew = '';
+            try {
+                $this->checkRenew($this->p['serviceid']);
+                $resellerRenew = $this->renewCertificate();
                 if ($resellerRenew != 'beforeConfiguration') {
-                    $this->addRenew($this->p['serviceid']);
+                    $this->updateOneTime();
                 }
-                return 'success';
-            } else {
-                Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->update([
-                    'remoteid' => '',
-                    'configdata' => '',
-                    'completiondate' => '0000-00-00 00:00:00',
-                    'status' => 'Awaiting Configuration'
-                ]);
-                return 'success';
+            } catch (Exception $ex) {
+                return $ex->getMessage();
             }
-//        } else {
-//            return 'This action cannot be called, it will only be called when paying for a renew invoice. If you want ' .
-//                'to run this action manually please check the "Renew order via existing order" option in the ' .
-//                'RealtimeRegisterSsl module settings.';
-//        }
+            if ($resellerRenew != 'beforeConfiguration') {
+                $this->addRenew($this->p['serviceid']);
+            }
+            return 'success';
+        } else {
+            Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->update([
+                'remoteid' => '',
+                'configdata' => '',
+                'completiondate' => '0000-00-00 00:00:00',
+                'status' => 'Awaiting Configuration'
+            ]);
+            return 'success';
+        }
     }
 
     private function updateOneTime()
@@ -431,8 +425,6 @@ class Renew
         $order['admin_country'] = $p->country; // required for OV SSL certificates
         $order['admin_postalcode'] = $p->postcode;
         $order['admin_region'] = $p->state;
-        //$order['admin_fax']          = $cf['firstname']; // required for OV SSL certificates
-
 
         /**
          * id use administrative unchecked get tech contsact details from module configuration
@@ -471,8 +463,6 @@ class Renew
             $order['org_region'] = $f->org_regions;
         } elseif ($orgRequired) {
             $order['org_name'] = $p->orgname;
-//            $order['org_division']     = $f->org_division;
-//            $order['org_duns']         = $f->org_duns;
             $order['org_addressline1'] = $p->address1;
             $order['org_city'] = $p->city;
             $order['org_country'] = Countries::getInstance()->getCountryCodeByName($p->country);

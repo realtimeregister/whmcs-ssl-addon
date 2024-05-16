@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl\Addon;
 use MGModule\RealtimeRegisterSsl\eHelpers\Admin;
