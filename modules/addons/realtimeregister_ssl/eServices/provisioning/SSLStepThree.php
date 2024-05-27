@@ -173,6 +173,7 @@ class SSLStepThree
                 $order['approver'] = [
                     'firstName' => $this->p['firstname'],
                     'lastName' => $this->p['lastname'],
+                    'jobTitle' => $this->p['jobtitle'],
                     'email' => $this->p['email'],
                     'voice' => $this->p['phonenumber']
                 ];
@@ -481,7 +482,7 @@ class SSLStepThree
         $this->sslConfig->setDomain($orderDetails->identifier);
         $this->sslConfig->setOrderStatusDescription($orderDetails->status);
         $this->sslConfig->setApproverMethod($this->p['approvalmethod']);
-        $this->sslConfig->setDcvMethod($this->p['approvalmethod']);
+        $this->sslConfig->setDcvMethod($this->p['fields']['dcv_method']);
         $this->sslConfig->setProductId($this->p['configoption1']);
         $this->sslConfig->setSSLStatus($orderDetails->status);
         $this->sslConfig->save();
@@ -498,7 +499,7 @@ class SSLStepThree
             $this->p['userid'],
             $this->p['serviceid'],
             $sslOrder->id,
-            json_encode($this->p['fields']['dcv_method']),
+            $this->p['fields']['dcv_method'],
             'Pending Verification',
             $addedSSLOrder
         );

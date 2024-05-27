@@ -83,7 +83,7 @@ class Client
     /**
      * @throws DeployException
      */
-    protected function request(string $method = 'GET', array $post = [], string $content = null): string
+    protected function request(string $method = 'GET', array $post = [], string $content = null)
     {
         $curl = curl_init();
 

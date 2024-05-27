@@ -83,25 +83,29 @@ class Cron extends AbstractController
                     ->update(['termination_date' => $order['valid_till']]);
             }
 
-            if ($order['status'] == 'expired' || $order['status'] == 'cancelled')
+            if ($order->status == 'expired' || $order->status == 'cancelled')
             {
                 $this->setSSLServiceAsTerminated($serviceID);
                 $updatedServices[] = $serviceID;
             }
 
-            //if certificate is active
+            /** @var CertificatesApi $certificateApi */
+            $certificateApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
 
-            if ($order['status'] == 'active')
+            $sslOrder = $certificateApi->listCertificates(1,null, null, ['process:eq' => $order->remoteid])[0];
+
+            //if certificate is active
+            if ($order->status == 'active')
             {
                 //update whmcs service next due date
-                $newNextDueDate = $order['valid_till'];
+                $newNextDueDate = $sslOrder->expiryDate;
                 if(!empty($order['end_date']))
                 {
-                    $newNextDueDate = $order['end_date'];
+                    $newNextDueDate = $sslOrder->expiryDate;
                 }
 
                 //set ssl certificate as terminated if expired
-                if (strtotime($order['valid_till']) < strtotime(date('Y-m-d')))
+                if (strtotime($sslOrder->expiryDate) < strtotime(date('Y-m-d')))
                 {
                     $this->setSSLServiceAsTerminated($serviceID);
                 }
@@ -116,8 +120,8 @@ class Cron extends AbstractController
                 $updatedServices[] = $serviceID;
             }
         }
-        echo 'Synchronization completed.';
-        echo '<br />Number of synchronized services: ' . count($updatedServices);
+        echo 'Synchronization completed.' . PHP_EOL;
+        echo '<br />Number of synchronized services: ' . count($updatedServices) . PHP_EOL;
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
             "Realtime Register Ssl WHMCS: Synchronization completed. Number of synchronized services: " .
@@ -191,16 +195,14 @@ class Cron extends AbstractController
              * if service is One Time and nextduedate is setted as 0000-00-00 get valid
              * till from Realtime Register Ssl API
              */
-            if ($srv->billingcycle == 'One Time')
-            {
+            if ($srv->billingcycle == 'One Time') {
                 $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $srv->id)->first();
 
-                if(isset($sslOrder->remoteid) && !empty($sslOrder->remoteid)) {
-                    /** @var ProcessesApi $processesApi */
-                    $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-                    $order = $processesApi->get($sslOrder->remoteid);
-                    $daysLeft = $this->checkOrderExpireDate($order['valid_till']);
-
+                if (!empty($sslOrder->remoteid)) {
+                    /** @var CertificatesApi $sslOrderApi */
+                    $sslOrderApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+                    $ssl = $sslOrderApi->listCertificates(1,null,null, ['process:eq' => $sslOrder->remoteid]);
+                    $daysLeft = $this->checkOrderExpireDate($ssl[0]->expiryDate);
                 }
             }
 
@@ -209,7 +211,7 @@ class Cron extends AbstractController
             if($srv->domainstatus == 'Active' && $daysReissue == '30' && $product->configoption2 > 12)
             {
                 // send email
-                $emailSendsCountReissue += $this->sendReissueNotfiyEmail($srv->id);
+                $emailSendsCountReissue += $this->sendReissueNotifyEmail($srv->id);
             }
 
             //service was synchronized, so we can base on nextduedate, that should be the same as valid_till
@@ -219,7 +221,7 @@ class Cron extends AbstractController
                 if ($srv->billingcycle == 'One Time' && $send_expiration_notification_one_time
                      || $srv->billingcycle != 'One Time' && $send_expiration_notification_reccuring
                 ) {
-                    $emailSendsCount += $this->sendExpireNotfiyEmail($srv->id, $daysLeft);
+                    $emailSendsCount += $this->sendExpireNotifyEmail($srv->id, $daysLeft);
                 }
             }
 
@@ -275,14 +277,18 @@ class Cron extends AbstractController
             /** @var SSL $ssl */
             $ssl = $SSLOrder->getWhere(['serviceid' => $service->id, 'userid' => $service->clientID])->first();
 
-            if ($ssl == NULL || $ssl->remoteid == '') {
+            if ($ssl == null || $ssl->remoteid == '') {
                 continue;
             }
             /** @var ProcessesApi $processesApi */
             $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-            $apiOrder = $processesApi->get($ssl->partnerRemoteId);
+            $apiOrder = $processesApi->get($ssl->remoteid);
 
-            if ($apiOrder['status'] !== 'active' || empty($apiOrder['ca_code'])) {
+            /** @var CertificatesApi $certificateApi */
+            $certificateApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+            $certificateInfo = $certificateApi->listCertificates(1, null, null, ['process:eq' => $ssl->remoteid]);
+
+            if ($apiOrder->status !== 'COMPLETED' || empty($certificateInfo[0]->certificate)) {
                 continue;
             }
 
@@ -290,18 +296,21 @@ class Cron extends AbstractController
                 continue;
             }
 
-            $apiConf                  = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
-            $sendCertyficateTermplate = $apiConf->send_certificate_template;
-            if ($sendCertyficateTermplate == null) {
+            $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+
+            $sendCertificateTemplate = $apiConf->send_certificate_template;
+            if ($sendCertificateTemplate == null) {
                 sendMessage(EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID, $service->id, [
-                    'ssl_certificate' => nl2br($apiOrder['ca_code']),
-                    'crt_code' => nl2br($apiOrder['crt_code']),
+                    'domain' => $certificateInfo[0]->domainName,
+                    'ssl_certificate' => nl2br($certificateInfo[0]->certificate),
+                    'crt_code' => null,
                 ]);
             } else {
-                $templateName = EmailTemplateService::getTemplateName($sendCertyficateTermplate);
+                $templateName = EmailTemplateService::getTemplateName($sendCertificateTemplate);
                 sendMessage($templateName, $service->id, [
-                    'ssl_certificate' => nl2br($apiOrder['ca_code']),
-                    'crt_code' => nl2br($apiOrder['crt_code']),
+                    'domain' => $certificateInfo[0]->domainName,
+                    'ssl_certificate' => nl2br($certificateInfo[0]->certificate),
+                    'crt_code' => null,
                 ]);
             }
             $this->setSSLCertificateAsSent($service->id);
@@ -381,15 +390,12 @@ class Cron extends AbstractController
         echo 'Certificate Stats Loader started.' . PHP_EOL;
         Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Stats Loader started.");
 
-        $emailSendsCount = 0;
         $this->sslRepo   = new SSL();
 
         $services = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
         $services->onlyStatus(['Active', 'Suspended']);
 
-        $servicesArray = [];
         foreach ($services->get() as $service) {
-            $apiOrders = null;
             $product   = $service->product();
             //check if product is Realtime Register Ssl
             if ($product->serverType != 'realtimeregister_ssl') {
@@ -406,8 +412,16 @@ class Cron extends AbstractController
             $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
             $apiOrder = $processesApi->get($ssl->remoteid);
 
-            $this->setSSLCertificateValidTillDate($service->id, $apiOrder['valid_till']);
-            $this->setSSLCertificateStatus($service->id, $apiOrder['status']);
+            /** @var CertificatesApi $certificatesApi */
+            $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+
+            $sslInformation = $certificatesApi->listCertificates(100,null,null,['process:eq' => $ssl->remoteid]);
+
+            if (count($sslInformation) === 1) {
+                $this->setSSLCertificateValidTillDate($service->id, $sslInformation[0]->expiryDate);
+            }
+
+            $this->setSSLCertificateStatus($service->id, $apiOrder->status);
         }
         echo '<br/ >';
         echo 'Certificate Stats Loader completed.' . PHP_EOL;
@@ -510,7 +524,7 @@ class Cron extends AbstractController
         ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
         ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
         ->where('tblhosting.domainstatus', 'Active')
-        ->where('tblsslorders.configdata', 'like', '%"ssl_status":"processing"%')
+        ->where('tblsslorders.configdata', 'like', '%"ssl_status":"COMPLETED"%')
         ->orWhere('tblsslorders.status', '=', 'Configuration Submitted')
         ->get(['tblsslorders.*']);
 
@@ -613,7 +627,7 @@ class Cron extends AbstractController
             'module' => 'realtimeregister_ssl'
         ];
 
-        if ($serviceID != NULL)
+        if ($serviceID !== null)
             $where['serviceid'] = $serviceID;
 
         return $this->sslRepo->getBy($where, true);
@@ -677,7 +691,7 @@ class Cron extends AbstractController
     public function checkIfCertificateSent($serviceID)
     {
         $result        = false;
-        if ($this->sslRepo == NULL)
+        if ($this->sslRepo === null)
             $this->sslRepo = new SSL();
 
         $sslService = $this->sslRepo->getByServiceId((int) $serviceID);
@@ -691,7 +705,7 @@ class Cron extends AbstractController
 
     public function setSSLCertificateAsSent($serviceID)
     {
-        if ($this->sslRepo == NULL) {
+        if ($this->sslRepo === null) {
             $this->sslRepo = new SSL();
         }
         $sslService    = $this->sslRepo->getByServiceId((int) $serviceID);
@@ -765,7 +779,7 @@ class Cron extends AbstractController
         return isset($expireDaysNotify[$diff->days]) ? $diff->days : -1;
     }
 
-    public function sendExpireNotfiyEmail($serviceId, $daysLeft)
+    public function sendExpireNotifyEmail($serviceId, $daysLeft)
     {
         $command = 'SendEmail';
 
@@ -788,7 +802,7 @@ class Cron extends AbstractController
         return $resultSuccess;
     }
 
-    public function sendReissueNotfiyEmail($serviceId)
+    public function sendReissueNotifyEmail($serviceId)
     {
         $command = 'SendEmail';
 

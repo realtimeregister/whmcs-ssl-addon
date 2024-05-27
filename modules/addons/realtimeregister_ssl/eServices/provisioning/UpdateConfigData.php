@@ -7,7 +7,6 @@ use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\Certificate;
 use WHMCS\Database\Capsule;
 
@@ -39,14 +38,14 @@ class UpdateConfigData
         }
 
         if (empty($this->orderdata)) {
-            /** @var ProcessesApi $processesApi */
-            $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-            $process = $processesApi->info($this->sslService->remoteid);
-
             /** @var CertificatesApi $certificatesApi */
             $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-            $certificateResults = $certificatesApi->listCertificates(null, null, null,['process:eq' => $process->id]);
-
+            $certificateResults = $certificatesApi->listCertificates(
+                null,
+                null,
+                null,
+                ['process:eq' => $this->sslService->remoteid]
+            );
             if ($certificateResults->count() === 1) {
                 /** @var Certificate $order */
                 $order = $certificateResults[0];
@@ -54,64 +53,65 @@ class UpdateConfigData
         } else {
             $order = $this->orderdata;
         }
-           
-        $apiRepo = new Products();
 
-        if (
-            !isset($this->sslService->configdata->product_brand) || empty($this->sslService->configdata->product_brand)
-        ) {
-            $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        if ($order) {
+            $apiRepo = new Products();
 
-            $brandName = null;
-            if ($checkTable !== false) {
-                if (is_object($order)) {
-                    $id = KeyToIdMapping::getIdByKey($order->product);
-                } else {
-                    $id = KeyToIdMapping::getIdByKey($order['command']['product']);
+            if (
+                !isset($this->sslService->configdata->product_brand) || empty($this->sslService->configdata->product_brand)
+            ) {
+                $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+
+                $brandName = null;
+                if ($checkTable !== false) {
+                    if (is_object($order)) {
+                        $id = KeyToIdMapping::getIdByKey($order->product);
+                    } else {
+                        $id = KeyToIdMapping::getIdByKey($order['command']['product']);
+                    }
+                    $productData = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where([
+                            'pid' => $id
+                        ]
+                    )->first();
+                    if (isset($productData->brand) && !empty($productData->brand)) {
+                        $brandName = $productData->brand;
+                    }
                 }
-                $productData = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where([
-                    'pid',
-                    $id
-                ]
-                )->first();
-                if (isset($productData->brand) && !empty($productData->brand)) {
-                    $brandName = $productData->brand;
+
+                if ($brandName === null) {
+                    $apiProduct = $apiRepo->getProduct($order->product);
+                    $apiProduct->brand = $brandName;
                 }
             }
-            
-            if ($brandName === null) {
-                $apiProduct = $apiRepo->getProduct($order->product);
-                $apiProduct->brand = $brandName;
+
+            /** @var SSL $sslOrder */
+            $sslOrder = $this->sslService;
+
+            $sslOrder->setCrt($order->certificate);
+
+            $sslOrder->setValidFrom($order->startDate);
+            $sslOrder->setValidTill($order->expiryDate);
+
+            $sslOrder->setSubscriptionStarts($order->startDate);
+            $sslOrder->setSubscriptionEnds($order->expiryDate);
+
+            $sslOrder->setDomain($order->domainName);
+            $sslOrder->setSSLStatus($order->status);
+
+            $sslOrder->setProductId($order->product);
+
+            if (
+                !isset($this->sslService->configdata->product_brand)
+                || empty($this->sslService->configdata->product_brand)
+            ) {
+                $sslOrder->setProductBrand($brandName);
             }
+
+            $sslOrder->setSanDetails($order->san);
+
+            $sslOrder->save();
+
+            return $order;
         }
-
-        /** @var SSL $sslOrder */
-        $sslOrder = $this->sslService;
-
-        $sslOrder->setCrt($order->certificate);
-
-        $sslOrder->setValidFrom($order->startDate);
-        $sslOrder->setValidTill($order->expiryDate);
-
-        $sslOrder->setSubscriptionStarts($order->startDate);
-        $sslOrder->setSubscriptionEnds($order->expiryDate);
-
-        $sslOrder->setDomain($order->domainName);
-        $sslOrder->setSSLStatus($order->status);
-
-        $sslOrder->setProductId($order->product);
-
-        if (
-            !isset($this->sslService->configdata->product_brand)
-            || empty($this->sslService->configdata->product_brand)
-        ) {
-            $sslOrder->setProductBrand($brandName);
-        }
-
-        $sslOrder->setSanDetails($order->san);
-
-        $sslOrder->save();
-
-        return $order;
     }
 }

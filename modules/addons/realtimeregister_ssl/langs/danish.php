@@ -343,7 +343,7 @@ $_LANG['addonAA']['orders']['table']['actions'] = 'Actions';
 $_LANG['Choose a domain'] = 'Choose a domain';
 
 $_LANG['addonAA']['apiConfiguration']['cronCertificateInstaller']['pleaseNote'] = 'Please Note:';
-$_LANG['addonAA']['apiConfiguration']['cronCertificateInstaller']['info'] = 'In order to install certificate in cPanel, set the following command line cron (once a day suggested):';
+$_LANG['addonAA']['apiConfiguration']['cronCertificateInstaller']['info'] = 'In order to install certificate in your hostingpanel, set the following command line cron (once a day suggested):';
 $_LANG['addonAA']['apiConfiguration']['cronCertificateInstaller']['commandLine']['cronFrequency'] = '0 0 * * *';
 
 $_LANG['addonAA']['orders']['table']['set as verified'] = 'Set as verified';

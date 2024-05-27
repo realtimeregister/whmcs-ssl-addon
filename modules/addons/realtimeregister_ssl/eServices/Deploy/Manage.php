@@ -6,13 +6,14 @@ namespace MGModule\RealtimeRegisterSsl\eServices\Deploy;
 
 use Exception;
 use HostcontrolSSL\Service\Certificate;
+use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Client;
 use MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Ssl\PlatformInterface;
 use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
 
 class Manage
 {
-    protected static Panel $panel;
+    protected static string $panel;
     private static PlatformInterface $instance;
 
     /**
@@ -90,21 +91,13 @@ class Manage
         }
     }
 
-    public static function prepareDeply($sid, $domain, $crt = null)
+    public static function prepareDeploy($sid, $domain): ?string
     {
-        $manage = new Panel\Manage(['serviceid' => $sid, 'domainname' => $domain]);
-        /** @var Certificate $certificate */
-        $certificate = $manage->service('certificate');
-
-        $key = $certificate->getRsa($sid);
-
-        if (!$crt) {
-            $crt = $certificate->getCertificate(null, 'crt');
-        }
-        $csr = \HostcontrolSSL\Services\Validation\Manage::getCsrByServiceId($sid);
+        $sslRepository = new SSL();
+        $sslCertificate = $sslRepository->getByServiceId($sid);
 
         try {
-            self::deployCertificate($domain, $key, $crt, $csr);
+            return self::deployCertificate($domain, $sslCertificate->getPrivateKey(), $sslCertificate->getCrt(), $sslCertificate->getCsr());
         } catch (\Exception $e) {
             logActivity("Realtime Register Ssl. CronJob. Deploy Error: " . $e->getMessage());
         }
@@ -120,7 +113,7 @@ class Manage
     {
         $panelData = $panel->getPanelData();
         self::$panel = $panelData['platform'];
-        $api = sprintf('\MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Ssl\%', ucfirst($panelData['platform']));
+        $api = '\MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Ssl\\' .  ucfirst($panelData['platform']);
 
         if (!class_exists($api)) {
             throw new DeployException(sprintf('Platform `%s` not supported.', $panelData['platform']), 12);

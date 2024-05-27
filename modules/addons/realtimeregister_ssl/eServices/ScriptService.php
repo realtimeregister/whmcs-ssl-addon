@@ -63,14 +63,14 @@ class ScriptService
 
         $csrWithData = false;
         $csrData = [];
-        if($profile_data_csr) {
+        if ($profile_data_csr) {
             $service = new Service($serviceId);
-            $client =  new Client($service->clientID);
+            $client = new Client($service->clientID);
 
             $csrData['country'] = $client->getCountry();
             $csrData['state'] = $client->getState();
             $csrData['locality'] = $client->getCity();
-            $csrData['organization'] = $client->companyname;
+            $csrData['organization'] = $client->companyname ?: $client->getFullName();
             $csrData['org_unit'] = 'IT';
             $csrData['common_name'] = $service->domain;
             $csrData['email'] = $client->email;

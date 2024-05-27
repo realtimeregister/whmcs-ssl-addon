@@ -125,7 +125,7 @@ class EmailTemplateService
         $template->delete();
     }
     
-    public static function createCertyficateTemplate()
+    public static function createCertificateTemplate()
     {
         if (!is_null(self::getTemplate(self::SEND_CERTIFICATE_TEMPLATE_ID))) {
             return 'Template exist, nothing to do here';

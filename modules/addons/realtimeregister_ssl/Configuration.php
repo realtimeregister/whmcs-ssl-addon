@@ -151,7 +151,7 @@ class Configuration extends AbstractConfiguration
         (new OrdersRepo())->createOrdersTable();
         (new KeyToIdMapping())->createTable();
         EmailTemplateService::createConfigurationTemplate();
-        EmailTemplateService::createCertyficateTemplate();
+        EmailTemplateService::createCertificateTemplate();
         EmailTemplateService::createExpireNotificationTemplate();
         EmailTemplateService::createRenewalTemplate();
         EmailTemplateService::createReissueTemplate();

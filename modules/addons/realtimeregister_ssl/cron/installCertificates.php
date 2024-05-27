@@ -30,13 +30,24 @@ foreach ($orders as $order) {
     $key = decrypt($details['private_key']);
 
     try {
-        $service = new Service();
-        $serviceCpanel = $service->getServiceByDomain($order->client_id, $order->domain);
+        if ($order->domain) {
+            $result = \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::prepareDeploy($order->service_id, $order->domain);
+        }
 
-        if ($serviceCpanel === false) {
+        /** @var \MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Client $client */
+        $client = new \MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Client(
+            \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::loadPanel($order->domain)
+        );
+
+
+        $service = new Service();
+        $panel = $service->getServiceByDomain($order->client_id, $order->domain);
+
+        if ($panel === false) {
             continue;
         }
 
+        $panel->
         $cpanel = new Cpanel();
         $cpanel->setService($serviceCpanel);
         $cpanel->installSSL($serviceCpanel->user, $order->domain, $cert, $key, $cabundle);

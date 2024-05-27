@@ -30,8 +30,12 @@ class Repository extends MainRepository
             ->select([$this->tableName.'.*', 'tblsslorders.configdata', 'tblhosting.domain'])
             ->join('tblhosting', 'tblhosting.id', '=', $this->tableName.'.service_id')
             ->join('tblsslorders', 'tblsslorders.serviceid', '=', $this->tableName.'.service_id')
-            ->where($this->tableName.'.status', 'Pending Installation')
-            ->where('tblsslorders.configdata', 'like', '%-----BEGIN CERTIFICATE-----%')
+            ->where([
+                [$this->tableName.'.status', 'NOT LIKE', '%"ssl_status":"COMPLETED"%'],
+                [$this->tableName.'.status', 'NOT LIKE', '%"ssl_status":"INVALID"%'],
+                [$this->tableName.'.status', 'NOT LIKE', '%"ssl_status":"REJECTED"%'],
+            ])
+            ->orWhere('tblsslorders.status', 'Configuration Submitted')
             ->get();
     }
 

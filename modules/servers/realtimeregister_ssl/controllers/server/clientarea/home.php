@@ -9,6 +9,8 @@ use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage;
+use MGModule\RealtimeRegisterSsl\eServices\Deploy\Panel;
 use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
@@ -110,9 +112,8 @@ class home extends AbstractController
                         $sslOrderRepo = new OrderRepo();
                         $checkOrderSSL = $sslOrderRepo->checkOrdersInstallation($serviceId);
 
-                        $service = new Service();
-                        $serviceCpanel = $service->getServiceByDomain($input['params']['userid'], $input['params']['domain']);
-                        if ($serviceCpanel !== false && $checkOrderSSL === true) {
+                        $panelData = Panel::getPanelData($input['params']['domain']);
+                        if ($panelData !== false && $checkOrderSSL === true) {
                             $vars['btnInstallCrt'] = true;
                         }
                     }
@@ -414,6 +415,7 @@ class home extends AbstractController
 
             $errorInvoiceExist = false;
             $cron = new Cron();
+            // TODO fix the following lines
             $service = \WHMCS\Service\Service::where('id', $input['id'])->get();
             $result = $cron->createAutoInvoice([$input['params']['pid'] => $service], $input['id'], true);
             if (is_array($result) && isset($result['invoiceID'])) {
