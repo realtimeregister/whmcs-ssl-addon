@@ -25,18 +25,20 @@ $orders = $orderRepo->getOrdersInstallation();
 foreach ($orders as $order) {
     $details = json_decode($order->configdata, true);
 
+    dd($order->id);
     $cert = $details['crt'];
     $cabundle = $details['ca'];
     $key = decrypt($details['private_key']);
 
     try {
-        if ($order->domain) {
-            $result = \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::prepareDeploy($order->service_id, $order->domain);
+
+        if ($details['domain']) {
+            $result = \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::prepareDeploy($order->service_id, $details['domain']);
         }
 
         /** @var \MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Client $client */
         $client = new \MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Client(
-            \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::loadPanel($order->domain)
+            \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::loadPanel($details['domain'])
         );
 
 
@@ -47,7 +49,6 @@ foreach ($orders as $order) {
             continue;
         }
 
-        $panel->
         $cpanel = new Cpanel();
         $cpanel->setService($serviceCpanel);
         $cpanel->installSSL($serviceCpanel->user, $order->domain, $cert, $key, $cabundle);

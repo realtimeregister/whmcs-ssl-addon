@@ -14,6 +14,7 @@ use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Dns\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\FlashService;
 use MGModule\RealtimeRegisterSsl\eServices\ScriptService;
 use MGModule\RealtimeRegisterSsl\eServices\TemplateService;
@@ -399,6 +400,7 @@ class ClientReissueCertificate
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
         $orderDetails = $processesApi->get($this->sslService->remoteid);
 
+        // TODO add dns management
         // dns manager
         sleep(2);
         $dnsmanagerfile = dirname(

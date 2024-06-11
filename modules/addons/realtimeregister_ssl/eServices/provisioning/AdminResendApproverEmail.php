@@ -52,7 +52,7 @@ class AdminResendApproverEmail extends Ajax
         foreach ($data['validations']['dcv']['entities'] as $validation) {
             $domainControlValidations[] = [
                 'commonName' => $validation['commonName'],
-                'type' => $validation['type'],
+                'type' => (strtoupper($validation['type']) === 'HTTP' ? 'FILE' : strtoupper($validation['type'])),
                 'email' => $validation['email'],
             ];
         }

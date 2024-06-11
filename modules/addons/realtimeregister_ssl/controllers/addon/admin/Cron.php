@@ -473,12 +473,14 @@ class Cron extends AbstractController
         Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Products Price Updater completed.");
         return [];
     }
+
     private function checkOrdersStatus($sslorders, $processingOnly = false)
     {
         $cids = [];
         foreach ($sslorders as $sslorder) {
             $cids[] = $sslorder->remoteid;
         }
+
         try
         {
             $configDataUpdate = new UpdateConfigs($cids, $processingOnly);
@@ -491,6 +493,7 @@ class Cron extends AbstractController
             );
         }
     }
+
     public function dailyStatusCheckCRON($input, $vars = [])
     {
         echo 'Certificates (ssl status Completed) Data Updater started.' . PHP_EOL;

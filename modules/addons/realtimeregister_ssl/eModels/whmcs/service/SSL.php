@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MGModule\RealtimeRegisterSsl\eModels\whmcs\service;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -159,22 +161,23 @@ class SSL extends \Illuminate\Database\Eloquent\Model
 
     public function setSansDomains($domains)
     {
-        $fileds                 = (array) $this->getConfigdataKey('fields');
-        $fileds['sans_domains'] = $domains;
-        $this->setConfigdataKey('fields', $fileds);
+        $fields = (array) $this->getConfigdataKey('fields');
+        $fields['sans_domains'] = $domains;
+        $this->setConfigdataKey('fields', $fields);
     }
 
     public function setApproverEmails($emails)
     {
-        $fileds['approveremails'] = $emails;
-        $this->setConfigdataKey('fields', $fileds);
+        $fields = (array) $this->getConfigdataKey('fields');
+        $fields['approveremails'] = $emails;
+        $this->setConfigdataKey('fields', $fields);
     }
 
     public function setApproverEmail($email)
     {
-        $fileds                  = (array) $this->getConfigdataKey('fields');
-        $fileds['approveremail'] = $email;
-        $this->setConfigdataKey('fields', $fileds);
+        $fields = (array) $this->getConfigdataKey('fields');
+        $fields['approveremail'] = $email;
+        $this->setConfigdataKey('fields', $fields);
     }
     
     public function setSubscriptionStarts($date)
