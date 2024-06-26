@@ -41,14 +41,15 @@ You are highly welcome to send us requests for new features, suggestions, issues
 - Automated Price import and commission setup
 - Multibrand For WHMCS support
 
-### Sub-Reseller network
-We support ["Products Reseller For WHMCS"](https://www.modulesgarden.com/products/whmcs/products-reseller#features) module from Modules Garden allowing to have own Sub-Resellers using WHMCS to expand your network. Please review [documentation](https://github.com/gogetssl/whmcs-addon/wiki/Sub-Resellers-module) for more details
-
 ### cPanel AutoSSL Installation 
 We provide ["cPanel AutoSSL installation"](https://github.com/gogetssl/whmcs-addon/wiki/cPanel-AutoSSL), allowing to validate and install SSL certificates automatically. 
 ***
 
 ### License
 This project is licensed under the MIT License
+
+### Plesk module
+The files inside modules/whmcs-addon/modules/addons/realtimeregister_ssl/eServices/ManagementPanel/Deploy/API/Platforms/Module/ext-realtime-register-ssl-file-upload-helper 
+need to be put in their own .zip module (no initial directory, so meta.xml should not be inside a directory(!)) 
 
 

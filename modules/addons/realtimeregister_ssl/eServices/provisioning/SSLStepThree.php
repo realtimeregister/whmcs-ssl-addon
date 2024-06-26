@@ -3,10 +3,6 @@
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use HostcontrolSSL\Services\File\FileControl;
-use MGModule\DNSManager2\addon;
-use MGModule\DNSManager2\loader;
-use MGModule\DNSManager2\mgLibs\custom\helpers\DomainHelper;
 use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
@@ -18,6 +14,7 @@ use MGModule\RealtimeRegisterSsl\eServices\Deploy\Panel;
 use MGModule\RealtimeRegisterSsl\eServices\Deploy\Panel\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\FlashService;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
@@ -384,7 +381,7 @@ class SSLStepThree
                 $panel = \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel::getPanelData($data['commonName']);
 
                 if ($data['type'] == 'FILE') {
-                    $result = \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl::create(
+                    $result = FileControl::create(
                         [
                             'fileLocation' => $data['fileLocation'], // whole url,
                             'fileContents' => $data['fileContents']

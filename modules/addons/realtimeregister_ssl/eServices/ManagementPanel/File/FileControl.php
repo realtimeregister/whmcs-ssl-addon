@@ -6,7 +6,6 @@ namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File;
 
 use Exception;
 use HostcontrolSSL\Service\Certificate;
-use \HostcontrolSSL\Exceptions\DefaultException;
 use HostcontrolSSL\Services\Validation\Manage as ValidationManage;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Manage as FileManage;
@@ -17,7 +16,7 @@ class FileControl
      * @param Certificate $certificate
      * @param Manage $panel
      * @return array
-     * @throws DefaultException
+     * @throws \Exception
      */
     public static function getData($certificate, $panel)
     {
@@ -61,7 +60,6 @@ class FileControl
     /**
      * @param Certificate $certificate
      * @return array
-     * @throws DefaultException
      * @throws Exception
      */
     public static function getExpected($certificate)
@@ -72,7 +70,7 @@ class FileControl
         if ($type == 'ee') {
             try {
                 $key = $certificate->authenticationKey($certificate->info());
-            } catch (DefaultException $e) {
+            } catch (Exception $e) {
                 return null;
             }
             $file['dir'] = '.well-known/pki-validation/';
@@ -105,7 +103,7 @@ class FileControl
     /**
      *
      * @param Certificate $certificate
-     * @throws DefaultException
+     * @throws Exception
      */
     public static function downloadFile($certificate)
     {

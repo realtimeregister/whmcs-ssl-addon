@@ -54,7 +54,7 @@ class Client
         return $this;
     }
 
-    private function setOptions(string $method, array $post, $content = null)
+    private function setOptions(string $method, $post, $content = null)
     {
         $this->options = [
             CURLOPT_URL => $this->url,
@@ -91,7 +91,7 @@ class Client
     /**
      * @throws Exception
      */
-    protected function request(string $method = 'GET', array $post = [], string $content = null)
+    protected function request(string $method = 'GET', $post, string $content = null)
     {
         $curl = curl_init();
 
@@ -129,7 +129,7 @@ class Client
         }
 
         if ($cResponse) {
-            return $this->parseResponse();
+            return $this->parseResponse($this->response['body']);
         }
 
         if ($error) {
@@ -166,7 +166,7 @@ class Client
     {
     }
 
-    protected function parseResponse(string $response): string
+    protected function parseResponse(string $response)
     {
     }
 }

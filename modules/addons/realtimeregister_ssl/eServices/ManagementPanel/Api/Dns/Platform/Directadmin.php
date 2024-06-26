@@ -112,7 +112,7 @@ class Directadmin extends Client implements PlatformInterface
      * @param mixed $response
      * @return mixed
      */
-    protected function parseResponse(string $response)
+    protected function parseResponse(string $response): string
     {
         return $response;
     }

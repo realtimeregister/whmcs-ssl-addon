@@ -104,10 +104,9 @@ class Cpanel extends Client implements PlatformInterface
     }
 
     /**
-     * @return mixed
      * @throws DNSException
      */
-    protected function parseResponse(string $response): string
+    protected function parseResponse(string $response)
     {
         $result = json_decode($response);
         if (isset($result->cpanelresult, $result->cpanelresult->error)) {

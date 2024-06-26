@@ -35,12 +35,16 @@ foreach ($orders as $order) {
         if ($details['domain']) {
             $result = \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::prepareDeploy($order->service_id, $details['domain']);
         }
-
+dd($order->domain);
+        dd(\MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::loadPanel($details['domain']));
         /** @var \MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Client $client */
         $client = new \MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Client(
             \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::loadPanel($details['domain'])
         );
 
+
+        dd($order);
+        $manage = new \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage();
 
         $service = new Service();
         $panel = $service->getServiceByDomain($order->client_id, $order->domain);

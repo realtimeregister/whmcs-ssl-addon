@@ -26,7 +26,7 @@ class Client
      *
      * @var string
      */
-    private $ua = 'Hostcontrol-%s/WHMCS-%s';
+    private $ua = 'RealtimeRegister-%s/WHMCS-%s';
 
     public function __construct(array $params = [])
     {
@@ -51,7 +51,7 @@ class Client
         return $this;
     }
 
-    private function setOptions(string $method, array $post, $content = null)
+    private function setOptions(string $method, $post, $content = null)
     {
         $this->options = [
             CURLOPT_URL => $this->url,

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform\PlatformInterface;
 use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
 
 class Manage
@@ -17,7 +16,7 @@ class Manage
     private static $instance;
 
     /**
-     * @param \HostcontrolPanel\Manage $panel
+     * @param array $panel
      * @param array $options
      * @throws Exception
      */
@@ -30,50 +29,38 @@ class Manage
         }
     }
 
-
     /**
-     * @param \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage $panel
-     * @return array
+     * @param array $records Records [$type => ['name' => $name, 'value' => $value]]
      * @throws Exception
      */
-    public static function addRecord($panel, array $dcvData)
+    public static function addRecord(array $panel, string $domain, array $dcvRecords)
     {
-        foreach ($dcvData as $record) {
-            try {
-                /** @var PlatformInterface */
-                self::$instance->createDNSRecord($record['commonName'], $record['name'], $record['value'], $record['dnsType']);
-            } catch (Exception $ex) {
-                throw new DNSException($ex->getMessage());
-            }
-        }
+        self::loadPanel($panel);
+
+        self::createRecords($dcvRecords, $domain);
 
         return 'Record(s) has been successfully added.';
     }
 
     /**
-     * @param array $records
-     * @param string $domain
      * @throws Exception
      */
-    private static function createRecords($records, $domain)
+    private static function createRecords(array $records, string $domain)
     {
-        foreach ($records as $type => $record) {
+        foreach ($records as $record) {
             try {
-                self::$instance->createDNSRecord($domain, $record['name'], $record['value'], $type);
+                self::$instance->createDNSRecord($domain, $record['dnsRecord'], $record['dnsContents'], $record['dnsType']);
             } catch (Exception $ex) {
                 throw new DNSException($ex->getMessage());
             }
         }
     }
 
-
     /**
-     * @param \HostcontrolPanel\Manage $panel
-     * @param string $name
      * @return mixed
      * @throws Exception
      */
-    public function getPanelRecords($panel, $name)
+    public function getPanelRecords(array $panel, string $name)
     {
         self::loadPanel($panel);
 
@@ -81,9 +68,9 @@ class Manage
     }
 
     /**
-     * @param \HostcontrolPanel\Manage $panel
+     * @param array $panel
      * @param string $domain Domain for which find records
-     * @param $expRecords searched record
+     * @param array $expRecords searched record
      * @return bool
      * @throws Exception
      */
@@ -106,20 +93,19 @@ class Manage
     }
 
     /**
-     * @param \HostcontrolPanel\Manage $panel
+     * @param array $panel
      * @param array $options
      * @return mixed
      * @throws Exception
      */
-    private function makeInstance($panel, $options)
+    private static function makeInstance($panel, $options)
     {
-        $panelData = $panel->getPanelData();
-        $api = 'MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform\'' . ucfirst($panelData['platform']);
+        $api = 'MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform\\' . ucfirst($panel['platform']);
 
         if (!class_exists($api)) {
-            throw new DNSException(sprintf("Platform `%s` not supported.", $panelData['platform']));
+            throw new DNSException(sprintf("Platform `%s` not supported.", $panel['platform']));
         }
 
-        return new $api($panelData + $options);
+        return new $api($panel + $options);
     }
 }

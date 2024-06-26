@@ -3,16 +3,15 @@
 namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns;
 
 use Exception;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Manage as DNSManage;
-use HostcontrolPanel\Panel;
-use HostcontrolSSL\Service\Certificate;
-use HostcontrolSSL\Services\Validation\Manage as ValidationManage;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Validation\Manage as ValidationManage;
 
 class DnsControl
 {
     /**
      * @param Certificate $certificate
-     * @param \HostcontrolPanel\Manage $panel
+     * @param Manage $panel
      * @return array
      * @throws DefaultException
      */
@@ -20,14 +19,14 @@ class DnsControl
     {
         return [
             'expected' => self::getExpectedRecords($certificate),
-            'created'  => self::hasRecord($certificate, $panel),
+            'created' => self::hasRecord($certificate, $panel),
         ];
     }
 
     /**
      * @param Certificate $certificate
      * @return array
-     * @throws DefaultException
+     * @throws Exception
      */
     public static function getExpectedRecords($certificate)
     {
@@ -41,7 +40,7 @@ class DnsControl
         } elseif ($type == 'ee') {
             $records = [
                 "TXT" => [
-                    'name'  => $domain,
+                    'name' => $domain,
                     'value' => $certificate->authenticationKey($certificate->info()),
                 ],
             ];
@@ -52,7 +51,7 @@ class DnsControl
 
     /**
      * @param Certificate $certificate
-     * @param \HostcontrolPanel\Manage $panel
+     * @param Manage $panel
      * @return bool
      * @throws Exception
      */
@@ -76,26 +75,23 @@ class DnsControl
 
 
     /**
-     * @param Certificate $certificate
-     * @param \HostcontrolPanel\Manage $panel
+     * @param Manage $panel
      * @return array
      * @throws Exception
      */
-    public static function generateRecord($certificate, $panel)
+    public static function generateRecord(array $certificate, $panel)
     {
         try {
-            $result = DNSManage::addRecord($panel, $dcvData);
+            $result = DNSManage::addRecord($panel, $certificate['commonName'], $certificate['validations']['dcv']['entities']);
 
             return [
-                'result'  => $result,
-                'status'  => 'success',
+                'result' => $result,
+                'status' => 'success',
                 'message' => $result,
             ];
-        } catch (DefaultException $e) {
+        } catch (Exception $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
-
-        return ['status' => 'error', 'message' => 'Unknown Error'];
     }
 
     /**
