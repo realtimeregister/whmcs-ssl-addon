@@ -34,6 +34,7 @@ class Plesk extends Client implements PlatformInterface
                     'realtime-register-ssl' => [
                         'install_file_validation' => [
                             'file' => [
+                                'domain' => $this->params['domain'],
                                 'filename' => $path . $file['dir'] . '/' . $file['name'],
                                 'content' => $file['content']
                             ],
