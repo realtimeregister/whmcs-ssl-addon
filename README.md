@@ -52,4 +52,6 @@ This project is licensed under the MIT License
 The files inside modules/whmcs-addon/modules/addons/realtimeregister_ssl/eServices/ManagementPanel/Deploy/API/Platforms/Module/ext-realtime-register-ssl-file-upload-helper 
 need to be put in their own .zip module (no initial directory, so meta.xml should not be inside a directory(!)) 
 
+The plesk module will be used in order to enable file validations. It will be automatically installed every time it is needed
+
 

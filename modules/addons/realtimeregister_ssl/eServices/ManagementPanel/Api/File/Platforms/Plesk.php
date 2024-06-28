@@ -7,6 +7,8 @@ namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Platfo
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Client;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
 use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class Plesk extends Client implements PlatformInterface
 {
@@ -44,86 +46,128 @@ class Plesk extends Client implements PlatformInterface
             ],
         ];
 
-        $response = $this->request('POST', $this->packet($packet));
-        dd($response);
+        $this->request('POST', $this->packet($packet));
+
+        $this->detectAndUpdateExtension();
+
+        $this->request();
+    }
+
+    public function detectAndUpdateExtension()
+    {
+        $ch = curl_init();
+
+        $urlParts = parse_url($this->params['API_URL']);
+
+        curl_setopt($ch, CURLOPT_URL, $urlParts['scheme'] . '://' . $urlParts['host'] . '/api/v2/extensions');
+
+        curl_setopt($ch, CURLOPT_USERPWD, $this->params['API_USER'] . ":" . $this->params['API_PASSWORD']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $res = curl_exec($ch);
+
+        $result = json_decode($res);
+
+        $found = false;
+        foreach ($result as $r) {
+            if ($r->id === 'realtime-register-ssl' && $r->active === true) {
+                $xml = simplexml_load_file(
+                    __DIR__ . '/../../../Deploy/API/Platforms/Module/ext-realtime-register-ssl-file-upload-helper/meta.xml'
+                );
+
+                if ($r->version === (string)$xml->version && $r->release === (string)$xml->release) {
+                    $found = true;
+                }
+            }
+        }
+
+        if (!$found) {
+            $this->removeExtension(); // try, for example, if there is an old version installed
+            $this->uploadExtension();
+        }
+    }
+
+    private function removeExtension()
+    {
+        $ch = curl_init();
+
+        $urlParts = parse_url($this->params['API_URL']);
+
+        curl_setopt(
+            $ch,
+            CURLOPT_URL,
+            $urlParts['scheme'] . '://' . $urlParts['host'] . '/api/v2/extensions/realtime-register-ssl'
+        );
+
+        curl_setopt($ch, CURLOPT_USERPWD, $this->params['API_USER'] . ":" . $this->params['API_PASSWORD']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        curl_exec($ch);
     }
 
     /**
-     * @param array $file [name,content]
-     * @param string $dir
      * @return mixed
      * @throws FileException
      */
-    public function uploadFile_tmp($file, $dir)
+    public function uploadExtension(): string
     {
-        // File to upload
-        $fileName = ltrim($dir . '/' . $file['name'], '/');
-        $fileContents = base64_encode($file['content']);
+        $fileName = $this->createExtensionZipfile();
 
-        $siteId = $this->getSiteId($this->params['domain']);
-dd($siteId);
-        $path = $this->getHostingProperty($this->params['domain'], 'www_root');
+        $url = parse_url($this->params['API_URL']);
 
-        $headers = array(
-            "HTTP_AUTH_LOGIN: " . $this->params['API_USER'],
-            "HTTP_AUTH_PASSWD: " . $this->params['API_PASSWORD'],
-            "HTTP_PRETTY_PRINT: TRUE",
-            "Content-Type: multipart/form-data;",
-        );
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url['scheme'] . '://' . $url['host'] . ':8443' . $url['path']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'HTTP_AUTH_LOGIN: ' . $this->params['API_USER'],
+            'HTTP_AUTH_PASSWD: ' . $this->params['API_PASSWORD'],
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, [
+            'myfile' => new \CURLFile($fileName),
+        ]);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
-        // Initialize the curl engine
+        $response = curl_exec($ch);
+
+        $xml = simplexml_load_string($response);
+
+        curl_close($ch);
+        if ($xml && (string)$xml->upload->result->status === 'ok') {
+            $this->installExtension((string)$xml->upload->result->file);
+        }
+        throw new FileException('Extension uploaded not successful');
+    }
+
+    private function installExtension(string $location)
+    {
         $ch = curl_init();
 
-        // Set the curl options
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        // this line makes it work under https
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $urlParts = parse_url($this->params['API_URL']);
 
-        // Set the URL to be processed
-        curl_setopt($ch, CURLOPT_URL, 'https://plesk.yoursrs.com:8443/enterprise/control/agent.php');
+        curl_setopt($ch, CURLOPT_URL, $urlParts['scheme'] . '://' . $urlParts['host'] . '/api/v2/extensions');
 
-        $filename = '/tmp/random.txt';
-        curl_setopt($ch, CURLOPT_POSTFIELDS,
-            ['/tmp/blaat.txt'=>"@$filename"]
-        );
-//dd(curl_getinfo($ch));
-        $result = curl_exec($ch);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->params['API_USER'] . ":" . $this->params['API_PASSWORD']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'HTTP_AUTH_LOGIN: ' . $this->params['API_USER'],
+            'HTTP_AUTH_PASSWD: ' . $this->params['API_PASSWORD'],
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+            'file' => $location
+        ]));
+        $res = curl_exec($ch);
 
-        if (curl_errno($ch)) {
-            echo "\n\n-------------------------\n" .
-                "cURL error number:" .
-                curl_errno($ch);
-            echo "\n\ncURL error:" . curl_error($ch);
+        $result = json_decode($res,true);
+
+        if ($result['status'] === 'success') {
+            return true;
         }
-dd($result);
-        curl_close($ch);
 
-//fclose($fp);
-
-        return;
-//
-//        // Prepare the XML request
-
-//
-//
-//        try {
-//            $response = $this->request('POST', $xmlRequest);
-//        } catch (FileException $ex) {
-//            dd($ex);
-//            if (strpos($ex->getMessage(), "The file “” does not exist") !== false) {
-//                return $this->makeFileWithPath($file, $dir);
-//            } else {
-//                throw new FileException($ex->getMessage());
-//            }
-//        }
-//        dd($response);
-//
-//        if (isset($response->cpanelresult->error)) {
-//            throw new FileException($response->cpanelresult->error);
-//        }
-//
-//        return "success";
+        return false;
     }
 
     /**
@@ -133,7 +177,7 @@ dd($result);
     public function getSiteId(string $domain): string
     {
         if (!$this->siteInformation) {
-        $this->getSiteInformation($domain);
+            $this->getSiteInformation($domain);
         }
         return (string)$this->siteInformation->id;
     }
@@ -206,8 +250,12 @@ dd($result);
      */
     protected function setAuth()
     {
-        array_unshift($this->options[CURLOPT_HTTPHEADER], sprintf("HTTP_AUTH_LOGIN: %s", $this->params['API_USER']),
-            sprintf("HTTP_AUTH_PASSWD: %s", $this->params['API_PASSWORD']), "HTTP_PRETTY_PRINT: TRUE");
+        array_unshift(
+            $this->options[CURLOPT_HTTPHEADER],
+            sprintf("HTTP_AUTH_LOGIN: %s", $this->params['API_USER']),
+            sprintf("HTTP_AUTH_PASSWD: %s", $this->params['API_PASSWORD']),
+            "HTTP_PRETTY_PRINT: TRUE"
+        );
     }
 
     /**
@@ -217,7 +265,6 @@ dd($result);
      */
     protected function parseResponse($response)
     {
-        dump($response);
         $xml = new \SimpleXMLElement($response);
         if (isset($xml->status) && (string)$xml->status == 'error') {
             throw new DNSException((string)$xml->errtext);
@@ -233,5 +280,37 @@ dd($result);
     public function getFile(string $file, string $dir)
     {
         // TODO: Implement getFile() method.
+    }
+
+
+    private function createExtensionZipfile(): string
+    {
+        // First create the file
+        $tmpFile = sys_get_temp_dir() . '/' . uniqid();
+        $moduleDir = realpath(__DIR__ . '/../../../Deploy/API/Platforms/Module/ext-realtime-register-ssl-file-upload-helper');
+
+        $zip = new \ZipArchive();
+
+        $zip->open($tmpFile, \ZipArchive::CREATE);
+
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($moduleDir),
+            RecursiveIteratorIterator::LEAVES_ONLY
+        );
+
+        foreach ($files as $file) {
+            if (!$file->isDir()) {
+                // Get real and relative path for current file
+                $filePath = $file->getRealPath();
+                $relativePath = substr($filePath, strlen($moduleDir) + 1);
+
+                // Add current file to archive
+                $zip->addFile($filePath, $relativePath);
+            }
+        }
+
+        $zip->close();
+
+        return $tmpFile;
     }
 }

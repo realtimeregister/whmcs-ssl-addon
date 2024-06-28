@@ -1,1 +1,1 @@
-This extension is needed for file validation of ssl requests
+This extension is needed for file validation of ssl requests done via the Realtime Register SSL API

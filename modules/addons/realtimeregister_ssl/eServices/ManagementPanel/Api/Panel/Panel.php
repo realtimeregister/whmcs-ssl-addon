@@ -78,7 +78,7 @@ class Panel
             case "plesk":
                 $allowance = [
                     'dns' => true,
-                    'file' => false,
+                    'file' => true,
                     'deploy' => true,
                     'nokey' => false,
                 ];

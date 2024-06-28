@@ -3,7 +3,7 @@
 <module>
     <id>realtime-register-ssl</id>
     <name>Realtime Register SSL File upload helper</name>
-    <description>This module is used for file validation with the Realtime Register SSL module, it will be automaticly installed when needed</description>
+    <description>This module is used for file validation with the WHMCS Realtime Register SSL module, it will be automaticly installed when needed, it can be removed when WHMCS isn't used anymore</description>
     <category>security</category>
     <version>1.0</version>
     <release>1</release>

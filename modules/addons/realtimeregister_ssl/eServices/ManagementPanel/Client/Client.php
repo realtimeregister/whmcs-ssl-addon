@@ -76,7 +76,7 @@ class Client extends AbstractClient
             'User-Agent' => $this->getUserAgent(),
             'Authorization' => 'Basic ' . base64_encode(implode(':', $this->getAuth())),
         ];
-        $response = $request = $this->client->request(strtoupper($type), $url, $options)-;
+        $response = $request = $this->client->request(strtoupper($type), $url, $options)->getBody();
 
         if ($this->args['debug']) {
             new Debug($this->getBaseUrl() . $url, $type, $request, $response, json_encode($options));
@@ -85,7 +85,7 @@ class Client extends AbstractClient
         try {
             return json_decode((string)$response->getBody(), true);
         } catch (Exception $e) {
-            return json_decode([], true);
+            return json_decode($e->getMessage(), true);
         }
     }
 }
