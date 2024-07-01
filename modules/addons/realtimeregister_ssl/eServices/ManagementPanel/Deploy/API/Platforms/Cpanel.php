@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\Platforms;
 
+use GuzzleHttp\Exception\GuzzleException;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
 use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
+use function GuzzleHttp\Psr7\build_query;
 
 class Cpanel extends Client implements PlatformInterface
 {
-    private int $port = 2083;
+    private int $port = 2087;
+
+    //https://hostname.example.com:2087/cpsess##########/json-api/installssl?api.version=1
 
     private array $uri = [
         'generate_key' => 'json-api/cpanel?cpanel_jsonapi_apiversion=3&cpanel_jsonapi_module=SSL&cpanel_jsonapi_func=generate_key',
         'list_keys' => 'json-api/cpanel?cpanel_jsonapi_apiversion=3&cpanel_jsonapi_module=SSL&cpanel_jsonapi_func=list_keys',
         'generate_csr' => 'json-api/cpanel?cpanel_jsonapi_apiversion=3&cpanel_jsonapi_module=SSL&cpanel_jsonapi_func=generate_csr',
-        'ssl_upload_cert' => 'json-api/cpanel?cpanel_jsonapi_apiversion=3&cpanel_jsonapi_module=SSL&cpanel_jsonapi_func=upload_cert',
-        'ssl_install_ssl' => 'json-api/cpanel?cpanel_jsonapi_apiversion=3&cpanel_jsonapi_module=SSL&cpanel_jsonapi_func=install_ssl',
+        'ssl_install_ssl' => 'json-api/installssl?api.version=3',
         'show_key' => 'json-api/cpanel?cpanel_jsonapi_apiversion=3&cpanel_jsonapi_module=SSL&cpanel_jsonapi_func=show_key',
     ];
 
@@ -59,7 +62,7 @@ class Cpanel extends Client implements PlatformInterface
         ];
 
         try {
-            $response = $this->url([$this->uri['generate_key']], false, true)->request('POST', $args);
+            $response = $this->url($this->uri['generate_key'])->request('POST', $args);
         } catch (DeployException $ex) {
             throw new DeployException($ex->getMessage());
         }
@@ -107,22 +110,6 @@ class Cpanel extends Client implements PlatformInterface
      */
     public function uploadCertificate(string $domain, string $crt)
     {
-        $name = $domain . "_realtimeregister_ssl_autodeploy";
-        $args = [
-            'crt' => $crt,
-            'friendly_name' => $name,
-        ];
-
-        try {
-            $response = $this->url([$this->uri['ssl_upload_cert']], false, true)->request('POST', $args);
-        } catch (DeployException $ex) {
-            throw new DeployException($ex->getMessage());
-        }
-
-        if (isset($response->result->errors)) {
-            throw new DeployException($response->result->errors[0]);
-        }
-
         return "success";
     }
 
@@ -138,7 +125,7 @@ class Cpanel extends Client implements PlatformInterface
         ];
 
         try {
-            $response = $this->url([$this->uri['show_key']], false, true)->request('POST', $args);
+            //$response = $this->url([$this->uri['show_key']], false, true)->request('POST', $args);
         } catch (DeployException $ex) {
             throw new DeployException($ex->getMessage());
         }
@@ -156,41 +143,31 @@ class Cpanel extends Client implements PlatformInterface
      * @param $crt
      * @param $ca
      * @return string
-     * @throws DeployException
+     * @throws DeployException|GuzzleException
      */
     public function installCertificate($domain, $key, $crt, $csr = null, $ca = null): string
     {
         $args = [
-            'domain' => $domain,
-            'cert' => $crt,
-            'key' => $key,
+           'domain' => $domain,
+           'crt' => $crt,
+           'key' => $key
         ];
         if (isset($ca)) {
-            $args['cabundle'] = $crt['ca'];
+            $args['cabundle'] = $ca;
         }
 
-        try {
-            $response = $this->url([$this->uri['ssl_install_ssl']], false, true)->request('POST', $args);
-        } catch (DeployException $ex) {
-            throw new DeployException($ex->getMessage());
-        }
+        $response = $this->request($this->url($this->uri['ssl_install_ssl']), 'GET', $args);
 
-        if (isset($response->cpanelresult->errors)) {
-            throw new DeployException($response->cpanelresult->errors[0]);
+        if ($response['metadata']['result'] != 1) {
+            throw new DeployException($response['metadata']['reason']);
         }
 
         return "success";
     }
 
-    protected function setAuth()
+    protected function getAuth() : array
     {
-        array_unshift(
-            $this->options[CURLOPT_HTTPHEADER],
-            sprintf(
-                "Authorization: Basic %s",
-                base64_encode($this->params['API_USER'] . ":" . $this->params['API_PASSWORD'])
-            )
-        );
+        return [$this->args['API_USER'], $this->args['API_PASSWORD']];
     }
 
     /**
@@ -210,5 +187,36 @@ class Cpanel extends Client implements PlatformInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function request(string $url, string $type = 'GET', array $options = [])
+    {
+        $url = $url  . '&' . build_query($options);
+        $options['headers'] = [
+            'User-Agent' => $this->getUserAgent()
+        ];
+
+        $response = $this->client->request(strtoupper($type), $url, $options);
+
+        if ($this->args['debug']) {
+            //new Debug($this->getBaseUrl() . $url, $type, $request, $response, json_encode($options));
+        }
+
+        try {
+            return json_decode((string)$response->getBody(), true);
+        } catch (\Exception $e) {
+            return json_decode([], true);
+        }
+    }
+
+    protected function getBaseUrl() : string
+    {
+        return substr($this->args['API_URL'], 0, strlen($this->args['API_URL']) -1)
+            . ':'
+            . $this->args['API_PORT']
+            . '/';
     }
 }

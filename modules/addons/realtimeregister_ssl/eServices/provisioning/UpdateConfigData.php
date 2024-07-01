@@ -37,6 +37,9 @@ class UpdateConfigData
             return;
         }
 
+        $order = null;
+        $caBundle = null;
+
         if (empty($this->orderdata)) {
             /** @var CertificatesApi $certificatesApi */
             $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
@@ -49,6 +52,7 @@ class UpdateConfigData
             if ($certificateResults->count() === 1) {
                 /** @var Certificate $order */
                 $order = $certificateResults[0];
+                $caBundle = base64_decode($certificatesApi->downloadCertificate($order->id, 'CA_BUNDLE'));
             }
         } else {
             $order = $this->orderdata;
@@ -91,6 +95,7 @@ class UpdateConfigData
 
             $sslOrder->setValidFrom($order->startDate);
             $sslOrder->setValidTill($order->expiryDate);
+            $sslOrder->setCa($caBundle);
 
             $sslOrder->setSubscriptionStarts($order->startDate);
             $sslOrder->setSubscriptionEnds($order->expiryDate);
@@ -110,8 +115,7 @@ class UpdateConfigData
             $sslOrder->setSanDetails($order->san);
 
             $sslOrder->save();
-
-            return $order;
         }
+        return $order;
     }
 }

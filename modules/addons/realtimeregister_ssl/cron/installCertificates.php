@@ -1,6 +1,6 @@
 <?php
 
-use MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
 use WHMCS\Database\Capsule as DB;
 use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
 use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
@@ -24,38 +24,14 @@ $orders = $orderRepo->getOrdersInstallation();
 
 foreach ($orders as $order) {
     $details = json_decode($order->configdata, true);
-
-    dd($order->id);
     $cert = $details['crt'];
-    $cabundle = $details['ca'];
+    $caBundle = $details['ca'];
     $key = decrypt($details['private_key']);
 
     try {
-
         if ($details['domain']) {
-            $result = \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::prepareDeploy($order->service_id, $details['domain']);
+            Manage::prepareDeploy($order->service_id, $details['domain'], $cert, $details['csr'], $key, $caBundle);
         }
-dd($order->domain);
-        dd(\MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::loadPanel($details['domain']));
-        /** @var \MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Client $client */
-        $client = new \MGModule\RealtimeRegisterSsl\eServices\Deploy\API\Client(
-            \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage::loadPanel($details['domain'])
-        );
-
-
-        dd($order);
-        $manage = new \MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage();
-
-        $service = new Service();
-        $panel = $service->getServiceByDomain($order->client_id, $order->domain);
-
-        if ($panel === false) {
-            continue;
-        }
-
-        $cpanel = new Cpanel();
-        $cpanel->setService($serviceCpanel);
-        $cpanel->installSSL($serviceCpanel->user, $order->domain, $cert, $key, $cabundle);
 
         $logsRepo->addLog(
             $order->client_id,
@@ -71,8 +47,6 @@ dd($order->domain);
             'error',
             '['.$order->domain.'] Error: '.$e->getMessage()
         );
-        continue;
-
     }
 }
 

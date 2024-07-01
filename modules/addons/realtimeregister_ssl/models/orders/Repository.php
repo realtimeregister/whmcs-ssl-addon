@@ -34,6 +34,7 @@ class Repository extends MainRepository
                 [$this->tableName.'.status', 'NOT LIKE', '%"ssl_status":"COMPLETED"%'],
                 [$this->tableName.'.status', 'NOT LIKE', '%"ssl_status":"INVALID"%'],
                 [$this->tableName.'.status', 'NOT LIKE', '%"ssl_status":"REJECTED"%'],
+                [$this->tableName.'.status', '!=', 'Success']
             ])
             ->orWhere('tblsslorders.status', 'Configuration Submitted')
             ->get();
@@ -108,6 +109,9 @@ class Repository extends MainRepository
     public function updateStatus($serviceid, $status)
     {
         Capsule::table($this->tableName)->where('service_id', $serviceid)->update([
+            'status' => $status
+        ]);
+        Capsule::table('tblsslorders')->where('serviceid', $serviceid)->update([
             'status' => $status
         ]);
     }
