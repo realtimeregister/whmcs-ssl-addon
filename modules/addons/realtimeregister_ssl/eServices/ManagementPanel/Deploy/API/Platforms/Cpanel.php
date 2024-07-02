@@ -156,7 +156,9 @@ class Cpanel extends Client implements PlatformInterface
             $args['cabundle'] = $ca;
         }
 
-        $response = $this->request($this->url($this->uri['ssl_install_ssl']), 'GET', $args);
+        $url = $this->uri['ssl_install_ssl']  . '&' . build_query($args);
+
+        $response = $this->request($this->url($url));
 
         if ($response['metadata']['result'] != 1) {
             throw new DeployException($response['metadata']['reason']);
@@ -187,29 +189,6 @@ class Cpanel extends Client implements PlatformInterface
         }
 
         return $result;
-    }
-
-    /**
-     * @throws GuzzleException
-     */
-    public function request(string $url, string $type = 'GET', array $options = [])
-    {
-        $url = $url  . '&' . build_query($options);
-        $options['headers'] = [
-            'User-Agent' => $this->getUserAgent()
-        ];
-
-        $response = $this->client->request(strtoupper($type), $url, $options);
-
-        if ($this->args['debug']) {
-            //new Debug($this->getBaseUrl() . $url, $type, $request, $response, json_encode($options));
-        }
-
-        try {
-            return json_decode((string)$response->getBody(), true);
-        } catch (\Exception $e) {
-            return json_decode([], true);
-        }
     }
 
     protected function getBaseUrl() : string

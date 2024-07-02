@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\API\Platforms;
 
+use GuzzleHttp\Exception\GuzzleException;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
 use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
 
@@ -12,8 +13,8 @@ class Directadmin extends Client implements PlatformInterface
     private int $port = 2222;
 
     private array $uri = [
-        'CMD_API_SSL' => "/CMD_API_SSL",
-        'CMD_SSL' => "/CMD_SSL",
+        'CMD_API_SSL' => "CMD_API_SSL",
+        'CMD_SSL' => "CMD_SSL",
     ];
 
     private string $contentType = "Content-Type: text/plain";
@@ -65,61 +66,61 @@ class Directadmin extends Client implements PlatformInterface
         return ["status" => "error", "message" => "Unknown Error"];
     }
 
-    public function getKey(string $domain, string $id = null)
-    {
-        $url = $this->uri['CMD_API_SSL'] . "?" . http_build_query(['domain' => $domain]);
-
-        try {
-            $response = $this->url([$url], false, true)
-                ->request('GET');
-        } catch (DeployException $ex) {
-            throw new DeployException($ex->getMessage());
-        }
-        parse_str($response, $output);
-
-        if (isset($output['error']) && $output['error'] == 1) {
-            throw new DeployException($output['text'] . $output['details']);
-        }
-
-        return $output['key'];
-    }
-
     public function uploadCertificate(string $domain, string $crt)
     {
-        return true;
+        return "";
     }
 
     /**
      * @return string
      * @throws DeployException
      */
-    public function installCertificate(string $domain, string $key, string $crt, string $csr = null, string $ca = null)
+    public function installCertificate(string $domain, string $key, string $crt, string $csr = null, string $ca = null): string
     {
-        if (!$key) {
-            $key = $this->getKey($domain);
-        }
-
-        $argc = [
+        $argv = [
             'action' => "save",
             'domain' => $domain,
             'type' => "paste",
-            'certificate' => $key . $crt,
-            'submit' => 'Save',
+            'certificate' => $crt . "\r\n" . $key . "\r\n"
         ];
-        $url = $this->uri['CMD_API_SSL'] . "?" . http_build_query($argc);
-        try {
-            $response = $this->url([$url], false, true)
-                ->request('POST', $argc);
-        } catch (DeployException $ex) {
-            throw new DeployException($ex->getMessage());
-        }
-        parse_str($response, $output);
+        $url = $this->uri['CMD_API_SSL'] . "?" . http_build_query($argv);
+        $output = $this->request($this->url($url), 'POST');
+
         if (isset($output['error']) && $output['error'] == 1) {
-            throw new DeployException($output['text'] . $output['details']);
+            throw new DeployException($output['text'] . "\n" . $output['details']);
         }
 
         if ($output['error'] == 0) {
-            return "success";
+            if ($ca) {
+                return $this->installCaBundle($domain, $ca);
+            }
+            return 'Success';
+        }
+
+        return "Unknown Error";
+    }
+
+    /**
+     * @throws DeployException
+     * @throws GuzzleException
+     */
+    private function installCaBundle(string $domain, string $ca) : string {
+        $argv = [
+            'action' => "save",
+            'domain' => $domain,
+            'type' => "cacert",
+            'active' => "yes",
+            'cacert' => $ca
+        ];
+        $url = $this->uri['CMD_API_SSL'] . "?" . http_build_query($argv);
+        $output = $this->request($this->url($url), 'POST');
+
+        if (isset($output['error']) && $output['error'] == 1) {
+            throw new DeployException($output['text'] . "\n" . $output['details']);
+        }
+
+        if ($output['error'] == 0) {
+            return "Success";
         }
 
         return "Unknown Error";
@@ -145,13 +146,19 @@ class Directadmin extends Client implements PlatformInterface
     }
 
     /**
-     * @param array $options Curl Options
      * @return mixed
      */
-    protected function setAuth()
+    protected function getAuth() : array
     {
-        $this->options[CURLOPT_HTTPAUTH] = CURLAUTH_BASIC;
-        $this->options[CURLOPT_USERPWD] = $this->params['API_USER'] . ":" . $this->params['API_PASSWORD'];
+        return [$this->args['API_USER'], $this->args['API_PASSWORD']];
+    }
+
+    protected function getBaseUrl()
+    {
+        return $this->args['API_URL']
+            . ':'
+            . $this->args['API_PORT']
+            . '/';
     }
 
     /**
@@ -160,6 +167,18 @@ class Directadmin extends Client implements PlatformInterface
      */
     protected function parseResponse($response)
     {
-        return $response;
+        $result = [];
+        foreach (explode("&", urldecode($response)) as $responsePart) {
+            $keyValuePair = explode("=", $responsePart);
+            if ($keyValuePair[0] != "") {
+                $result[$keyValuePair[0]] = $keyValuePair[1];
+            }
+        }
+        return $result;
+    }
+
+    public function getKey(string $domain, string $id): string
+    {
+        return "";
     }
 }

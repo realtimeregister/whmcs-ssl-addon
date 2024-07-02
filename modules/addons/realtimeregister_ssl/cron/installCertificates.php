@@ -13,15 +13,13 @@ define('ADDON_DIR', substr(dirname(__FILE__), 0, strpos(dirname(__FILE__), DS.'c
 require_once WHMCS_MAIN_DIR.DS.'init.php';
 
 require_once ADDON_DIR.DS.'Loader.php';
-$loader = new \MGModule\RealtimeRegisterSsl\Loader();
 $input = [];
-$input['argv'] = $argv ? $argv : $_SERVER['argv'];
+$input['argv'] = $argv ?: $_SERVER['argv'];
 
 $logsRepo = new LogsRepo();
 
 $orderRepo = new OrderRepo();
 $orders = $orderRepo->getOrdersInstallation();
-
 foreach ($orders as $order) {
     $details = json_decode($order->configdata, true);
     $cert = $details['crt'];
