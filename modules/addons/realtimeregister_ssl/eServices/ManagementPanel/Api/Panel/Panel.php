@@ -30,7 +30,7 @@ class Panel
                     return $query->where('hosting.domain', $domain);
                 }
             })
-            ->where('hosting.server', '>', 0)
+            ->where([['hosting.server', '>', 0], ['hosting.domainstatus', '=', 'Active']])
             ->first([
                 'hosting.domain',
                 'hosting.domainstatus',

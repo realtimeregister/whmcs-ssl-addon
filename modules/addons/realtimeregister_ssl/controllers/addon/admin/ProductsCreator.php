@@ -89,7 +89,7 @@ class ProductsCreator extends AbstractController
             $productModel->createPricing($value);
         }
 
-        $apiProduct = $this->apiProductsRepo->getProduct($input[C::API_PRODUCT_ID]);
+        $apiProduct = $this->apiProductsRepo->getProduct((int) $input[C::API_PRODUCT_ID]);
 
         if ($apiProduct->isSanEnabled() && $input[C::PRODUCT_ENABLE_SAN] === 'on') {
             ConfigurableOptionService::createForProduct($newProductId, $productData['name']);

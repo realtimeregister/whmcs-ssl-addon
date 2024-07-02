@@ -51,7 +51,7 @@ class Products
 
         /** @var Product $product */
         foreach ($this->products as $product) {
-            if ($product->product == $id) {
+            if ($product->pid == $id) {
                 return $product;
             }
         }

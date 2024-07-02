@@ -80,9 +80,7 @@ class Manage
         self::loadPanel($domain);
 
         self::$instance->uploadCertificate($domain, $crt);
-        self::$instance->installCertificate($domain, $key, $crt, $csr, $ca);
-
-        return "success";
+        return self::$instance->installCertificate($domain, $key, $crt, $csr, $ca);
     }
 
     /**
@@ -91,30 +89,23 @@ class Manage
      */
     public static function loadPanel($domain, $options = [])
     {
-        $panel = new \HostcontrolPanel\Manage($domain);
+        $panel = new \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage($domain);
 
         if (!isset(self::$instance)) {
             self::$instance = self::makeInstance($panel, $options);
         }
     }
 
-    public static function prepareDeply($sid, $domain, $crt = null)
+    /**
+     * @throws Exception
+     */
+    public static function prepareDeploy($sid, $domain, $crt = null, $csr = null, $key = null, $caBundle = null) : string
     {
-        $manage = new \HostcontrolSSL\Manage(['serviceid' => $sid, 'domainname' => $domain]);
-        /** @var \HostcontrolSSL\Service\Certificate $Certificate */
-        $Certificate = $manage->service('certificate');
-
-        $key = $Certificate->getRsa($sid);
-
-        if (!$crt) {
-            $crt = $Certificate->getCertificate(null, 'crt');
-        }
-        $csr = \HostcontrolSSL\Services\Validation\Manage::getCsrByServiceId($sid);
-
         try {
-            self::deployCertificate($domain, $key, $crt, $csr);
+            return self::deployCertificate($domain, $key, $crt, $csr, $caBundle);
         } catch (Exception $e) {
-            logActivity("hostcontro_ssl. CronJob. Deploy Error: " . $e->getMessage());
+            logActivity("realtimeregister_ssl. CronJob. Deploy Error: " . $e->getMessage());
+            throw $e;
         }
     }
 
@@ -128,7 +119,8 @@ class Manage
     {
         $panelData = $panel->getPanelData();
         self::$panel = $panelData['platform'];
-        $API = sprintf("\HostcontrolSSL\Services\Deploy\API\Platforms\%s", ucfirst($panelData['platform']));
+        $API = sprintf("\MGModule\RealtimeRegisterSsl\\eServices\ManagementPanel\Deploy\Api\Platforms\%s",
+            ucfirst($panelData['platform']));
 
         if (!class_exists($API)) {
             throw new DeployException(sprintf("Platform `%s` not supported.", $panelData['platform']), 12);

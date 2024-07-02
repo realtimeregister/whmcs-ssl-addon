@@ -23,6 +23,11 @@ abstract class AbstractClient
         return $this->args['ote'] == 'on' ? Config::get('api.ote') : Config::get('api.production');
     }
 
+    protected function url(string $endpoint)
+    {
+        return $this->getBaseUrl() . $endpoint;
+    }
+
     /**
      * Check if ignore SSL verify is true of false
      *
@@ -48,6 +53,6 @@ abstract class AbstractClient
      */
     protected function getUserAgent()
     {
-        return Utils::getDefaultUserAgent() . ' WHMCS/' . $GLOBALS['CONFIG']['Version'] . ' Version/' . Config::get('addon.version');
+        return Utils::defaultUserAgent() . ' WHMCS/' . $GLOBALS['CONFIG']['Version'] . ' Version/' . '';//Config::get('addon.version');
     }
 }

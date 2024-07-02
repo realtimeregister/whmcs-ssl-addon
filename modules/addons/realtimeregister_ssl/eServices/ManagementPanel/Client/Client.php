@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client;
 
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Client\Debug;
+use function GuzzleHttp\Psr7\build_query;
 
 /**
  * Class Client
@@ -14,7 +17,7 @@ class Client extends AbstractClient
     /**
      * @var \GuzzleHttp\Client
      */
-    private $client;
+    protected $client;
 
     private $version;
 
@@ -37,7 +40,8 @@ class Client extends AbstractClient
             ],
             'headers' => [
                 'User-Agent' => $this->getUserAgent()
-            ]
+            ],
+            'verify' => false
         ]);
     }
 
@@ -67,8 +71,13 @@ class Client extends AbstractClient
         return $response;
     }
 
+    protected function parseResponse(string $response) {
+        return json_decode($response, true);
+    }
+
     /**
      * @return mixed
+     * @throws GuzzleException
      */
     public function request(string $url, string $type = 'GET', array $options = [])
     {
@@ -76,15 +85,15 @@ class Client extends AbstractClient
             'User-Agent' => $this->getUserAgent(),
             'Authorization' => 'Basic ' . base64_encode(implode(':', $this->getAuth())),
         ];
-        $response = $request = $this->client->request(strtoupper($type), $url, $options)->getBody();
+        $response = $this->client->request(strtoupper($type), $url, $options);
 
         if ($this->args['debug']) {
-            new Debug($this->getBaseUrl() . $url, $type, $request, $response, json_encode($options));
+            new Debug($this->getBaseUrl() . $url, $type, $options['headers'], $response, $options);
         }
 
         try {
-            return json_decode((string)$response->getBody(), true);
-        } catch (Exception $e) {
+            return $this->parseResponse((string) $response->getBody());
+        } catch (\Exception $e) {
             return json_decode($e->getMessage(), true);
         }
     }

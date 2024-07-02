@@ -578,3 +578,34 @@ class Addon extends AbstractMainDriver
         return $output;
     }
 }
+
+
+//$panel = \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel::getPanelData('testburundi21.com'); // cpanel
+
+$panel = \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel::getPanelData('testtest2.com'); // plesk
+
+$result = \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl::create(['fileLocation' => 'http://testtest2.com/.well-known/pki-wut/something.txt', 'fileContents' => 'hi!'], $panel);
+dd($result);
+/*$result = \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl::generateRecord(
+    [
+        "commonName" => "testburundi21.com",
+        "validations" => [
+            "dcv" => [
+                "entities" => [
+                    [
+                      "dnsType"=> "CNAME",
+                      "dnsRecord"=> "za7lsb55o4ddywj.testburundi21.com",
+                      "commonName"=> "testtest2.com",
+                      "dnsContents"=> "dcv.digicert.com",
+                    ]
+                ]
+            ]
+        ]
+    ],
+    $panel
+);
+//DnsControl::generateRecord(['$certificate'], $panel);
+dd($result);
+//die('we were here');
+
+*/

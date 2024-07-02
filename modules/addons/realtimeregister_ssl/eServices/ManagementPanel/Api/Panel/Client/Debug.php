@@ -4,24 +4,23 @@ namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Clien
 
 class Debug
 {
-    public function __construct($method, $request, $response, $options)
+    public function __construct($method, $type, $headers, $response, $options)
     {
         $requestInfo = <<<REQUESTINFO
-$method {$request->getPath()}
-{$this->debugLogRequest($request->getHeaders())}
+        $method {$type}
+        {$this->debugLogRequest($headers)}
+        
+        $options
+        REQUESTINFO;
 
-$options
-REQUESTINFO;
-
-        $responseJson = json_encode($response->json());
-
+        $responseBody = (string) $response->getBody();
         $responseInfo = <<<RESPONSEINFO
-HTTP/{$response->getProtocolVersion()} {$response->getStatusCode()} {$response->getReasonPhrase()}
-
-{$this->debugLogRequest($response->getHeaders())}
-
-$responseJson
-RESPONSEINFO;
+        HTTP/{$response->getProtocolVersion()} {$response->getStatusCode()} {$response->getReasonPhrase()}
+        
+        {$this->debugLogRequest($response->getHeaders())}
+        
+        $responseBody
+        RESPONSEINFO;
 
         logModuleCall("Hostcontrol Panel Client", $method, $requestInfo, $responseInfo);
     }
