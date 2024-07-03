@@ -11,6 +11,7 @@ use DateInterval;
 use DateTime;
 use Illuminate\Database\Schema\Blueprint;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR;
@@ -606,7 +607,7 @@ class Invoice
         $product = Product::where('id', $service->packageid)->first();
         $isSanEnabled = $product->{ConfigOptions::PRODUCT_ENABLE_SAN} === 'on';
         $isSanEnabledWildcard = $product->{ConfigOptions::PRODUCT_ENABLE_SAN_WILDCARD} === 'on';
-        $apiProduct = Products::getInstance()->getProduct($product->{C::API_PRODUCT_ID});
+        $apiProduct = Products::getInstance()->getProduct(KeyToIdMapping::getIdByKey($product->{C::API_PRODUCT_ID}));
 
         if ($isSanEnabledWildcard) {
             $server = new Server();
