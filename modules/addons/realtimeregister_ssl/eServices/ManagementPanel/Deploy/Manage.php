@@ -110,9 +110,9 @@ class Manage
     }
 
     /**
-     * @param \HostcontrolPanel\Manage $panel
+     * @param \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage $panel
      * @param array $options
-     * @return \HostcontrolSSL\Services\Deploy\API\Client
+     * @return \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\Platforms\PlatformInterface
      * @throws Exception
      */
     private static function makeInstance($panel, $options)

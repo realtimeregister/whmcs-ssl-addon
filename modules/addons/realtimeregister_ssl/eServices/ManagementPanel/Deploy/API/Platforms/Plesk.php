@@ -46,7 +46,7 @@ class Plesk extends Client implements PlatformInterface
             ],
         ];
 
-        $response = $this->request('POST', $this->packet($packet));
+        $response = $this->request($this->getBaseUrl(), 'POST', $this->packet($packet));
 
 
         if (isset($response->certificate->generate->result->status) && (string)$response->certificate->generate->result->status == 'error') {
@@ -99,15 +99,77 @@ class Plesk extends Client implements PlatformInterface
             ],
         ];
 
-        $response = $this->request('POST', $this->packet($packet));
+        $response = $this->request(
+            $this->getBaseUrl(),
+            'POST',
+            [
+                'body' => $this->packet($packet),
+                'headers' => [
+                    "HTTP_AUTH_LOGIN" => $this->args['API_USER'],
+                    "HTTP_AUTH_PASSWD" => $this->args['API_PASSWORD']
+                ]
+            ]
+        );
 
-        if (isset($response->certificate->install->result->status) && (string)$response->certificate->install->result->status == 'error') {
-            throw new DeployException((string)$response->certificate->install->result->errtext);
+        if (isset($response->certificate->install->result->status)) {
+            if ((string)$response->certificate->install->result->status == 'error') {
+                throw new DeployException((string)$response->certificate->install->result->errtext);
+            }
+            if ((string)$response->certificate->install->result->status == 'ok') {
+                // We can now enable the certificate to the domain:
+
+                $packet = [
+                    'webspace' => [
+                        'set' => [
+                            'filter' => [
+                                'id' => $this->getSiteId($domain)
+                            ],
+                            'values' => [
+                                'hosting' => [
+                                    'vrt_hst' => [
+                                        'property' => [
+                                            'name' => 'certificate_name',
+                                            'value' => $name
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ];
+
+                $response = $this->request(
+                    $this->getBaseUrl(),
+                    'POST',
+                    [
+                        'body' => $this->packet($packet),
+                        'headers' => [
+                            "HTTP_AUTH_LOGIN" => $this->args['API_USER'],
+                            "HTTP_AUTH_PASSWD" => $this->args['API_PASSWORD']
+                        ]
+                    ]
+                );
+
+                dd($response);
+
+                return 'success';
+            }
         }
 
-        return "success";
+        return 'error';
     }
 
+    protected function getBaseUrl()
+    {
+        $url = parse_url($this->args['API_URL']);
+        $url['port'] = $this->args['API_PORT'];
+        return $url['scheme'] . '://' . $url['host'] . ':' . $url['port'] . $url['path'];
+    }
+
+    protected function getAuth(): array
+    {
+        return [$this->args['API_USER'], $this->args['API_PASSWORD']];
+    }
 
     /**
      *
@@ -130,7 +192,14 @@ class Plesk extends Client implements PlatformInterface
             ],
         ];
 
-        $response = $this->request('POST', $this->packet($packet));
+        $response = $this->request($this->getBaseUrl(), 'POST', [
+                'body' => $this->packet($packet),
+                'headers' => [
+                    "HTTP_AUTH_LOGIN" => $this->args['API_USER'],
+                    "HTTP_AUTH_PASSWD" => $this->args['API_PASSWORD']
+                ]
+            ]
+        );
 
         if (isset($response->site->get->result->status) && (string)$response->site->get->result->status == 'error') {
             throw new DeployException((string)$response->site->get->result->errtext);
@@ -174,8 +243,12 @@ class Plesk extends Client implements PlatformInterface
      */
     protected function setAuth()
     {
-        array_unshift($this->options[CURLOPT_HTTPHEADER], sprintf("HTTP_AUTH_LOGIN: %s", $this->params['API_USER']),
-            sprintf("HTTP_AUTH_PASSWD: %s", $this->params['API_PASSWORD']), "HTTP_PRETTY_PRINT: TRUE");
+        array_unshift(
+            $this->options[CURLOPT_HTTPHEADER],
+            sprintf("HTTP_AUTH_LOGIN: %s", $this->params['API_USER']),
+            sprintf("HTTP_AUTH_PASSWD: %s", $this->params['API_PASSWORD']),
+            "HTTP_PRETTY_PRINT: TRUE"
+        );
     }
 
 

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client;
 
-use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Client\Debug;
-use function GuzzleHttp\Psr7\build_query;
 
 /**
  * Class Client
@@ -49,7 +47,7 @@ class Client extends AbstractClient
     {
         if ($limit > 100) {
             //trow error max 100 per page
-            throw new DefaultException('Limit can not be higher then 100');
+            throw new \Exception('Limit can not be higher then 100');
         }
         $page = 1;
         if (!empty($_REQUEST['page']) && is_numeric($_REQUEST['page']) && $_REQUEST['page'] > 0) {
@@ -65,7 +63,7 @@ class Client extends AbstractClient
         $response['current_page'] = $page;
 
         if ($page > $lastPage && $lastPage > 0) {
-            throw new DefaultException('The current page could not be highter then ' . $lastPage);
+            throw new \Exception('The current page could not be highter then ' . $lastPage);
         }
 
         return $response;
@@ -81,10 +79,18 @@ class Client extends AbstractClient
      */
     public function request(string $url, string $type = 'GET', array $options = [])
     {
-        $options['headers'] = [
-            'User-Agent' => $this->getUserAgent(),
-            'Authorization' => 'Basic ' . base64_encode(implode(':', $this->getAuth())),
-        ];
+        if (!array_key_exists('headers', $options)) {
+            $options['headers'] = [];
+        }
+
+        $options['headers'] = array_merge(
+            [
+                'User-Agent' => $this->getUserAgent(),
+                'Authorization' => 'Basic ' . base64_encode(implode(':', $this->getAuth())),
+            ],
+            $options['headers']
+        );
+
         $response = $this->client->request(strtoupper($type), $url, $options);
 
         if ($this->args['debug']) {
