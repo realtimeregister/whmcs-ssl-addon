@@ -146,7 +146,7 @@ class Client
             return;
         }
 
-        logModuleCall("Hostcontrol File Lib", $this->method, implode(PHP_EOL, $this->request), implode(PHP_EOL, $this->response));
+        logModuleCall("Realtime Register SSL File Lib", $this->method, implode(PHP_EOL, $this->request), implode(PHP_EOL, $this->response));
     }
 
     protected function setData($post)

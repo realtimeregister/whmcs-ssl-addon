@@ -25,7 +25,7 @@ class Client
      *
      * @var string
      */
-    private $ua = 'Hostcontrol-%s/WHMCS-%s';
+    private $ua = 'Realtime Register SSL-%s/WHMCS-%s';
 
     /**
      *
@@ -148,7 +148,7 @@ class Client
             return;
         }
 
-        logModuleCall("Hostcontrol DNS Lib", $this->method, implode(PHP_EOL, $this->request), implode(PHP_EOL, $this->response));
+        logModuleCall("Realtime Register SSL DNS Lib", $this->method, implode(PHP_EOL, $this->request), implode(PHP_EOL, $this->response));
     }
 
     protected function setData($post)

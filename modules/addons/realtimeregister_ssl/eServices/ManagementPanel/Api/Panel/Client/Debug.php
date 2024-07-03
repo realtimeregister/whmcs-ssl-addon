@@ -22,7 +22,7 @@ class Debug
         $responseBody
         RESPONSEINFO;
 
-        logModuleCall("Hostcontrol Panel Client", $method, $requestInfo, $responseInfo);
+        logModuleCall("Realtime Register SSL Panel Client", $method, $requestInfo, $responseInfo);
     }
 
     private function debugLogRequest(array $array)
