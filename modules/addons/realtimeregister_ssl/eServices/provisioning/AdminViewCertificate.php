@@ -42,19 +42,17 @@ class AdminViewCertificate extends Ajax
             $return['csr'] = $sslService->getCsr();
         }
 
-        if (!empty($sslService->getCrt())) {
-            $return['crt'] = $sslService->getCrt();
-        }
-
-
         if (!empty($sslService->getCa())) {
             $return['ca'] = $sslService->getCa();
         }
 
-        if ($sslService->getOrderStatus() !== 'ACTIVE') {
+        if (empty($sslService->getCrt())) {
             $this->response(false, 'Order status is not active, so can not display certificate', $return);
-        } else {
-            $this->response(true, 'Details', $return);
+            return;
         }
+
+        $return['crt'] = $sslService->getCrt();
+
+        $this->response(true, 'Details', $return);
     }
 }

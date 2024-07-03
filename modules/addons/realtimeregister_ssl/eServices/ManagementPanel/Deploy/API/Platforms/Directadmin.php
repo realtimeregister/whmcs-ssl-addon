@@ -13,8 +13,7 @@ class Directadmin extends Client implements PlatformInterface
     private int $port = 2222;
 
     private array $uri = [
-        'CMD_API_SSL' => "CMD_API_SSL",
-        'CMD_SSL' => "CMD_SSL",
+        'CMD_API_SSL' => "CMD_API_SSL"
     ];
 
     private string $contentType = "Content-Type: text/plain";
@@ -27,53 +26,15 @@ class Directadmin extends Client implements PlatformInterface
         parent::__construct($params);
     }
 
-    /**
-     * @return array [key, csr]
-     * @throws DeployException
-     */
-    public function genKeyCsr(string $domain, array $csrData): array
-    {
-        $this->getKey($domain);
-        $argc = [
-            'domain' => $domain,
-            'action' => "save",
-            'type' => "create",
-            'request' => "yes",
-            'country' => $csrData['short_country'],
-            'province' => $csrData['state'],
-            'city' => $csrData['city'],
-            'company' => $csrData['company'],
-            'division' => $csrData['department'],
-            'name' => $domain,
-            'email' => $csrData['approverEmail'],
-            'keysize' => "2048",
-            'encryption' => "sha256",
-        ];
-        $url = $this->uri['CMD_API_SSL'] . "?" . http_build_query($argc);
-        $response = $this->url([$url], false, true)->request('POST');
-        parse_str($response, $output);
-
-        if (isset($output['error']) && $output['error'] == 1) {
-            throw new DeployException($output['text'] . $output['details']);
-        }
-
-        $csr = html_entity_decode($output['request'], ENT_QUOTES, 'UTF-8');
-
-        if ($output['error'] == 0) {
-            return ["status" => "success", "key" => "", "csr" => $csr];
-        }
-
-        return ["status" => "error", "message" => "Unknown Error"];
-    }
 
     public function uploadCertificate(string $domain, string $crt)
     {
-        return "";
+        return "success";
     }
 
     /**
      * @return string
-     * @throws DeployException
+     * @throws GuzzleException
      */
     public function installCertificate(string $domain, string $key, string $crt, string $csr = null, string $ca = null): string
     {
@@ -84,24 +45,17 @@ class Directadmin extends Client implements PlatformInterface
             'certificate' => $crt . "\r\n" . $key . "\r\n"
         ];
         $url = $this->uri['CMD_API_SSL'] . "?" . http_build_query($argv);
-        $output = $this->request($this->url($url), 'POST');
 
-        if (isset($output['error']) && $output['error'] == 1) {
-            throw new DeployException($output['text'] . "\n" . $output['details']);
+        $this->request($this->url($url), 'POST');
+
+        if ($ca) {
+            return $this->installCaBundle($domain, $ca);
         }
 
-        if ($output['error'] == 0) {
-            if ($ca) {
-                return $this->installCaBundle($domain, $ca);
-            }
-            return 'Success';
-        }
-
-        return "Unknown Error";
+        return "Success";
     }
 
     /**
-     * @throws DeployException
      * @throws GuzzleException
      */
     private function installCaBundle(string $domain, string $ca) : string {
@@ -113,36 +67,9 @@ class Directadmin extends Client implements PlatformInterface
             'cacert' => $ca
         ];
         $url = $this->uri['CMD_API_SSL'] . "?" . http_build_query($argv);
-        $output = $this->request($this->url($url), 'POST');
+        $this->request($this->url($url), 'POST');
 
-        if (isset($output['error']) && $output['error'] == 1) {
-            throw new DeployException($output['text'] . "\n" . $output['details']);
-        }
-
-        if ($output['error'] == 0) {
-            return "Success";
-        }
-
-        return "Unknown Error";
-    }
-
-
-    /**
-     * @return string|void
-     */
-    protected function setData(array $data)
-    {
-        if ($data['action'] == "upload") {
-            array_unshift(
-                $this->options[CURLOPT_HTTPHEADER],
-                "X-DirectAdmin-File-Upload: yes",
-                "X-DirectAdmin-File-Name: " . $data['filename']
-            );
-
-            return $data['content'];
-        } else {
-            return $data;
-        }
+        return "Success";
     }
 
     /**
@@ -164,8 +91,9 @@ class Directadmin extends Client implements PlatformInterface
     /**
      * @param mixed $response
      * @return mixed
+     * @throws DeployException
      */
-    protected function parseResponse($response)
+    protected function parseResponse($response) : array
     {
         $result = [];
         foreach (explode("&", urldecode($response)) as $responsePart) {
@@ -174,11 +102,11 @@ class Directadmin extends Client implements PlatformInterface
                 $result[$keyValuePair[0]] = $keyValuePair[1];
             }
         }
-        return $result;
-    }
 
-    public function getKey(string $domain, string $id): string
-    {
-        return "";
+        if (isset($output['error']) && $output['error'] == 1) {
+            throw new DeployException($output['text'] . "\n" . $output['details']);
+        }
+
+        return $result;
     }
 }

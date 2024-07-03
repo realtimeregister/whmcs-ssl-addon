@@ -54,10 +54,13 @@ class GenerateCSR
             'stateOrProvinceName' => $this->post['stateOrProvinceName'],
             'localityName' => $this->post['localityName'],
             'organizationName' => $this->post['organizationName'],
-            'organizationalUnitName' => $this->post['organizationalUnitName'],
             'commonName' => $this->post['commonName'],
             'emailAddress' => $this->post['emailAddress'],
         ];
+
+        if ($this->post['organizationalUnitName']) {
+            $dn['organizationalUnitName'] = $this->post['organizationalUnitName'];
+        }
 
         $privKey = openssl_pkey_new([
             "private_key_bits" => 2048,

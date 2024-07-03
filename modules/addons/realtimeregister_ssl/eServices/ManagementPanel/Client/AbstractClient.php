@@ -28,6 +28,10 @@ abstract class AbstractClient
         return $this->getBaseUrl() . $endpoint;
     }
 
+    protected function getVersion() {
+        return "1.0";
+    }
+
     /**
      * Check if ignore SSL verify is true of false
      *
@@ -53,6 +57,6 @@ abstract class AbstractClient
      */
     protected function getUserAgent()
     {
-        return Utils::defaultUserAgent() . ' WHMCS/' . $GLOBALS['CONFIG']['Version'] . ' Version/' . '';//Config::get('addon.version');
+        return Utils::defaultUserAgent() . ' WHMCS/' . $GLOBALS['CONFIG']['Version'] . ' Version/' . $this->getVersion();
     }
 }

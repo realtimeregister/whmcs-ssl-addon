@@ -24,44 +24,6 @@ class Plesk extends Client implements PlatformInterface
     }
 
     /**
-     * @return array [csr, key]
-     * @throws DeployException
-     */
-    public function genKeyCsr(string $domain, array $csrData): array
-    {
-        $packet = [
-            'certificate' => [
-                'generate' => [
-                    'info' => [
-                        'bits' => 2048,
-                        'country' => $csrData['short_country'],
-                        'state' => $csrData['state'],
-                        'location' => $csrData['city'],
-                        'company' => $csrData['company'],
-                        'dept' => $csrData['department'],
-                        'email' => $csrData['approverEmail'],
-                        'name' => $domain,
-                    ],
-                ],
-            ],
-        ];
-
-        $response = $this->request($this->getBaseUrl(), 'POST', $this->packet($packet));
-
-
-        if (isset($response->certificate->generate->result->status) && (string)$response->certificate->generate->result->status == 'error') {
-            throw new DeployException((string)$response->certificate->generate->result->errtext);
-        }
-
-        return [
-            "status" => "success",
-            "csr" => $response->certificate->generate->result->csr,
-            "key" => $response->certificate->generate->result->pvt,
-
-        ];
-    }
-
-    /**
      * @param $domain
      * @param $crt
      * @return string
@@ -150,8 +112,6 @@ class Plesk extends Client implements PlatformInterface
                     ]
                 );
 
-                dd($response);
-
                 return 'success';
             }
         }
@@ -239,18 +199,6 @@ class Plesk extends Client implements PlatformInterface
         return $xml->asXML();
     }
 
-    /**
-     */
-    protected function setAuth()
-    {
-        array_unshift(
-            $this->options[CURLOPT_HTTPHEADER],
-            sprintf("HTTP_AUTH_LOGIN: %s", $this->params['API_USER']),
-            sprintf("HTTP_AUTH_PASSWD: %s", $this->params['API_PASSWORD']),
-            "HTTP_PRETTY_PRINT: TRUE"
-        );
-    }
-
 
     /**
      * @param mixed $response
@@ -269,10 +217,5 @@ class Plesk extends Client implements PlatformInterface
         }
 
         return $xml;
-    }
-
-    public function getKey(string $domain, string $id): string
-    {
-        return false;
     }
 }

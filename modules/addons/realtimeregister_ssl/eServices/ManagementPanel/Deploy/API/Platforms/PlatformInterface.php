@@ -8,11 +8,6 @@ use Exception;
 
 interface PlatformInterface
 {
-    /**
-     * @return array [csr, key, keyId]
-     * @throws Exception
-     */
-    public function genKeyCsr(string $domain, array $csrData): array;
 
     /**
      * @throws Exception
@@ -23,9 +18,4 @@ interface PlatformInterface
      * @throws Exception
      */
     public function installCertificate(string $domain, string $key, string $crt, string $csr = null, string $ca = null): string;
-
-    /**
-     * @throws Exception
-     */
-    public function getKey(string $domain, string $id): string;
 }
