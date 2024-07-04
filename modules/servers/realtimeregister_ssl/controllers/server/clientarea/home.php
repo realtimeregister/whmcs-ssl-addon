@@ -52,13 +52,16 @@ class home extends AbstractController
             $ssl = new SSL();
             $sslService = $ssl->getByServiceId($serviceId);
 
+            $sslStatus = $sslService->configdata->ssl_status;
             if (
                 (
-                    $sslService->configdata->ssl_status == 'pending'
-                    || $sslService->configdata->ssl_status == 'reissue'
-                    || $sslService->configdata->ssl_status == 'new_order'
-                    || $sslService->configdata->ssl_status == 'processing'
-                    || $sslService->configdata->ssl_status == ''
+                    !$sslStatus
+                    || $sslStatus == 'pending'
+                    || $sslStatus == 'reissue'
+                    || $sslStatus == 'new_order'
+                    || $sslStatus == 'processing'
+                    || $sslStatus == 'SUSPENDED'
+                    || $sslStatus == ''
                 )
                 && $sslService->remoteid != ''
             ) {
@@ -103,6 +106,8 @@ class home extends AbstractController
                 $vars['privateKey'] = $privateKey;
             }
             $vars['san_revalidate'] = false;
+
+
 
             if ($sslService->status !== 'Awaiting Configuration') {
                 try {
@@ -151,9 +156,26 @@ class home extends AbstractController
                         $vars['csr'] = ($certificateDetails['csr']);
                     }
 
+                    $now = new \DateTime();
+
+                    $vars['displayRenewButton'] = false;
+
                     if (!empty($certificateDetails['crt'])) {
                         $vars['crt'] = ($certificateDetails['crt']);
                     }
+
+                    if ($certificateDetails['ssl_status'] == 'ACTIVE' || $certificateDetails['ssl_status'] == 'COMPETED') {
+                        $diffDays = $now->diff(
+                            $now,
+                            \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_until']->date))
+                        );
+
+                        if ((int)$diffDays->format('%a') < 30) {
+                            $vars['displayRenewButton'] = true;
+                        }
+                    }
+
+
                     if (!empty($certificateDetails['ca'])) {
                         $vars['ca'] = ($certificateDetails['ca']);
                     }
@@ -189,8 +211,6 @@ class home extends AbstractController
                     $vars['validFrom'] = fromMySQLDate($certificateDetails['valid_from'], false, true);
                     $vars['validTill'] = fromMySQLDate($certificateDetails['valid_till'], false, true);
 
-
-                    $now = new \DateTime();
                     $datediff = $now->diff($now, \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_from']->date)));
                     $vars['nextReissue'] = $datediff->format('%a');
 
@@ -204,13 +224,6 @@ class home extends AbstractController
 
                     //service billing cycle
                     $vars['serviceBillingCycle'] = $serviceBillingCycle;
-                    $vars['displayRenewButton'] = false;
-
-                    $diffDays = $now->diff($now, \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_until']->date)));
-
-                    if ((int)$diffDays->format('%a') < 30) {
-                        $vars['displayRenewButton'] = true;
-                    }
 
                     $disabledValidationMethods = [];
 

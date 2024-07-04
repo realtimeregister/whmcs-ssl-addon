@@ -348,6 +348,8 @@ class SSLStepThree
         $this->sslConfig->setDcvMethod($this->p['fields']['dcv_method'] == 'http'?'FILE':$this->p['fields']['dcv_method']);
         $this->sslConfig->setProductId($this->p['configoption1']);
         $this->sslConfig->setSSLStatus($orderDetails->status);
+
+        // Gets overwritten by whmcs ioncube encoded stuff atm >:(
         $this->sslConfig->save();
 
         //try to mark previous order as completed if it is autoinvoiced and autocreated product
@@ -364,7 +366,7 @@ class SSLStepThree
             $sslOrder->id,
             $this->p['fields']['dcv_method'],
             'Pending Verification',
-            $addedSSLOrder
+            array_merge((array) $this->sslConfig->configdata, $addedSSLOrder->toArray())
         );
 
         $logs->addLog($this->p['userid'], $this->p['serviceid'], 'success', 'The order has been placed.');

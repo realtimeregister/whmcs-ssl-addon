@@ -10,7 +10,7 @@ class SSL extends \Illuminate\Database\Eloquent\Model
 {
     public $timestamps = false;
     protected $table   = 'tblsslorders';
-    
+
     public function scopeWhereServiceId($query, $id)
     {
         $query->where('serviceid', '=', $id);
