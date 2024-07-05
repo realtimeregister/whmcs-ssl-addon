@@ -257,7 +257,7 @@
                         {if $dcv_method == 'email' && !$sans}
                             <button type="button" id="btnChange_Approver_Email" class="btn btn-default" style="margin:2px">{$MGLANG->T('changeValidationEmail')}</button>
                         {/if}
-                        {if $activationStatus == 'processing'}
+                        {if $activationStatus == 'processing' || $activationStatus == 'SUSPENDED'}
                             <button type="button" id="btnRevalidate" class="btn btn-default" style="margin:2px">{$MGLANG->T('domainvalidationmethod')}</button>
                         {elseif $activationStatus == 'active'}
                             <a class="btn btn-default" role="button" href="" id="Action_Custom_Module_Button_Reissue_Certificate">{$MGLANG->T('reissueCertificate')}</a>

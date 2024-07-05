@@ -298,7 +298,7 @@ class SSLStepThree
             $decodedMessage = json_decode(str_replace('Bad Request: ', '', $exception->getMessage()), true);
             switch ($decodedMessage['type']) {
                 case 'ObjectExists':
-                    $reason = 'The SSL certificate already exists';
+                    $reason = 'The request already exists';
                     break;
                 case 'ValidationError':
                     $reason = 'Validation error';

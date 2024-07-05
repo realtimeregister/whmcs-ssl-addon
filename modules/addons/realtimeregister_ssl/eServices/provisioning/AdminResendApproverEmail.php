@@ -49,7 +49,7 @@ class AdminResendApproverEmail extends Ajax
         $data = json_decode((string)$result->data, true);
 
         $domainControlValidations = [];
-        foreach ($data['validations']['dcv']['entities'] as $validation) {
+        foreach ($data['validations']['dcv'] as $validation) {
             $domainControlValidations[] = [
                 'commonName' => $validation['commonName'],
                 'type' => (strtoupper($validation['type']) === 'HTTP' ? 'FILE' : strtoupper($validation['type'])),
