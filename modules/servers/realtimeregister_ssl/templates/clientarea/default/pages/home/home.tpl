@@ -254,7 +254,7 @@
                     {/if}
 
                     {if $configurationStatus != 'Awaiting Configuration'}
-                        {if $dcv_method == 'email' && !$sans}
+                        {if $dcv_method == 'email' && !$sans && $activationStatus != 'active'}
                             <button type="button" id="btnChange_Approver_Email" class="btn btn-default" style="margin:2px">{$MGLANG->T('changeValidationEmail')}</button>
                         {/if}
                         {if $activationStatus == 'processing' || $activationStatus == 'SUSPENDED'}
@@ -523,7 +523,7 @@
                     </button>
                     <h4 class="modal-title">{$MGLANG->T('revalidateModalTitle')}</h4>
                 </div>
-                <div {if $sans && !$brand|in_array:$brandsWithOnlyEmailValidation}style="overflow-y: auto; height:{if $sans|@count == 1 }200{elseif $sans|@count == 2}275{else}350{/if}px;"{/if} class="modal-body panel-body" id="modalRevalidateBody">
+                <div {if $sans}style="overflow-y: auto; height:{if $sans|@count == 1 }200{elseif $sans|@count == 2}275{else}350{/if}px;"{/if} class="modal-body panel-body" id="modalRevalidateBody">
 
                     <div class="alert alert-success hidden" id="modalRevalidateSuccess">
                         <strong>Success!</strong> <span></span>

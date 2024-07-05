@@ -11,6 +11,7 @@ use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Domain\Certificate;
 use WHMCS\Database\Capsule;
+use function GuzzleHttp\is_host_in_noproxy;
 
 class UpdateConfigData
 {
@@ -85,6 +86,7 @@ class UpdateConfigData
             $sslOrder = $this->sslService;
 
             $sslOrder->setCrt($order->certificate);
+            $sslOrder->setSSLStatus('COMPLETED');
 
             $sslOrder->setValidFrom($order->startDate);
             $sslOrder->setValidTill($order->expiryDate);
@@ -111,21 +113,81 @@ class UpdateConfigData
 
         $orderRepo = new OrderRepo();
         $currentOrder = $orderRepo->getByServiceId($this->sslService->serviceid);
-        $sslOrder= $this->sslService;
+        $sslOrder = $this->sslService;
         $sslOrder->configdata = array_merge((array) json_decode($currentOrder->data), (array) $sslOrder->configdata);
         if (!empty($this->orderdata)) {
-            $sslOrder->setSSLStatus($this->orderdata['status']);
-            $sslOrder->setDcvMethod(self::getDcvMethod($this->orderdata));
+            if (isset($this->orderdata['status'])) {
+                $sslOrder->setSSLStatus($this->orderdata['status']);
+            }
+            if (isset($this->orderdata['dcv'])) {
+                $this->handleDcvMethod();
+            }
         }
 
         $sslOrder->save();
         return $this->orderdata;
     }
 
-    private static function getDcvMethod($orderData) {
-        $dcv = $orderData['command']['dcv'];;
-        return $dcv[0]['type'] == 'http'
-            ?'FILE'
-            : $dcv[0]['type'];
+    private function handleDcvMethod() : void {
+        $sslOrder = $this->sslService;
+        $dcv = array_filter($this->orderdata['dcv'],
+            function ($dcv) {return $dcv['commonName'] == $this->sslService->getDomain();})[0];
+        switch ($dcv['type']) {
+            case 'FILE':
+                $sslOrder->setDcvMethod('http');
+                $sslOrder->setApproverMethod(
+                    ['http' => [
+                        'link' => $dcv['fileLocation'],
+                        'content' => $dcv['fileContents']
+                    ]]
+                );
+                break;
+            case "DNS":
+                $sslOrder->setDcvMethod('dns');
+                $sslOrder->setApproverMethod(
+                    ['dns' => [
+                        'record' => $dcv['dnsRecord'] . ' ' . $dcv['dnsType']  . ' ' . $dcv['dnsContents']
+                    ]]
+                );
+                break;
+            default:
+                $sslOrder->setDcvMethod('email');
+                $sslOrder->setApproverEmail($dcv['email']);
+        }
+        $san = array_filter($this->orderdata['dcv'],
+            function ($dcv) {return $dcv['commonName'] != $this->sslService->getDomain();});
+
+        $san_details = [];
+        foreach ($san as $dcv) {
+            $sanEntry = [
+                'san_name' => $dcv['commonName']
+            ];
+            switch ($dcv['type']) {
+                case "FILE":
+                    $sanEntry['validation_method'] = 'http';
+                    $sanEntry['validation'] = [
+                        'http' => [
+                            'link' => $dcv['fileLocation'],
+                            'content' => $dcv['fileContents']
+                            ]];
+                    break;
+                case "DNS":
+                    $sanEntry['validation_method'] = 'dns';
+                    $sanEntry['validation'] = [
+                        ['dns' => [
+                            'record' => $dcv['dnsRecord'] . ' ' . $dcv['dnsType']  . ' ' . $dcv['dnsContents']
+                        ]]];
+                    break;
+                default:
+                    $sanEntry['validation_method'] = 'email';
+                    $sanEntry['validation'] = [
+                        ['dns' => [
+                            'record' => $dcv['dnsRecord'] . ' ' . $dcv['dnsType']  . ' ' . $dcv['dnsContents']
+                        ]]];
+                    break;
+            }
+            $san_details[] = $sanEntry;
+        }
+        $sslOrder->setSanDetails($san_details);
     }
 }

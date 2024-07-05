@@ -54,6 +54,7 @@ class home extends AbstractController
             $sslService = $ssl->getByServiceId($serviceId);
 
             $sslStatus = $sslService->configdata->ssl_status;
+
             if (
                 (
                     !$sslStatus
@@ -79,9 +80,17 @@ class home extends AbstractController
 
                 /** @var ProcessesApi $processesApi */
                 $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+                $infoProcess = [];
                 $apicertdata = $processesApi->get($sslService->getRemoteId())->toArray();
+                if ($apicertdata['status'] != 'COMPLETED') {
+                    $infoProcess = $processesApi->info($sslService->getRemoteId())->toArray();
+                }
 
-                $configDataUpdate = new UpdateConfigData($sslService, $apicertdata);
+                $configDataUpdate = new UpdateConfigData($sslService, [
+                    'status' => $apicertdata['status'],
+                    'dcv' => $infoProcess['validations']['dcv']
+                ]);
+
                 $configDataUpdate->run();
 
                 // if($apicertdata['status'] != 'new_order')
@@ -149,7 +158,7 @@ class home extends AbstractController
                             }
                         } else {
                             $vars['dcv_method'] = 'email';
-                            $vars['approver_method'] = $certificateDetails['approveremail'];
+                            $vars['approver_method'] = $certificateDetails['fields']->approveremail;
                         }
                     }
 
@@ -165,7 +174,7 @@ class home extends AbstractController
                         $vars['crt'] = ($certificateDetails['crt']);
                     }
 
-                    if ($certificateDetails['ssl_status'] == 'ACTIVE' || $certificateDetails['ssl_status'] == 'COMPETED') {
+                    if ($certificateDetails['ssl_status'] == 'active' || $certificateDetails['ssl_status'] == 'COMPETED') {
                         $diffDays = $now->diff(
                             $now,
                             \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_until']->date))
@@ -199,6 +208,7 @@ class home extends AbstractController
                                     $vars['sans'][$san->san_name]['san_validation'] = (array)$san->validation->http;
                                     $vars['sans'][$san->san_name]['san_validation']['content'] =
                                         explode(PHP_EOL, $san->validation->http->content);
+                                    //dd($vars['sans'][$san->san_name]);
                                     break;
                                 default:
                                     $vars['sans'][$san->san_name]['san_validation'] = $san->validation->email;
@@ -350,6 +360,7 @@ class home extends AbstractController
                 exit;
             }
 
+            $vars['actual_link'] = $CONFIG['SystemURL'] . '/clientarea.php?action=productdetails&id=' . $vars['serviceid'];
             $vars['actual_link'] = $CONFIG['SystemURL'] . '/clientarea.php?action=productdetails&id=' . $vars['serviceid'];
 
             $vars['btndownload'] = false;
@@ -627,19 +638,18 @@ class home extends AbstractController
         $serviceId = $input['params']['serviceid'];
         $ssl = new SSL();
         $sslService = $ssl->getByServiceId($serviceId);
-        if (isset($input['newDcvMethods'])) {
-            $newDcvMethodArray = [];
-            foreach ($input['newDcvMethods'] as $domain => $method) {
-                if (strpos($domain, '___') !== false) {
-                    $domain = str_replace('___', '*', $domain);
-                }
-                $newDcvMethodArray[$domain] = $method;
-            }
 
-            $input['newDcvMethods'] = $newDcvMethodArray;
+        $newDcvMethodArray = [];
+        foreach ($input['newDcvMethods'] as $domain => $method) {
+            if (strpos($domain, '___') !== false) {
+                $domain = str_replace('___', '*', $domain);
+            }
+            $newDcvMethodArray[$domain] = $method;
         }
 
-        foreach ($input['newDcvMethods'] as $domain => $newMethod) {
+        $data=[];
+
+        foreach ($newDcvMethodArray as $domain => $newMethod) {
             $newdomains = [];
             $new_methods = [];
 
@@ -648,37 +658,40 @@ class home extends AbstractController
                 $new_methods[] = $newMethod;
             }
 
-            $data = [
-                'new_methods' => implode(',', $new_methods),
-                'domains' => implode(',', $newdomains)
+            $validationType = self::getValidationType($newMethod);
+            $email = $validationType == 'EMAIL' ? $newMethod : null;
+
+            $data[] = [
+                'commonName'=> $domain,
+                'type'=> $validationType,
+                'email'=> $email
             ];
-
-
-            try {
-                $response = ApiProvider::getInstance()->getApi(CertificatesApi::class)
-                    ->resendDcv($sslService->remoteid, $data);
-            } catch (Exception $ex) {
-                if (strpos($ex->getMessage(), 'Function is locked for') !== false) {
-                    if (strpos($domain, '___') !== false) {
-                        $domain = str_replace('___', '*', $domain);
-                    }
-                    $message = substr($ex->getMessage(), 0, -1) . ' for the domain: ' . $domain . '.';
-                } else {
-                    $message = $domain . ': ' . $ex->getMessage();
-                }
-
-                return [
-                    'success' => 0,
-                    'msg' => $message
-                ];
-            }
         }
 
-        $sslorder = (array)Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
+        try {
+            $response = ApiProvider::getInstance()->getApi(CertificatesApi::class)
+                ->resendDcv($sslService->getRemoteId(), $data);
+        } catch (Exception $ex) {
+            if (strpos($ex->getMessage(), 'Function is locked for') !== false) {
+                if (strpos($domain, '___') !== false) {
+                    $domain = str_replace('___', '*', $domain);
+                }
+                $message = substr($ex->getMessage(), 0, -1) . ' for the domain: ' . $domain . '.';
+            } else {
+                $message = $domain . ': ' . $ex->getMessage();
+            }
+
+            return [
+                'success' => 0,
+                'msg' => $message
+            ];
+        }
+
+        $sslorder = (array) Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
 
         $sslorderconfigdata = json_decode($sslorder['configdata'], true);
 
-        $sslorderconfigdata['dcv_method'] = $data['new_method'];
+        $sslorderconfigdata['dcv_method'] = $newDcvMethodArray[0];
 
         if ($data['new_method'] != 'email') {
             $sslorderconfigdata['approveremail'] = '';
@@ -689,9 +702,21 @@ class home extends AbstractController
         ]);
 
         return [
-            'success' => $response['success'],
+            'success' => 1,
             'msg' => $response['message']
         ];
+    }
+
+    private static function getValidationType(string $type) : string {
+        if ($type == 'dns') {
+            return 'DNS';
+        }
+
+        if ($type == 'http') {
+            return 'FILE';
+        }
+
+        return 'EMAIL';
     }
 
     public function getApprovalEmailsForDomainJSON($input, $vars = [])
@@ -699,13 +724,13 @@ class home extends AbstractController
         $serviceId = $input['id'];
         $ssl = new SSL();
         $sslService = $ssl->getByServiceId($serviceId);
-        $result = [
+
+        return [
             'success' => 1,
-            'domainEmails' => ApiProvider::getInstance()->getApi()->getDomainEmails($input['domain'])
+            'domainEmails' => ApiProvider::getInstance()
+                ->getApi(CertificatesApi::class)
+                ->listDcvEmailAddresses($input['domain'], $sslService->getProductId())
         ];
-
-        return $result;
-
     }
 
     public function getPrivateKeyJSON($input, $vars = [])
@@ -777,6 +802,7 @@ class home extends AbstractController
         $sslRepo = new SSL();
         $sslService = $sslRepo->getByServiceId($input['id']);
 
+        dd($sslService);
         $data = [
             'domain' => $input['params']['domain']
         ];
