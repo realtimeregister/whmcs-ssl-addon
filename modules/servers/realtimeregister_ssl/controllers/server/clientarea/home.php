@@ -10,7 +10,7 @@ use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage;
-use MGModule\RealtimeRegisterSsl\eServices\Deploy\Panel;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
@@ -22,6 +22,7 @@ use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\Server;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use SandwaveIo\RealtimeRegister\Domain\DomainControlValidationCollection;
 use WHMCS\Database\Capsule;
 use MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service;
 use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
@@ -52,13 +53,16 @@ class home extends AbstractController
             $ssl = new SSL();
             $sslService = $ssl->getByServiceId($serviceId);
 
+            $sslStatus = $sslService->configdata->ssl_status;
             if (
                 (
-                    $sslService->configdata->ssl_status == 'pending'
-                    || $sslService->configdata->ssl_status == 'reissue'
-                    || $sslService->configdata->ssl_status == 'new_order'
-                    || $sslService->configdata->ssl_status == 'processing'
-                    || $sslService->configdata->ssl_status == ''
+                    !$sslStatus
+                    || $sslStatus == 'pending'
+                    || $sslStatus == 'reissue'
+                    || $sslStatus == 'new_order'
+                    || $sslStatus == 'processing'
+                    || $sslStatus == 'SUSPENDED'
+                    || $sslStatus == ''
                 )
                 && $sslService->remoteid != ''
             ) {
@@ -103,6 +107,8 @@ class home extends AbstractController
                 $vars['privateKey'] = $privateKey;
             }
             $vars['san_revalidate'] = false;
+
+
 
             if ($sslService->status !== 'Awaiting Configuration') {
                 try {
@@ -151,9 +157,26 @@ class home extends AbstractController
                         $vars['csr'] = ($certificateDetails['csr']);
                     }
 
+                    $now = new \DateTime();
+
+                    $vars['displayRenewButton'] = false;
+
                     if (!empty($certificateDetails['crt'])) {
                         $vars['crt'] = ($certificateDetails['crt']);
                     }
+
+                    if ($certificateDetails['ssl_status'] == 'ACTIVE' || $certificateDetails['ssl_status'] == 'COMPETED') {
+                        $diffDays = $now->diff(
+                            $now,
+                            \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_until']->date))
+                        );
+
+                        if ((int)$diffDays->format('%a') < 30) {
+                            $vars['displayRenewButton'] = true;
+                        }
+                    }
+
+
                     if (!empty($certificateDetails['ca'])) {
                         $vars['ca'] = ($certificateDetails['ca']);
                     }
@@ -189,8 +212,6 @@ class home extends AbstractController
                     $vars['validFrom'] = fromMySQLDate($certificateDetails['valid_from'], false, true);
                     $vars['validTill'] = fromMySQLDate($certificateDetails['valid_till'], false, true);
 
-
-                    $now = new \DateTime();
                     $datediff = $now->diff($now, \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_from']->date)));
                     $vars['nextReissue'] = $datediff->format('%a');
 
@@ -204,13 +225,6 @@ class home extends AbstractController
 
                     //service billing cycle
                     $vars['serviceBillingCycle'] = $serviceBillingCycle;
-                    $vars['displayRenewButton'] = false;
-
-                    $diffDays = $now->diff($now, \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_until']->date)));
-
-                    if ((int)$diffDays->format('%a') < 30) {
-                        $vars['displayRenewButton'] = true;
-                    }
 
                     $disabledValidationMethods = [];
 
@@ -226,22 +240,6 @@ class home extends AbstractController
                                 $productssl['product'] = json_decode($productsslDB->data, true);
                             }
                         }
-                    }
-
-                    if (!$productssl) {
-                        /** @var CertificatesApi $certificatesApi */
-                        $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-                        $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
-                    }
-
-                    if (!$productssl['product']['dcv_email']) {
-                        array_push($disabledValidationMethods, 'email');
-                    }
-                    if (!$productssl['product']['dcv_dns']) {
-                        array_push($disabledValidationMethods, 'dns');
-                    }
-                    if (!$productssl['product']['dcv_http']) {
-                        array_push($disabledValidationMethods, 'http');
                     }
                 } catch (Exception $ex) {
                     $vars['error'] = 'Can not load order details';
@@ -456,7 +454,18 @@ class home extends AbstractController
     {
         $ssl = new SSL();
         $serviceSSL = $ssl->getByServiceId($input['id']);
-        $response = ApiProvider::getInstance()->getApi()->resendValidationEmail($serviceSSL->remoteid);
+        $resendDcv = [];
+        foreach ($serviceSSL->configdata->validations->dcv as $dcv) {
+            if ($dcv->type == "EMAIL") {
+                $resendDcv[] = [
+                    "commonName"=> $dcv->commonName,
+                    "type" => "EMAIL",
+                    "email" => $dcv->email
+                ];
+            }
+        }
+        $response = ApiProvider::getInstance()->getApi(CertificatesApi::class)
+            ->resendDcv($serviceSSL->getRemoteId(), $resendDcv);
 
         return [
             'success' => $response['message']
@@ -618,95 +627,36 @@ class home extends AbstractController
         $serviceId = $input['params']['serviceid'];
         $ssl = new SSL();
         $sslService = $ssl->getByServiceId($serviceId);
-
-        $brand = $input['brand'];
-
-        if ($brand == 'digicert' || $brand == 'geotrust' || $brand == 'thawte' || $brand == 'rapidssl') {
-            if (isset($input['newDcvMethods'])) {
-                $newDcvMethodArray = [];
-                foreach ($input['newDcvMethods'] as $domain => $method) {
-                    if (strpos($domain, '___') !== false) {
-                        $domain = str_replace('___', '*', $domain);
-                    }
-                    $newDcvMethodArray[$domain] = $method;
+        if (isset($input['newDcvMethods'])) {
+            $newDcvMethodArray = [];
+            foreach ($input['newDcvMethods'] as $domain => $method) {
+                if (strpos($domain, '___') !== false) {
+                    $domain = str_replace('___', '*', $domain);
                 }
-
-                $input['newDcvMethods'] = $newDcvMethodArray;
+                $newDcvMethodArray[$domain] = $method;
             }
 
-            foreach ($input['newDcvMethods'] as $domain => $newMethod) {
-                $newdomains = [];
-                $new_methods = [];
+            $input['newDcvMethods'] = $newDcvMethodArray;
+        }
 
-                foreach ($input['newdomains'] as $newd) {
-                    $newdomains[] = str_replace('___', '*', $newd);
-                    $new_methods[] = $newMethod;
-                }
-
-                $data = [
-                    'new_methods' => implode(',', $new_methods),
-                    'domains' => implode(',', $newdomains)
-                ];
-
-
-                try {
-                    $response = ApiProvider::getInstance()->getApi()
-                        ->changeDomainValidationMethod($sslService->remoteid, $data);
-                } catch (Exception $ex) {
-                    if (strpos($ex->getMessage(), 'Function is locked for') !== false) {
-                        if (strpos($domain, '___') !== false) {
-                            $domain = str_replace('___', '*', $domain);
-                        }
-                        $message = substr($ex->getMessage(), 0, -1) . ' for the domain: ' . $domain . '.';
-                    } else {
-                        $message = $domain . ': ' . $ex->getMessage();
-                    }
-
-                    return [
-                        'success' => 0,
-                        'msg' => $message
-                    ];
-                }
-            }
-
-            $sslorder = (array)Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
-
-            $sslorderconfigdata = json_decode($sslorder['configdata'], true);
-
-            $sslorderconfigdata['dcv_method'] = $data['new_method'];
-
-            if ($data['new_method'] != 'email') {
-                $sslorderconfigdata['approveremail'] = '';
-            }
-
-            Capsule::table('tblsslorders')->where('serviceid', $serviceId)->update([
-                'configdata' => json_encode($sslorderconfigdata)
-            ]);
-
-            return [
-                'success' => $response['success'],
-                'msg' => $response['message']
-            ];
-        } else {
-            $new_methods = [];
+        foreach ($input['newDcvMethods'] as $domain => $newMethod) {
             $newdomains = [];
+            $new_methods = [];
 
-            foreach ($input['newDcvMethods'] as $method) {
-                $new_methods[] = $method;
+            foreach ($input['newdomains'] as $newd) {
+                $newdomains[] = str_replace('___', '*', $newd);
+                $new_methods[] = $newMethod;
             }
 
-            foreach ($input['newdomains'] as $newdomain) {
-                $newdomains[] = str_replace('___', '*', $newdomain);
-            }
             $data = [
                 'new_methods' => implode(',', $new_methods),
                 'domains' => implode(',', $newdomains)
             ];
 
+
             try {
-                $response = ApiProvider::getInstance()->getApi()->changeDomainValidationMethod(
-                    $sslService->remoteid, $data
-                );
+                $response = ApiProvider::getInstance()->getApi(CertificatesApi::class)
+                    ->resendDcv($sslService->remoteid, $data);
             } catch (Exception $ex) {
                 if (strpos($ex->getMessage(), 'Function is locked for') !== false) {
                     if (strpos($domain, '___') !== false) {
@@ -722,36 +672,40 @@ class home extends AbstractController
                     'msg' => $message
                 ];
             }
-
-            $sslorder = (array)Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
-
-            $sslorderconfigdata = json_decode($sslorder['configdata'], true);
-
-            $sslorderconfigdata['dcv_method'] = $data['new_method'];
-
-            if ($data['new_method'] != 'email') {
-                $sslorderconfigdata['approveremail'] = '';
-            }
-
-            Capsule::table('tblsslorders')->where('serviceid', $serviceId)->update([
-                'configdata' => json_encode($sslorderconfigdata)
-            ]);
-
-            return [
-                'success' => $response['success'],
-                'msg' => $response['message']
-            ];
         }
+
+        $sslorder = (array)Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
+
+        $sslorderconfigdata = json_decode($sslorder['configdata'], true);
+
+        $sslorderconfigdata['dcv_method'] = $data['new_method'];
+
+        if ($data['new_method'] != 'email') {
+            $sslorderconfigdata['approveremail'] = '';
+        }
+
+        Capsule::table('tblsslorders')->where('serviceid', $serviceId)->update([
+            'configdata' => json_encode($sslorderconfigdata)
+        ]);
+
+        return [
+            'success' => $response['success'],
+            'msg' => $response['message']
+        ];
     }
 
     public function getApprovalEmailsForDomainJSON($input, $vars = [])
     {
+        $serviceId = $input['id'];
+        $ssl = new SSL();
+        $sslService = $ssl->getByServiceId($serviceId);
         $result = [
             'success' => 1,
             'domainEmails' => ApiProvider::getInstance()->getApi()->getDomainEmails($input['domain'])
         ];
 
         return $result;
+
     }
 
     public function getPrivateKeyJSON($input, $vars = [])

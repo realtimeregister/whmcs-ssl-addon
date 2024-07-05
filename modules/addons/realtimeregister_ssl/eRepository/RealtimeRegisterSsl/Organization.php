@@ -31,7 +31,6 @@ class Organization
             'Required'     => true,
         ];
         $org['org_division']     = [
-            'FriendlyName' => 'Division',
             'FriendlyName' => Lang::getInstance()->T('confOrganizationDivision'),
             'Type'         => 'text',
             'Size'         => '30',
@@ -40,7 +39,6 @@ class Organization
             
         ];
         $org['org_lei']     = [
-            'FriendlyName' => 'LEI code',
             'FriendlyName' => Lang::getInstance()->T('LEI code'),
             'Type'         => 'text',
             'Size'         => '30',

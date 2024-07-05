@@ -19,6 +19,11 @@ class Repository extends MainRepository
         return Capsule::table($this->tableName)->get();
     }
 
+    public function getByServiceId($serviceId)
+    {
+        return Capsule::table($this->tableName)->where('service_id', $serviceId)->first();
+    }
+
     public function remove($id)
     {
         Capsule::table($this->tableName)->where('id', $id)->delete();

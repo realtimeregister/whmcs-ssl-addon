@@ -61,7 +61,7 @@
                                                   </div>\n\
                                                   <div class="form-group">\n\
                                                     <label class="control-label" for="OU">'+'{$MGLANG->T('organizationanUnitLabel')}'+'</label>\n\
-                                                    <input class="form-control generateCsrInput" id="organizationalUnitName" placeholder="'+'{$MGLANG->T('organizationanUnitPlaceholder')}'+'" name="OU" value="{$csrData['org_unit']}" required="" type="text">\n\
+                                                    <input class="form-control generateCsrInput" id="organizationalUnitName" placeholder="'+'{$MGLANG->T('organizationanUnitPlaceholder')}'+'" name="OU" value="{$csrData['org_unit']}" type="text">\n\
                                                   </div>\n\
                                                   <div class="form-group">\n\
                                                     <label class="control-label" for="CN">'+'{$MGLANG->T('commonNameLabel')}'+'</label>\n\
@@ -233,11 +233,11 @@
                     generateCsrCommonName,
                     generateCsrEmailAddress
                 ]
-                fields.forEach(function(index, value){                    
-                    index.bind("keyup change input",function() {
+                fields.forEach(function(value, index){
+                    value.bind("keyup change input",function() {
                         var empty = false;
-                        fields.forEach(function(index2, value2) {
-                            if (index2.val() == '') {
+                        fields.forEach(function(value2) {
+                            if (value2.attr("required") && value2.val() === '') {
                                 empty = true;
                             }
                         });
