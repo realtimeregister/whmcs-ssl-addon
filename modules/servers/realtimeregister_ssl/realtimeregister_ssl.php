@@ -106,6 +106,18 @@ function realtimeregister_ssl_SSLAdminResendCertificate($params) {
     return $adminResendCertificate->run();
 }
 
+/**
+ * Renew an instance of a product/service.
+ *
+ * Attempt to renew an existing instance of a given product/service. This is
+ * called any time a product/service invoice has been paid.
+ *
+ * @param array $params common module parameters
+ *
+ * @see https://developers.whmcs.com/provisioning-modules/module-parameters/
+ *
+ * @return string "success" or an error message
+ */
 function realtimeregister_ssl_Renew($params) {
     $renewCertificate = new Renew($params);
     return $renewCertificate->run();
