@@ -11,6 +11,7 @@ use MGModule\RealtimeRegisterSsl\eHelpers\Domains;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
@@ -249,17 +250,7 @@ class ClientReissueCertificate
         if (!$productssl) {
             /** @var CertificatesApi $certificatesApi */
             $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-            $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
-        }
-
-        if (!$productssl['product']['dcv_email']) {
-            array_push($disabledValidationMethods, 'email');
-        }
-        if (!$productssl['product']['dcv_dns']) {
-            array_push($disabledValidationMethods, 'dns');
-        }
-        if (!$productssl['product']['dcv_http']) {
-            array_push($disabledValidationMethods, 'http');
+            $productssl = $certificatesApi->getProduct($product->configuration()->text_name)->toArray();
         }
 
         foreach ($SSLStepTwoJS->fetchApprovalEmailsForSansDomains($parseDomains) as $sandomain => $appreveEmails) {
@@ -600,7 +591,7 @@ class ClientReissueCertificate
     {
         if (!empty($this->p[ConfigOptions::API_PRODUCT_ID])) {
             $apiRepo = new Products();
-            $apiProduct = $apiRepo->getProduct($this->p[ConfigOptions::API_PRODUCT_ID]);
+            $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($this->p[ConfigOptions::API_PRODUCT_ID]));
             return $apiProduct->brand;
         }
     }
@@ -680,7 +671,7 @@ class ClientReissueCertificate
 
         //$this->orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($this->sslService->remoteid);
 
-        if ($this->sslService->configdata->ssl_status !== 'active') {
+        if (!in_array($this->sslService->configdata->ssl_status, ['active', 'COMPLETED'])) {
             throw new Exception(Lang::getInstance()->T('notAllowToReissue'));
         }
     }
@@ -689,7 +680,7 @@ class ClientReissueCertificate
     {
         try {
             $apiRepo = new Products();
-            $apiProduct = $apiRepo->getProduct($this->p[ConfigOptions::API_PRODUCT_ID]);
+            $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($this->p[ConfigOptions::API_PRODUCT_ID]));
 
             if ($apiProduct->brand == 'comodo') {
                 $apiWebServers = [

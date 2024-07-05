@@ -63,6 +63,7 @@ class home extends AbstractController
                     || $sslStatus == 'new_order'
                     || $sslStatus == 'processing'
                     || $sslStatus == 'SUSPENDED'
+                    || $sslStatus == 'COMPLETED'
                     || $sslStatus == ''
                 )
                 && $sslService->remoteid != ''
@@ -219,18 +220,18 @@ class home extends AbstractController
                     if (!$vars['activationStatus']) {
                         $vars['activationStatus'] = $certificateDetails['ssl_status'];
                     }
-                    $vars['validFrom'] = fromMySQLDate($certificateDetails['valid_from'], false, true);
-                    $vars['validTill'] = fromMySQLDate($certificateDetails['valid_till'], false, true);
+                    $vars['validFrom'] = $certificateDetails['valid_from']->date;
+                    $vars['validTill'] = $certificateDetails['valid_till']->date;
 
                     $datediff = $now->diff($now, \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_from']->date)));
                     $vars['nextReissue'] = $datediff->format('%a');
 
                     if (isset($certificateDetails['begin_date']) && !empty($certificateDetails['begin_date'])) {
-                        $vars['subscriptionStarts'] = fromMySQLDate($certificateDetails['begin_date'], false, true);
+                        $vars['subscriptionStarts'] = $certificateDetails['begin_date']->date;
                     }
 
                     if (isset($certificateDetails['end_date']) && !empty($certificateDetails['end_date'])) {
-                        $vars['subscriptionEnds'] = fromMySQLDate($certificateDetails['end_date'], false, true);
+                        $vars['subscriptionEnds'] = $certificateDetails['end_date']->date;
                     }
 
                     //service billing cycle

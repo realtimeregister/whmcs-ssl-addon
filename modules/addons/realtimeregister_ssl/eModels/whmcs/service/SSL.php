@@ -257,9 +257,6 @@ class SSL extends \Illuminate\Database\Eloquent\Model
 
     public function setSSLStatus($status)
     {
-        if ($status == 'COMPLETED') {
-            $this->setConfigdataKey('ssl_status', 'active');
-        }
         $this->setConfigdataKey('ssl_status', $status);
     }
 

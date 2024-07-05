@@ -32,7 +32,7 @@
             <col style="width: 80%"/>
         </colgroup>
         <tbody>
-            {if $activationStatus === 'active'}
+            {if $activationStatus === 'active' || $activationStatus == 'COMPETED'}
                 {if $configoption23}
                     <tr>
                         <td class="text-left">{$MGLANG->T('issued_ssl_message')}</td>
@@ -60,7 +60,7 @@
                 <tr>
                     <td class="text-left">{$MGLANG->T('activationStatus')}</td>
                     <td class="text-left">
-                        {if $activationStatus === 'active'}
+                        {if $activationStatus === 'active' || $activationStatus === 'COMPLETED'}
                             {$MGLANG->T('activationStatusActive')}
                         {elseif $activationStatus === 'new_order'}
                             {$MGLANG->T('activationStatusNewOrder')}
@@ -82,7 +82,7 @@
                     </td>
                 </tr>
             {/if}
-            {if $activationStatus === 'active'}
+            {if $activationStatus === 'active' || $activationStatus === 'COMPLETED'}
                 <tr>
                     <td class="text-left">{$MGLANG->T('validFrom')}</td>
                     <td class="text-left">{$validFrom}</td>
@@ -254,12 +254,12 @@
                     {/if}
 
                     {if $configurationStatus != 'Awaiting Configuration'}
-                        {if $dcv_method == 'email' && !$sans && $activationStatus != 'active'}
+                        {if $dcv_method == 'email' && !$sans && ($activationStatus != 'active' || $activationStatus == 'COMPLETED')}
                             <button type="button" id="btnChange_Approver_Email" class="btn btn-default" style="margin:2px">{$MGLANG->T('changeValidationEmail')}</button>
                         {/if}
                         {if $activationStatus == 'processing' || $activationStatus == 'SUSPENDED'}
                             <button type="button" id="btnRevalidate" class="btn btn-default" style="margin:2px">{$MGLANG->T('domainvalidationmethod')}</button>
-                        {elseif $activationStatus == 'active'}
+                        {elseif $activationStatus == 'active' || $activationStatus === 'COMPLETED'}
                             <a class="btn btn-default" role="button" href="" id="Action_Custom_Module_Button_Reissue_Certificate">{$MGLANG->T('reissueCertificate')}</a>
                             <button type="button" id="send-certificate-email" class="btn btn-default" style="margin:2px">{$MGLANG->T('sendCertificate')}</button>
                             {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default" style="margin:2px">{$MGLANG->T('downloadca')}</button></a>{/if}

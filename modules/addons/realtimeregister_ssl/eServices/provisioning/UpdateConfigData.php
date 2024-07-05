@@ -92,8 +92,8 @@ class UpdateConfigData
             $sslOrder->setValidTill($order->expiryDate);
             $sslOrder->setCa($caBundle);
 
-            $sslOrder->setSubscriptionStarts($order->startDate);
-            $sslOrder->setSubscriptionEnds($order->expiryDate);
+            //$sslOrder->setSubscriptionStarts($order->startDate);
+            //$sslOrder->setSubscriptionEnds($order->expiryDate);
 
             $sslOrder->setDomain($order->domainName);
 
