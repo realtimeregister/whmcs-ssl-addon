@@ -9,9 +9,9 @@ use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\Deploy\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
@@ -768,24 +768,20 @@ class home extends AbstractController
 
         $details = (array)$sslService->configdata;
         $cert = $details['crt'];
-        $cabundle = $details['ca'];
+        $caBundle = $details['ca'];
         $key = decrypt($details['private_key']);
-
         try {
-            $service = new Service();
-            $serviceCpanel = $service->getServiceByDomain($sslService->userid, $details['domain']);
-            if ($serviceCpanel !== false) {
-                $cpanel = new Cpanel();
-                $cpanel->setService($serviceCpanel);
-                $cpanel->installSSL($serviceCpanel->user, $details['domain'], $cert, $key, $cabundle);
-                $logsRepo->addLog(
-                    $sslService->userid,
-                    $sslService->serviceid,
-                    'success',
-                    'The certificate for the ' . $details['domain'] . ' domain has been installed correctly.'
-                );
-                $orderRepo->updateStatus($sslService->serviceid, 'Success');
+            if ($details['domain']) {
+                Manage::prepareDeploy($sslService->serviceid, $details['domain'], $cert, $details['csr'], $key, $caBundle);
             }
+
+            $logsRepo->addLog(
+                $sslService->userid,
+                $sslService->serviceid,
+                'success',
+                'The certificate for the ' . $details['domain'] . ' domain has been installed correctly.'
+            );
+            $orderRepo->updateStatus($sslService->serviceid, 'Success');
         } catch (Exception $e) {
             $logsRepo->addLog(
                 $sslService->userid,

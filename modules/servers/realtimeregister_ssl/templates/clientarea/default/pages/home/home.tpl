@@ -254,9 +254,6 @@
                     {/if}
 
                     {if $configurationStatus != 'Awaiting Configuration'}
-                        {if $dcv_method == 'email' && !$sans && ($activationStatus != 'active' || $activationStatus == 'COMPLETED')}
-                            <button type="button" id="btnChange_Approver_Email" class="btn btn-default" style="margin:2px">{$MGLANG->T('changeValidationEmail')}</button>
-                        {/if}
                         {if $activationStatus == 'processing' || $activationStatus == 'SUSPENDED'}
                             <button type="button" id="btnRevalidate" class="btn btn-default" style="margin:2px">{$MGLANG->T('domainvalidationmethod')}</button>
                         {elseif $activationStatus == 'active' || $activationStatus === 'COMPLETED'}
@@ -778,6 +775,8 @@
                     domaintemp = domaintemp.replace("*", "___");
                     newdomains[domaintemp] = domaintemp;
                 });
+
+                console.log(newMethods);
                 
                 
                 revalidateInput.each(function(key,value){

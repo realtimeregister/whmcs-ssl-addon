@@ -39,7 +39,7 @@ class UpdateConfigData
             return null;
         }
 
-        $caBundle = null;
+        $orderRepo = new OrderRepo();
 
         $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
         $certificateResults = $certificatesApi->listCertificates(
@@ -88,6 +88,9 @@ class UpdateConfigData
             $sslOrder->setCrt($order->certificate);
             $sslOrder->setSSLStatus('COMPLETED');
 
+            $orderRepo->updateStatus($sslOrder->serviceid, 'Pending Installation');
+            $sslOrder->setCertificateId($order->id);
+
             $sslOrder->setValidFrom($order->startDate);
             $sslOrder->setValidTill($order->expiryDate);
             $sslOrder->setCa($caBundle);
@@ -111,7 +114,6 @@ class UpdateConfigData
             return $order;
         }
 
-        $orderRepo = new OrderRepo();
         $currentOrder = $orderRepo->getByServiceId($this->sslService->serviceid);
         $sslOrder = $this->sslService;
         $sslOrder->configdata = array_merge((array) json_decode($currentOrder->data), (array) $sslOrder->configdata);

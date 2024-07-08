@@ -249,6 +249,10 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     {
         return $this->getConfigdataKey('fields');
     }
+
+    public function getCertificateId() {
+        return $this->getConfigdataKey('certificateId');
+    }
     
     public function setSanDetails($details)
     {
@@ -338,5 +342,10 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     public function setStatus($status)
     {
         $this->status = $status;
+    }
+
+    public function setCertificateId($id)
+    {
+        $this->setConfigdataKey("certificateId", $id);
     }
 }

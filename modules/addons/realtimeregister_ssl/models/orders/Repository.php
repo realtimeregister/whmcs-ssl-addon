@@ -116,9 +116,11 @@ class Repository extends MainRepository
         Capsule::table($this->tableName)->where('service_id', $serviceid)->update([
             'status' => $status
         ]);
-        Capsule::table('tblsslorders')->where('serviceid', $serviceid)->update([
-            'status' => $status
-        ]);
+        if ($status == 'Success') {
+            Capsule::table('tblsslorders')->where('serviceid', $serviceid)->update([
+                'status' => 'active'
+            ]);
+        }
     }
 
     public function updateStatusById($id, $status)

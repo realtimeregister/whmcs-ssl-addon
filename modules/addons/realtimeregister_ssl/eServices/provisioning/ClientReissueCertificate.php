@@ -209,15 +209,7 @@ class ClientReissueCertificate
         $service = new Service($this->p['serviceid']);
         $product = new Product($service->productID);
 
-        if ($product->configuration()->text_name != '144') {
-            if (!isset($decodeCSR['csrResult']['CN']) || strpos($decodeCSR['csrResult']['CN'], '*.') === false) {
-                if (isset($decodeCSR['csrResult']['errorMessage'])) {
-                    throw new Exception($decodeCSR['csrResult']['errorMessage']);
-                }
-            }
-        }
-
-        $mainDomain = $decodeCSR['csrResult']['CN'];
+        $mainDomain = $decodeCSR['commonName'];
         $domains = $mainDomain . PHP_EOL . $this->post['sans_domains'];
         $parseDomains = SansDomains::parseDomains(strtolower($domains));
         $domainsWildcard = $this->post['sans_domains_wildcard'];
@@ -253,31 +245,32 @@ class ClientReissueCertificate
             $productssl = $certificatesApi->getProduct($product->configuration()->text_name)->toArray();
         }
 
-        foreach ($SSLStepTwoJS->fetchApprovalEmailsForSansDomains($parseDomains) as $sandomain => $appreveEmails) {
-            if (strpos($sandomain, '*.') !== false) {
-                array_push($disabledValidationMethods, 'http');
-            }
-        }
+//        foreach ($SSLStepTwoJS->fetchApprovalEmailsForSansDomains($parseDomains) as $sandomain => $approverEmails) {
+//            if (str_contains($sandomain, '*.')) {
+//                $disabledValidationMethods[] = 'http';
+//            }
+//        }
 
         $this->vars['disabledValidationMethods'] = json_encode($disabledValidationMethods);
     }
 
     private function stepTwoForm()
     {
-        $data['dcv_method'] = strtolower($this->post['dcv_method']);
-        $data['webserver_type'] = $this->post['webservertype'];
-        $data['approver_email'] = ($data['dcv_method'] == 'email') ? $this->post['approveremail'] : '';
-        $data['csr'] = $this->post['csr'];
-
-        $sansDomains = [];
-
-        $this->validateWebServer();
-
         if (isset($_SESSION['decodeCSR']) && !empty($_SESSION['decodeCSR'])) {
             $decodedCSR = $_SESSION['decodeCSR'];
         } else {
             $decodedCSR = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->post['csr']);
         }
+        $commonName = $decodedCSR['commonName'];
+        $dcv = [];
+        $dcv[] = [
+            "commonName" => $commonName,
+            "type" => self::getDcvMethod($this->post['dcv_method']),
+            "email" => $this->post['approveremail']
+        ];
+        $csr = $this->post['csr'];
+
+        $sansDomains = [];
 
         if ($this->getSansLimit()) {
             $this->validateSanDomains();
@@ -288,7 +281,7 @@ class ClientReissueCertificate
             //if entered san is the same as main domain
             if (count($sansDomains) != count($_POST['approveremails'])) {
                 foreach ($sansDomains as $key => $domain) {
-                    if ($decodedCSR['csrResult']['CN'] == $domain) {
+                    if ($decodedCSR['commonName'] == $domain) {
                         unset($sansDomains[$key]);
                     }
                 }
@@ -299,28 +292,29 @@ class ClientReissueCertificate
             if (!empty($sanDcvMethods = $this->getSansDomainsValidationMethods())) {
                 $i = 0;
                 foreach ($_POST['approveremails'] as $domain => $approveremail) {
-                    if ($sanDcvMethods[$i] != 'EMAIL') {
-                        $_POST['approveremails']["$domain"] = strtolower($sanDcvMethods[$i]);
-                    }
+                    $dcv[] = [
+                        "commonName" => $domain,
+                        "type" => self::getDcvMethod(strtolower($sanDcvMethods[$i])),
+                        "email" => $approveremail
+                    ];
                     $i++;
                 }
-                $data['approver_emails'] = implode(',', $_POST['approveremails']);
             }
         }
 
         $service = new Service($this->p['serviceid']);
         $product = new Product($service->productID);
 
-        if ($product->configuration()->text_name == '144') {
-            $sansDomains = SansDomains::parseDomains($this->post['sans_domains']);
-
-            $data['dns_names'] = implode(',', $sansDomains);
-            $data['approver_emails'] = strtolower($_POST['dcvmethodMainDomain']);
-
-            foreach ($_POST['dcvmethod'] as $method) {
-                $data['approver_emails'] .= ',' . strtolower($method);
-            }
-        }
+//        if ($product->configuration()->text_name == '144') {
+//            $sansDomains = SansDomains::parseDomains($this->post['sans_domains']);
+//
+//            $data['dns_names'] = implode(',', $sansDomains);
+//            $data['approver_emails'] = strtolower($_POST['dcvmethodMainDomain']);
+//
+//            foreach ($_POST['dcvmethod'] as $method) {
+//                $data['approver_emails'] .= ',' . strtolower($method);
+//            }
+//        }
 
         $productssl = false;
         $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
@@ -341,55 +335,29 @@ class ClientReissueCertificate
             $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
         }
 
-        $sansDomainsMethod = [];
-        foreach ($sansDomains as $sd) {
-            $sansDomainsMethod[] = strtolower($this->post['dcv_method']);
-        }
-        $data['approver_emails'] = implode(',', $sansDomainsMethod);
-
-
-        $ssl = new SSL();
-        $sslService = $ssl->getByServiceId($this->p['serviceid']);
-
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $orderStatus = $processesApi->get($this->sslService->remoteid);
 
-        $singleDomainsCount = $orderStatus['single_san_count'];
-        $wildcardDomainsCount = $orderStatus['wildcard_san_count'];
-
-        $newSanDomainSingleCount = count(explode(PHP_EOL, $this->post['sans_domains']));
-        $newSanDomainWildcardCount = count(explode(PHP_EOL, $this->post['sans_domains_wildcard']));
-
-
-        if (!empty($this->post['sans_domains']) || !empty($this->post['sans_domains_wildcard'])) {
-            if ($newSanDomainSingleCount > $singleDomainsCount || $newSanDomainWildcardCount > $wildcardDomainsCount) {
-                $singleToAdd = $newSanDomainSingleCount - $singleDomainsCount;
-                if ($singleToAdd < 0) {
-                    $singleToAdd = 0;
-                }
-                $wildcardToAdd = $newSanDomainWildcardCount - $wildcardDomainsCount;
-                if ($wildcardToAdd < 0) {
-                    $wildcardToAdd = 0;
-                }
-                $allToAdd = $singleToAdd + $wildcardToAdd;
-
-                if ($singleToAdd <= 0) {
-                    $allToAdd = 0;
-                }
-
-                ApiProvider::getInstance()->getApi()->addSslSan(
-                    $this->sslService->remoteid,
-                    $allToAdd,
-                    $singleToAdd,
-                    $wildcardToAdd
-                );
-            }
-        }
-
-        $reissueData = ApiProvider::getInstance()->getApi()->reIssueOrder($this->sslService->remoteid, $data);
+        $reissueData = ApiProvider::getInstance()
+            ->getApi(CertificatesApi::class)
+            ->reissueCertificate(
+                $this->sslService->getCertificateId(),
+                $csr,
+                $sansDomains,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                $dcv,
+                $commonName);
         /** @var ProcessesApi $processesApi */
+        $this->sslService->setRemoteId($reissueData->processId);
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $orderDetails = $processesApi->get($this->sslService->remoteid);
+        $orderDetails = $processesApi->info($this->sslService->getRemoteId())->toArray();
 
         // TODO add dns management
         // dns manager
@@ -399,7 +367,7 @@ class ClientReissueCertificate
             ) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . 'dnsmanager.php';
         $checkTable = Capsule::schema()->hasTable('dns_manager2_zone');
         if (file_exists($dnsmanagerfile) && $checkTable !== false) {
-            $zoneDomain = $decodedCSR['csrResult']['CN'];
+            $zoneDomain = $decodedCSR['commonName'];
             $loaderDNS = dirname(
                     dirname(dirname(dirname(dirname(__DIR__))))
                 ) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'addons'
@@ -408,7 +376,7 @@ class ClientReissueCertificate
                 require_once $loaderDNS;
                 $loader = new loader();
                 addon::I(true);
-                $helper = new DomainHelper($decodedCSR['csrResult']['CN']);
+                $helper = new DomainHelper($decodedCSR['commonName']);
                 $zoneDomain = $helper->getDomainWithTLD();
             }
 
@@ -551,23 +519,33 @@ class ClientReissueCertificate
 
         //update domain column in tblhostings
         $service = new Service($this->p['serviceid']);
-        $service->save(['domain' => $decodedCSR['csrResult']['CN']]);
+        $service->save(['domain' => $decodedCSR['commonName']]);
 
-        $this->sslService->setDomain($decodedCSR['csrResult']['CN']);
+        $this->sslService->setDomain($decodedCSR['commonName']);
         $this->sslService->setSSLStatus('processing');
-        $this->sslService->setConfigdataKey('servertype', $data['webserver_type']);
-        $this->sslService->setConfigdataKey('csr', $data['csr']);
-        $this->sslService->setConfigdataKey('approveremail', $data['approver_email']);
+        $this->sslService->setCrt(null);
+        $this->sslService->setCa(null);
+        $this->sslService->setConfigdataKey('servertype', "-1");
+        $this->sslService->setConfigdataKey('csr', $csr);
+        $this->sslService->setConfigdataKey('approveremail', $dcv[0]['email']);
         $this->sslService->setConfigdataKey('private_key', $_POST['privateKey']);
-        $this->sslService->setApproverEmails($data['approver_emails']);
-        $this->sslService->setSanDetails($orderDetails['san']);
+        $this->sslService->setApproverEmails(
+            array_filter(array_map(function ($entry) {return $entry['email'];},  $orderDetails['validations'] ?? [])));
+        $this->sslService->setSanDetails(
+            array_filter(array_map(function ($entry) {return $entry['commonName'];},  $orderDetails['validations'] ?? []),
+                function ($entry) {return $entry['commonName'] != $this->sslService->getDomain();}
+            ));
         $this->sslService->save();
 
 
         try {
-            Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $decodedCSR['csrResult']['CN'], true);
+            Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $decodedCSR['commonName'], true);
         } catch (Exception $e) {
         }
+    }
+
+    private static function getDcvMethod(string $dcvMethod) : string {
+        return $dcvMethod == 'http' ? 'FILE' : strtoupper($dcvMethod);
     }
 
     private function getSansDomainsValidationMethods()

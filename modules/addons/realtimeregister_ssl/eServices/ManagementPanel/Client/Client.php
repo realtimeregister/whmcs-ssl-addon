@@ -71,10 +71,6 @@ class Client extends AbstractClient
             new Debug($this->getBaseUrl() . $url, $type, $options['headers'], $response, $options);
         }
 
-        try {
-            return $this->parseResponse((string) $response->getBody());
-        } catch (\Exception $e) {
-            return json_decode($e->getMessage(), true);
-        }
+        return $this->parseResponse((string) $response->getBody());
     }
 }
