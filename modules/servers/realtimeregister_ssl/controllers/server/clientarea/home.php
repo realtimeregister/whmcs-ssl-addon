@@ -487,22 +487,14 @@ class home extends AbstractController
     public function sendCertificateEmailJSON($input, $vars = [])
     {
         $ssl = new SSL();
-        $serviceSSL = $ssl->getByServiceId($input['id']);
+        $orderStatus = $ssl->getByServiceId($input['id']);
 
-        /** @var ProcessesApi $processesApi */
-        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $orderStatus = $processesApi->get($serviceSSL->remoteid);
-
-        if ($orderStatus['status'] !== 'active') {
+        if ($orderStatus->getSSLStatus() != 'COMPLETED' && $orderStatus->getSSLStatus() != 'active') {
             throw new Exception(
                 Lang::getInstance()->T('orderNotActiveError')
             ); //Can not send certificate. Order status is different than active.
         }
 
-        if (empty($orderStatus['ca_code'])) {
-            //An error occurred. Certificate body is empty.
-            throw new Exception(Lang::getInstance()->T('CACodeEmptyError'));
-        }
         $apiConf = (new Repository())->get();
         $sendCertyficateTermplate = $apiConf->send_certificate_template;
 
@@ -526,7 +518,7 @@ class home extends AbstractController
         }
 
         $attachments = [];
-        if (!empty($orderStatus['ca_code'])) {
+        if (!empty($orderStatus->getCa())) {
             if ($pathAttachemts === false) {
                 $tmp_ca_code = tempnam("/tmp", "FOO");
                 $handle = fopen($tmp_ca_code, "w");
@@ -541,7 +533,7 @@ class home extends AbstractController
                 $filetemp = $pathAttachemts . DIRECTORY_SEPARATOR . $input['params']['serviceid']
                     . $input['params']['accountid'] . '_ca_code.ca';
                 file_exists($filetemp) || touch($filetemp);
-                file_put_contents($filetemp, $orderStatus['csr_code']);
+                file_put_contents($filetemp, $orderStatus->getCa());
 
                 $attachments[] = [
                     'displayname' => $input['params']['serviceid'] . $input['params']['accountid'] . '_ca_code.ca',
@@ -550,11 +542,11 @@ class home extends AbstractController
             }
         }
 
-        if (!empty($orderStatus['crt_code'])) {
+        if (!empty($orderStatus->getCrt())) {
             if ($pathAttachemts === false) {
                 $tmp_crt_code = tempnam("/tmp", "FOO");
                 $handle = fopen($tmp_crt_code, "w");
-                fwrite($handle, $orderStatus['crt_code']);
+                fwrite($handle, $orderStatus->getCrt());
                 fclose($handle);
 
                 $attachments[] = [
@@ -565,7 +557,7 @@ class home extends AbstractController
                 $filetemp = $pathAttachemts . DIRECTORY_SEPARATOR . $input['params']['serviceid']
                     . $input['params']['accountid'] . '_crt_code.crt';
                 file_exists($filetemp) || touch($filetemp);
-                file_put_contents($filetemp, $orderStatus['csr_code']);
+                file_put_contents($filetemp, $orderStatus->getCrt());
 
                 $attachments[] = [
                     'displayname' => $input['params']['serviceid'] . $input['params']['accountid'] . '_crt_code.crt',
@@ -574,11 +566,11 @@ class home extends AbstractController
             }
         }
 
-        if (!empty($orderStatus['csr_code'])) {
+        if (!empty($orderStatus->getCsr())) {
             if ($pathAttachemts === false) {
                 $tmp_csr_code = tempnam("/tmp", "FOO");
                 $handle = fopen($tmp_csr_code, "w");
-                fwrite($handle, $orderStatus['csr_code']);
+                fwrite($handle, $orderStatus->getCsr());
                 fclose($handle);
 
                 $attachments[] = [
@@ -589,7 +581,7 @@ class home extends AbstractController
                 $filetemp = $pathAttachemts . DIRECTORY_SEPARATOR . $input['params']['serviceid']
                     . $input['params']['accountid'] . '_csr_code.csr';
                 file_exists($filetemp) || touch($filetemp);
-                file_put_contents($filetemp, $orderStatus['csr_code']);
+                file_put_contents($filetemp, $orderStatus->getCsr());
 
                 $attachments[] = [
                     'displayname' => $input['params']['serviceid'] . $input['params']['accountid'] . '_csr_code.csr',
@@ -600,28 +592,24 @@ class home extends AbstractController
 
         if ($sendCertyficateTermplate == null) {
             $result = sendMessage(EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID, $input['id'], [
-                'domain' => $orderStatus['domain'],
-                'ssl_certificate' => nl2br($orderStatus['ca_code']),
-                'crt_code' => nl2br($orderStatus['crt_code']),
+                'domain' => $orderStatus['domain']
             ], false, $attachments);
         } else {
             $templateName = EmailTemplateService::getTemplateName($sendCertyficateTermplate);
             $result = sendMessage($templateName, $input['id'], [
-                'domain' => $orderStatus['domain'],
-                'ssl_certificate' => nl2br($orderStatus['ca_code']),
-                'crt_code' => nl2br($orderStatus['crt_code']),
+                'domain' => $orderStatus['domain']
             ], false, $attachments);
         }
 
-        if (!empty($orderStatus['ca_code'])) {
+        if (!empty($orderStatus->getCa())) {
             unlink($tmp_ca_code);
         }
 
-        if (!empty($orderStatus['crt_code'])) {
+        if (!empty($orderStatus->getCrt())) {
             unlink($tmp_crt_code);
         }
 
-        if (!empty($orderStatus['csr_code'])) {
+        if (!empty($orderStatus->getCsr())) {
             unlink($tmp_csr_code);
         }
 
