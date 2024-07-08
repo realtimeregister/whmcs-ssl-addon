@@ -696,12 +696,9 @@ class home extends AbstractController
 
     public function getApprovalEmailsForDomainJSON($input, $vars = [])
     {
-        $serviceId = $input['id'];
-        $ssl = new SSL();
-        $sslService = $ssl->getByServiceId($serviceId);
         $result = [
             'success' => 1,
-            'domainEmails' => ApiProvider::getInstance()->getApi()->getDomainEmails($input['domain'])
+            'domainEmails' => ApiProvider::getInstance()->getApi(CertificatesApi::class)->listDcvEmailAddresses($input['domain'])
         ];
 
         return $result;
