@@ -38,7 +38,7 @@ class Product
     
     public function isSanEnabled()
     {
-        return $this->san_enabled === 1;
+        return $this->includedDomains >= 1;
     }
     
     public function isSanWildcardEnabled()

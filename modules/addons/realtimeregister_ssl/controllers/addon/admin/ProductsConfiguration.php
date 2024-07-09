@@ -158,7 +158,7 @@ class ProductsConfiguration extends AbstractController
         }
 
         foreach ($input['product'] as $key => $value) {
-            $productModel->updateProducDetails($key, $value);
+            $productModel->updateProductDetails($key, $value);
         }
 
         foreach ($input['currency'] as $key => $value) {

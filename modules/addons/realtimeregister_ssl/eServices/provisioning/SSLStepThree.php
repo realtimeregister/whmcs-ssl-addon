@@ -233,9 +233,6 @@ class SSLStepThree
                     $i++;
                 }
             }
-
-            $apiRepo = new Products();
-            $apiProduct = $apiRepo->getProduct($order['product_id']);
         }
 
         if ($_POST['dcvmethodMainDomain'] === 'EMAIL') {

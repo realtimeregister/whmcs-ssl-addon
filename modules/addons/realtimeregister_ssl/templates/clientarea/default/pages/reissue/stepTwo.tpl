@@ -127,7 +127,7 @@
                 {
                     selectDcvMethod += '<option value="DNS">'+'{$MGLANG->T('dropdownDcvMethodDns')}'+'</option>';
                 }
-                selectDcvMethod += '</select>';            
+                selectDcvMethod += '</select></div>';
                 
                 partHtml = partHtml + selectDcvMethod.replace('name="selectName"', getNameForSelectMethod(x, domain));
                 selectEmailHtml = selectBegin.replace('name="selectName"', getNameForSelectEmail(x, domain));
@@ -144,14 +144,12 @@
                 partHtml = '';
                 x++;
             });
+
             template.before(getTable(tableBegin, tableEnd, fullHtml));
             template.remove();
         }
         
         replaceRadioInputs(JSON.parse('{$approvalEmails}'));
-        
-        $('select[name^="dcvmethod["]').remove();
-        $('select[name^="approveremails"]').remove();
 
         $('select[name^="dcvmethod"]').change( function (){
             

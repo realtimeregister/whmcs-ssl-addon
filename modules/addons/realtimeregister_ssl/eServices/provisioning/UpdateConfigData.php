@@ -109,7 +109,7 @@ class UpdateConfigData
                 $sslOrder->setProductBrand($brandName);
             }
 
-            $sslOrder->setSanDetails($order->san);
+            $sslOrder->setSanDetails(array_map(function ($sanEntry) {return ["san_name" => $sanEntry];}, $order->san));
             $sslOrder->save();
             return $order;
         }
