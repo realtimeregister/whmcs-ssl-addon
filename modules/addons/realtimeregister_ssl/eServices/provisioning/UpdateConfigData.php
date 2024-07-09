@@ -95,8 +95,8 @@ class UpdateConfigData
             $sslOrder->setValidTill($order->expiryDate);
             $sslOrder->setCa($caBundle);
 
-            //$sslOrder->setSubscriptionStarts($order->startDate);
-            //$sslOrder->setSubscriptionEnds($order->expiryDate);
+            $sslOrder->setSubscriptionStarts($order->startDate);
+            $sslOrder->setSubscriptionEnds($order->subscriptionEndDate);
 
             $sslOrder->setDomain($order->domainName);
 
@@ -109,7 +109,10 @@ class UpdateConfigData
                 $sslOrder->setProductBrand($brandName);
             }
 
-            $sslOrder->setSanDetails(array_map(function ($sanEntry) {return ["san_name" => $sanEntry];}, $order->san));
+            if (isset($order->san)) {
+                $sslOrder->setSanDetails(array_map(function ($sanEntry) {return ["san_name" => $sanEntry];}, $order->san));
+            }
+
             $sslOrder->save();
             return $order;
         }

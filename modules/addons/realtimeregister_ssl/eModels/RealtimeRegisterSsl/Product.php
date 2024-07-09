@@ -43,7 +43,7 @@ class Product
     
     public function isSanWildcardEnabled()
     {
-        return in_array('WILDCARD', $this->features);
+        return $this->isSanEnabled() && in_array('WILDCARD', $this->features);
     }
     
     public function getPeriods()

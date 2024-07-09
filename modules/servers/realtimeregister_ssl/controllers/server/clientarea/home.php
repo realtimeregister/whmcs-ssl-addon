@@ -63,6 +63,8 @@ class home extends AbstractController
                     || $sslStatus == 'new_order'
                     || $sslStatus == 'processing'
                     || $sslStatus == 'SUSPENDED'
+                    || $sslStatus == 'COMPLETED'
+                    || $sslStatus == 'active'
                     || $sslStatus == ''
                 )
                 && $sslService->remoteid != ''

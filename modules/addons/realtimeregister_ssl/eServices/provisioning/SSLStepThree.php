@@ -136,11 +136,6 @@ class SSLStepThree
                     $billingPeriods['Monthly'] = $productAvailablePeriods[0];
                 }
             }
-
-            //one time billing set period to 12 months if avaiable else leave max period
-            if (in_array('12', $productAvailablePeriods)) {
-                $billingPeriods['One Time'] = 12;
-            }
         }
 
         if ($this->p[ConfigOptions::MONTH_ONE_TIME] && !empty($this->p[ConfigOptions::MONTH_ONE_TIME])) {
@@ -233,6 +228,7 @@ class SSLStepThree
                     $i++;
                 }
             }
+
         }
 
         if ($_POST['dcvmethodMainDomain'] === 'EMAIL') {
@@ -311,11 +307,10 @@ class SSLStepThree
 
         /** @var ProcessesApi $processesApi */
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $addedSSLOrderInformation = $processesApi->get($addedSSLOrder->processId);
 
         //update domain column in tblhostings
         $service = new Service($this->p['serviceid']);
-        $service->save(['domain' => $decodedCSR['csrResult']['CN']]);
+        $service->save(['domain' => $decodedCSR['commonName']]);
 
         /** @var ProcessesApi $processesApi */
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
@@ -581,18 +576,5 @@ class SSLStepThree
         $_SESSION['realtimeregister_ssl_FLASH_ERROR_STEP_ONE'] = $error;
         header('Location: configuressl.php?cert=' . $_GET['cert']);
         die();
-    }
-
-    /**
-     * @param string $name
-     * @param int $numberOfMonths
-     * @return string
-     */
-    private function createProductName(string $name, int $numberOfMonths)
-    {
-        if ($numberOfMonths > 12) {
-            $postFix = '_' . ($numberOfMonths / 12) . 'years';
-        }
-        return $name . $postFix;
     }
 }
