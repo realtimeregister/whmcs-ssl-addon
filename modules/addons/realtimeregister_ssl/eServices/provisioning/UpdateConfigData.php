@@ -182,10 +182,6 @@ class UpdateConfigData
                     break;
                 default:
                     $sanEntry['validation_method'] = 'email';
-                    $sanEntry['validation'] = [
-                        ['dns' => [
-                            'record' => $dcv['dnsRecord'] . ' ' . $dcv['dnsType']  . ' ' . $dcv['dnsContents']
-                        ]]];
                     break;
             }
             $san_details[] = $sanEntry;
