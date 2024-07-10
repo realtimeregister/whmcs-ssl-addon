@@ -93,14 +93,9 @@ class home extends AbstractController
 
                 $configDataUpdate->run();
 
-                // if($apicertdata['status'] != 'new_order')
-                //{
-                //    $sslService->setSSLStatus($apicertdata['status']);
-                //    $sslService->setPartnerOrderId($apicertdata['partner_order_id']);
-                //    $sslService->setApproverEmails($apicertdata['approver_email']);
-                //    $sslService->setDomain($apicertdata['domain']);
-                //    $sslService->save();
-                //}
+                //reload
+                $sslService = $ssl->getByServiceId($serviceId);
+
                 $vars['activationStatus'] = $apicertdata['status'];
             }
 
@@ -208,7 +203,6 @@ class home extends AbstractController
                                     $vars['sans'][$san->san_name]['san_validation'] = (array)$san->validation->http;
                                     $vars['sans'][$san->san_name]['san_validation']['content'] =
                                         explode(PHP_EOL, $san->validation->http->content);
-                                    //dd($vars['sans'][$san->san_name]);
                                     break;
                                 default:
                                     $vars['sans'][$san->san_name]['san_validation'] = $san->validation->email;
@@ -221,9 +215,9 @@ class home extends AbstractController
                     }
                     $vars['validFrom'] = $certificateDetails['valid_from']->date;
                     $vars['validTill'] = $certificateDetails['valid_till']->date;
+                    $datediff = $now->diff(new \DateTime($certificateDetails['valid_till']->date))->format('%a');
 
-                    $datediff = $now->diff($now, \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_from']->date)));
-                    $vars['nextReissue'] = $datediff->format('%a');
+
 
                     if (isset($certificateDetails['begin_date']) && !empty($certificateDetails['begin_date'])) {
                         $vars['subscriptionStarts'] = $certificateDetails['begin_date']->date;
@@ -231,6 +225,9 @@ class home extends AbstractController
 
                     if (isset($certificateDetails['end_date']) && !empty($certificateDetails['end_date'])) {
                         $vars['subscriptionEnds'] = $certificateDetails['end_date']->date;
+                        $vars['nextReissue'] = $datediff;
+                    } else {
+                        $vars['nextRenew'] = $datediff;
                     }
 
                     //service billing cycle
@@ -406,6 +403,8 @@ class home extends AbstractController
             'vars' => $vars
         ];
     }
+
+
 
     public function testHTML($input, $vars = [])
     {
