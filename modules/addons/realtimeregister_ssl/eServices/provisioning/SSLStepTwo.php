@@ -102,10 +102,10 @@ class SSLStepTwo
         $mainDomain = $decodedCSR['commonName'];
 
         if (empty($mainDomain)) {
-            $mainDomain = $decodedCSR['csrResult']['altNames'][0];
+            $mainDomain = $decodedCSR['altNames'][0];
         }
 
-        $domains = $mainDomain . PHP_EOL . $_POST['fields']['sans_domains'];
+        $domains = $mainDomain . PHP_EOL . $_POST['fields']['sans_domains']; // . implode(PHP_EOL, $decodedCSR['altNames'] ?: [], );
         $sansDomains = SansDomains::parseDomains(strtolower($domains));
         $approveremails = $step2js->fetchApprovalEmailsForSansDomains($sansDomains);
 

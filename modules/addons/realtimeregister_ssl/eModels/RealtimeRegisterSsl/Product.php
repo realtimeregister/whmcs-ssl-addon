@@ -38,12 +38,12 @@ class Product
     
     public function isSanEnabled()
     {
-        return $this->san_enabled === 1;
+        return $this->includedDomains >= 1;
     }
     
     public function isSanWildcardEnabled()
     {
-        return in_array('WILDCARD', $this->features);
+        return $this->isSanEnabled() && in_array('WILDCARD', $this->features);
     }
     
     public function getPeriods()

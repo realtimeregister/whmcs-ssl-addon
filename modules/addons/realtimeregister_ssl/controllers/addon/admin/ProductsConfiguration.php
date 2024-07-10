@@ -76,7 +76,7 @@ class ProductsConfiguration extends AbstractController
                 $apiConfig->peroids = $apiProduct->max_period;
                 $apiConfig->availablePeriods = $apiProduct->getPeriods();
                 $apiConfig->isSanEnabled = $apiProduct->isSanEnabled();
-                $apiConfig->isWildcardSanEnabled = $apiProduct->wildcard_san_enabled;
+                $apiConfig->isWildcardSanEnabled = $apiProduct->isSanWildcardEnabled();
                 $products[$key]->apiConfig = $apiConfig;
                 $products[$key]->confOption = ConfigurableOptionService::getForProduct($product->id);
                 $products[$key]->confOptionWildcard = ConfigurableOptionService::getForProductWildcard($product->id);
@@ -158,7 +158,7 @@ class ProductsConfiguration extends AbstractController
         }
 
         foreach ($input['product'] as $key => $value) {
-            $productModel->updateProducDetails($key, $value);
+            $productModel->updateProductDetails($key, $value);
         }
 
         foreach ($input['currency'] as $key => $value) {

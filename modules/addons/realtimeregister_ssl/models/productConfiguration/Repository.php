@@ -149,7 +149,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
         );
     }
     
-    public function updateProducDetails($productId, $params)
+    public function updateProductDetails($productId, $params)
     {
         $update                           = [];
         $update['name']                   = $params['name'];
