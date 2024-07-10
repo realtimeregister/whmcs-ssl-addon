@@ -31,6 +31,8 @@ class ConfigOptions
     public const PRODUCT_INCLUDED_SANS_WILDCARD = 'configoption8';
     public const OPTION_SANS_COUNT = 'sans_count'; // sans_count|SANs http://puu.sh/vXXx3/d08fdb2c2f.png
     public const OPTION_SANS_WILDCARD_COUNT = 'sans_wildcard_count';
+    public const OPTION_ISSUED_SSL_MESSAGE = 'configoption23';
+    public const OPTION_CUSTOM_GUIDE = 'configoption24';
 
     public function __construct(&$params = null)
     {

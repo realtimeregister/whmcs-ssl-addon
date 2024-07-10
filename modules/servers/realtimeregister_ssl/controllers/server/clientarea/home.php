@@ -15,6 +15,7 @@ use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
 use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
@@ -389,8 +390,8 @@ class home extends AbstractController
             $vars['error'] = $ex->getMessage();
         }
 
-        $vars['configoption23'] = $input['params']['configoption23'];
-        $vars['configoption24'] = $input['params']['configoption24'];
+        $vars[C::OPTION_ISSUED_SSL_MESSAGE] = $input['params'][C::OPTION_ISSUED_SSL_MESSAGE];
+        $vars[C::OPTION_CUSTOM_GUIDE] = $input['params'][C::OPTION_CUSTOM_GUIDE];
 
         $vars['approver_email'] = isset($sslService->configdata->approver_method->email)
         && !empty($sslService->configdata->approver_method->email) ? $sslService->configdata->approver_method->email

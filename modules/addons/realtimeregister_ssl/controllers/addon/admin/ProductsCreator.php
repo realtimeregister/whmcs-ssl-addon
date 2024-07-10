@@ -75,11 +75,11 @@ class ProductsCreator extends AbstractController
         ];
 
         if (isset($input['issued_ssl_message']) && !empty($input['issued_ssl_message'])) {
-            $productData['configoption23'] = $input['issued_ssl_message'];
+            $productData[C::OPTION_ISSUED_SSL_MESSAGE] = $input['issued_ssl_message'];
         }
 
         if (isset($input['custom_guide']) && !empty($input['custom_guide'])) {
-            $productData['configoption24'] = $input['custom_guide'];
+            $productData[C::OPTION_CUSTOM_GUIDE] = $input['custom_guide'];
         }
 
         $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
