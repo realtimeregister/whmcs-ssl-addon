@@ -20,7 +20,7 @@ class Repository
      * @param type $accountID
      * @author Michal Czech <michael@modulesgarden.com>
      */
-    function __construct($serviceID, array $data = [])
+    public function __construct($serviceID, array $data = [])
     {
         $this->serviceID = $serviceID;
 
@@ -36,26 +36,26 @@ class Repository
         }
     }
 
-    function __isset($name)
+    public function __isset($name)
     {
         return $this->_customFields[$name];
     }
 
-    function __get($name)
+    public function __get($name)
     {
         if (isset($this->_customFields[$name])) {
             return $this->_customFields[$name]->value;
         }
     }
 
-    function __set($name, $value)
+    public function __set($name, $value)
     {
         if (isset($this->_customFields[$name])) {
             $this->_customFields[$name]->value = $value;
         }
     }
 
-    function load()
+    public function load()
     {
         $query = "
             SELECT
@@ -98,7 +98,7 @@ class Repository
      *
      * @author Michal Czech <michael@modulesgarden.com>
      */
-    function update()
+    public function update()
     {
         $this->load();
 

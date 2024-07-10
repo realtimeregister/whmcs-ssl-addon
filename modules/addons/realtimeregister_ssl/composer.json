@@ -3,6 +3,7 @@
   "description": "description",
   "minimum-stability": "stable",
   "license": "MIT",
+  "version": "1.0.0",
   "authors": [
     {
       "name": "Realtime Register",
@@ -22,6 +23,7 @@
     "ext-curl": "*"
   },
   "require-dev": {
-    "symfony/var-dumper": "^6.4"
+    "symfony/var-dumper": "^6.4",
+    "squizlabs/php_codesniffer": "^3.10"
   }
 }

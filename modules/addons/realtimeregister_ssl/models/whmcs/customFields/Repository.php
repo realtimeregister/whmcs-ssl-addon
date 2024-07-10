@@ -25,7 +25,7 @@ class Repository
      * @param int $productID
      * @author Michal Czech <michael@modulesgarden.com>
      */
-    function __construct($type, $relationID)
+    public function __construct($type, $relationID)
     {
         $this->type = $type;
         $this->relationID = $relationID;
@@ -51,7 +51,7 @@ class Repository
      * @return array
      * @author Michal Czech <michael@modulesgarden.com>
      */
-    function checkFields(array $configuration = [])
+    public function checkFields(array $configuration = [])
     {
         if (empty($configuration)) {
             $configuration = self::$configuration;
@@ -82,7 +82,7 @@ class Repository
      *
      * @author Michal Czech <michael@modulesgarden.com>
      */
-    function generateFromConfiguration(array $configuration = [])
+    public function generateFromConfiguration(array $configuration = [])
     {
         if (empty($configuration)) {
             $configuration = self::$configuration;
@@ -108,7 +108,7 @@ class Repository
      *
      * @return customField[]
      */
-    function get()
+    public function get()
     {
         return $this->_fields;
     }
