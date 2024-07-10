@@ -93,14 +93,6 @@ class home extends AbstractController
 
                 $configDataUpdate->run();
 
-                // if($apicertdata['status'] != 'new_order')
-                //{
-                //    $sslService->setSSLStatus($apicertdata['status']);
-                //    $sslService->setPartnerOrderId($apicertdata['partner_order_id']);
-                //    $sslService->setApproverEmails($apicertdata['approver_email']);
-                //    $sslService->setDomain($apicertdata['domain']);
-                //    $sslService->save();
-                //}
                 $vars['activationStatus'] = $apicertdata['status'];
             }
 
@@ -174,7 +166,7 @@ class home extends AbstractController
                         $vars['crt'] = ($certificateDetails['crt']);
                     }
 
-                    if ($certificateDetails['ssl_status'] == 'active' || $certificateDetails['ssl_status'] == 'COMPETED') {
+                    if ($certificateDetails['ssl_status'] == 'ACTIVE' || $certificateDetails['ssl_status'] == 'COMPETED') {
                         $diffDays = $now->diff(
                             $now,
                             \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_until']->date))
