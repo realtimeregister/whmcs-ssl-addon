@@ -93,10 +93,7 @@ class home extends AbstractController
 
                 $configDataUpdate->run();
 
-                //reload
-                $sslService = $ssl->getByServiceId($serviceId);
-
-                $vars['activationStatus'] = $apicertdata['status'];
+                $vars['activationStatus'] = $sslService->getSSLStatus();
             }
 
             if (is_null($sslService)) {
@@ -203,6 +200,7 @@ class home extends AbstractController
                                     $vars['sans'][$san->san_name]['san_validation'] = (array)$san->validation->http;
                                     $vars['sans'][$san->san_name]['san_validation']['content'] =
                                         explode(PHP_EOL, $san->validation->http->content);
+                                    //dd($vars['sans'][$san->san_name]);
                                     break;
                                 default:
                                     $vars['sans'][$san->san_name]['san_validation'] = $san->validation->email;
