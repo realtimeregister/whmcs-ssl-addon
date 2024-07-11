@@ -128,6 +128,7 @@ $_LANG['addonAA']['productsConfiguration']['sslCenterProduct']    = 'RealtimeReg
 $_LANG['addonAA']['productsConfiguration']['productName']         = 'Produktnavn:';
 $_LANG['addonAA']['productsConfiguration']['configurableOptions'] = 'Konfigurerbare indstillinger SAN:';
 $_LANG['addonAA']['productsConfiguration']['configurableOptionsWildcard'] = 'Konfigurerbare indstillinger Wildcard SAN:';
+$_LANG['addonAA']['productsConfiguration']['configurableOptionsPeriod'] = 'Konfigurerbare indstillinger Period:';
 $_LANG['addonAA']['productsConfiguration']['createConfOptions']   = 'Generer';
 $_LANG['addonAA']['productsConfiguration']['editPrices']          = 'Rediger priser';
 $_LANG['addonAA']['productsConfiguration']['autoSetup']           = 'Automatisk Opsætning:';

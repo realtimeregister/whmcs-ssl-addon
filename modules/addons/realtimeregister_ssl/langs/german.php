@@ -133,6 +133,7 @@ $_LANG['addonAA']['productsConfiguration']['productName']         = 'Produktname
 $_LANG['addonAA']['productsConfiguration']['customguide']         = 'Processing SSL message:';
 $_LANG['addonAA']['productsConfiguration']['configurableOptions'] = 'Konfigurierbare Optionen SAN:';
 $_LANG['addonAA']['productsConfiguration']['configurableOptionsWildcard'] = 'Konfigurierbare Optionen Wildcard SAN:';
+$_LANG['addonAA']['productsConfiguration']['configurableOptionsPeriod'] = 'Konfigurierbare Optionen Period:';
 $_LANG['addonAA']['productsConfiguration']['createConfOptions']   = 'Generieren';
 $_LANG['addonAA']['productsConfiguration']['editPrices']          = 'Preise ändern';
 $_LANG['addonAA']['productsConfiguration']['autoSetup']           = 'Automatische Einrichtung:';

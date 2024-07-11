@@ -80,6 +80,7 @@ class ProductsConfiguration extends AbstractController
                 $products[$key]->apiConfig = $apiConfig;
                 $products[$key]->confOption = ConfigurableOptionService::getForProduct($product->id);
                 $products[$key]->confOptionWildcard = ConfigurableOptionService::getForProductWildcard($product->id);
+                $products[$key]->confOptionPeriod = ConfigurableOptionService::getForProductPeriod($product->id);
             }
 
             $vars['products'] = $products;

@@ -135,6 +135,7 @@ $_LANG['addonAA']['productsConfiguration']['customguide']         = 'Processing 
 $_LANG['addonAA']['productsConfiguration']['issued_ssl_message']  = 'Issued SSL message:';
 $_LANG['addonAA']['productsConfiguration']['configurableOptions'] = 'Configurable Options SAN:';
 $_LANG['addonAA']['productsConfiguration']['configurableOptionsWildcard'] = 'Configurable Options Wildcard SAN:';
+$_LANG['addonAA']['productsConfiguration']['configurableOptionsPeriod'] = 'Configurable Options Period:';
 $_LANG['addonAA']['productsConfiguration']['createConfOptions']   = 'Generate';
 $_LANG['addonAA']['productsConfiguration']['editPrices']          = 'Edit Prices';
 $_LANG['addonAA']['productsConfiguration']['autoSetup']           = 'Auto Setup:';

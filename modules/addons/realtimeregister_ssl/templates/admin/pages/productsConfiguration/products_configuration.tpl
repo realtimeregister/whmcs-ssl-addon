@@ -173,6 +173,12 @@
                                     </div>
                                 </div>
                             {/if}
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{$MGLANG->T('configurableOptionsPeriod')}</label>
+                                    <a href="#" onclick="manageconfigoptions('{$product->confOptionPeriod->id}');return false;" class="btn btn-success"/>{$MGLANG->T('editPrices')}</a>
+                                </div>
+                            </div>
                             
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{$MGLANG->T('autoSetup')}</label>
