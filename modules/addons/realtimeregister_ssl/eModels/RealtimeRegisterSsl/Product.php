@@ -38,7 +38,7 @@ class Product
     
     public function isSanEnabled()
     {
-        return $this->includedDomains >= 1;
+        return $this->includedDomains > 1;
     }
     
     public function isSanWildcardEnabled()
@@ -63,5 +63,9 @@ class Product
             return 'recurring';
         }
         return 'free';
+    }
+
+    public function getMaxPeriod() {
+        return max($this->periods);
     }
 }

@@ -147,7 +147,7 @@ class SSLStepThree
         $apiRepo = new Products();
 
         $order['product'] = $apiProduct->product;
-        $order['period'] = $billingPeriods[$this->p['model']->billingcycle];
+        $order['period'] = intval($this->p['configoptions']['years'][0]) * 12;
         $order['csr'] = str_replace('\n', "\n", $this->p['csr']); // Fix for RT-14675
         /** @var Product $productDetails */
         $productDetails = ApiProvider::getInstance()->getApi(CertificatesApi::class)

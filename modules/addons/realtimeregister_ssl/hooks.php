@@ -16,6 +16,7 @@ use MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
 use MGModule\RealtimeRegisterSsl\Server;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Service\Service;
+use WHMCS\View\Formatter\Price;
 use WHMCS\View\Menu\Item;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -747,7 +748,7 @@ function realtimeregister_ssl_overideProductPricingBasedOnCommission($vars)
 
 add_hook('OrderProductPricingOverride', 1, 'realtimeregister_ssl_overideProductPricingBasedOnCommission');
 
-function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnCommission($vars)
+function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts($vars)
 { 
     global $smarty;
     global $smartyvalues; 
@@ -769,7 +770,7 @@ function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnCommission($
                         $pid = $product['pid'];
 
                         $commission = Commission::getCommissionValue(['pid' => $pid]);
-                        $products[$key]['pricing'] = Whmcs::getPricingInfo($pid, $commission);
+                        $products[$key]['pricing'] = Whmcs::getPricingInfo($pid, $commission, true);
                     }
                 }
 
@@ -797,7 +798,7 @@ function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnCommission($
         }
     }
 }
-add_hook('ClientAreaHeadOutput', 999999999999, 'realtimeregister_ssl_overideDisaplayedProductPricingBasedOnCommission');
+add_hook('ClientAreaHeadOutput', 999999999999, 'realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts');
 
 add_hook('InvoiceCreation', 1, function($vars) {
     $invoiceid = $vars['invoiceid'];

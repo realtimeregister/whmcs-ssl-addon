@@ -2,6 +2,7 @@
 
 namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
 
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
@@ -16,7 +17,7 @@ use WHMCS\Product\Group;
 
 class ProductsCreator extends AbstractController
 {
-    private $apiProductsRepo;
+    private Products $apiProductsRepo;
 
     /**
      * This is default page.
@@ -61,17 +62,18 @@ class ProductsCreator extends AbstractController
         }
 
         $productData = [
-            'type' => 'hostingaccount',
+            'type' => 'other',
             'gid' => $input['gid'],
             'name' => $input['name'],
             'paytype' => $input['paytype'] ?: 'recurring',
             'servertype' => 'realtimeregister_ssl',
-            'hidden' => '1',
+            'hidden' => '0',
             'autosetup' => $input['autosetup'],
             C::API_PRODUCT_ID => $input[C::API_PRODUCT_ID],
             C::API_PRODUCT_MONTHS => $input[C::API_PRODUCT_MONTHS],
             C::PRODUCT_ENABLE_SAN => $input[C::PRODUCT_ENABLE_SAN] ?: '',
             C::PRODUCT_INCLUDED_SANS => $input[C::PRODUCT_INCLUDED_SANS] ?: 0,
+            C::PRODUCT_ENABLE_SAN_WILDCARD => $input[C::PRODUCT_ENABLE_SAN_WILDCARD] ?: 0,
         ];
 
         if (isset($input['issued_ssl_message']) && !empty($input['issued_ssl_message'])) {
@@ -89,13 +91,25 @@ class ProductsCreator extends AbstractController
             $productModel->createPricing($value);
         }
 
-        $apiProduct = $this->apiProductsRepo->getProduct((int) $input[C::API_PRODUCT_ID]);
+        $apiProduct = $this->apiProductsRepo->getProduct(KeyToIdMapping::getIdByKey($input[C::API_PRODUCT_ID]));
 
         if ($apiProduct->isSanEnabled() && $input[C::PRODUCT_ENABLE_SAN] === 'on') {
             ConfigurableOptionService::createForProduct($newProductId, $productData['name']);
         }
+
+        ConfigurableOptionService::insertPeriods(
+            $newProductId,
+            $input[C::API_PRODUCT_ID],
+            $productData['name'],
+            $apiProduct->getPeriods()
+        );
+
+        return $newProductId;
     }
 
+    /**
+     * @throws Exception
+     */
     public function saveProducts($currencies, $post)
     {
         $apiProducts = $this->apiProductsRepo->getAllProducts();
@@ -112,16 +126,16 @@ class ProductsCreator extends AbstractController
         }
 
         $dummyCurrencies = [];
-        foreach ($currencies as $curreny) {
+        foreach ($currencies as $currency) {
             $temp = [];
-            $temp['currency'] = $curreny->id;
+            $temp['currency'] = $currency->id;
             $temp['msetupfee'] = '0.00';
             $temp['qsetupfee'] = '0.00';
             $temp['ssetupfee'] = '0.00';
             $temp['asetupfee'] = '0.00';
             $temp['bsetupfee'] = '0.00';
             $temp['tsetupfee'] = '0.00';
-            $temp['monthly'] = '-1.00';
+            $temp['monthly'] = '0.00';
             $temp['quarterly'] = '-1.00';
             $temp['semiannually'] = '-1.00';
             $temp['annually'] = '-1.00';
@@ -134,11 +148,12 @@ class ProductsCreator extends AbstractController
             $input = [];
             $input['name'] = $apiProduct->product;
             $input['gid'] = $post['gid'];
-            $input[C::API_PRODUCT_ID] = $apiProduct->id;
-            $input[C::API_PRODUCT_MONTHS] = $apiProduct->getMinimalPeriods();
-            $input[C::PRODUCT_ENABLE_SAN] = '';
-            $input[C::PRODUCT_INCLUDED_SANS] = '0';
-            $input['paytype'] = $apiProduct->getPayType();
+            $input[C::API_PRODUCT_ID] = $apiProduct->product;
+            $input[C::API_PRODUCT_MONTHS] = $apiProduct->getMaxPeriod();
+            $input[C::PRODUCT_ENABLE_SAN] = $apiProduct->isSanEnabled() ? 'on' : '';
+            $input[C::PRODUCT_ENABLE_SAN_WILDCARD] = $apiProduct->isSanWildcardEnabled() ? 'on' : '';
+            $input[C::PRODUCT_INCLUDED_SANS] = $apiProduct->includedDomains;
+            $input['paytype'] = 'onetime';
             $input['currency'] = $dummyCurrencies;
             $input['autosetup'] = ($apiProduct->getPayType() == 'free') ? 'order' : 'payment';
             $this->saveProduct($input);

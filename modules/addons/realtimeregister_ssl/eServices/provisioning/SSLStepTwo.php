@@ -7,6 +7,7 @@ use Exception;
 use MGModule\RealtimeRegisterSsl\eHelpers\Domains;
 use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary;
 use MGModule\RealtimeRegisterSsl\eServices\FlashService;
@@ -25,23 +26,17 @@ class SSLStepTwo
 
     public function __construct(&$params)
     {
-        $service = new Service($params['serviceid']);
-        $product = new Product($service->productID);
-
         $productssl = false;
         $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
             if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
                 $productsslDB = Capsule::table(
                     Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND
-                )->where('pid', $product->id)->first();
+                )->where('pid', KeyToIdMapping::getIdByKey($params['configoption1']))->first();
                 if (isset($productsslDB->data)) {
                     $productssl['product'] = json_decode($productsslDB->data, true);
                 }
             }
-        }
-        if (!$productssl) {
-            $productssl = ApiProvider::getInstance()->getApi(false)->getProductDetails($params['configoption1']);
         }
 
         if (isset($productssl['product_san_wildcard']) && $productssl['product_san_wildcard'] == 'yes') {
