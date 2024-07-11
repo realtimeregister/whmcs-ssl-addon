@@ -146,7 +146,7 @@ class ProductsCreator extends AbstractController
 
         foreach ($apiProducts as $apiProduct) {
             $input = [];
-            $input['name'] = $apiProduct->product;
+            $input['name'] = self::displayName($apiProduct);
             $input['gid'] = $post['gid'];
             $input[C::API_PRODUCT_ID] = $apiProduct->product;
             $input[C::API_PRODUCT_MONTHS] = $apiProduct->getMaxPeriod();
@@ -158,6 +158,15 @@ class ProductsCreator extends AbstractController
             $input['autosetup'] = ($apiProduct->getPayType() == 'free') ? 'order' : 'payment';
             $this->saveProduct($input);
         }
+    }
+
+    private static function displayName($apiProduct) {
+        $certificateType = match ($apiProduct->certificateType) {
+            "MULTI_DOMAIN" => 'Multi Domain',
+            "WILDCARD" => "Wildcard",
+            default => 'Single Domain',
+        };
+        return $apiProduct->brand . " " . $apiProduct->name .  " " . $certificateType;
     }
 
     public function saveItemHTML($input, $vars = [])
