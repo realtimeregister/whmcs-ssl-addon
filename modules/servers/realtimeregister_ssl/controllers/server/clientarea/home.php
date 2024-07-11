@@ -24,7 +24,6 @@ use MGModule\RealtimeRegisterSsl\Server;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Database\Capsule;
-use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
 use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 

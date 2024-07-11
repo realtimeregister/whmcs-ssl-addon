@@ -3,7 +3,6 @@
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -20,7 +19,6 @@ use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\CertificateInfoProcess;
 use SandwaveIo\RealtimeRegister\Domain\Product;
-use stdClass;
 use WHMCS\Database\Capsule;
 use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;

@@ -3,10 +3,6 @@
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\DNSManager2\addon;
-use MGModule\DNSManager2\loader;
-use MGModule\DNSManager2\mgLibs\custom\helpers\DomainHelper;
 use MGModule\RealtimeRegisterSsl\eHelpers\Domains;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
@@ -14,7 +10,11 @@ use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\WebServers;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
@@ -152,173 +152,136 @@ class AdminReissueCertificate extends Ajax
         }
 
         $reissueData = ApiProvider::getInstance()->getApi()->reIssueOrder($sslService->remoteid, $data);
-        sleep(2);
         /** @var ProcessesApi $processesApi */
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
         $orderDetails = $processesApi->get($sslService->remoteid);
 
-        $decodedCSR   = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->p['csr']);
+        $logs = new LogsRepo();
 
-        // dns manager
-        $dnsmanagerfile = dirname(
-                dirname(dirname(dirname(dirname(__DIR__))))
-            ) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . 'dnsmanager.php';
-        $checkTable = Capsule::schema()->hasTable('dns_manager2_zone');
-        if(file_exists($dnsmanagerfile) && $checkTable !== false)
-        {
-            $zoneDomain = $decodedCSR['csrResult']['CN'];
-            $loaderDNS = dirname(
-                    dirname(dirname(dirname(dirname(__DIR__))))
-                ) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'addons'
-                . DIRECTORY_SEPARATOR . 'DNSManager2' . DIRECTORY_SEPARATOR . 'loader.php';
-            if(file_exists($loaderDNS)) {
-                require_once $loaderDNS;
-                $loader = new loader();
-                addon::I(true);
-                $helper = new DomainHelper($decodedCSR['csrResult']['CN']);
-                $zoneDomain = $helper->getDomainWithTLD();
-            }
+        foreach ($orderDetails['validations']['dcv']['entities'] as $data) {
+            try {
+                $panel = Panel::getPanelData($data['commonName']);
 
-            $records = [];
-            if (
-                isset($orderDetails['approver_method']['dns']['record'])
-                && !empty($orderDetails['approver_method']['dns']['record'])
-            ) {
-                if (strpos($orderDetails['approver_method']['dns']['record'], 'CNAME') !== false) {
-                    $dnsrecord = explode("CNAME", $orderDetails['approver_method']['dns']['record']);
-                    $records[] = [
-                        'name' => trim(rtrim($dnsrecord[0])).'.',
-                        'type' => 'CNAME',
-                        'ttl' => '3600',
-                        'data' => trim(rtrim($dnsrecord[1]))
-                    ];
-                } else {
-                    $dnsrecord = explode("IN   TXT", $orderDetails['approver_method']['dns']['record']);
-                    $length = strlen(trim(rtrim($dnsrecord[1])));
-                    $records[] = [
-                        'name' => trim(rtrim($dnsrecord[0])).'.',
-                        'type' => 'TXT',
-                        'ttl' => '14440',
-                        'data' => substr(trim(rtrim($dnsrecord[1])),1, $length-2)
-                    ];
-                }
-
-                $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
-                if (!isset($zone->id) || empty($zone->id)) {
-                    $postfields = [
-                        'action' => 'dnsmanager',
-                        'dnsaction' => 'createZone',
-                        'zone_name' => $zoneDomain,
-                        'type' => '2',
-                        'relid' => $this->p['serviceid'],
-                        'zone_ip' => '',
-                        'userid' => $this->p['userid']
-                    ];
-                    $createZoneResults = localAPI('dnsmanager' ,$postfields);
-                    logModuleCall(
-                        'RealtimeRegisterSsl [dns]',
-                        'createZone',
-                        print_r($postfields, true),
-                        print_r($createZoneResults, true)
+                if ($data['type'] == 'FILE') {
+                    $result = FileControl::create(
+                        [
+                            'fileLocation' => $data['fileLocation'], // whole url,
+                            'fileContents' => $data['fileContents']
+                        ],
+                        $panel
                     );
-                }
 
-                $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
-                if(isset($zone->id) && !empty($zone->id))
-                {
-                    $postfields =  [
-                        'dnsaction' => 'createRecords',
-                        'zone_id' => $zone->id,
-                        'records' => $records
-                    ];
-                    $createRecordCnameResults = localAPI('dnsmanager' ,$postfields);
-                    logModuleCall(
-                        'RealtimeRegisterSsl [dns]',
-                        'updateZone',
-                        print_r($postfields, true),
-                        print_r($createRecordCnameResults, true)
-                    );
-                }
+                    if ($result['status'] === 'success') {
+                        $logs->addLog(
+                            $this->p['userid'],
+                            $this->p['serviceid'],
+                            'success',
+                            'The ' . $service->domain . ' domain has been verified using the file method.'
+                        );
+                        $revalidate = true;
+                    }
+                } elseif ($data['type'] == 'DNS') {
+                    if ($data['dnsType'] == 'CNAME') {
 
-            }
-            if(isset($orderDetails['san']) && !empty($orderDetails['san']))
-            {
-                foreach($orderDetails['san'] as $sanrecord)
-                {
-                    $records = [];
-                    if (
-                        isset($sanrecord['validation']['dns']['record'])
-                        && !empty($sanrecord['validation']['dns']['record'])
-                    ) {
-                        if(file_exists($loaderDNS)) {
-                            $helper = new DomainHelper(str_replace('*.', '',$sanrecord['san_name']));
-                            $zoneDomain = $helper->getDomainWithTLD();
-                        }
-
-                        if (strpos($sanrecord['validation']['dns']['record'], 'CNAME') !== false)
-                        {
-                            $dnsrecord = explode("CNAME", $sanrecord['validation']['dns']['record']);
-                            $records[] = [
-                                'name' => trim(rtrim($dnsrecord[0])).'.',
-                                'type' => 'CNAME',
-                                'ttl' => '3600',
-                                'data' => trim(rtrim($dnsrecord[1]))
-                            ];
-                        }
-                        else
-                        {
-                            $dnsrecord = explode("IN   TXT", $sanrecord['validation']['dns']['record']);
-                            $length = strlen(trim(rtrim($dnsrecord[1])));
-                            $records[] = [
-                                'name' => trim(rtrim($dnsrecord[0])).'.',
-                                'type' => 'TXT',
-                                'ttl' => '14440',
-                                'data' => substr(trim(rtrim($dnsrecord[1])),1, $length-2)
-                            ];
-                        }
-
-                        $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
-                        if(!isset($zone->id) || empty($zone->id))
-                        {
-                            $postfields = [
-                                'action' => 'dnsmanager',
-                                'dnsaction' => 'createZone',
-                                'zone_name' => $zoneDomain,
-                                'type' => '2',
-                                'relid' => $this->p['serviceid'],
-                                'zone_ip' => '',
-                                'userid' => $this->p['userid']
-                            ];
-                            $createZoneResults = localAPI('dnsmanager' ,$postfields);
-                            logModuleCall(
-                                'RealtimeRegisterSsl [dns]',
-                                'createZone',
-                                print_r($postfields, true),
-                                print_r($createZoneResults, true)
+                        $result = DnsControl::generateRecord($data, $panel);
+                        if ($result) {
+                            $logs->addLog(
+                                $this->p['userid'],
+                                $this->p['serviceid'],
+                                'success',
+                                'The ' . $service->domain . ' domain has been verified using the dns method.'
                             );
+                            $revalidate = true;
                         }
-
-                        $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
-                        if(isset($zone->id) && !empty($zone->id))
-                        {
-                            $postfields =  [
-                                'dnsaction' => 'createRecords',
-                                'zone_id' => $zone->id,
-                                'records' => $records
-                            ];
-                            $createRecordCnameResults = localAPI('dnsmanager' ,$postfields);
-                            logModuleCall(
-                                'RealtimeRegisterSsl [dns]',
-                                'updateZone',
-                                print_r($postfields, true),
-                                print_r($createRecordCnameResults, true)
-                            );
-                        }
-
                     }
                 }
+            } catch (Exception $e) {
+                $logs->addLog(
+                    $this->p['userid'],
+                    $this->p['serviceid'],
+                    'error',
+                    '[' . $service->domain . '] Error:' . $e->getMessage()
+                );
+                continue;
             }
         }
+//            if(isset($orderDetails['san']) && !empty($orderDetails['san']))
+//            {
+//                foreach($orderDetails['san'] as $sanrecord)
+//                {
+//                    $records = [];
+//                    if (
+//                        isset($sanrecord['validation']['dns']['record'])
+//                        && !empty($sanrecord['validation']['dns']['record'])
+//                    ) {
+//                        if(file_exists($loaderDNS)) {
+//                            $helper = new DomainHelper(str_replace('*.', '',$sanrecord['san_name']));
+//                            $zoneDomain = $helper->getDomainWithTLD();
+//                        }
+//
+//                        if (strpos($sanrecord['validation']['dns']['record'], 'CNAME') !== false)
+//                        {
+//                            $dnsrecord = explode("CNAME", $sanrecord['validation']['dns']['record']);
+//                            $records[] = [
+//                                'name' => trim(rtrim($dnsrecord[0])).'.',
+//                                'type' => 'CNAME',
+//                                'ttl' => '3600',
+//                                'data' => trim(rtrim($dnsrecord[1]))
+//                            ];
+//                        }
+//                        else
+//                        {
+//                            $dnsrecord = explode("IN   TXT", $sanrecord['validation']['dns']['record']);
+//                            $length = strlen(trim(rtrim($dnsrecord[1])));
+//                            $records[] = [
+//                                'name' => trim(rtrim($dnsrecord[0])).'.',
+//                                'type' => 'TXT',
+//                                'ttl' => '14440',
+//                                'data' => substr(trim(rtrim($dnsrecord[1])),1, $length-2)
+//                            ];
+//                        }
+//
+//                        $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
+//                        if(!isset($zone->id) || empty($zone->id))
+//                        {
+//                            $postfields = [
+//                                'action' => 'dnsmanager',
+//                                'dnsaction' => 'createZone',
+//                                'zone_name' => $zoneDomain,
+//                                'type' => '2',
+//                                'relid' => $this->p['serviceid'],
+//                                'zone_ip' => '',
+//                                'userid' => $this->p['userid']
+//                            ];
+//                            $createZoneResults = localAPI('dnsmanager' ,$postfields);
+//                            logModuleCall(
+//                                'RealtimeRegisterSsl [dns]',
+//                                'createZone',
+//                                print_r($postfields, true),
+//                                print_r($createZoneResults, true)
+//                            );
+//                        }
+//
+//                        $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
+//                        if(isset($zone->id) && !empty($zone->id))
+//                        {
+//                            $postfields =  [
+//                                'dnsaction' => 'createRecords',
+//                                'zone_id' => $zone->id,
+//                                'records' => $records
+//                            ];
+//                            $createRecordCnameResults = localAPI('dnsmanager' ,$postfields);
+//                            logModuleCall(
+//                                'RealtimeRegisterSsl [dns]',
+//                                'updateZone',
+//                                print_r($postfields, true),
+//                                print_r($createRecordCnameResults, true)
+//                            );
+//                        }
+//
+//                    }
+//                }
+//            }
 
         $sslService->setConfigdataKey('servertype', $data['webserver_type']);
         $sslService->setConfigdataKey('csr', $data['csr']);

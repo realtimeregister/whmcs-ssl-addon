@@ -2,7 +2,6 @@
 
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
 use WHMCS\Database\Capsule as DB;
-use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
 use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 

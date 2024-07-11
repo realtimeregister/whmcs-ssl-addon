@@ -2,7 +2,6 @@
 
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use MGModule\DNSManager2\mgLibs\custom\helpers\DomainHelper;
 use MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
