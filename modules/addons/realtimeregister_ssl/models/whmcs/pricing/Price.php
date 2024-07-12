@@ -140,7 +140,6 @@ class Price extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
     private $_currency;
 
-
     public function getId()
     {
         return $this->id;
@@ -236,43 +235,43 @@ class Price extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     public function getPrice($billingCycle)
     {
         switch ($billingCycle) {
-            case BillingCycle::FREE :
+            case BillingCycle::FREE:
                 return 0;
-            case BillingCycle::ONE_TIME :
-            case BillingCycle::MONTHLY :
+            case BillingCycle::ONE_TIME:
+            case BillingCycle::MONTHLY:
                 return $this->getMonthly();
-            case BillingCycle::QUARTERLY :
+            case BillingCycle::QUARTERLY:
                 return $this->getQuarterly();
-            case BillingCycle::SEMI_ANNUALLY :
+            case BillingCycle::SEMI_ANNUALLY:
                 return $this->getSemiAnnually();
-            case BillingCycle::ANNUALLY :
+            case BillingCycle::ANNUALLY:
                 return $this->getAnnually();
-            case BillingCycle::BIENNIALLY :
+            case BillingCycle::BIENNIALLY:
                 return $this->getBiennially();
-            case BillingCycle::TRIENNIALLY :
+            case BillingCycle::TRIENNIALLY:
                 return $this->getTriennially();
             //Domains
-            case BillingCycle::YEAR :
+            case BillingCycle::YEAR:
                 return $this->getMonthlySetupFee();
-            case BillingCycle::YEARS_2 :
+            case BillingCycle::YEARS_2:
                 return $this->getQuarterlySetupFee();
-            case BillingCycle::YEARS_3 :
+            case BillingCycle::YEARS_3:
                 return $this->getSemiAnnuallySetupFee();
-            case BillingCycle::YEARS_4 :
+            case BillingCycle::YEARS_4:
                 return $this->getAnnuallySetupFee();
-            case BillingCycle::YEARS_5 :
+            case BillingCycle::YEARS_5:
                 return $this->getBienniallySetupFee();
-            case BillingCycle::YEARS_6 :
+            case BillingCycle::YEARS_6:
                 return $this->getMonthly();
-            case BillingCycle::YEARS_7 :
+            case BillingCycle::YEARS_7:
                 return $this->getQuarterly();
-            case BillingCycle::YEARS_8 :
+            case BillingCycle::YEARS_8:
                 return $this->getSemiAnnually();
-            case BillingCycle::YEARS_9 :
+            case BillingCycle::YEARS_9:
                 return $this->getAnnually();
-            case BillingCycle::YEARS_10 :
+            case BillingCycle::YEARS_10:
                 return $this->getBiennially();
-            default :
+            default:
                 throw new main\mgLibs\exceptions\System('Invalid billing cycle: ' . $billingCycle);
         }
     }

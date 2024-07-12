@@ -15,6 +15,7 @@ use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
 use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
@@ -22,10 +23,7 @@ use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\Server;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
-use SandwaveIo\RealtimeRegister\Domain\DomainControlValidationCollection;
 use WHMCS\Database\Capsule;
-use MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service;
-use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
 use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 
@@ -166,7 +164,7 @@ class home extends AbstractController
                         $vars['crt'] = ($certificateDetails['crt']);
                     }
 
-                    if ($certificateDetails['ssl_status'] == 'active' || $certificateDetails['ssl_status'] == 'COMPETED') {
+                    if ($certificateDetails['ssl_status'] == 'ACTIVE' || $certificateDetails['ssl_status'] == 'COMPETED') {
                         $diffDays = $now->diff(
                             $now,
                             \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_until']->date))
@@ -389,8 +387,8 @@ class home extends AbstractController
             $vars['error'] = $ex->getMessage();
         }
 
-        $vars['configoption23'] = $input['params']['configoption23'];
-        $vars['configoption24'] = $input['params']['configoption24'];
+        $vars[C::OPTION_ISSUED_SSL_MESSAGE] = $input['params'][C::OPTION_ISSUED_SSL_MESSAGE];
+        $vars[C::OPTION_CUSTOM_GUIDE] = $input['params'][C::OPTION_CUSTOM_GUIDE];
 
         $vars['approver_email'] = isset($sslService->configdata->approver_method->email)
         && !empty($sslService->configdata->approver_method->email) ? $sslService->configdata->approver_method->email
@@ -401,8 +399,6 @@ class home extends AbstractController
             'vars' => $vars
         ];
     }
-
-
 
     public function testHTML($input, $vars = [])
     {

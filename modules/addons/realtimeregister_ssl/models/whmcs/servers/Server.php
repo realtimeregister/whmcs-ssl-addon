@@ -67,7 +67,7 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
      * @param array $data
      * @author Michal Czech <michael@modulesgarden.com>
      */
-    function __construct($id = false, $data = [])
+    public function __construct($id = false, $data = [])
     {
         if ($id !== false && empty($data)) {
             $data = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(

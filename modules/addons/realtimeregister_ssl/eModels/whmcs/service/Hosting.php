@@ -41,49 +41,6 @@ class Hosting extends Model
             ->get();
     }
 
-    // FIXME
-    public function getDomainByUser(int $userid)
-    {
-        $domains = [];
-        $services = self::getServicesByUserId($userid);
-
-        foreach ($services as $service) {
-            try {
-                $cpanel = new Cpanel();
-                $cpanel->setService($service);
-                $domains = array_merge($domains, $cpanel->listDomains($service->user));
-            } catch (\Exception $e) {
-                \logActivity($e->getMessage(), 0);
-            }
-        }
-
-        return $domains;
-    }
-
-    // FIXME
-    public function getServiceByDomain(int $userid, string $domain)
-    {
-        $services = self::getServicesByUserId($userid);
-        foreach ($services as $service) {
-            try {
-                $panel = new Manage($service->domain);
-
-                $panelData = $panel->getPanelData();
-
-                $cpanel = new Cpanel();
-                $cpanel->setService($service);
-                foreach ($cpanel->listDomains($service->user) as $cpaneldomain) {
-                    if ($domain == $cpaneldomain) {
-                        return $service;
-                    }
-                }
-            } catch (\Exception $e) {
-                \logActivity($e->getMessage(), 0);
-            }
-        }
-        return false;
-    }
-
     /** was getcPanelService */
     public function getPanelByDomain(string $domain)
     {

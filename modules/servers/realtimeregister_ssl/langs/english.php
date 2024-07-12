@@ -97,7 +97,7 @@ $_LANG['orderTypeTitle']                = 'Order Type';
 $_LANG['orderTypeLabel']                = 'Type';
 $_LANG['newOrder']                      = 'New order';
 $_LANG['renewOrder']                    = 'Renewal';
-$_LANG['selectOrderTypeDescription']    = 'Select Renewal option in case you need renew existing SSL that expires soon. Realtime Register would add up to 36-days left from Original order.';
+$_LANG['selectOrderTypeDescription']    = 'Select Renewal option in case you need renew existing SSL that expires soon. Realtime Register would add up to 30-days left from Original order.';
 
 $_LANG['reissueOneTitle']        = 'Reissue Certificate';
 $_LANG['reissueOneWebServer']    = 'Web Server';

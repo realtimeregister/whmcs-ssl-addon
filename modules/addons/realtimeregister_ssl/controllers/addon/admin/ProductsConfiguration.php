@@ -147,11 +147,11 @@ class ProductsConfiguration extends AbstractController
                 }
 
                 if (isset($input['issued_ssl_message']) && !empty($input['issued_ssl_message'])) {
-                    $productModel->updateProductParam($product->id, 'configoption23', $input['issued_ssl_message']);
+                    $productModel->updateProductParam($product->id, C::OPTION_ISSUED_SSL_MESSAGE, $input['issued_ssl_message']);
                 }
 
                 if (isset($input['custom_guide']) && !empty($input['custom_guide'])) {
-                    $productModel->updateProductParam($product->id, 'configoption24', $input['custom_guide']);
+                    $productModel->updateProductParam($product->id, C::OPTION_CUSTOM_GUIDE, $input['custom_guide']);
                 }
             }
 

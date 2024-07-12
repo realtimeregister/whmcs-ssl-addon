@@ -28,26 +28,26 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\pricing;
 class BillingCycle
 {
     //Product and Addons
-    const FREE          = 'free';
-    const ONE_TIME      = 'onetime';
-    const MONTHLY       = 'monthly';
-    const QUARTERLY     = 'quarterly';
-    const SEMI_ANNUALLY = 'semiannually';
-    const ANNUALLY      = 'annually';
-    const BIENNIALLY    = 'biennially';
-    CONST TRIENNIALLY   = 'triennially';
+    public const FREE          = 'free';
+    public const ONE_TIME      = 'onetime';
+    public const MONTHLY       = 'monthly';
+    public const QUARTERLY     = 'quarterly';
+    public const SEMI_ANNUALLY = 'semiannually';
+    public const ANNUALLY      = 'annually';
+    public const BIENNIALLY    = 'biennially';
+    public const TRIENNIALLY   = 'triennially';
     //Domains
-    CONST YEAR     = 'YEAR';
-    CONST YEARS_2  = 'YEARS_2';
-    CONST YEARS_3  = 'YEARS_3';
-    CONST YEARS_4  = 'YEARS_4';
-    CONST YEARS_5  = 'YEARS_5';
-    CONST YEARS_6  = 'YEARS_6';
-    CONST YEARS_7  = 'YEARS_7';
-    CONST YEARS_8  = 'YEARS_8';
-    CONST YEARS_9  = 'YEARS_9';
-    CONST YEARS_10 = 'YEARS_10';
-    CONST PERIODS = [
+    public const YEAR     = 'YEAR';
+    public const YEARS_2  = 'YEARS_2';
+    public const YEARS_3  = 'YEARS_3';
+    public const YEARS_4  = 'YEARS_4';
+    public const YEARS_5  = 'YEARS_5';
+    public const YEARS_6  = 'YEARS_6';
+    public const YEARS_7  = 'YEARS_7';
+    public const YEARS_8  = 'YEARS_8';
+    public const YEARS_9  = 'YEARS_9';
+    public const YEARS_10 = 'YEARS_10';
+    public const PERIODS = [
         'free account' => 'free',
         'monthly'      => '1',
         'quarterly'    => '3',
@@ -57,7 +57,7 @@ class BillingCycle
         'triennially'  => '36',
     ];
 
-    static function convertPeriodToString($period)
+    public static function convertPeriodToString($period)
     {
         if ($period == 1) {
             return 'YEAR';
@@ -70,17 +70,17 @@ class BillingCycle
         throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Invalid period: ' . $period);
     }
 
-    static function convertStringToPeriod($string)
+    public static function convertStringToPeriod($string)
     {
         $string = strtolower($string);
         if (key_exists($string, self::PERIODS)) {
             return self::PERIODS[$string];
         }
-        
+
         throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Invalid period: ' . $string);
     }
-    
-    static function convertPeriodToName($period)
+
+    public static function convertPeriodToName($period)
     {
         if ($key = array_search($period, self::PERIODS)) {
             return $key;

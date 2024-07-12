@@ -160,7 +160,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
         $update[C::PRODUCT_INCLUDED_SANS_WILDCARD] = $params[C::PRODUCT_INCLUDED_SANS_WILDCARD] ?: '0';
         $update['paytype']                = $params['paytype'];
         $update['autosetup']              = $params['autosetup'];
-        $update[C::PRICE_AUTO_DOWNLOAD]   = $params[C::PRICE_AUTO_DOWNLOAD] ? $params[C::PRICE_AUTO_DOWNLOAD] : '0';
+        $update[C::PRICE_AUTO_DOWNLOAD]   = $params[C::PRICE_AUTO_DOWNLOAD] ?: '0';
         $update[C::COMMISSION]            = $params[C::COMMISSION] ? $params[C::COMMISSION] / 100 : '0';
         
         //if san disabled unassign sans config options
@@ -179,11 +179,11 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
         }
         
         if (isset($params['issued_ssl_message']) && !empty($params['issued_ssl_message'])) {
-            $update['configoption23'] = $params['issued_ssl_message'];
+            $update[C::OPTION_ISSUED_SSL_MESSAGE] = $params['issued_ssl_message'];
         }
 
         if (isset($params['custom_guide']) && !empty($params['custom_guide'])) {
-            $update['configoption24'] = $params['custom_guide'];
+            $update[C::OPTION_CUSTOM_GUIDE] = $params['custom_guide'];
         }
         
         return Capsule::table('tblproducts')->where('id', $productId)->update($update);

@@ -3,7 +3,6 @@
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eHelpers\Cpanel;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -20,7 +19,6 @@ use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\CertificateInfoProcess;
 use SandwaveIo\RealtimeRegister\Domain\Product;
-use stdClass;
 use WHMCS\Database\Capsule;
 use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
@@ -315,7 +313,6 @@ class SSLStepThree
         /** @var ProcessesApi $processesApi */
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
         $orderDetails = $processesApi->get($addedSSLOrder->processId);
-//        dd($addedSSLOrder, $orderDetails);
         if ($this->p[ConfigOptions::MONTH_ONE_TIME] && !empty($this->p[ConfigOptions::MONTH_ONE_TIME])) {
             $service = new Service($this->p['serviceid']);
             $service->save();
@@ -405,25 +402,6 @@ class SSLStepThree
                             );
                             $revalidate = true;
                         }
-                    }
-
-                    if (strpos($data['record'], 'IN   TXT') !== false) {
-                        $cpanel->setService($cpanelDetails);
-                        $records = explode('IN   TXT', $data['record']);
-                        $record = new stdClass();
-                        $record->domain = $service->domain;
-                        $record->name = trim($records[0]);
-                        $record->type = 'TXT';
-                        $record->ttl = "14400";
-                        $record->txtdata = str_replace('"', '', trim($records[1]));
-                        $cpanel->addRecord($cpanelDetails->user, $record);
-                        $logs->addLog(
-                            $this->p['userid'],
-                            $this->p['serviceid'],
-                            'success',
-                            'The ' . $service->domain . ' domain has been verified using the dns method.'
-                        );
-                        $revalidate = true;
                     }
                 }
             } catch (Exception $e) {
