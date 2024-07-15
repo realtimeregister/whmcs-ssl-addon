@@ -6,12 +6,9 @@ use MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\models\orders\Order;
 use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
-use SandwaveIo\RealtimeRegister\Domain\Certificate;
 use WHMCS\Database\Capsule;
-use function GuzzleHttp\is_host_in_noproxy;
 
 class UpdateConfigData
 {
@@ -95,9 +92,11 @@ class UpdateConfigData
             $sslOrder->setValidTill($order->expiryDate);
             $sslOrder->setCa($caBundle);
 
-            $sslOrder->setSubscriptionStarts($order->startDate);
-            $sslOrder->setSubscriptionEnds($order->subscriptionEndDate);
-
+            if ($order->subscriptionEndDate) {
+                $sslOrder->setSubscriptionStarts($order->startDate);
+                $sslOrder->setSubscriptionEnds($order->subscriptionEndDate);
+            }
+            
             $sslOrder->setDomain($order->domainName);
 
             $sslOrder->setProductId($order->product);

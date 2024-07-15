@@ -48,7 +48,7 @@ class ProductsPrices
 
         $this->prices = [];
         foreach ($apiProducts->toArray() as $apiProductPrice) {
-            if (strpos($apiProductPrice['product'], 'ssl') !== false) {
+            if (str_contains($apiProductPrice['product'], 'ssl')) {
                 $pp = new ProductPrice();
                 Fill::fill($pp, $apiProductPrice);
                 $this->prices[] = $pp;

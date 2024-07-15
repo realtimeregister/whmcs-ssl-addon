@@ -93,16 +93,24 @@ class ProductsCreator extends AbstractController
 
         $apiProduct = $this->apiProductsRepo->getProduct(KeyToIdMapping::getIdByKey($input[C::API_PRODUCT_ID]));
 
-        if ($apiProduct->isSanEnabled() && $input[C::PRODUCT_ENABLE_SAN] === 'on') {
-            ConfigurableOptionService::createForProduct($newProductId, $productData['name']);
-        }
-
-        ConfigurableOptionService::insertPeriods(
+        $optionGroupId = ConfigurableOptionService::insertPeriods(
             $newProductId,
             $input[C::API_PRODUCT_ID],
             $productData['name'],
             $apiProduct->getPeriods()
         );
+
+
+        if ($apiProduct->isSanEnabled() && $input[C::PRODUCT_ENABLE_SAN] === 'on') {
+            ConfigurableOptionService::createForProduct(
+                $newProductId,
+                $input[C::API_PRODUCT_ID],
+                $productData['name'],
+                $apiProduct,
+                $optionGroupId
+            );
+        }
+
 
         return $newProductId;
     }

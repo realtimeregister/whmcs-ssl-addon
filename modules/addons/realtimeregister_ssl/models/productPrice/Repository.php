@@ -17,6 +17,12 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
     {
         return __NAMESPACE__ . '\ProductPrice';
     }
+
+    public function __construct($columns = [], $search = [])
+    {
+        parent::__construct();
+        $this->_filters['action'] = 'REQUEST';
+    }
     
     /**
      *
@@ -47,6 +53,12 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
         $this->_filters['period'] = $period;
         return $this;
     }
+
+    public function onlyAction($action)
+    {
+        $this->_filters['action'] = $action;
+        return $this;
+    }
     
     public function createApiProductsPricesTable()
     {
@@ -56,6 +68,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
                 $table->integer('api_product_id');
                 $table->string('price');
                 $table->string('period');
+                $table->string("action");
             });
         }
     }
@@ -68,6 +81,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
                 $table->integer('api_product_id');
                 $table->string('price');
                 $table->string('period');
+                $table->string("action");
             });
         }
     }

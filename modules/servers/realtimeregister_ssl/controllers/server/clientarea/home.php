@@ -158,21 +158,10 @@ class home extends AbstractController
 
                     $now = new \DateTime();
 
-                    $vars['displayRenewButton'] = false;
+
 
                     if (!empty($certificateDetails['crt'])) {
                         $vars['crt'] = ($certificateDetails['crt']);
-                    }
-
-                    if ($certificateDetails['ssl_status'] == 'ACTIVE' || $certificateDetails['ssl_status'] == 'COMPETED') {
-                        $diffDays = $now->diff(
-                            $now,
-                            \DateTime::createFromFormat('i', strtotime($certificateDetails['valid_until']->date))
-                        );
-
-                        if ((int)$diffDays->format('%a') < 30) {
-                            $vars['displayRenewButton'] = true;
-                        }
                     }
 
 
@@ -212,18 +201,22 @@ class home extends AbstractController
                     $vars['validFrom'] = $certificateDetails['valid_from']->date;
                     $vars['validTill'] = $certificateDetails['valid_till']->date;
                     $datediff = $now->diff(new \DateTime($certificateDetails['valid_till']->date))->format('%a');
+                    $vars['nextReissue'] = $datediff;
 
+                    $vars['displayRenewButton'] = false;
 
+                    if ($certificateDetails['ssl_status'] == 'active' || $certificateDetails['ssl_status'] == "COMPLETED") {
+                        if ((int)$datediff < 30) {
+                            $vars['displayRenewButton'] = true;
+                        }
+                    }
 
-                    if (isset($certificateDetails['begin_date']) && !empty($certificateDetails['begin_date'])) {
+                    if (!empty($certificateDetails['begin_date'])) {
                         $vars['subscriptionStarts'] = $certificateDetails['begin_date']->date;
                     }
 
-                    if (isset($certificateDetails['end_date']) && !empty($certificateDetails['end_date'])) {
+                    if (!empty($certificateDetails['end_date'])) {
                         $vars['subscriptionEnds'] = $certificateDetails['end_date']->date;
-                        $vars['nextReissue'] = $datediff;
-                    } else {
-                        $vars['nextRenew'] = $datediff;
                     }
 
                     //service billing cycle
@@ -353,7 +346,6 @@ class home extends AbstractController
                 exit;
             }
 
-            $vars['actual_link'] = $CONFIG['SystemURL'] . '/clientarea.php?action=productdetails&id=' . $vars['serviceid'];
             $vars['actual_link'] = $CONFIG['SystemURL'] . '/clientarea.php?action=productdetails&id=' . $vars['serviceid'];
 
             $vars['btndownload'] = false;

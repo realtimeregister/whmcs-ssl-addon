@@ -12,9 +12,9 @@ class ProductPrice
 
         $period = $this->getPeriodFromName($this->product);
 
-        $productPriceRepo->onlyApiProductID(
-            KeyToIdMapping::getIdByKey($this->getCleanProductName($this->product)))->onlyPeriod((string)$period
-        );
+        $productPriceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($this->getCleanProductName($this->product)))
+            ->onlyPeriod((string)$period)
+            ->onlyAction($this->action);
 
         if (!$productPriceRepo->count()) {
             $productPrice = new \MGModule\RealtimeRegisterSsl\models\productPrice\ProductPrice();
@@ -22,6 +22,8 @@ class ProductPrice
             $productPrice->setApiProductID(KeyToIdMapping::getIdByKey($this->getCleanProductName($this->product)));
             $productPrice->setPeriod($period);
             $productPrice->setPrice($this->price);
+            $productPrice->setAction($this->action);
+
         } else {
             $priceRow = $productPriceRepo->fetchOne();
 

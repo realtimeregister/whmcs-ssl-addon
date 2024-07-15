@@ -91,7 +91,7 @@
                     <td class="text-left">{$MGLANG->T('validTill')}</td>
                     <td class="text-left">{$validTill}</td>
                 </tr>
-                {if $serviceBillingCycle != 'Annually'}
+                {if $subscriptionEnds}
                     <tr>
                         <td class="text-left">{$MGLANG->T('subscriptionStarts')}</td>
                         <td class="text-left">{$subscriptionStarts}</td>

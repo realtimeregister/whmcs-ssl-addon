@@ -50,6 +50,16 @@ class Product
     {
         return $this->periods;
     }
+
+    public function getMaxDomains()
+    {
+        return $this->maxDomains;
+    }
+
+    public function getIncludedDomains()
+    {
+        return $this->includedDomains;
+    }
     
     public function getMinimalPeriods()
     {

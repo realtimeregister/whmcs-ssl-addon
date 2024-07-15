@@ -33,6 +33,12 @@ class ProductPrice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
      */
     public $period;
 
+    /**
+     * @Column(varchar=32)
+     * @var string
+     */
+    public $action;
+
     public function getID()
     {
         return $this->id;
@@ -66,5 +72,15 @@ class ProductPrice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     public function setPeriod($period)
     {
         $this->period = $period;
+    }
+
+    public function getAction(): string
+    {
+        return $this->action;
+    }
+
+    public function setAction(string $action): void
+    {
+        $this->action = $action;
     }
 }
