@@ -60,6 +60,8 @@ $_LANG['addonAA']['apiConfiguration']['item']['summary_expires_soon_days']['labe
 $_LANG['addonAA']['apiConfiguration']['item']['summary_expires_soon_days']['description']              = 'Medregn SSL-ordre til statistik, hvis der er færre eller lige dage, der skal udløbe end de valgte';
 $_LANG['addonAA']['apiConfiguration']['item']['send_certificate_template']['label']                    = 'Send Certifikat E-mailskabelon';
 $_LANG['addonAA']['apiConfiguration']['item']['send_certificate_template']['description']              = 'For at sende et SSL-certifikat igennem den valgte skabelon skal du ændre skabelonen og placere {$ssl_certificate} i skabelonen.';
+$_LANG['addonAA']['apiConfiguration']['item']['api_test']['description'] = 'Aktiver for testmiljø';
+$_LANG['addonAA']['apiConfiguration']['item']['api_test']['label'] = '';
 //
 $_LANG['addonAA']['apiConfiguration']['item']['data_migration_legend']['label']                        = 'Migrering af Data og Konfiguration';
 $_LANG['addonAA']['apiConfiguration']['item']['data_migration']['content']                             = 'Migrer';

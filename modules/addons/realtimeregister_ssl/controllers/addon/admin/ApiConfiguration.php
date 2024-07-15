@@ -63,6 +63,16 @@ class ApiConfiguration extends AbstractController
         $field->error = $this->getFieldError('api_login');
         $form->addField($field);
 
+        $field = new CheckboxField();
+        $field->name = 'api_test';
+        $field->options = ['api_test'];
+        $field->value = $input['api_test'] ? ['api_test'] : [''];
+        $field->inline = true;
+        $field->colWidth = 3;
+        $field->continue = false;
+        $field->enableDescription = true;
+        $form->addField($field);
+
         $form->addField('button', 'testConnection', [
             'value' => 'testConnection',
         ]);
@@ -514,6 +524,7 @@ class ApiConfiguration extends AbstractController
                     'disable_email_validation',
                     'email_whois',
 //                    'renew_new_order',
+                    'api_test',
                     'visible_renew_button',
                     'save_activity_logs'
                 ];

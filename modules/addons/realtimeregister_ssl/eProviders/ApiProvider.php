@@ -13,7 +13,8 @@ class ApiProvider
 {
     private static $instance;
 
-    private string $apiUrl = 'https://api.yoursrs-ote.com';
+    private string $apiUrl = 'https://api.yoursrs.com';
+    private string $apiTestUrl = 'https://api.yoursrs-ote.com';
 
     /**
      * @var AbstractApi[]
@@ -37,7 +38,7 @@ class ApiProvider
         if ($this->api[$className] === null) {
             $this->initApi($className);
         }
-        
+
         return $this->api[$className];
     }
 
@@ -48,7 +49,12 @@ class ApiProvider
     {
         $apiKeyRecord = Capsule::table('mgfw_REALTIMEREGISTERSSL_api_configuration')->first();
 
-        $this->api[$className] = new $className(new AuthorizedClient($this->apiUrl, $apiKeyRecord->api_login));
+        $apiUrl = $this->apiUrl;
+        if ($apiKeyRecord->api_test === 1) {
+            $apiUrl = $this->apiTestUrl;
+        }
+
+        $this->api[$className] = new $className(new AuthorizedClient($apiUrl, $apiKeyRecord->api_login));
         self::$customer = $this->setCustomer($apiKeyRecord->api_login);
     }
 

@@ -29,6 +29,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
             Capsule::table($this->tableName)->insert(
                     [
                         'api_login'                              => $params['api_login'],
+                        'api_test' => $params['api_test'],
                         'rate'                                   => $params['rate'],
                         'use_admin_contact'                      => $params['use_admin_contact'],
                         'display_csr_generator'                  => $params['display_csr_generator'],
@@ -73,6 +74,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
             Capsule::table($this->tableName)->update(
                     [
                         'api_login'                              => $params['api_login'],
+                        'api_test' => $params['api_test'],
                         'rate'                                   => $params['rate'],
                         'use_admin_contact'                      => $params['use_admin_contact'],
                         'display_csr_generator'                  => $params['display_csr_generator'],
@@ -118,6 +120,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
             Capsule::schema()->create($this->tableName, function($table)
             {
                 $table->string('api_login');
+                $table->boolean('api_test');
                 $table->boolean('use_admin_contact');
                 $table->boolean('display_csr_generator');
                 $table->boolean('profile_data_csr');
@@ -263,6 +266,12 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
             if (!Capsule::schema()->hasColumn($this->tableName, 'auto_install_panel')) {
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->boolean('auto_install_panel');
+                });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'api_test')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->boolean('api_test');
                 });
             }
         }

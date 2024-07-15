@@ -105,6 +105,9 @@ $_LANG['addonAA']['apiConfiguration']['item']['visible_renew_button']['label']  
 $_LANG['addonAA']['apiConfiguration']['item']['visible_renew_button']['description']            = 'Visible "Renew" button in Client Area';
 $_LANG['addonAA']['apiConfiguration']['item']['save_activity_logs']['label']                  = 'Activity log';
 $_LANG['addonAA']['apiConfiguration']['item']['save_activity_logs']['description']            = 'Tick this field to save logs';
+
+$_LANG['addonAA']['apiConfiguration']['item']['api_test']['description'] = 'Enable for test environment';
+$_LANG['addonAA']['apiConfiguration']['item']['api_test']['label'] = '';
 //
 $_LANG['addonAA']['apiConfiguration']['item']['tech_firstname']['label']                               = 'First Name';
 $_LANG['addonAA']['apiConfiguration']['item']['use_admin_contact']['label']                            = 'Use Administrative Contact Details';
