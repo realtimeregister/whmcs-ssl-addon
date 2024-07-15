@@ -64,7 +64,6 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
                         'sidebar_templates'                      => $params['sidebar_templates'],
                         'custom_guide'                           => $params['custom_guide'],
                         'disable_email_validation'               => $params['disable_email_validation'],
-                        'email_whois'                            => $params['email_whois']
             ]);
         } else {
             if (!isset($params['tech_fax']) || empty($params['tech_fax'])) {
@@ -109,7 +108,6 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
                         'sidebar_templates'                      => $params['sidebar_templates'],
                         'custom_guide'                           => $params['custom_guide'],
                         'disable_email_validation'               => $params['disable_email_validation'],
-                        'email_whois'                            => $params['email_whois'],
             ]);
         }
     }
@@ -155,7 +153,6 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
                 $table->string('rate')->nullable();
                 $table->text('custom_guide')->nullable();
                 $table->boolean('disable_email_validation');
-                $table->boolean('email_whois');
             });
         }
     }
@@ -251,11 +248,6 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
             if (!Capsule::schema()->hasColumn($this->tableName, 'disable_email_validation')) {
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->boolean('disable_email_validation');
-                });
-            }
-            if (!Capsule::schema()->hasColumn($this->tableName, 'email_whois')) {
-                Capsule::schema()->table($this->tableName, function($table) {
-                    $table->boolean('email_whois');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'profile_data_csr')) {

@@ -361,16 +361,6 @@ class ApiConfiguration extends AbstractController
         $field->enableDescription = false;
         $form->addField($field);
 
-        $field = new CheckboxField();
-        $field->name = 'email_whois';
-        $field->options = ['email_whois'];
-        $field->value = $input['email_whois'] ? ['email_whois'] : [''];
-        $field->inline = false;
-        $field->colWidth = 2;
-        $field->continue = false;
-        $field->enableDescription = false;
-        $form->addField($field);
-
         $field = new LegendField();
         $field->name = 'tech_legend';
         $form->addField($field);
@@ -522,8 +512,6 @@ class ApiConfiguration extends AbstractController
                     'renewal_invoice_status_unpaid',
                     'display_ca_summary',
                     'disable_email_validation',
-                    'email_whois',
-//                    'renew_new_order',
                     'api_test',
                     'visible_renew_button',
                     'save_activity_logs'
