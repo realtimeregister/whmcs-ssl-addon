@@ -84,8 +84,7 @@
                 selectDcvMethod += '</select>';
 
 
-                //if(jQuery.inArray('email', disabledValidationMethods) < 0)
-                partHtml = partHtml + selectDcvMethod.replace('name="selectName"', getNameForSelectMethod(x, domain));                                
+                partHtml = partHtml + selectDcvMethod.replace('name="selectName"', getNameForSelectMethod(x, domain));
                 selectEmailHtml = selectBegin.replace('name="selectName"', getNameForSelectEmail(x, domain));
                 
                 if(jQuery.inArray('email', disabledValidationMethods) >= 0)
@@ -113,17 +112,9 @@
         $('#containerApprovalMethodEmail p').prev('div.alert').hide();
         $('#containerApprovalMethodEmail p').hide();
 
-        if(brand == 'digicert' || brand == 'thawte' || brand == 'rapidssl')
+        if(checkwildcard)
         {
-            $('select[name^="dcvmethod["]').remove();
-            $('select[name^="approveremails"]').remove();
-        
-        
-            if(checkwildcard)
-            {
-                $('select[name="dcvmethodMainDomain"] option[value="HTTP"]').remove();
-            }
-
+            $('select[name="dcvmethodMainDomain"] option[value="HTTP"]').remove();
         }
         
         $('body').on('change','select[name^="dcvmethod"]',function(){
