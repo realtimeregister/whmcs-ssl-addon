@@ -29,8 +29,6 @@ use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 class ClientReissueCertificate
 {
-    // allow *.domain.com as SAN for products
-    public const PRODUCTS_WITH_ADDITIONAL_SAN_VALIDATION = [100, 99, 63];
     /**
      *
      * @var array
@@ -538,35 +536,27 @@ class ClientReissueCertificate
 
         $apiProductId = $this->p[ConfigOptions::API_PRODUCT_ID];
 
-        $invalidDomains = Domains::getInvalidDomains(
-            $sansDomains,
-            in_array($apiProductId, self::PRODUCTS_WITH_ADDITIONAL_SAN_VALIDATION)
-        );
+        $productBrandRepository = Products::getInstance();
+        $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
 
-        if ($apiProductId != '144') {
-            if (count($invalidDomains)) {
-                throw new Exception(Lang::getInstance()->T('incorrectSans') . implode(', ', $invalidDomains));
-            }
-        } else {
-            if (count($invalidDomains)) {
-                $iperror = false;
-
-                foreach ($invalidDomains as $domainname) {
-                    if (!filter_var($domainname, FILTER_VALIDATE_IP)) {
-                        $iperror = true;
-                    }
+        $uniqueDomains = [];
+        if ($sansDomains !== null && count($sansDomains) > 0) {
+            if (in_array('WWW_INCLUDED', $productBrand->features)) {
+                foreach ($sansDomains as $domain) {
+                    // Remove 'www.' prefix if it exists
+                    $normalizedDomain = preg_replace('/^www\./', '', $domain);
+                    // Add the normalized domain to the array
+                    $normalizedDomains[] = $normalizedDomain;
                 }
 
-                if ($iperror) {
-                    throw new Exception('SANs are incorrect');
-                }
+                $uniqueDomains = array_unique($normalizedDomains);
+            } else {
+                $uniqueDomains = $sansDomains;
             }
         }
 
-        $includedSans = $this->p[ConfigOptions::PRODUCT_INCLUDED_SANS];
-        $boughtSans = $this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
         $sansLimit = $this->getSansLimit();
-        if (count($sansDomains) > $sansLimit) {
+        if (count($uniqueDomains) > $sansLimit) {
             throw new Exception(Lang::getInstance()->T('exceededLimitOfSans'));
         }
     }

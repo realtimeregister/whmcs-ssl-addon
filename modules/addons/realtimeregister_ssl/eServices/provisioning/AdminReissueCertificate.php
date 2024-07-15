@@ -7,6 +7,7 @@ use MGModule\RealtimeRegisterSsl\eHelpers\Domains;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\WebServers;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
@@ -25,7 +26,6 @@ class AdminReissueCertificate extends Ajax
 {
     private $p;
     private $serviceParams;
-    private $product;
 
     function __construct(&$params)
     {
@@ -307,7 +307,6 @@ class AdminReissueCertificate extends Ajax
         }
 
         $this->response(true, 'Certificate was successfully reissued.');
-
     }
 
     private function webServers()
@@ -362,30 +361,31 @@ class AdminReissueCertificate extends Ajax
 
         $invalidDomains = Domains::getInvalidDomains($sansDomains, in_array($apiProductId, [100, 99, 63]));
 
-        if($apiProductId != '144') {
-            if (count($invalidDomains)) {
-                throw new Exception(Lang::getInstance()->T('incorrectSans') . implode(', ', $invalidDomains));
-            }
-        } else {
-            if (count($invalidDomains)) {
-                $iperror = false;
+        if (count($invalidDomains)) {
+            throw new Exception(Lang::getInstance()->T('incorrectSans') . implode(', ', $invalidDomains));
+        }
 
-                foreach($invalidDomains as $domainname) {
-                    if(!filter_var($domainname, FILTER_VALIDATE_IP)) {
-                        $iperror = true;
-                    }
+        $productBrandRepository = Products::getInstance();
+        $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
+
+        $uniqueDomains = [];
+        if ($sansDomains !== null && count($sansDomains) > 0) {
+            if (in_array('WWW_INCLUDED', $productBrand->features)) {
+                foreach ($sansDomains as $domain) {
+                    // Remove 'www.' prefix if it exists
+                    $normalizedDomain = preg_replace('/^www\./', '', $domain);
+                    // Add the normalized domain to the array
+                    $normalizedDomains[] = $normalizedDomain;
                 }
 
-                if ($iperror) {
-                    throw new Exception('SANs are incorrect');
-                }
+                $uniqueDomains = array_unique($normalizedDomains);
+            } else {
+                $uniqueDomains = $sansDomains;
             }
         }
 
-        $includedSans = $this->serviceParams[ConfigOptions::PRODUCT_INCLUDED_SANS];
-        $boughtSans   = $this->serviceParams['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
         $sansLimit    = $this->getSansLimit();
-        if (count($sansDomains) > $sansLimit) {
+        if (count($uniqueDomains) > $sansLimit) {
             throw new Exception(Lang::getInstance()->T('exceededLimitOfSans'));
         }
     }

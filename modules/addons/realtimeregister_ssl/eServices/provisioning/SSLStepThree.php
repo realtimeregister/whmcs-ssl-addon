@@ -109,40 +109,12 @@ class SSLStepThree
             unset($_POST['approveremail']);
         }
 
-        $billingPeriods = [
-            'Free Account' => $this->p[ConfigOptions::API_PRODUCT_MONTHS],
-            'One Time' => $this->p[ConfigOptions::API_PRODUCT_MONTHS],
-            'Monthly' => 12,
-            'Quarterly' => 3,
-            'Semi-Annually' => 6,
-            'Annually' => 12,
-            'Biennially' => 24,
-            'Triennially' => 36,
-        ];
-
         if (!empty($this->p[ConfigOptions::API_PRODUCT_ID])) {
             $apiRepo = new Products();
             $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($this->p[ConfigOptions::API_PRODUCT_ID]));
-
-            //get available periods for product
-            $productAvailablePeriods = $apiProduct->getPeriods();
-            //if certificate have monthly billing cycle available
-            if (in_array('1', $productAvailablePeriods)) {
-                $billingPeriods['Monthly'] = 1;
-            } else {
-                if (!in_array('12', $productAvailablePeriods)) {
-                    $billingPeriods['Monthly'] = $productAvailablePeriods[0];
-                }
-            }
-        }
-
-        if ($this->p[ConfigOptions::MONTH_ONE_TIME] && !empty($this->p[ConfigOptions::MONTH_ONE_TIME])) {
-            $billingPeriods['One Time'] = $this->p[ConfigOptions::MONTH_ONE_TIME];
         }
 
         $order = [];
-
-        $apiRepo = new Products();
 
         $order['product'] = $apiProduct->product;
         $order['period'] = intval($this->p['configoptions']['years'][0]) * 12;
@@ -287,6 +259,8 @@ class SSLStepThree
                 '[' . $csrDecode['commonName'] . '] Error:' . $exception->getMessage()
             );
             $decodedMessage = json_decode(str_replace('Bad Request: ', '', $exception->getMessage()), true);
+
+            dd($decodedMessage);
             switch ($decodedMessage['type']) {
                 case 'ObjectExists':
                     $reason = 'The request already exists';
@@ -302,9 +276,6 @@ class SSLStepThree
             }
             $this->redirectToStepOne($reason);
         }
-
-        /** @var ProcessesApi $processesApi */
-        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
 
         //update domain column in tblhostings
         $service = new Service($this->p['serviceid']);

@@ -21,7 +21,6 @@ class SSLStepTwo
 {
     private $p;
     private $errors = [];
-    private $additional_san_validation = [139, 100, 99, 63, 25, 24];
     private $csrDecode = [];
 
     public function __construct(&$params)
@@ -198,27 +197,35 @@ class SSLStepTwo
 
         $invalidDomains = Domains::getInvalidDomains($sansDomains);
 
-        if ($apiProductId != '144') {
-            if (count($invalidDomains)) {
-                throw new Exception(Lang::getInstance()->T('incorrectSans') . implode(', ', $invalidDomains));
-            }
-        } else {
-            $iperror = false;
-            foreach ($sansDomains as $domainname) {
-                if (!filter_var($domainname, FILTER_VALIDATE_IP)) {
-                    $iperror = true;
-                }
-            }
-
-            if (count($invalidDomains) && $iperror) {
-                throw new Exception('SANs are incorrect');
-            }
+        if (count($invalidDomains)) {
+            throw new Exception(Lang::getInstance()->T('incorrectSans') . implode(', ', $invalidDomains));
         }
 
         $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS];
+
+        $productBrandRepository = Products::getInstance();
+        $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
+
+        $uniqueDomains = [];
+        if ($sansDomains !== null && count($sansDomains) > 0) {
+            if (in_array('WWW_INCLUDED', $productBrand->features)) {
+                foreach ($sansDomains as $domain) {
+                    // Remove 'www.' prefix if it exists
+                    $normalizedDomain = preg_replace('/^www\./', '', $domain);
+                    // Add the normalized domain to the array
+                    $normalizedDomains[] = $normalizedDomain;
+                }
+
+                $uniqueDomains = array_unique($normalizedDomains);
+            } else {
+                $uniqueDomains = $sansDomains;
+            }
+        }
+
         $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
         $sansLimit = $includedSans + $boughtSans;
-        if (count($sansDomains) > $sansLimit) {
+
+        if (count($uniqueDomains) > $sansLimit) {
             throw new Exception(Lang::T('sanLimitExceeded'));
         }
     }
@@ -234,7 +241,7 @@ class SSLStepTwo
         if ($checkTable) {
             if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
                 $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)
-                    ->where('pid', $this->p['serviceid'])->first();
+                    ->where('pid', $this->p['pid'])->first();
                 if (isset($productsslDB->data)) {
                     $productssl['product'] = json_decode($productsslDB->data, true);
                 }
