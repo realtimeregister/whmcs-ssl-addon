@@ -335,14 +335,8 @@ class AdminReissueCertificate extends Ajax
         $this->validateServerType();
         $decodeCSR = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->p['csr']);
 
-        $service = new Service($this->p['serviceId']);
-        $product = new Product($service->productID);
-
-        if($product->configuration()->text_name != '144')
-        {
-            if(isset($decodeCSR['csrResult']['errorMessage'])){
-                throw new Exception($decodeCSR['csrResult']['errorMessage']);
-            }
+        if(isset($decodeCSR['csrResult']['errorMessage'])){
+            throw new Exception($decodeCSR['csrResult']['errorMessage']);
         }
         $mainDomain   = $decodeCSR['csrResult']['CN'];
         $domains      = $mainDomain . PHP_EOL . $this->p['sanDomains'].PHP_EOL.$this->p['sanDomainsWildcard'];

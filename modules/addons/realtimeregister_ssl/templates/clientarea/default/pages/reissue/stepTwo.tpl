@@ -40,8 +40,6 @@
 </div>
  <script type="text/javascript">
     $(document).ready(function () {
-        //var fillVars = JSON.parse('{$fillVars}');
-        var brand = JSON.parse('{$brand}');        
         var disabledValidationMethods = JSON.parse('{$disabledValidationMethods}');
 
         function getSelectHtml(value, checked) {
@@ -152,37 +150,20 @@
         replaceRadioInputs(JSON.parse('{$approvalEmails}'));
 
         $('select[name^="dcvmethod"]').change( function (){
-            
-            var product144 = $('select[name="approveremail"] option').length; 
-            
             var method = this.value;
             var selectName = this.name;
             var domain = selectName.replace('dcvmethod', '');
             if(domain === 'MainDomain') {
                 if(method !== 'EMAIL') {
-                    
-                    if(product144 <= 0)
-                    {
-                        $('select[name="approveremail"]').append('<option value="defaultemail@defaultemail.com"></option>');
-                        $('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').attr("selected", "selected");
-                    }
-                    
                     $('select[name="approveremail"]').addClass('hidden');
                 } else {                    
                     $('select[name="approveremail"]').removeClass('hidden');
                 }
             } else {
                 if(method !== 'EMAIL') {
-                    
-                    if(product144 <= 0)
-                    {
-                        $('select[name="approveremail"]').append('<option value="defaultemail@defaultemail.com"></option>');
-                        $('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').attr("selected", "selected");
-                    }
                     $('select[name="approveremails'+domain+'"]').addClass('hidden');
                 } else {
                     $('select[name="approveremails'+domain+'"]').removeClass('hidden');
-
                 }                 
             }
         });

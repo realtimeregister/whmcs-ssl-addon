@@ -118,45 +118,22 @@
         }
         
         $('body').on('change','select[name^="dcvmethod"]',function(){
-             
-            var product144 = $('select[name="approveremail"] option').length;
-             
             var method = this.value;
             var selectName = this.name;
             var domain = selectName.replace('dcvmethod', '');
             if(domain === 'MainDomain') {
                 if(method !== 'EMAIL') {
                     $('select[name="approveremail"]').addClass('hidden');
-                    
-                    if(product144 <= 0)
-                    {
-                        $('select[name="approveremail"]').append('<option value="defaultemail@defaultemail.com"></option>');
-                        $('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').attr("selected", "selected");
-                    }
-                    
-                    //$('select[name="approveremail"]').append('<option value="defaultemail@defaultemail.com"></option>');
-                    //$('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').attr("selected", "selected");
-                } else {                    
+                } else {
                     $('select[name="approveremail"]').removeClass('hidden');   
-                    //$('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').remove();
                 }
             } else {
                 domain = domain.replace("*", "___"); 
                 if(method !== 'EMAIL') {
-                    
-                    if(product144 <= 0)
-                    {
-                        $('select[name="approveremail"]').append('<option value="defaultemail@defaultemail.com"></option>');
-                        $('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').attr("selected", "selected");
-                    }
-                    
                     $('select[name="approveremails'+domain+'"]').addClass('hidden');
-                    //$('select[name="approveremail"]').append('<option value="defaultemail@defaultemail.com"></option>');
-                    //$('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').attr("selected", "selected");
                 } else {
                     $('select[name="approveremails'+domain+'"]').removeClass('hidden'); 
-                    //$('select[name="approveremail"] option[value="defaultemail@defaultemail.com"]').remove();
-                }                 
+                }
             }
             
             var domainname = $(this).parent('div.form-group').parent('td').prev().text();
