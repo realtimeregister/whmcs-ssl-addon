@@ -17,12 +17,6 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
     {
         return __NAMESPACE__ . '\ProductPrice';
     }
-
-    public function __construct($columns = [], $search = [])
-    {
-        parent::__construct();
-        $this->_filters['action'] = 'REQUEST';
-    }
     
     /**
      *

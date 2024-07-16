@@ -25,16 +25,6 @@ class ProductsConfiguration extends AbstractController
     public function indexHTML($input = [], $vars = []): array
     {
         try {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($input['createConfOptions'])) {
-                ConfigurableOptionService::createForProduct($input['productId'], $input['productName']);
-                $vars['success'] = Lang::T('messages', 'configurable_generated');
-            }
-
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($input['createConfOptionsWildcard'])) {
-                ConfigurableOptionService::createForProductWildcard($input['productId'], $input['productName']);
-                $vars['success'] = Lang::T('messages', 'configurable_generated');
-            }
-
             if ($_SERVER['REQUEST_METHOD'] === 'POST' and isset($input['saveProduct'])) {
                 $ajax = false;
 
