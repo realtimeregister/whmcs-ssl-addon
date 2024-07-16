@@ -1,9 +1,8 @@
-![logo-horizontal-270x81_powered](https://github.com/gogetssl/whmcs-addon/assets/36668842/e48a2918-bb30-46bb-9f56-19e040ea5fea)
 # Realtime Register SSL WHMCS SSL Addon
 Free of charge SSL Addon for WHMCS to automate SSL certificate sales/distribution via realtimeregister.com platform
 
 ***
-**Note:** This version is fully compatible with 8.x.x versions of WHMCS.
+**Note:** This version is fully compatible with al current versions of WHMCS which are still supported. Please consult [this page](https://docs.whmcs.com/releases/) for the latest information.
 ***
 
 ### Prerequisites
@@ -21,14 +20,14 @@ Check [WIKI](https://github.com/realtimeregister/whmcs-ssl-addon/wiki) for manua
 - Login is the same as login for Client area
 
 ### Suggestions, Bugs, Issues, New Features
-You are highly welcome to send us requests for new features, suggestions, issues or any possible bugs found
-[Submission form](https://github.com/gogetssl/whmcs-addon/issues/new/choose)
+You are ofcourse welcome to send us requests for new features, suggestions, issues or any possible bugs found
+[Submission form](https://github.com/realtimeregister/whmcs-ssl-addon/issues/new/choose)
 
 ### List of addon features
 - Full integration, no invite links;
 - Multiple year support, up to 3 years;
 - One-time and Recurring payments
-- cPanel AutoSSL installation plugin
+- cPanel/Directadmin & Plesk AutoSSL installation plugin
 - SAN/UCC/MDC support;
 - LEI codes for OV/EV orders
 - Online CSR Generator
@@ -49,9 +48,6 @@ We provide ["cPanel AutoSSL installation"](https://github.com/gogetssl/whmcs-add
 This project is licensed under the MIT License
 
 ### Plesk module
-The files inside modules/whmcs-addon/modules/addons/realtimeregister_ssl/eServices/ManagementPanel/Deploy/API/Platforms/Module/ext-realtime-register-ssl-file-upload-helper 
-need to be put in their own .zip module (no initial directory, so meta.xml should not be inside a directory(!)) 
-
-The plesk module will be used in order to enable file validations. It will be automatically installed every time it is needed
+The plesk module will be used in order to enable file validations. It will be automatically installed every time it is needed, no further action needed on your part.
 
 

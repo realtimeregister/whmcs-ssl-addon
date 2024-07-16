@@ -7,7 +7,8 @@
   "authors": [
     {
       "name": "Realtime Register",
-      "email": "info@realtimeregister.com"
+      "email": "info@realtimeregister.com",
+      "homepage": "https://realtimeregister.com"
     }
   ],
   "repositories": [
