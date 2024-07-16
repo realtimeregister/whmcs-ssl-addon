@@ -259,8 +259,6 @@ class SSLStepThree
                 '[' . $csrDecode['commonName'] . '] Error:' . $exception->getMessage()
             );
             $decodedMessage = json_decode(str_replace('Bad Request: ', '', $exception->getMessage()), true);
-
-            dd($decodedMessage);
             switch ($decodedMessage['type']) {
                 case 'ObjectExists':
                     $reason = 'The request already exists';
@@ -338,7 +336,7 @@ class SSLStepThree
 
         $revalidate = false;
 
-        foreach ($orderDetails['validations']['dcv']['entities'] as $data) {
+        foreach ($orderDetails['validations']['dcv'] as $data) {
             try {
                 $panel = \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel::getPanelData($data['commonName']);
 
@@ -362,7 +360,6 @@ class SSLStepThree
                     }
                 } elseif ($data['type'] == 'DNS') {
                     if ($data['dnsType'] == 'CNAME') {
-
                         $result = DnsControl::generateRecord($data, $panel);
                         if ($result) {
                             $logs->addLog(
@@ -385,98 +382,6 @@ class SSLStepThree
                 continue;
             }
         }
-
-        // TODO
-        /*if (isset($orderDetails['san']) && !empty($orderDetails['san'])) {
-            foreach ($orderDetails['san'] as $san) {
-                try {
-                    $cPanelService = new \MGModule\RealtimeRegisterSsl\eModels\cpanelservices\Service();
-                    $cpanelDetails = $cPanelService->getServiceByDomain($service->userid, $san['san_name']);
-
-                    if ($cpanelDetails === false) {
-                        continue;
-                    }
-
-                    $cpanel = new Cpanel();
-                    $cpanel->setService($cpanelDetails);
-
-                    if ($san['validation_method'] == 'http') {
-                        $directory = $cpanel->getRootDirectory($cpanelDetails->user, $san['san_name']);
-                        $content = $san['validation'][$san['validation_method']]['content'];
-
-                        $cpanel->addDirectory($cpanelDetails->user, [
-                            [
-                                'dir' => $directory,
-                                'name' => '.well-known',
-                            ],
-                            [
-                                'dir' => $directory . '/.well-known',
-                                'name' => 'pki-validation',
-                            ]
-                        ]);
-
-                        $cpanel->saveFile(
-                            $cpanelDetails->user,
-                            $san['validation'][$san['validation_method']]['filename'],
-                            $directory . '/.well-known/pki-validation/',
-                            $content
-                        );
-                        $logs->addLog(
-                            $this->p['userid'],
-                            $this->p['serviceid'],
-                            'success',
-                            'The ' . $san['san_name'] . ' domain has been verified using the file method.'
-                        );
-                        $revalidate = true;
-                    }
-
-                    if ($san['validation_method'] == 'dns') {
-                        if (strpos($san['validation'][$san['validation_method']]['record'], 'CNAME') !== false) {
-                            $records = explode('CNAME', $san['validation'][$san['validation_method']]['record']);
-                            $record = new stdClass();
-                            $record->domain = $san['san_name'];
-                            $record->name = trim($records[0]) . '.';
-                            $record->cname = trim($records[1]);
-                            $record->type = 'CNAME';
-                            $cpanel->addRecord($cpanelDetails->user, $record);
-                            $logs->addLog(
-                                $this->p['userid'],
-                                $this->p['serviceid'],
-                                'success',
-                                'The ' . $san['san_name'] . ' domain has been verified using the dns method.'
-                            );
-                            $revalidate = true;
-                        }
-
-                        if (strpos($san['validation'][$san['validation_method']]['record'], 'IN   TXT') !== false) {
-                            $records = explode('IN   TXT', $san['validation'][$san['validation_method']]['record']);
-                            $record = new stdClass();
-                            $record->domain = $san['san_name'];
-                            $record->name = trim($records[0]);
-                            $record->type = 'TXT';
-                            $record->ttl = "14400";
-                            $record->txtdata = str_replace('"', '', trim($records[1]));
-                            $cpanel->addRecord($cpanelDetails->user, $record);
-                            $logs->addLog(
-                                $this->p['userid'],
-                                $this->p['serviceid'],
-                                'success',
-                                'The ' . $san['san_name'] . ' domain has been verified using the dns method.'
-                            );
-                            $revalidate = true;
-                        }
-                    }
-                } catch (Exception $e) {
-                    $logs->addLog(
-                        $this->p['userid'],
-                        $this->p['serviceid'],
-                        'error',
-                        '[' . $san['san_name'] . '] Error:' . $e->getMessage()
-                    );
-                    continue;
-                }
-            }
-        }*/
 
         if ($revalidate === true) {
             try {
