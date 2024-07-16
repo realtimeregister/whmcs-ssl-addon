@@ -69,7 +69,7 @@ class ProductsCreator extends AbstractController
             'servertype' => 'realtimeregister_ssl',
             'hidden' => '0',
             'autosetup' => $input['autosetup'],
-            C::PRICE_AUTO_DOWNLOAD => $input[C::PRICE_AUTO_DOWNLOAD]?: 'true',
+            C::PRICE_AUTO_DOWNLOAD => $input[C::PRICE_AUTO_DOWNLOAD]?: '',
             C::API_PRODUCT_ID => $input[C::API_PRODUCT_ID],
             C::API_PRODUCT_MONTHS => $input[C::API_PRODUCT_MONTHS],
             C::PRODUCT_ENABLE_SAN => $input[C::PRODUCT_ENABLE_SAN] ?: '',
