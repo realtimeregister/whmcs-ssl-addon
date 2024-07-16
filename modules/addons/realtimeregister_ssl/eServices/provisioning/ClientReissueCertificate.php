@@ -221,7 +221,6 @@ class ClientReissueCertificate
         }
 
         $disabledValidationMethods = [];
-        $apiConf = (new Repository())->get();
 
         $productssl = false;
         $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
@@ -242,12 +241,6 @@ class ClientReissueCertificate
             $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
             $productssl = $certificatesApi->getProduct($product->configuration()->text_name)->toArray();
         }
-
-//        foreach ($SSLStepTwoJS->fetchApprovalEmailsForSansDomains($parseDomains) as $sandomain => $approverEmails) {
-//            if (str_contains($sandomain, '*.')) {
-//                $disabledValidationMethods[] = 'http';
-//            }
-//        }
 
         $this->vars['disabledValidationMethods'] = json_encode($disabledValidationMethods);
     }
@@ -316,13 +309,6 @@ class ClientReissueCertificate
                 }
             }
         }
-        if (!$productssl) {
-            /** @var CertificatesApi $certificatesApi */
-            $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-            $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
-        }
-
-        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
 
         $reissueData = ApiProvider::getInstance()
             ->getApi(CertificatesApi::class)
@@ -368,7 +354,6 @@ class ClientReissueCertificate
                             'success',
                             'The ' . $service->domain . ' domain has been verified using the file method.'
                         );
-                        $revalidate = true;
                     }
                 } elseif ($data['type'] == 'DNS') {
                     if ($data['dnsType'] == 'CNAME') {
@@ -381,7 +366,6 @@ class ClientReissueCertificate
                                 'success',
                                 'The ' . $service->domain . ' domain has been verified using the dns method.'
                             );
-                            $revalidate = true;
                         }
                     }
                 }
@@ -422,7 +406,6 @@ class ClientReissueCertificate
                 function ($entry) {return $entry['commonName'] != $this->sslService->getDomain();}
             ));
         $this->sslService->save();
-
 
         try {
             Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $decodedCSR['commonName'], true);
@@ -524,8 +507,6 @@ class ClientReissueCertificate
             throw new Exception(Lang::getInstance()->T('createNotInitialized'));
         }
 
-        //$this->orderStatus = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getOrderStatus($this->sslService->remoteid);
-
         if (!in_array($this->sslService->configdata->ssl_status, ['active', 'COMPLETED'])) {
             throw new Exception(Lang::getInstance()->T('notAllowToReissue'));
         }
@@ -534,20 +515,10 @@ class ClientReissueCertificate
     private function loadServerList()
     {
         try {
-            $apiRepo = new Products();
-            $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($this->p[ConfigOptions::API_PRODUCT_ID]));
-
-            if ($apiProduct->brand == 'comodo') {
-                $apiWebServers = [
-                    ['id' => '35', 'software' => 'IIS'],
-                    ['id' => '-1', 'software' => 'Any Other']
-                ];
-            } else {
-                $apiWebServers = [
-                    ['id' => '18', 'software' => 'IIS'],
-                    ['id' => '18', 'software' => 'Any Other']
-                ];
-            }
+            $apiWebServers = [
+                ['id' => '18', 'software' => 'IIS'],
+                ['id' => '18', 'software' => 'Any Other']
+            ];
 
             $this->vars['webServers'] = $apiWebServers;
             FlashService::set('realtimeregister_ssl_SERVER_LIST_' . ConfigOptions::API_PRODUCT_ID, $apiWebServers);

@@ -12,7 +12,6 @@ use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary;
 use MGModule\RealtimeRegisterSsl\eServices\FlashService;
 use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
@@ -79,14 +78,13 @@ class SSLStepTwo
         }
         $ValidationMethods = ['email', 'dns', 'file'];
 
-
         if (empty($this->csrDecode)) {
             // Use server to generate csr..
             try {
                 $this->csrDecode = ApiProvider::getInstance()->getApi(CertificatesApi::class)
                     ->decodeCsr(trim(rtrim($_POST['csr'])));
             } catch (Exception $e) {
-                dd($e);
+                throw new Exception($e->getMessage());
             }
         }
         $decodedCSR = $this->csrDecode;

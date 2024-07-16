@@ -107,8 +107,6 @@ class home extends AbstractController
             }
             $vars['san_revalidate'] = false;
 
-
-
             if ($sslService->status !== 'Awaiting Configuration') {
                 try {
                     $certificateDetails = (array)$sslService->configdata;
@@ -158,8 +156,6 @@ class home extends AbstractController
 
                     $now = new \DateTime();
 
-
-
                     if (!empty($certificateDetails['crt'])) {
                         $vars['crt'] = ($certificateDetails['crt']);
                     }
@@ -187,7 +183,6 @@ class home extends AbstractController
                                     $vars['sans'][$san->san_name]['san_validation'] = (array)$san->validation->http;
                                     $vars['sans'][$san->san_name]['san_validation']['content'] =
                                         explode(PHP_EOL, $san->validation->http->content);
-                                    //dd($vars['sans'][$san->san_name]);
                                     break;
                                 default:
                                     $vars['sans'][$san->san_name]['san_validation'] = $san->validation->email;
@@ -771,7 +766,6 @@ class home extends AbstractController
         $sslRepo = new SSL();
         $sslService = $sslRepo->getByServiceId($input['id']);
 
-        dd($sslService);
         $data = [
             'domain' => $input['params']['domain']
         ];
