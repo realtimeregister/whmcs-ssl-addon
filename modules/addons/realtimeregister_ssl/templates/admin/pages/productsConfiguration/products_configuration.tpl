@@ -176,7 +176,9 @@
 
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{$MGLANG->T('configurableOptionsPeriod')}</label>
+                                <div class="col-sm-10">
                                     <a href="#" onclick="manageconfigoptions('{$product->confOptionPeriod->id}');return false;" class="btn btn-success"/>{$MGLANG->T('editPrices')}</a>
+                                </div>
                                 </div>
                             </div>
                             

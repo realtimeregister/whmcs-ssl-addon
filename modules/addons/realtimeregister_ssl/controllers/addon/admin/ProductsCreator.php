@@ -67,13 +67,14 @@ class ProductsCreator extends AbstractController
             'name' => $input['name'],
             'paytype' => $input['paytype'] ?: 'recurring',
             'servertype' => 'realtimeregister_ssl',
-            'hidden' => '0',
+            'hidden' => $input['hidden'] ?: 0,
             'autosetup' => $input['autosetup'],
             C::PRICE_AUTO_DOWNLOAD => $input[C::PRICE_AUTO_DOWNLOAD]?: '',
             C::API_PRODUCT_ID => $input[C::API_PRODUCT_ID],
             C::API_PRODUCT_MONTHS => $input[C::API_PRODUCT_MONTHS],
             C::PRODUCT_ENABLE_SAN => $input[C::PRODUCT_ENABLE_SAN] ?: '',
             C::PRODUCT_INCLUDED_SANS => $input[C::PRODUCT_INCLUDED_SANS] ?: 0,
+            C::PRODUCT_INCLUDED_SANS_WILDCARD => $input[C::PRODUCT_INCLUDED_SANS_WILDCARD] ?: 0,
             C::PRODUCT_ENABLE_SAN_WILDCARD => $input[C::PRODUCT_ENABLE_SAN_WILDCARD] ?: '',
         ];
 
@@ -170,6 +171,7 @@ class ProductsCreator extends AbstractController
             $input[C::API_PRODUCT_MONTHS] = $apiProduct->getMaxPeriod();
             $input[C::PRODUCT_ENABLE_SAN] = $apiProduct->isSanEnabled() ? 'on' : '';
             $input[C::PRODUCT_ENABLE_SAN_WILDCARD] = $apiProduct->isSanWildcardEnabled() ? 'on' : '';
+            $input[C::PRODUCT_INCLUDED_SANS_WILDCARD] = $apiProduct->includedDomains;
             $input[C::PRODUCT_INCLUDED_SANS] = $apiProduct->includedDomains;
             $input['paytype'] = 'onetime';
             $input['currency'] = $dummyCurrencies;
