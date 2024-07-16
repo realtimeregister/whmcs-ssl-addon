@@ -69,11 +69,12 @@ class ProductsCreator extends AbstractController
             'servertype' => 'realtimeregister_ssl',
             'hidden' => '0',
             'autosetup' => $input['autosetup'],
+            C::PRICE_AUTO_DOWNLOAD => $input[C::PRICE_AUTO_DOWNLOAD]?: 'true',
             C::API_PRODUCT_ID => $input[C::API_PRODUCT_ID],
             C::API_PRODUCT_MONTHS => $input[C::API_PRODUCT_MONTHS],
             C::PRODUCT_ENABLE_SAN => $input[C::PRODUCT_ENABLE_SAN] ?: '',
             C::PRODUCT_INCLUDED_SANS => $input[C::PRODUCT_INCLUDED_SANS] ?: 0,
-            C::PRODUCT_ENABLE_SAN_WILDCARD => $input[C::PRODUCT_ENABLE_SAN_WILDCARD] ?: 0,
+            C::PRODUCT_ENABLE_SAN_WILDCARD => $input[C::PRODUCT_ENABLE_SAN_WILDCARD] ?: '',
         ];
 
         if (isset($input['issued_ssl_message']) && !empty($input['issued_ssl_message'])) {
@@ -93,7 +94,7 @@ class ProductsCreator extends AbstractController
 
         $apiProduct = $this->apiProductsRepo->getProduct(KeyToIdMapping::getIdByKey($input[C::API_PRODUCT_ID]));
 
-        $optionGroupId = ConfigurableOptionService::insertPeriods(
+        ConfigurableOptionService::insertPeriods(
             $newProductId,
             $input[C::API_PRODUCT_ID],
             $productData['name'],
@@ -107,7 +108,15 @@ class ProductsCreator extends AbstractController
                 $input[C::API_PRODUCT_ID],
                 $productData['name'],
                 $apiProduct,
-                $optionGroupId
+            );
+        }
+
+        if ($apiProduct->isSanWildcardEnabled() && $input[C::PRODUCT_ENABLE_SAN_WILDCARD] === 'on') {
+            ConfigurableOptionService::createForProductWildCard(
+                $newProductId,
+                $input[C::API_PRODUCT_ID],
+                $productData['name'],
+                $apiProduct
             );
         }
 
@@ -156,6 +165,7 @@ class ProductsCreator extends AbstractController
             $input = [];
             $input['name'] = self::displayName($apiProduct);
             $input['gid'] = $post['gid'];
+            $input[C::PRICE_AUTO_DOWNLOAD] = "true";
             $input[C::API_PRODUCT_ID] = $apiProduct->product;
             $input[C::API_PRODUCT_MONTHS] = $apiProduct->getMaxPeriod();
             $input[C::PRODUCT_ENABLE_SAN] = $apiProduct->isSanEnabled() ? 'on' : '';
@@ -168,7 +178,7 @@ class ProductsCreator extends AbstractController
         }
     }
 
-    private static function displayName($apiProduct) {
+    public static function displayName($apiProduct) {
         $certificateType = match ($apiProduct->certificateType) {
             "MULTI_DOMAIN" => 'Multi Domain',
             "WILDCARD" => "Wildcard",
