@@ -82,7 +82,7 @@ class DnsControl
     public static function generateRecord(array $certificate, $panel)
     {
         try {
-            $result = DNSManage::addRecord($panel, $certificate['commonName'], $certificate['validations']['dcv']['entities']);
+            $result = DNSManage::addRecord($panel, $certificate['commonName'], $certificate['validations']['dcv']);
 
             return [
                 'result' => $result,

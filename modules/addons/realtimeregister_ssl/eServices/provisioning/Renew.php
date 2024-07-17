@@ -195,7 +195,7 @@ class Renew
 
         $logs = new LogsRepo();
         /** @var DomainControlValidation $data */
-        foreach ($addSSLRenewOrder->validations->dcv->entities as $data) {
+        foreach ($addSSLRenewOrder->validations->dcv as $data) {
             try {
                 $panel = Panel::getPanelData($data->commonName);
 
