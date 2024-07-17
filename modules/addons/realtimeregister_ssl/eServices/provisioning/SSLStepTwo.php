@@ -216,6 +216,7 @@ class SSLStepTwo
     private function validateCSR()
     {
         $csr = trim(rtrim($this->p['csr']));
+
         $this->csrDecode = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($csr);
         $decodedCSR = $this->csrDecode;
         $_SESSION['csrDecode'] = $decodedCSR;

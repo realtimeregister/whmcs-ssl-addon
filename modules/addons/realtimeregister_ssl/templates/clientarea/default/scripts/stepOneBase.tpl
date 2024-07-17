@@ -40,40 +40,9 @@
                 {/foreach}
 
                 $('body').on('click', '#goto_next_step', function () {
-                    let typeStep = $('#step-type-data').val();
-                    if (typeStep == 'custom') {
-                        $('.select-cpanel-server').hide();
-                        $('.select-cpanel-server').prev('div').show();
-                        $('.select-cpanel-server').prev('div').parent('div').next('div').show();
-                    } else {
-                        $.ajax({
-                            url: "index.php?m=realtimeregister_ssl&mg-page=Home&mg-action=generateCSR&json=1",
-                            type: "post",
-                            data: {
-                                domain: typeStep,
-                                country: $('select[name="C"]').val(),
-                                state: $('input[name="ST"]').val(),
-                                locality: $('input[name="L"]').val(),
-                                organization: $('input[name="O"]').val(),
-                                organizationUnit: $('input[name="OU"]').val(),
-                                email: $('input[name="EA"]').val()
-                            },
-                            success: function (response) {
-                                let results = JSON.parse(response);
-                                $('#inputCsr').val(results.public_key);
-                                $('#inputCsr').parent('div').append('<input class="form-control" type="hidden" name="privateKey" value="' + results.private_key + '">');
-                                $('#inputCsr').parent('div').hide();
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                console.log(textStatus, errorThrown);
-                            }
-                        });
-
-
-                        $('.select-cpanel-server').hide();
-                        $('.select-cpanel-server').prev('div').show();
-                        $('.select-cpanel-server').prev('div').parent('div').next('div').show();
-                    }
+                    $('.select-cpanel-server').hide();
+                    $('.select-cpanel-server').prev('div').show();
+                    $('.select-cpanel-server').prev('div').parent('div').next('div').show();
                 });
             } else {
                 $('#inputCsr').parent('div').hide();

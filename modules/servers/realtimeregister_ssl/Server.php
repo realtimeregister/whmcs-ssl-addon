@@ -98,8 +98,6 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
 
                 list($content,$success,$error) = self::I()->runControler($page,$action,$input,'HTML');
 
-                //echo $content;
-
                 if (self::I()->isDebug()) {
                     $html = '<div style="color: #a94442;background-color: #f2dede;border-color: #dca7a7;font-size:20px;padding:10px;"><strong>Module is under development Mode!!!!!!!!!!!!!!!</strong></div>';
 

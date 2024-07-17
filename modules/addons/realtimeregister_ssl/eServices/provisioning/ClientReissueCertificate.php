@@ -191,7 +191,7 @@ class ClientReissueCertificate
     private function setSansDomainsDcvMethod($post)
     {
         if (isset($post['dcvmethod']) && is_array($post['dcvmethod'])) {
-            $this->post['sansDomansDcvMethod'] = $post['dcvmethod'];
+            $this->post['sansDomainsDcvMethod'] = $post['dcvmethod'];
         }
     }
 
@@ -420,7 +420,7 @@ class ClientReissueCertificate
     private function getSansDomainsValidationMethods()
     {
         $data = [];
-        foreach ($this->post['sansDomansDcvMethod'] as $newMethod) {
+        foreach ($this->post['sansDomainsDcvMethod'] as $newMethod) {
             $data[] = $newMethod;
         }
         return $data;

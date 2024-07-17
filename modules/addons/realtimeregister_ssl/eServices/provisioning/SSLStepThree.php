@@ -75,7 +75,7 @@ class SSLStepThree
     private function setSansDomainsDcvMethod($post): void
     {
         if (isset($post['dcvmethod']) && is_array($post['dcvmethod'])) {
-            $this->p['sansDomansDcvMethod'] = $post['dcvmethod'];
+            $this->p['sansDomainsDcvMethod'] = $post['dcvmethod'];
         }
     }
 
@@ -118,6 +118,10 @@ class SSLStepThree
 
         $order['product'] = $apiProduct->product;
         $order['period'] = intval($this->p['configoptions']['years'][0]) * 12;
+
+        if ($order['period'] === 0) {
+            $order['period'] = $this->p[ConfigOptions::API_PRODUCT_MONTHS];
+        }
         $order['csr'] = str_replace('\n', "\n", $this->p['csr']); // Fix for RT-14675
         /** @var Product $productDetails */
         $productDetails = ApiProvider::getInstance()->getApi(CertificatesApi::class)
@@ -330,11 +334,8 @@ class SSLStepThree
         $logs->addLog($this->p['userid'], $this->p['serviceid'], 'success', 'The order has been placed.');
 
         $order = Capsule::table('REALTIMEREGISTERSSL_orders')->where('service_id', $this->p['serviceid'])->first();
-        $sslOrder = Capsule::table('tblsslorders')->where('id', $order->ssl_order_id)->first();
         $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();
         $orderDetails = json_decode($order->data, true);
-
-        $revalidate = false;
 
         foreach ($orderDetails['validations']['dcv'] as $data) {
             try {
@@ -356,7 +357,6 @@ class SSLStepThree
                             'success',
                             'The ' . $service->domain . ' domain has been verified using the file method.'
                         );
-                        $revalidate = true;
                     }
                 } elseif ($data['type'] == 'DNS') {
                     if ($data['dnsType'] == 'CNAME') {
@@ -368,7 +368,6 @@ class SSLStepThree
                                 'success',
                                 'The ' . $service->domain . ' domain has been verified using the dns method.'
                             );
-                            $revalidate = true;
                         }
                     }
                 }
@@ -382,44 +381,12 @@ class SSLStepThree
                 continue;
             }
         }
-
-        if ($revalidate === true) {
-            try {
-                $dataAPI = [
-                    'domain' => $service->domain
-                ];
-                $response = ApiProvider::getInstance()->getApi()->revalidate($sslOrder->remoteid, $dataAPI);
-
-                $logs->addLog(
-                    $this->p['userid'],
-                    $this->p['serviceid'],
-                    'info',
-                    '[' . $service->domain . '] Revalidate,'
-                );
-
-                if (isset($response['success']) && !empty($response['success'])) {
-                    $orderRepo->updateStatus($this->p['serviceid'], 'Pending Installation');
-                    $logs->addLog(
-                        $this->p['userid'],
-                        $this->p['serviceid'],
-                        'success',
-                        '[' . $service->domain . '] Revalidate Succces.'
-                    );
-                }
-            } catch (Exception $e) {
-                $logs->addLog(
-                    $this->p['userid'], $this->p['serviceid'],
-                    'error',
-                    '[' . $service->domain . '] Error:' . $e->getMessage()
-                );
-            }
-        }
     }
 
     private function getSansDomainsValidationMethods()
     {
         $data = [];
-        foreach ($this->p['sansDomansDcvMethod'] as $newMethod) {
+        foreach ($this->p['sansDomainsDcvMethod'] as $newMethod) {
             $data[] = $newMethod;
         }
         return $data;

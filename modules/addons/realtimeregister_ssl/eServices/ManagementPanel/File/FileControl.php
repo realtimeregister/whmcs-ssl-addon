@@ -42,6 +42,10 @@ class FileControl
      */
     public static function create(array $dcvData, $panel): array
     {
+        /** @noinspection HttpUrlsUsage */
+        if (!strpos($dcvData['fileLocation'], 'https://') && !strpos($dcvData['fileLocation'], 'http://') ) {
+            $dcvData['fileLocation'] = 'https://' . $dcvData['fileLocation'];
+        }
         $url = parse_url($dcvData['fileLocation']);
         $pathInfo = pathinfo($url['path']);
         $file = [
