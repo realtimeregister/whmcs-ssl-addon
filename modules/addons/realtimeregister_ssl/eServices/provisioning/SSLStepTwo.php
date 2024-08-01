@@ -225,7 +225,7 @@ class SSLStepTwo
         if ($checkTable) {
             if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
                 $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)
-                    ->where('pid', $this->p['pid'])->first();
+                    ->where('pid', KeyToIdMapping::getIdByKey($this->p['configoption1']))->first();
                 if (isset($productsslDB->data)) {
                     $productssl['product'] = json_decode($productsslDB->data, true);
                 }
@@ -267,9 +267,6 @@ class SSLStepTwo
         }
         if (empty(trim($this->p['orgname']))) {
             $this->errors[] = Lang::T('organizationNameMissing');
-        }
-        if (empty(trim($this->p['fields']['order_type']))) {
-            $this->errors[] = Lang::T('orderTypeMissing');
         }
     }
 

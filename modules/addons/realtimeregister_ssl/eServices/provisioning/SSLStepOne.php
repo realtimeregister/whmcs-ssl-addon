@@ -113,8 +113,7 @@ class SSLStepOne
         }
 
         $stepOneBaseScript = ScriptService::getStepOneBaseScript($apiProduct->brand, $domains);
-        $orderTypeScript = ScriptService::getOrderTypeScript($orderTypes, $fillVarsJSON);
-        $webServerTypeSctipt = ScriptService::getWebServerTypeSctipt($apiWebServersJSON);
+        $webServerTypeScript = ScriptService::getWebServerTypeScript();
         $autoFillFieldsScript = ScriptService::getAutoFillFieldsScript($fillVarsJSON);
         $autoFillPrivateKeyField = null;
         $autoFillOrderTypeField = null;
@@ -135,7 +134,7 @@ class SSLStepOne
         }
 
         $fields['additionalfields']['<br />']['<br />'] = [
-            'Description' => $stepOneBaseScript . $webServerTypeSctipt . $orderTypeScript
+            'Description' => $stepOneBaseScript . $webServerTypeScript
                 . $autoFillFieldsScript . $generateCsrModalScript . $autoFillPrivateKeyField . $autoFillOrderTypeField,
         ];
 

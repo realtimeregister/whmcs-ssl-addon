@@ -19,21 +19,9 @@ class ScriptService
     public const ORDER_TYPE = 'scripts/orderType';
     public const GENERATE_CSR_MODAL = 'scripts/generateCsrModal';
 
-    public static function getWebServerTypeSctipt($apiWebServersJSON)
+    public static function getWebServerTypeScript()
     {
-        $servertype = FlashService::getFieldsMemory($_GET['cert'], 'servertype');
-        if ($servertype != '-1') {
-            if (count($servertype) === 0) {
-                $servertype = 0;
-            }
-        }
-        if (!empty($_POST['servertype'])) {
-            $servertype = $_POST['servertype'];
-        }
-        return TemplateService::buildTemplate(self::WEB_SERVER, [
-            'serverTypes' => addslashes($apiWebServersJSON),
-            'selectedServerId' => $servertype,
-        ]);
+        return TemplateService::buildTemplate(self::WEB_SERVER);
     }
     
     public static function getStepOneBaseScript($brand, $domains = [])

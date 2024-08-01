@@ -107,11 +107,25 @@ $_LANG['reissueOneCsr']          = 'CSR';
 $_LANG['reissueOneSanDomains']   = 'SAN Domains';
 $_LANG['reissueOneSanDomainsWildcard'] = 'Wildcard SAN Domains';
 
-$_LANG['reissueTwoTitle']                            = 'Reissue - Certificate Approver Email';
+$_LANG['reissueTwoTitle']                            = 'Reissue - Certificate Approver Information';
 $_LANG['reissueSelectVerificationMethodTitle']       = 'Reissue - Certificate Validation';
-$_LANG['reissueTwoSubTitle']                         = 'You must now choose from the options below where you would like the approval email request for this certificate to be sent.';
+$_LANG['reissueTwoSubTitle']                         = 'Fill in the information of the approver';
 $_LANG['reissueSelectVerificationMethodDescription'] = 'You must now choose from the options below in order to pass Domain Control Validation (DCV) process.';
+$_LANG['reissueTwoOrganizationTitle']                = 'Organization Information';
+$_LANG['reissueTwoOrganizationSubTitle']             = 'Fill in the information of the organization';
 $_LANG['reissueTwoContinue']                         = 'Continue';
+$_LANG['reissueTwoFirstName']                        = 'First Name';
+$_LANG['reissueTwoLastName']                         = 'Last Name';
+$_LANG['reissueTwoEmail']                            = 'Email';
+$_LANG['reissueTwoVoice']                            = 'Voice';
+$_LANG['reissueTwoJobTitle']                         = 'Job Title';
+$_LANG['reissueTwoPostalCode']                       = 'Postal code';
+$_LANG['reissueTwoAdresss'] = 'Address';
+$_LANG['reissueTwoCity'] = 'City';
+$_LANG['reissueTwoLastName']                         = 'Last Name';
+$_LANG['reissueTwoEmail']                            = 'Email';
+$_LANG['reissueTwoVoice']                            = 'Voice';
+$_LANG['reissueTwoJobTitle']                         = 'Job Title';
 
 $_LANG['reissueThreeSuccess'] = 'Certificate successfully reissued';
 $_LANG['mustSelectServer']    = 'You must select your server type';

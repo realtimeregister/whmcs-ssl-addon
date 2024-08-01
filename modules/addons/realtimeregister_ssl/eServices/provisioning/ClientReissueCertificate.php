@@ -96,6 +96,10 @@ class ClientReissueCertificate
         if (isset($this->post['stepOneForm'])) {
             try {
                 $this->stepOneForm();
+                $ssl = new SSL();
+                $ssldata = $ssl->getByServiceId($this->p['serviceid']);
+                $this->setApproverData($ssldata);
+                $this->vars['countries'] = Countries::getInstance()->getCountriesForMgAddonDropdown();
                 return $this->build(self::STEP_TWO);
             } catch (Exception $ex) {
                 $this->vars['errors'][] = \MGModule\RealtimeRegisterSsl\eHelpers\Exception::e($ex);
@@ -142,7 +146,6 @@ class ClientReissueCertificate
         ) : '';
         $this->vars['serviceID'] = $this->p['serviceid'];
 
-        $this->loadServerList();
         $this->vars['sansLimit'] = $this->getSansLimit();
         $this->vars['sansLimitWildCard'] = $this->getSansLimitWildcard();
 
@@ -182,6 +185,32 @@ class ClientReissueCertificate
         return $this->build(self::STEP_ONE);
     }
 
+    private function setApproverData(\MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL $sslData) {
+        if (!str_contains($sslData->getProductId(), "ev") && !str_contains($sslData->getProductId(), "ov")) {
+            $this->vars['extraValidation'] = false;
+            return;
+        }
+        $this->vars['extraValidation'] = true;
+        $configData = $sslData->configdata;
+
+        $cert = ApiProvider::getInstance()
+            ->getApi(CertificatesApi::class)
+            ->getCertificate($sslData->getCertificateId());
+
+        $this->vars['firstname'] = $configData->firstname;
+        $this->vars['lastname'] = $configData->lastname;
+        $this->vars['email'] = $configData->email;
+        $this->vars['phonenumber'] = $configData->phonenumber;
+        $this->vars['jobtitle'] = $configData->jobtitle;
+        $this->vars['orgname'] = $cert->organization;
+        $this->vars['city'] = $cert->city;
+        $this->vars['state'] = $cert->state;
+        $this->vars['country'] = $cert->country;
+        $this->vars['address'] = implode("\n", $cert->addressLine);
+        $this->vars['postcode'] = $cert->postalCode;
+      //  $this->vars[]
+    }
+
 
     private function setMainDomainDcvMethod($post)
     {
@@ -197,7 +226,6 @@ class ClientReissueCertificate
 
     private function stepOneForm()
     {
-        $this->validateWebServer();
         $this->validateSanDomains();
         $this->validateSansDomainsWildcard();
         $decodeCSR = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->post['csr']);
@@ -310,23 +338,50 @@ class ClientReissueCertificate
             }
         }
 
+        $approver = null;
+        $organization = null;
+        $address = null;
+        $postalCode = null;
+        $city = null;
+        $state = null;
+
+        if ($this->post['extraValidation']) {
+            $organization = $this->post['orgname'];
+            $address = $this->post['address'];
+            $postalCode = $this->post['postcode'];
+            $city = $this->post['city'];
+            $state = $this->post['state'];
+            $approver = [
+                "firstName" => $this->post['firstname'],
+                "lastName" => $this->post['lastname'],
+                "jobTitle" => $this->post['jobtitle'],
+                "email" => $this->post['email'],
+                "voice" => str_replace(" ", "",
+                    '+' . $this->post['country-calling-code-phonenumber'] . '.' . $this->post['phonenumber'])
+            ];
+        }
+
+
+
         $reissueData = ApiProvider::getInstance()
             ->getApi(CertificatesApi::class)
             ->reissueCertificate(
                 $this->sslService->getCertificateId(),
                 $csr,
                 $sansDomains,
+                $organization,
                 null,
+                $address,
+                $postalCode,
+                $city,
                 null,
-                null,
-                null,
-                null,
-                null,
-                null,
+                $approver,
                 null,
                 null,
                 $dcv,
-                $commonName);
+                $commonName,
+            null,
+                $state);
         /** @var ProcessesApi $processesApi */
         $this->sslService->setRemoteId($reissueData->processId);
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
@@ -426,13 +481,6 @@ class ClientReissueCertificate
         return $data;
     }
 
-    private function validateWebServer()
-    {
-        if ($this->post['webservertype'] == 0) {
-            throw new Exception(Lang::getInstance()->T('mustSelectServer'));
-        }
-    }
-
     private function getCertificateBrand()
     {
         if (!empty($this->p[ConfigOptions::API_PRODUCT_ID])) {
@@ -512,23 +560,9 @@ class ClientReissueCertificate
         }
     }
 
-    private function loadServerList()
-    {
-        try {
-            $apiWebServers = [
-                ['id' => '18', 'software' => 'IIS'],
-                ['id' => '18', 'software' => 'Any Other']
-            ];
-
-            $this->vars['webServers'] = $apiWebServers;
-            FlashService::set('realtimeregister_ssl_SERVER_LIST_' . ConfigOptions::API_PRODUCT_ID, $apiWebServers);
-        } catch (Exception $ex) {
-            $this->vars['errors'][] .= Lang::getInstance()->T('canNotFetchWebServer');
-        }
-    }
-
     private function build($template)
     {
+
         $this->vars['error'] = implode('<br>', $this->vars['errors']);
         $content = TemplateService::buildTemplate($template, $this->vars);
         return [

@@ -1,5 +1,5 @@
-<h3>{$MGLANG->T('reissueTwoTitle')}</h3>
-<p>{$MGLANG->T('reissueTwoSubTitle')}</p>
+<h3>{$MGLANG->T('reissueSelectVerificationMethodTitle')}</h3>
+<p>{$MGLANG->T('reissueSelectVerificationMethodDescription')}</p>
 
 {assign var=val value=0}
 
@@ -12,6 +12,7 @@
             <input type="hidden" name="sans_domains" value="{$smarty.post.sans_domains}">
             <input type="hidden" name="sans_domains_wildcard" value="{$smarty.post.sans_domains_wildcard}">
             <input type="hidden" name="privateKey" value="{$privateKey}">
+            <input type="hidden" name="extraValidation" value="{$extraValidation}">
             <div class="loading">
                 Loading...
             </div>
@@ -32,6 +33,80 @@
                 </div>
                 {assign var=val value=$val+1}
             {/foreach}-->
+            {if $extraValidation}
+            <h3>{$MGLANG->T('reissueTwoOrganizationTitle')}</h3>
+            <p>{$MGLANG->T('reissueTwoOrganizationSubTitle')}</p>
+                <div class="form-group">
+                    <label class="col-sm-4 col-form-label" for="inputOrgName">{$MGLANG->T('organizationLabel')}</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="orgname" id="inputOrgName" value="{$orgname}" />
+                    </div>
+                </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 col-form-label" for="inputAddress">{$MGLANG->T('reissueTwoAdresss')}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="address" id="inputAddress" value="{$address}" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 col-form-label" for="inputState">{$MGLANG->T('stateLabel')}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="state" id="inputState" value="{$state}" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 col-form-label" for="inputCity">{$MGLANG->T('reissueTwoCity')}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="city" id="inputCity" value="{$city}" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 col-form-label" for="inputPostcode">{$MGLANG->T('reissueTwoPostalCode')}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="postcode" id="inputPostcode" value="{$postcode}" />
+                </div>
+            </div>
+            <h3>{$MGLANG->T('reissueTwoTitle')}</h3>
+            <p>{$MGLANG->T('reissueTwoSubTitle')}</p>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="inputFirstName">{$MGLANG->T('reissueTwoFirstName')}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="firstname" id="inputFirstName" value="{$firstname}"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="inputLastName">{$MGLANG->T('reissueTwoLastName')}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="lastname" id="inputLastName" value="{$lastname}"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="inputEmail">{$MGLANG->T('reissueTwoEmail')}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="email" id="inputEmail" value="{$email}" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="inputPhoneNumber">{$MGLANG->T('reissueTwoVoice')}</label>
+                <div class="col-sm-8">
+                    <input type="tel" class="form-control" name="phonenumber" id="inputPhoneNumber" value="{$phonenumber}" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="inputJobTitle">{$MGLANG->T('reissueTwoJobTitle')}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="jobtitle" id="inputJobTitle" value="{$jobtitle}"/>
+                </div>
+            </div>
+            {/if}
             <div class="col-sm-12 text-center">
                 <input id="reissueCertificateButton" type="submit" value="{$MGLANG->T('reissueTwoContinue')}" class="btn btn-primary">
             </div>
