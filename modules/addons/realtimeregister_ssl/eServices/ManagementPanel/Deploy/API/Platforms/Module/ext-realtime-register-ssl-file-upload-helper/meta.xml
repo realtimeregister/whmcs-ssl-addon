@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2024. Realtime Register B.V. -->
+<module>
+    <id>realtime-register-ssl</id>
+    <name>Realtime Register SSL File upload helper</name>
+    <description>This module is used for file validation with the WHMCS Realtime Register SSL module, it will be automaticly installed when needed, it can be removed when WHMCS isn't used anymore</description>
+    <category>security</category>
+    <version>1.0</version>
+    <release>1</release>
+    <vendor>Realtime Register</vendor>
+    <url>https://realtimeregister.com</url>
+    <plesk_min_version>17.0.0</plesk_min_version>
+</module>
