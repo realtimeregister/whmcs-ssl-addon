@@ -40,7 +40,7 @@ $_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['pleaseNo
 $_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['info']                                   = 'For at kunne synkronisere certifikatdetaljer i WHMCS med certifikatdetaljer fra API\'en skal du opsætte følgende cron job (én gang dagligt anbefalet):';
 $_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['commandLine']['cronFrequency']           = '0 0 * * *';
 //
-$_LANG['addonAA']['apiConfiguration']['item']['price_rate']['label']                                   = 'Rate for currency from RealtimeRegisterSsl';
+$_LANG['addonAA']['apiConfiguration']['item']['price_rate']['label']                                   = 'Rate for currency from RealtimeRegisterSSL';
 $_LANG['addonAA']['apiConfiguration']['item']['rate']['label']                                         = 'Rate';
 $_LANG['addonAA']['apiConfiguration']['item']['header']                                                = 'API Konfiguration';
 $_LANG['addonAA']['apiConfiguration']['item']['api_login']['label']                                    = 'Login';
@@ -70,7 +70,7 @@ $_LANG['addonAA']['apiConfiguration']['modal']['migrationData']                 
 $_LANG['addonAA']['apiConfiguration']['migrationOldModuleDataExixts']                                  = 'Der er produkter eller services tilknyttet GGSL WHMCS modulet:';
 $_LANG['addonAA']['apiConfiguration']['migrationProductIDs']                                           = 'Produkt-ID\'er: ';
 $_LANG['addonAA']['apiConfiguration']['migrationServiceIDs']                                           = 'Service-ID\'er: ';
-$_LANG['addonAA']['apiConfiguration']['migrationPerformMigration']                                     = 'Udfør migrering af data for at tilknytte konfiguration og data med RealtimeRegisterSsl WHMCS modulet.';
+$_LANG['addonAA']['apiConfiguration']['migrationPerformMigration']                                     = 'Udfør migrering af data for at tilknytte konfiguration og data med RealtimeRegisterSSL WHMCS modulet.';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo']                                    = 'Du er ved at migrere data og konfiguration fra GGSSL WHMCS modulet. Denne handling kan ikke fortrydes.';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo2']                                   = 'Handlinger, der bliver foretaget:';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfoAction'][0]                           = 'importering af addon-konfigurationen';
@@ -125,7 +125,7 @@ $_LANG['addonAA']['pagesLabels']['apiConfiguration']['saveItem']           = 'Ge
 $_LANG['addonAA']['apiConfiguration']['messages']['api_connection_success'] = 'Forbindelse etableret.';
 
 
-$_LANG['addonAA']['productsConfiguration']['sslCenterProduct']    = 'RealtimeRegisterSsl Produkt:';
+$_LANG['addonAA']['productsConfiguration']['realtimeRegisterSSLProduct']    = 'RealtimeRegisterSSL Produkt:';
 $_LANG['addonAA']['productsConfiguration']['productName']         = 'Produktnavn:';
 $_LANG['addonAA']['productsConfiguration']['configurableOptions'] = 'Konfigurerbare indstillinger SAN:';
 $_LANG['addonAA']['productsConfiguration']['configurableOptionsWildcard'] = 'Konfigurerbare indstillinger Wildcard SAN:';
@@ -173,7 +173,7 @@ $_LANG['addonAA']['productsConfiguration']['messages'][''] = '';
 
 
 $_LANG['addonAA']['productsCreator']['singleProductCreator'] = 'Opret Enkelt Produkt';
-$_LANG['addonAA']['productsCreator']['sslCenterProduct']     = 'RealtimeRegisterSsl Produkt:';
+$_LANG['addonAA']['productsCreator']['realtimeRegisterSSLProduct']     = 'RealtimeRegisterSSL Produkt:';
 $_LANG['addonAA']['productsCreator']['productName']          = 'Produktnavn:';
 $_LANG['addonAA']['productsCreator']['productGroup']         = 'Produktgruppe:';
 $_LANG['addonAA']['productsCreator']['autoSetup']            = 'Automatisk Opsætning:';
@@ -207,7 +207,7 @@ $_LANG['addonAA']['productsCreator']['saveMultiple']           = 'Opret Flere Pr
 $_LANG['addonAA']['productsCreator']['messages']['mass_product_created']    = 'Produkterne er blevet oprettet som skjult. Gå til `Produktkonfiguration` for at gøre gøre det synligt. Gennemgå produktkonfigurationen og priserne for produktet først.';
 $_LANG['addonAA']['productsCreator']['messages']['single_product_created']  = 'Produktet er blevet oprettet som skjult. Gå til `Produktkonfiguration` for at gøre det synligt. Gennemgå produktkonfigurationen først.';
 $_LANG['addonAA']['productsCreator']['messages']['no_product_group_found']  = 'Ingen produktgruppe fundet.';
-$_LANG['addonAA']['productsCreator']['messages']['api_product_not_chosen']  = 'RealtimeRegisterSsl produkt ikke valgt.';
+$_LANG['addonAA']['productsCreator']['messages']['api_product_not_chosen']  = 'RealtimeRegisterSSL produkt ikke valgt.';
 $_LANG['addonAA']['productsCreator']['messages']['api_configuration_empty'] = 'API-konfigurationen er tom';
 
 $_LANG['addonAA']['productsConfiguration']['messages']['product_saved']          = 'Produkt gemt.';

@@ -36,7 +36,7 @@ class Configuration extends AbstractConfiguration
      * Module name visible on addon module page
      * @var string
      */
-    public $name = 'Realtime Register Ssl WHMCS';
+    public $name = 'Realtime Register SSL WHMCS';
 
     /**
      * Module description
@@ -48,7 +48,7 @@ class Configuration extends AbstractConfiguration
      * Module name in client area
      * @var string
      */
-    public $clientareaName = 'Realtime Register Ssl WHMCS';
+    public $clientareaName = 'Realtime Register SSL WHMCS';
 
     /**
      * Encryption hash. Used in ORM 

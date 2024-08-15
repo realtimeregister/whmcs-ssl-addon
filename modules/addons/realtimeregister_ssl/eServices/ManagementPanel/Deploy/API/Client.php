@@ -21,7 +21,7 @@ class Client
 
     private string $url;
 
-    private string $ua = 'RealtimeRegisterSsl-%s/WHMCS-%s';
+    private string $ua = 'RealtimeRegisterSSL-%s/WHMCS-%s';
 
     public function __construct(array $params = [])
     {

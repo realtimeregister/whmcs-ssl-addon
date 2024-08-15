@@ -50,7 +50,7 @@ class AdminServicesTabFields
             }
 
             $return = [];
-            $return['Realtime Register Ssl API Order ID'] = $sslService->remoteid;
+            $return['Realtime Register SSL API Order ID'] = $sslService->remoteid;
 
             $orderDetails = (array)$sslService->configdata;
 
@@ -85,7 +85,7 @@ class AdminServicesTabFields
 
             return $return;
         } catch (Exception $ex) {
-            return ['Realtime Register Ssl Error' => $ex->getMessage()];
+            return ['Realtime Register SSL Error' => $ex->getMessage()];
         }
     }
 

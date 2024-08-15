@@ -613,7 +613,7 @@ class Invoice
             $server = new Server();
             if (!$server->loadByServiceID($service->id)) {
                 Whmcs::savelogActivityRealtimeRegisterSsl(
-                    "Realtime Register Ssl WHMCS: Required Product Module '" . $server->getServiceModule() . "' Missing"
+                    "Realtime Register SSL WHMCS: Required Product Module '" . $server->getServiceModule() . "' Missing"
                 );
             } else {
                 $serviceParams = $server->buildParams();
@@ -636,7 +636,7 @@ class Invoice
             $server = new Server();
             if (!$server->loadByServiceID($service->id)) {
                 Whmcs::savelogActivityRealtimeRegisterSsl(
-                    "Realtime Register Ssl WHMCS: Required Product Module '" . $server->getServiceModule() . "' Missing"
+                    "Realtime Register SSL WHMCS: Required Product Module '" . $server->getServiceModule() . "' Missing"
                 );
             } else {
                 $serviceParams = $server->buildParams();
@@ -795,7 +795,7 @@ class Invoice
                     $item->save();
 
                     Whmcs::savelogActivityRealtimeRegisterSsl(
-                        "Realtime Register Ssl WHMCS: Description of the invoice item for Invoice ID: " . $invoice->getId(
+                        "Realtime Register SSL WHMCS: Description of the invoice item for Invoice ID: " . $invoice->getId(
                         ) . ' has been changed from "' . $oldDescription . '" to "' . $newDescription . '"'
                     );
                 }

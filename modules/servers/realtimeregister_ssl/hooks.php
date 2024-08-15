@@ -315,7 +315,7 @@ add_hook('InvoiceCreationPreEmail', 1, function($vars)
 
             if (!$results['result'] == 'success') {
                 logModuleCall(
-                    'RealtimeRegisterSsl',
+                    'RealtimeRegisterSSL',
                     $command2,
                     $postData2,
                     $results
@@ -324,7 +324,7 @@ add_hook('InvoiceCreationPreEmail', 1, function($vars)
         }
     } else {
         logModuleCall(
-            'RealtimeRegisterSsl',
+            'RealtimeRegisterSSL',
             $command,
             $postData,
             $results

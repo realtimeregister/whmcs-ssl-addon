@@ -7,11 +7,11 @@ use WHMCS\Database\Capsule;
 
 class EmailTemplateService
 {
-    public const CONFIGURATION_TEMPLATE_ID = 'RealtimeRegisterSsl - Configuration Required';
-    public const EXPIRATION_TEMPLATE_ID = 'RealtimeRegisterSsl - Service Expiration';
-    public const SEND_CERTIFICATE_TEMPLATE_ID = 'RealtimeRegisterSsl - Send Certificate';
-    public const RENEWAL_TEMPLATE_ID = 'RealtimeRegisterSsl - Renewal';
-    public const REISSUE_TEMPLATE_ID = 'RealtimeRegisterSsl - Reissue';
+    public const CONFIGURATION_TEMPLATE_ID = 'RealtimeRegisterSSL - Configuration Required';
+    public const EXPIRATION_TEMPLATE_ID = 'RealtimeRegisterSSL - Service Expiration';
+    public const SEND_CERTIFICATE_TEMPLATE_ID = 'RealtimeRegisterSSL - Send Certificate';
+    public const RENEWAL_TEMPLATE_ID = 'RealtimeRegisterSSL - Renewal';
+    public const REISSUE_TEMPLATE_ID = 'RealtimeRegisterSSL - Reissue';
 
     public static function createRenewalTemplate() {
         if(!is_null(self::getTemplate(self::RENEWAL_TEMPLATE_ID))) {

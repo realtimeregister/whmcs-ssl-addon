@@ -124,7 +124,7 @@ class Cron extends AbstractController
         echo '<br />Number of synchronized services: ' . count($updatedServices) . PHP_EOL;
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
-            "Realtime Register Ssl WHMCS: Synchronization completed. Number of synchronized services: " .
+            "Realtime Register SSL WHMCS: Synchronization completed. Number of synchronized services: " .
             count($updatedServices)
         );
 
@@ -249,7 +249,7 @@ class Cron extends AbstractController
         logActivity('Notifier completed. Number of emails send: '.$emailSendsCount, 0);
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
-            "Realtime Register Ssl WHMCS: Notifier completed. Number of emails send: " . $emailSendsCount
+            "Realtime Register SSL WHMCS: Notifier completed. Number of emails send: " . $emailSendsCount
         );
 
         return [];
@@ -258,7 +258,7 @@ class Cron extends AbstractController
     public function certificateSendCRON($input, $vars = [])
     {
         echo 'Certificate Sender started.' . PHP_EOL;
-        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Sender started.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Sender started.");
 
         $emailSendsCount = 0;
         $this->sslRepo   = new SSL();
@@ -321,7 +321,7 @@ class Cron extends AbstractController
         echo '<br />The number of messages sent: ' . $emailSendsCount . PHP_EOL;
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
-            "Realtime Register Ssl WHMCS: Certificate Sender completed. The number of messages sent: " . $emailSendsCount
+            "Realtime Register SSL WHMCS: Certificate Sender completed. The number of messages sent: " . $emailSendsCount
         );
         return [];
     }
@@ -329,7 +329,7 @@ class Cron extends AbstractController
     public function certificateDetailsUpdateCRON($input, $vars = [])
     {
         echo 'Certificate Details Updating.' . PHP_EOL;
-        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Details Updating started.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Details Updating started.");
 
         $this->sslRepo = new SSL();
 
@@ -380,7 +380,7 @@ class Cron extends AbstractController
         echo '<br/ >';
         echo 'Certificate Details Updating completed.' . PHP_EOL;
         Whmcs::savelogActivityRealtimeRegisterSsl(
-            "Realtime Register Ssl WHMCS: Certificate Details Updating completed."
+            "Realtime Register SSL WHMCS: Certificate Details Updating completed."
         );
         return [];
     }
@@ -388,7 +388,7 @@ class Cron extends AbstractController
     public function loadCertificateStatsCRON($input, $vars = [])
     {
         echo 'Certificate Stats Loader started.' . PHP_EOL;
-        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Stats Loader started.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Stats Loader started.");
 
         $this->sslRepo   = new SSL();
 
@@ -425,14 +425,14 @@ class Cron extends AbstractController
         }
         echo '<br/ >';
         echo 'Certificate Stats Loader completed.' . PHP_EOL;
-        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Certificate Stats Loader completed.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Stats Loader completed.");
         return [];
     }
 
     public function updateProductPricesCRON($input, $vars = [])
     {
         echo 'Products Price Updater started.' . PHP_EOL;
-        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Products Price Updater started.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Products Price Updater started.");
 
         try
         {
@@ -466,13 +466,13 @@ class Cron extends AbstractController
         catch (Exception $e)
         {;
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register Ssl WHMCS Products Price Updater Error: " . $e->getMessage()
+                "Realtime Register SSL WHMCS Products Price Updater Error: " . $e->getMessage()
             );
         }
 
         echo '<br/ >';
         echo 'Products Price Updater completed.' . PHP_EOL;
-        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register Ssl WHMCS: Products Price Updater completed.");
+        Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Products Price Updater completed.");
         return [];
     }
 
@@ -491,7 +491,7 @@ class Cron extends AbstractController
         catch (Exception $e)
         {
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register Ssl WHMCS Products Price Updater Error: " . $e->getMessage()
+                "Realtime Register SSL WHMCS Products Price Updater Error: " . $e->getMessage()
             );
         }
     }
@@ -508,7 +508,7 @@ class Cron extends AbstractController
         ->get(['tblsslorders.*']);
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
-            "Realtime Register Ssl WHMCS: Certificates (ssl status Completed) Data Updater started."
+            "Realtime Register SSL WHMCS: Certificates (ssl status Completed) Data Updater started."
         );
 
         $this->checkOrdersStatus($sslorders);
@@ -516,7 +516,7 @@ class Cron extends AbstractController
         echo '<br/ >';
         echo 'Certificates (ssl status Completed) Data Updater completed.' . PHP_EOL;
         Whmcs::savelogActivityRealtimeRegisterSsl(
-            "Realtime Register Ssl WHMCS: Certificates (ssl status Completed) Data Updater completed."
+            "Realtime Register SSL WHMCS: Certificates (ssl status Completed) Data Updater completed."
         );
         return [];
     }
@@ -534,7 +534,7 @@ class Cron extends AbstractController
         ->get(['tblsslorders.*']);
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
-            "Realtime Register Ssl WHMCS: Certificates (ssl status Processing) Data Updater started."
+            "Realtime Register SSL WHMCS: Certificates (ssl status Processing) Data Updater started."
         );
 
         $this->checkOrdersStatus($sslorders, true);
@@ -542,7 +542,7 @@ class Cron extends AbstractController
         echo '<br/ >';
         echo 'Certificates (ssl status Processing) Data Updater completed.' . PHP_EOL;
         Whmcs::savelogActivityRealtimeRegisterSsl(
-            "Realtime Register Ssl WHMCS: Certificates (ssl status Processing) Data Updater completed."
+            "Realtime Register SSL WHMCS: Certificates (ssl status Processing) Data Updater completed."
         );
         return [];
     }
@@ -552,8 +552,8 @@ class Cron extends AbstractController
     {
         $optionGroupResult = Capsule::table('tblproductconfiggroups')
             ->select('id')
-            ->where('name', '=', 'RealtimeRegisterSsl - '. ProductsCreator::displayName($apiProduct))
-            ->where('description', '=', 'Auto generated by module - RealtimeRegisterSsl #' . $productId)
+            ->where('name', '=', 'RealtimeRegisterSSL - '. ProductsCreator::displayName($apiProduct))
+            ->where('description', '=', 'Auto generated by module - RealtimeRegisterSSL #' . $productId)
             ->first();
 
         if ($optionGroupResult == null) {
@@ -667,7 +667,7 @@ class Cron extends AbstractController
             $service->save();
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register Ssl WHMCS: Service #$serviceID nextduedate set to ".$date." and nextinvoicedate to". $nextinvoicedate
+                "Realtime Register SSL WHMCS: Service #$serviceID nextduedate set to ".$date." and nextinvoicedate to". $nextinvoicedate
             );
         }
     }
@@ -688,7 +688,7 @@ class Cron extends AbstractController
             $service->save();
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register Ssl WHMCS: Service #$serviceID set as Terminated"
+                "Realtime Register SSL WHMCS: Service #$serviceID set as Terminated"
             );
         }
     }
@@ -817,7 +817,7 @@ class Cron extends AbstractController
         $resultSuccess = $results['result'] == 'success';
         if (!$resultSuccess) {
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                'Realtime Register Ssl WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message']
+                'Realtime Register SSL WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message']
             );
         }
         return $resultSuccess;
@@ -840,7 +840,7 @@ class Cron extends AbstractController
         if (!$resultSuccess)
         {
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                'Realtime Register Ssl WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message']
+                'Realtime Register SSL WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message']
             );
         }
         return $resultSuccess;

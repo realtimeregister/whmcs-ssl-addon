@@ -15,7 +15,7 @@
         <form action="" method="post" class="form-horizontal">
 
             <div class="form-group">
-                <label class="control-label col-sm-2">{$MGLANG->T('realtimeRegisterSslProduct')}</label>
+                <label class="control-label col-sm-2">{$MGLANG->T('realtimeRegisterSSLProduct')}</label>
                 <div class="col-sm-10">
                     <select name="configoption1" class="form-control" id="api_product">
                         {foreach from=$apiProducts item=product}

@@ -41,7 +41,7 @@ class Migration
     {
         try {
             main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
-                'Realtime Register Ssl WHMCS: Data & Configuration Migration Started'
+                'Realtime Register SSL WHMCS: Data & Configuration Migration Started'
             );
             
             #import:
@@ -55,7 +55,7 @@ class Migration
             $this->updateSSLOrders();
             
             main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
-                'Realtime Register Ssl WHMCS: Data & Configuration Migration Completed'
+                'Realtime Register SSL WHMCS: Data & Configuration Migration Completed'
             );
         } catch (Exception $ex) {
             throw new Exception($ex->getMessage());
@@ -72,11 +72,11 @@ class Migration
             $apiConfigRepo->setConfiguration($input);
             
             main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
-                'Realtime Register Ssl WHMCS: Module '.self::MODULE_NAME.' configuration imported successfully.'
+                'Realtime Register SSL WHMCS: Module '.self::MODULE_NAME.' configuration imported successfully.'
             );
         } else {
             main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
-                'Realtime Register Ssl WHMCS: Module '.self::MODULE_NAME.' installation not detected.'
+                'Realtime Register SSL WHMCS: Module '.self::MODULE_NAME.' installation not detected.'
             );
         }
     }
@@ -119,7 +119,7 @@ class Migration
             $product->save();
             
             main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
-                'Realtime Register Ssl WHMCS: Product ID: ' . $product->id
+                'Realtime Register SSL WHMCS: Product ID: ' . $product->id
                 . ' has been modified. Module changed from ' . self::MODULE_NAME
                 . ' to ' . main\Addon::I()->configuration()->systemName
             );
@@ -140,7 +140,7 @@ class Migration
                     ]);
             
             main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
-                'Realtime Register Ssl WHMCS: SSL Service ID: ' . $ssl->serviceid
+                'Realtime Register SSL WHMCS: SSL Service ID: ' . $ssl->serviceid
                 . ' has been modified. Module changed from ' . self::MODULE_NAME . ' to '
                 . main\Addon::I()->configuration()->systemName
             );

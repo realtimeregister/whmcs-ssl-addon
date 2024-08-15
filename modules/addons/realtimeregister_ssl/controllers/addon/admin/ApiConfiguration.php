@@ -299,7 +299,7 @@ class ApiConfiguration extends AbstractController
         $field->name = 'send_certificate_template';
         $field->required = true;
         $field->value = ($input['send_certificate_template'] == null) ? EmailTemplateService::getTemplate(
-            'Realtime Register Ssl - Send Certificate'
+            'Realtime Register SSL - Send Certificate'
         )->id : $input['send_certificate_template'];
         $field->translateOptions = false;
         $field->inline = true;

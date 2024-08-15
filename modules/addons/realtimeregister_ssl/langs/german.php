@@ -40,7 +40,7 @@ $_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['pleaseNo
 $_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['info']                                   = 'Um die Zertifikatdetails in WHMCS mit den Zertifikatdetails in der API zu synchronisieren, richten Sie die folgende Cron-Befehlszeile ein (einmal täglich empfohlen):';
 $_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['commandLine']['cronFrequency']           = '0 0 * * *';
 //
-$_LANG['addonAA']['apiConfiguration']['item']['price_rate']['label']                                   = 'Rate for currency from RealtimeRegisterSsl';
+$_LANG['addonAA']['apiConfiguration']['item']['price_rate']['label']                                   = 'Rate for currency from RealtimeRegisterSSL';
 $_LANG['addonAA']['apiConfiguration']['item']['rate']['label']                                         = 'Rate';
 $_LANG['addonAA']['apiConfiguration']['item']['header']                                                = 'API-Konfiguration';
 $_LANG['addonAA']['apiConfiguration']['item']['api_login']['label']                                    = 'Login';
@@ -70,7 +70,7 @@ $_LANG['addonAA']['apiConfiguration']['modal']['migrationData']                 
 $_LANG['addonAA']['apiConfiguration']['migrationOldModuleDataExixts']                                  = 'Mit dem GGSSL WHMCS-Modul sind Produkte oder Dienstleistungen verbunden:';
 $_LANG['addonAA']['apiConfiguration']['migrationProductIDs']                                           = 'Produkt-IDs: ';
 $_LANG['addonAA']['apiConfiguration']['migrationServiceIDs']                                           = 'Service-IDs: ';
-$_LANG['addonAA']['apiConfiguration']['migrationPerformMigration']                                     = 'Führen Sie eine Datenmigration durch, um Konfiguration und Daten dem RealtimeRegisterSsl WHMCS-Modul zuzuordnen.';
+$_LANG['addonAA']['apiConfiguration']['migrationPerformMigration']                                     = 'Führen Sie eine Datenmigration durch, um Konfiguration und Daten dem RealtimeRegisterSSL WHMCS-Modul zuzuordnen.';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo']                                    = 'Sie sind dabei, Daten und Konfiguration vom GGSSL WHMCS-Modul zu migrieren. Dieser Vorgang ist irreversibel.';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo2']                                   = 'Aktivitäten, die durchgeführt werden:';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfoAction'][0]                           = 'Import der Addon-Konfiguration';
@@ -129,7 +129,7 @@ $_LANG['addonAA']['pagesLabels']['apiConfiguration']['saveItem']           = 'Sp
 $_LANG['addonAA']['apiConfiguration']['messages']['api_connection_success'] = 'Verbindung hergestellt.';
 
 
-$_LANG['addonAA']['productsConfiguration']['sslCenterProduct']    = 'RealtimeRegisterSsl-Produkt:';
+$_LANG['addonAA']['productsConfiguration']['realtimeRegisterSSLProduct']    = 'RealtimeRegisterSSL-Produkt:';
 $_LANG['addonAA']['productsConfiguration']['productName']         = 'Produktname:';
 $_LANG['addonAA']['productsConfiguration']['customguide']         = 'Processing SSL message:';
 $_LANG['addonAA']['productsConfiguration']['configurableOptions'] = 'Konfigurierbare Optionen SAN:';
@@ -186,7 +186,7 @@ $_LANG['addonAA']['productsConfiguration']['messages'][''] = '';
 
 
 $_LANG['addonAA']['productsCreator']['singleProductCreator'] = 'Einzelprodukt-Ersteller';
-$_LANG['addonAA']['productsCreator']['sslCenterProduct']     = 'RealtimeRegisterSsl-Produkt:';
+$_LANG['addonAA']['productsCreator']['realtimeRegisterSSLProduct']     = 'RealtimeRegisterSSL-Produkt:';
 $_LANG['addonAA']['productsCreator']['productName']          = 'Produktname:';
 $_LANG['addonAA']['productsCreator']['customguide']          = 'Processing SSL message:';
 $_LANG['addonAA']['productsCreator']['productGroup']         = 'Produktgruppe:';
@@ -221,7 +221,7 @@ $_LANG['addonAA']['productsCreator']['saveMultiple']           = 'Mehrere Produk
 $_LANG['addonAA']['productsCreator']['messages']['mass_product_created']    = 'Produkte wurden als ausgeblendet hinzugefügt. Gehen Sie zu "Produktkonfiguration", um sie einzublenden. Überprüfen Sie zuvor die Produktkonfiguration und legen Sie die Preise fest.';
 $_LANG['addonAA']['productsCreator']['messages']['single_product_created']  = 'Das Produkt wurde als ausgeblendet hinzugefügt. Gehen Sie zu "Produktkonfiguration", um es einzublenden. Überprüfen Sie zuvor die Produktkonfiguration.';
 $_LANG['addonAA']['productsCreator']['messages']['no_product_group_found']  = 'Keine Produktgruppe gefunden.';
-$_LANG['addonAA']['productsCreator']['messages']['api_product_not_chosen']  = 'RealtimeRegisterSsl-Produkt nicht ausgewählt.';
+$_LANG['addonAA']['productsCreator']['messages']['api_product_not_chosen']  = 'RealtimeRegisterSSL-Produkt nicht ausgewählt.';
 $_LANG['addonAA']['productsCreator']['messages']['api_configuration_empty'] = 'Die API-Konfiguration ist leer';
 
 $_LANG['addonAA']['productsConfiguration']['messages']['product_saved']          = 'Produkt gespeichert.';

@@ -38,7 +38,7 @@ class AdminResendCertificate
         }
 
         if (empty($serviceSSL->remoteid)) {
-            throw new Exception('Product not ordered in RealtimeRegisterSsl.');
+            throw new Exception('Product not ordered in RealtimeRegisterSSL.');
         }
 
         if (empty($serviceSSL->getCa())) {

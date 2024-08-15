@@ -32,7 +32,7 @@ if (!defined("WHMCS")) {
 
 function realtimeregister_ssl_MetaData() {
     return [
-        'DisplayName' => 'Realtime Register Ssl Server WHMCS',
+        'DisplayName' => 'Realtime Register SSL Server WHMCS',
         'APIVersion' => '1.0',
     ];
 }

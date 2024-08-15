@@ -264,7 +264,7 @@ add_hook('InvoicePaid', 1, function($vars)
         if (!$resultSuccess)
         {
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                'Realtime Register Ssl WHMCS Notifier: Error while sending customer notifications (service '
+                'Realtime Register SSL WHMCS Notifier: Error while sending customer notifications (service '
                 . $invoiceInfo['service_id'] . '): ' . $results['message']
             );
         }

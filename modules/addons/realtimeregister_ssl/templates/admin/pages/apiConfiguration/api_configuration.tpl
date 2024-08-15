@@ -146,7 +146,7 @@ Proin malesuada eros in risus accumsan euismod. Vivamus lacinia pellentesque nun
         $(document).ready(function () {
             
             
-            $("#item_default_rate").next('div').next('span').html('Your WHMCS default currency is: <b>{/literal}{$whmcsCurrency}{literal}</b><br>Your Realtime Register Ssl default currency is: <b>{/literal}{$realtimeRegisterSslCurrency}{literal}</b><br>Please set the rate through which the automatic product prices will be set.<br><br>For example, if in WHMCS you have EUR currency and in RealtimeRegisterSsl it is USD, then if the rate is 1.2 and the product price in USD is $1, then in WHMCS the price will be set at 1.20 EUR<br><br>If the currency in WHMCS and RealtimeRegisterSsl are the same, the field can be left blank.');
+            $("#item_default_rate").next('div').next('span').html('Your WHMCS default currency is: <b>{/literal}{$whmcsCurrency}{literal}</b><br>Your Realtime Register SSL default currency is: <b>{/literal}{$realtimeRegisterSslCurrency}{literal}</b><br>Please set the rate through which the automatic product prices will be set.<br><br>For example, if in WHMCS you have EUR currency and in RealtimeRegisterSsl it is USD, then if the rate is 1.2 and the product price in USD is $1, then in WHMCS the price will be set at 1.20 EUR<br><br>If the currency in WHMCS and RealtimeRegisterSsl are the same, the field can be left blank.');
             
             $('input[name="use_admin_contact[]"]').on('click', function () {
                 //$('input[name="use_admin_contact[]"]').prop('checked', true);

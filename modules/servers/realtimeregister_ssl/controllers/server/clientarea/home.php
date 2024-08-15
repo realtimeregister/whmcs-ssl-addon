@@ -399,7 +399,7 @@ class home extends AbstractController
     {
         try {
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register Ssl WHMCS: The renewal action was initiated for the Service ID: " . $input['id']
+                "Realtime Register SSL WHMCS: The renewal action was initiated for the Service ID: " . $input['id']
             );
 
             $errorInvoiceExist = false;
@@ -413,7 +413,7 @@ class home extends AbstractController
             }
         } catch (Exception $e) {
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register Ssl WHMC Renew Action Error: " . $e->getMessage()
+                "Realtime Register SSL WHMC Renew Action Error: " . $e->getMessage()
             );
             return [
                 'error' => $e->getMessage(),
@@ -421,7 +421,7 @@ class home extends AbstractController
         }
         if ($errorInvoiceExist) {
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register Ssl WHMC Renew Action Error: " . $errorInvoiceExist
+                "Realtime Register SSL WHMC Renew Action Error: " . $errorInvoiceExist
             );
 
             return [
@@ -431,7 +431,7 @@ class home extends AbstractController
         }
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
-            "Realtime Register Ssl WHMC Renew Action: A new invoice has been successfully created for the Service ID: "
+            "Realtime Register SSL WHMC Renew Action: A new invoice has been successfully created for the Service ID: "
             . $input['id']
         );
         return [
