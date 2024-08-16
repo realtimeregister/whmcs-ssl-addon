@@ -6,7 +6,6 @@ define('DS', DIRECTORY_SEPARATOR);
 define('WHMCS_MAIN_DIR', substr(dirname(__FILE__), 0, strpos(dirname(__FILE__), 'modules' . DS . 'addons')));
 
 use Exception;
-use MGModule\RealtimeRegisterSsl as main;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Migration
@@ -22,8 +21,7 @@ class Migration
                 . DS . 'Loader.php';
             if (file_exists($moduleLoaderPath)) {
                 require_once $moduleLoaderPath;
-                new \MGModule\GGSSLWHMCS\Loader();
-
+                new \MGModule\RealtimeRegisterSsl\Loader();
                 self::$moduleLoaded = true;
             }
         }
@@ -40,7 +38,7 @@ class Migration
     public function run()
     {
         try {
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
+            \MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
                 'Realtime Register SSL WHMCS: Data & Configuration Migration Started'
             );
             
@@ -54,7 +52,7 @@ class Migration
             #update SSL orders
             $this->updateSSLOrders();
             
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
+            \MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
                 'Realtime Register SSL WHMCS: Data & Configuration Migration Completed'
             );
         } catch (Exception $ex) {
@@ -65,17 +63,17 @@ class Migration
     private function importModuleConfiguration()
     {
         if (self::$moduleLoaded) {
-            $apiConfigRepo = new \MGModule\GGSSLWHMCS\models\apiConfiguration\Repository();
+            $apiConfigRepo = new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository();
             $input         = (array) $apiConfigRepo->get();
 
             $apiConfigRepo = new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository();
             $apiConfigRepo->setConfiguration($input);
             
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
+            \MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
                 'Realtime Register SSL WHMCS: Module '.self::MODULE_NAME.' configuration imported successfully.'
             );
         } else {
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
+            \MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
                 'Realtime Register SSL WHMCS: Module '.self::MODULE_NAME.' installation not detected.'
             );
         }
@@ -84,8 +82,8 @@ class Migration
     private function importInvoicesInfo()
     {
         if (self::$moduleLoaded) {
-            $oldTableName = \MGModule\GGSSLWHMCS\eHelpers\Invoice::INVOICE_INFOS_TABLE_NAME;
-            $newTableName = main\eHelpers\Invoice::INVOICE_INFOS_TABLE_NAME;
+            $oldTableName = Invoice::INVOICE_INFOS_TABLE_NAME;
+            $newTableName = \MGModule\RealtimeRegisterSsl\eHelpers\Invoice::INVOICE_INFOS_TABLE_NAME;
 
             $fields = [
                 'user_id',
@@ -104,31 +102,31 @@ class Migration
                 $query .= ($i > 0 ? ', ' : '') . $field . '=VALUES(' . $field . ')';
             }
 
-            main\mgLibs\MySQL\Query::query($query);
+            \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query($query);
         }
     }
 
     private function updateExistingProducts()
     {
 
-        $productsRepo = new main\models\whmcs\product\Products();
+        $productsRepo = new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Products();
         $productsRepo->onlyModule(self::MODULE_NAME);
 
         foreach ($productsRepo->get() as $product) {
-            $product->setServerType(main\Addon::I()->configuration()->systemName);
+            $product->setServerType(\MGModule\RealtimeRegisterSsl\Addon::I()->configuration()->systemName);
             $product->save();
             
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
+            \MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
                 'Realtime Register SSL WHMCS: Product ID: ' . $product->id
                 . ' has been modified. Module changed from ' . self::MODULE_NAME
-                . ' to ' . main\Addon::I()->configuration()->systemName
+                . ' to ' . \MGModule\RealtimeRegisterSsl\Addon::I()->configuration()->systemName
             );
         }
     }
 
     private function updateSSLOrders()
     {
-        $SSLOrders = new main\eRepository\whmcs\service\SSL();
+        $SSLOrders = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $orders    = $SSLOrders->getBy(['module' => self::MODULE_NAME]);
 
         foreach ($orders as $ssl) {
@@ -136,20 +134,20 @@ class Migration
                     ->where('id', '=', $ssl->id)
                     ->where('remoteid', '=', $ssl->remoteid)
                     ->update([
-                        'module' => main\Addon::I()->configuration()->systemName
+                        'module' => \MGModule\RealtimeRegisterSsl\Addon::I()->configuration()->systemName
                     ]);
             
-            main\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
+            \MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::savelogActivityRealtimeRegisterSsl(
                 'Realtime Register SSL WHMCS: SSL Service ID: ' . $ssl->serviceid
                 . ' has been modified. Module changed from ' . self::MODULE_NAME . ' to '
-                . main\Addon::I()->configuration()->systemName
+                . \MGModule\RealtimeRegisterSsl\Addon::I()->configuration()->systemName
             );
         }
     }
 
     private function isModuleExist()
     {
-        $result = main\mgLibs\MySQL\Query::select(
+        $result = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
             ['value'],
             'tblconfiguration',
             ['setting' => 'ActiveAddonModules']
