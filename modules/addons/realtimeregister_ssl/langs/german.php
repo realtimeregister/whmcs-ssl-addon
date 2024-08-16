@@ -67,11 +67,11 @@ $_LANG['addonAA']['apiConfiguration']['item']['data_migration']['content']      
 $_LANG['addonAA']['apiConfiguration']['modal']['import']                                               = 'Migrieren';
 $_LANG['addonAA']['apiConfiguration']['modal']['close']                                                = 'Schlie&szlig;en';
 $_LANG['addonAA']['apiConfiguration']['modal']['migrationData']                                        = 'Daten & Konfiguration importieren';
-$_LANG['addonAA']['apiConfiguration']['migrationOldModuleDataExixts']                                  = 'Mit dem GGSSL WHMCS-Modul sind Produkte oder Dienstleistungen verbunden:';
+$_LANG['addonAA']['apiConfiguration']['migrationOldModuleDataExixts']                                  = 'Mit dem Realtime Register SSL WHMCS-Modul sind Produkte oder Dienstleistungen verbunden:';
 $_LANG['addonAA']['apiConfiguration']['migrationProductIDs']                                           = 'Produkt-IDs: ';
 $_LANG['addonAA']['apiConfiguration']['migrationServiceIDs']                                           = 'Service-IDs: ';
 $_LANG['addonAA']['apiConfiguration']['migrationPerformMigration']                                     = 'Führen Sie eine Datenmigration durch, um Konfiguration und Daten dem RealtimeRegisterSSL WHMCS-Modul zuzuordnen.';
-$_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo']                                    = 'Sie sind dabei, Daten und Konfiguration vom GGSSL WHMCS-Modul zu migrieren. Dieser Vorgang ist irreversibel.';
+$_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo']                                    = 'Sie sind dabei, Daten und Konfiguration vom Realtime Register SSL WHMCS-Modul zu migrieren. Dieser Vorgang ist irreversibel.';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo2']                                   = 'Aktivitäten, die durchgeführt werden:';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfoAction'][0]                           = 'Import der Addon-Konfiguration';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfoAction'][1]                           = 'Aktualisierung bestehender Produkte (Änderung des zugewiesenen Moduls)';

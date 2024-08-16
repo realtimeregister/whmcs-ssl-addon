@@ -67,11 +67,11 @@ $_LANG['addonAA']['apiConfiguration']['item']['data_migration']['content']      
 $_LANG['addonAA']['apiConfiguration']['modal']['import']                                               = 'Migrer';
 $_LANG['addonAA']['apiConfiguration']['modal']['close']                                                = 'Luk';
 $_LANG['addonAA']['apiConfiguration']['modal']['migrationData']                                        = 'Importer Data og Konfiguration';
-$_LANG['addonAA']['apiConfiguration']['migrationOldModuleDataExixts']                                  = 'Der er produkter eller services tilknyttet GGSL WHMCS modulet:';
+$_LANG['addonAA']['apiConfiguration']['migrationOldModuleDataExixts']                                  = 'Der er produkter eller services tilknyttet Realtime Register SSL WHMCS modulet:';
 $_LANG['addonAA']['apiConfiguration']['migrationProductIDs']                                           = 'Produkt-ID\'er: ';
 $_LANG['addonAA']['apiConfiguration']['migrationServiceIDs']                                           = 'Service-ID\'er: ';
 $_LANG['addonAA']['apiConfiguration']['migrationPerformMigration']                                     = 'Udfør migrering af data for at tilknytte konfiguration og data med RealtimeRegisterSSL WHMCS modulet.';
-$_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo']                                    = 'Du er ved at migrere data og konfiguration fra GGSSL WHMCS modulet. Denne handling kan ikke fortrydes.';
+$_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo']                                    = 'Du er ved at migrere data og konfiguration fra Realtime Register SSL WHMCS modulet. Denne handling kan ikke fortrydes.';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo2']                                   = 'Handlinger, der bliver foretaget:';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfoAction'][0]                           = 'importering af addon-konfigurationen';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfoAction'][1]                           = 'opdatering af eksisterende produkter (ændring af tilknyttet modul)';

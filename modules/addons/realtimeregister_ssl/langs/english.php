@@ -65,11 +65,11 @@ $_LANG['addonAA']['apiConfiguration']['item']['data_migration']['content']      
 $_LANG['addonAA']['apiConfiguration']['modal']['import']                                               = 'Migrate';
 $_LANG['addonAA']['apiConfiguration']['modal']['close']                                                = 'Close';
 $_LANG['addonAA']['apiConfiguration']['modal']['migrationData']                                        = 'Import Data & Configuration';
-$_LANG['addonAA']['apiConfiguration']['migrationOldModuleDataExixts']                                  = 'There are products or services associated with the GGSSL WHMCS module:';
+$_LANG['addonAA']['apiConfiguration']['migrationOldModuleDataExixts']                                  = 'There are products or services associated with the Realtime Register SSL WHMCS module:';
 $_LANG['addonAA']['apiConfiguration']['migrationProductIDs']                                           = 'Product IDs: ';
 $_LANG['addonAA']['apiConfiguration']['migrationServiceIDs']                                           = 'Service IDs: ';
 $_LANG['addonAA']['apiConfiguration']['migrationPerformMigration']                                     = 'Perform data migration to associate configuration and data with the RealtimeRegisterSSL WHMCS module.';
-$_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo']                                    = 'You are about to migrate data and configuration from GGSSL WHMCS module, this procedure is irreversible.';
+$_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo']                                    = 'You are about to migrate data and configuration from Realtime Register SSL WHMCS module, this procedure is irreversible.';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfo2']                                   = 'Activities that will be performed:';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfoAction'][0]                           = 'import of the addon configuration';
 $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfoAction'][1]                           = 'update of existing products (change of assigned module)';
