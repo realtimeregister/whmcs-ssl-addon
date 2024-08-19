@@ -1398,3 +1398,10 @@ table#product_configuration input{
     font-family: FontAwesome;
     font-size:16px;
 }
+
+h3[aria-expanded=true] .fa-chevron-down {
+    display: none;
+}
+h3[aria-expanded=false] .fa-chevron-right {
+    display: none;
+}

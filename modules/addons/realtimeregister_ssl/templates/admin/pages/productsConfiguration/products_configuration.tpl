@@ -115,7 +115,11 @@
             <! --- end new form --->
             
             {foreach from=$products item=product}
-                <form action="" method="post" class="save-product-form form-horizontal margin-bottom-15">
+                <h3 class="col-sm-12" data-toggle="collapse" href="#collapse-price-{$product->id}" aria-expanded="false" role="button">{$product->configoption1}
+                    <i class="fa fa-chevron-right pull-right"></i>
+                    <i class="fa fa-chevron-down pull-right"></i>
+                </h3>
+                <form id="collapse-price-{$product->id}" action="" method="post" class="save-product-form form-horizontal margin-bottom-15 col-sm-10 collapse">
                     <table class="table table-condensed" id="product_configuration">
                         <tr class="product-container" data-product="{$product->id}">
                         <input type="hidden" name="product[{$product->id}][id]" value="{$product->id}"/>
