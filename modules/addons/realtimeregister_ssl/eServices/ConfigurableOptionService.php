@@ -3,12 +3,13 @@
 namespace MGModule\RealtimeRegisterSsl\eServices;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
+use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\ProductsPrices;
 use MGModule\RealtimeRegisterSsl\models\productPrice\Repository as ApiProductPriceRepo;
 
 class ConfigurableOptionService
 {
-
     public static function getForProduct($productId, $name = 'sans_count')
     {
         return Capsule::table('tblproductconfiggroups')
@@ -203,6 +204,8 @@ class ConfigurableOptionService
 
         $priceRepo = new ApiProductPriceRepo();
 
+        // The prices are sometimes not imported yet, so we force an import when there is no data
+        self::loadPrices($priceRepo, $apiProductId);
 
         foreach($periods as $i => $period) {
             $price = $priceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($apiProductId))
@@ -275,6 +278,9 @@ class ConfigurableOptionService
 
         $priceRepo = new ApiProductPriceRepo();
 
+        // The prices are sometimes not imported yet, so we force an import when there is no data
+        self::loadPrices($priceRepo, $apiProductId);
+
         foreach($periods as $i => $period) {
             $price = $priceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($apiProductId))
                     ->onlyPeriod($period)
@@ -322,6 +328,25 @@ class ConfigurableOptionService
             foreach ($productModel->getAllCurrencies() as $currency) {
                 $optionSubPrice['currency'] = $currency->id;
                 $optionSubId = Capsule::table('tblpricing')->insertGetId($optionSubPrice);
+            }
+        }
+    }
+
+    /**
+     * @param ApiProductPriceRepo $priceRepo
+     * @param $apiProductId
+     * @return void
+     */
+    public static function loadPrices(ApiProductPriceRepo $priceRepo, $apiProductId): void
+    {
+        try {
+            $priceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($apiProductId))->fetchOne();
+        } catch (\Exception $e) {
+            Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: loaded prices because they weren't available.");
+
+            $apiProductsPrices = ProductsPrices::getInstance();
+            foreach ($apiProductsPrices->getAllProductsPrices() as $productPrice) {
+                $productPrice->saveToDatabase();
             }
         }
     }

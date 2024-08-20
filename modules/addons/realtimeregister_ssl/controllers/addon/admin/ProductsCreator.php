@@ -42,7 +42,7 @@ class ProductsCreator extends AbstractController
             }
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($input['createSingle'])) {
-                $this->saveProduct($input, $vars);
+                $this->saveProduct($input);
                 $vars['success'] = Lang::T('messages', 'single_product_created');
             }
         } catch (Exception $e) {
@@ -55,7 +55,10 @@ class ProductsCreator extends AbstractController
         ];
     }
 
-    public function saveProduct($input = [])
+    /**
+     * @throws Exception
+     */
+    public function saveProduct($input = []): int
     {
         if (isset($input[C::API_PRODUCT_ID]) && $input[C::API_PRODUCT_ID] == 0) {
             throw new Exception('api_product_not_chosen');
@@ -102,7 +105,6 @@ class ProductsCreator extends AbstractController
             $apiProduct->getPeriods()
         );
 
-
         if ($apiProduct->isSanEnabled() && $input[C::PRODUCT_ENABLE_SAN] === 'on') {
             ConfigurableOptionService::createForProduct(
                 $newProductId,
@@ -120,7 +122,6 @@ class ProductsCreator extends AbstractController
                 $apiProduct
             );
         }
-
 
         return $newProductId;
     }
