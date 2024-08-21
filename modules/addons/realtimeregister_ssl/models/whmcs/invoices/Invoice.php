@@ -208,7 +208,7 @@ class Invoice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $datepaid
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice]
+     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     public function setDatepaid($datepaid)
     {

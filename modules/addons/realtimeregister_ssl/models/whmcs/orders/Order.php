@@ -61,24 +61,24 @@ class Order extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\clients\client
+     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client
      */
     private $_client;
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\invoice
+     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     private $_invoice;
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\clients\client
+     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client
      */
     public function client()
     {
         if (empty($this->_client)) {
-            $this->_client = new \MGModule\RealtimeRegisterSsl\models\whmcs\clients\client($this->userid);
+            $this->_client = new \MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client($this->userid);
         }
 
         return $this->_client;
@@ -86,7 +86,7 @@ class Order extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\invoice
+     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     public function invoice()
     {

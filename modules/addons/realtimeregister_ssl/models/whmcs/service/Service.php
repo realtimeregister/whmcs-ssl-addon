@@ -2,11 +2,11 @@
 
 namespace MGModule\RealtimeRegisterSsl\models\whmcs\service;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\system;
+use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System;
 use MGModule\RealtimeRegisterSsl\mgLibs\models\Orm;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\query;
-use MGModule\RealtimeRegisterSsl\models\whmcs\clients\client;
-use MGModule\RealtimeRegisterSsl\models\whmcs\orders\order;
+use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
+use MGModule\RealtimeRegisterSsl\models\whmcs\orders\Order;
 use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use MGModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
 use stdClass;
@@ -152,13 +152,13 @@ class Service extends Orm
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\service\customFields\repository
+     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\service\customFields\Repository
      */
     private $_customFields;
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\service\configOption\repository
+     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository
      */
     private $_configOptions;
 
@@ -220,8 +220,7 @@ class Service extends Orm
      * Load Client
      * Function allows to easy overwrite product object
      *
-     * @param type $data
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\service\client
+     * @return Client
      * @author Michal Czech <michael@modulesgarden.com>
      */
     protected function loadClient($data = [])

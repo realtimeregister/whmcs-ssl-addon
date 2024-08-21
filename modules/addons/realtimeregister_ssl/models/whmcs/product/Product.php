@@ -135,7 +135,7 @@ class Product extends Orm
     /**
      * Load Server
      *
-     * @return server
+     * @return Server
      */
     protected function loadServer()
     {
@@ -161,7 +161,7 @@ class Product extends Orm
             ]
         )->fetchColumn();
 
-        return new \MGModule\RealtimeRegisterSsl\models\whmcs\servers\server($server);
+        return new \MGModule\RealtimeRegisterSsl\models\whmcs\servers\Server($server);
     }
 
     /**

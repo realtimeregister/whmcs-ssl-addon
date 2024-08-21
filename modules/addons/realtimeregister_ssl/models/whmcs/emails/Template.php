@@ -241,7 +241,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $attachments
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template\
+     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setAttachments($attachments)
     {
