@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MGModule\RealtimeRegisterSsl\eModels\whmcs\service;
 
 use Illuminate\Database\Eloquent\Model;
-use MGModule\RealtimeRegisterSsl\eServices\Deploy\Panel\Manage;
 
 class Hosting extends Model
 {

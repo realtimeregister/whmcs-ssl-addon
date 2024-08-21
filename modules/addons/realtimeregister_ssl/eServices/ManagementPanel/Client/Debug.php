@@ -2,7 +2,7 @@
 
 namespace HostcontrolSSL\Services\Client;
 
-use HostcontrolSSL\Services\Config\Config;
+use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
 
 class Debug
 {

@@ -3,15 +3,19 @@
 namespace MGModule\RealtimeRegisterSsl\models\whmcs\service;
 
 use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\system;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\systemLoad;
 use MGModule\RealtimeRegisterSsl\mgLibs\models\Orm;
 use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\query;
-use MGModule\RealtimeRegisterSsl\models\recovery\RecoveryVM;
 use MGModule\RealtimeRegisterSsl\models\whmcs\clients\client;
 use MGModule\RealtimeRegisterSsl\models\whmcs\orders\order;
-use MGModule\RealtimeRegisterSsl\models\whmcs\product\product;
-use MGModule\RealtimeRegisterSsl\models\whmcs\servers\server;
+use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
+use MGModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
 use stdClass;
+
+/**
+ *
+ * Dit.txt
+ * dit.txt
+ */
 
 /**
  * Description of account
@@ -163,7 +167,7 @@ class Service extends Orm
      *
      * @param int $id
      * @param array $data
-     * @throws systemLoad
+     * @throws \Exception
      * @author Michal Czech <michael@modulesgarden.com>
      */
     public function __construct($id = null, $data = [])
@@ -499,36 +503,6 @@ class Service extends Orm
             $this->load();
         }
         return $this->_orderid;
-    }
-
-    /**
-     *
-     * @return \MGModule\proxmoxAddon\models\recovery\RecoveryVM
-     */
-    public function getRecoveryVM($vserverID = '0')
-    {
-        $where = ["service_id" => $this->id];
-        if ($vserverID !== '0') {
-            $where['vserver_id'] = $vserverID;
-        }
-
-        $data = query::select(
-            RecoveryVM::fieldDeclaration(),
-            RecoveryVM::tableName(),
-            $where
-        )->fetch();
-        if (!empty($data['id'])) {
-            return new RecoveryVM ($data['id'], $data);
-        }
-        $obj = new RecoveryVM ();
-        $obj->setServiceID($this->id);
-        $obj->setServerID($this->serverID);
-        $obj->setClientID($this->clientID);
-        if ($vserverID !== '0') {
-            $obj->setVserverID($vserverID);
-        }
-
-        return $obj;
     }
 
     public function getDomain()

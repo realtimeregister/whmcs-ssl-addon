@@ -5,9 +5,9 @@ namespace MGModule\RealtimeRegisterSsl\models\customWHMCS\product;
 /**
  * @SuppressWarnings(PHPMD)
  */
-class Product extends MGModule\RealtimeRegisterSsl\models\whmcs\product\product
+class Product extends \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product
 {
-    function loadConfiguration($params)
+    function loadConfiguration($params  = [])
     {
         return new Configuration($this->id);
     }

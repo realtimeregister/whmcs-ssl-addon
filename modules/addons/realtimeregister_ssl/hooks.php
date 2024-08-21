@@ -527,7 +527,7 @@ function realtimeregister_ssl_unableDowngradeConfigOption($vars)
             $processApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
 
             $orderStatus = $processApi->get($sslService->remoteid);
-        } catch (MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterApiException $e) {
+        } catch (\Exception $e) {
             return;
         }
         //get config option id related to sans_count and current value

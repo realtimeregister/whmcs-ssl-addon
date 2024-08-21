@@ -9,8 +9,6 @@ use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\Deploy\Panel;
-use MGModule\RealtimeRegisterSsl\eServices\Deploy\Panel\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\FlashService;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;

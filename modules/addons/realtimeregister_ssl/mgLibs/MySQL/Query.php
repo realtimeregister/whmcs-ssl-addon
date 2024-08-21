@@ -2,7 +2,7 @@
 
 namespace MGModule\RealtimeRegisterSsl\mgLibs\MySQL;
 use Illuminate\Database\Capsule\Manager;
-use MGModule\RealtimeRegisterSsl as main;
+use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes;
 use PDO;
 
 /**
@@ -121,7 +121,7 @@ class Query
 
                     self::$_instance->connection[$connectionName]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 } catch (\Exception $ex) {
-                    throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System('SQL Connection Error', exceptions\Codes::MYSQL_CONNECTION_FAILED);
+                    throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System('SQL Connection Error', Codes::MYSQL_CONNECTION_FAILED);
                 }
             }
         }

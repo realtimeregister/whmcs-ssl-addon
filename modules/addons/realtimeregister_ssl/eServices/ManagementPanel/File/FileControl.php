@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File;
 
 use Exception;
-use HostcontrolSSL\Service\Certificate;
-use HostcontrolSSL\Services\Validation\Manage as ValidationManage;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Validation\Manage as ValidationManage;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Manage as FileManage;
 

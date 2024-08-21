@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Validation;
 
-use HostcontrolSSL\Service\Certificate;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Exceptions\SSLValidationException;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
+use SandwaveIo\RealtimeRegister\Domain\Certificate;
 
 class Manage
 {

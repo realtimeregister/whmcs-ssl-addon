@@ -33,11 +33,11 @@ class ClientRecheckCertificateDetails extends Ajax
         $sslService = $sslRepo->getByServiceId($this->parameters['serviceId']);
 
         if (is_null($sslService)) {
-            throw new Exception('Create has not been initialized');
+            throw new \Exception('Create has not been initialized');
         }
 
         if ($this->parameters['userID'] != $sslService->userid) {
-            throw new Exception('An error occurred');
+            throw new \Exception('An error occurred');
         }
 
         $configDataUpdate = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData($sslService);
