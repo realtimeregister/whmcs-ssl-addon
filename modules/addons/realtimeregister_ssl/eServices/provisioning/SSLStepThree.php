@@ -14,14 +14,14 @@ use MGModule\RealtimeRegisterSsl\eServices\Deploy\Panel\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\FlashService;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
+use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\CertificateInfoProcess;
 use SandwaveIo\RealtimeRegister\Domain\Product;
 use WHMCS\Database\Capsule;
-use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
-use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 
 class SSLStepThree
 {
