@@ -2,11 +2,11 @@
 
 namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
 
+use Exception;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
-use Exception;
 use MGModule\RealtimeRegisterSsl\mgLibs\forms\Popup;
 use MGModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
 use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
@@ -67,7 +67,7 @@ class ProductsCreator extends AbstractController
             'name' => $input['name'],
             'paytype' => $input['paytype'] ?: 'recurring',
             'servertype' => 'realtimeregister_ssl',
-            'hidden' => $input['hidden'] ?: 0,
+            'hidden' => $input['hidden'] ?: 1,
             'autosetup' => $input['autosetup'],
             C::PRICE_AUTO_DOWNLOAD => $input[C::PRICE_AUTO_DOWNLOAD]?: '',
             C::API_PRODUCT_ID => $input[C::API_PRODUCT_ID],
