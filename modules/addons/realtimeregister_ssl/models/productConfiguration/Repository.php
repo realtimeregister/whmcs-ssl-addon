@@ -4,7 +4,6 @@ namespace MGModule\RealtimeRegisterSsl\models\productConfiguration;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
-use MGModule\RealtimeRegisterSsl as main;
 
 class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
@@ -162,21 +161,6 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
         $update['autosetup']              = $params['autosetup'];
         $update[C::PRICE_AUTO_DOWNLOAD]   = $params[C::PRICE_AUTO_DOWNLOAD] ?: '0';
         $update[C::COMMISSION]            = $params[C::COMMISSION] ? $params[C::COMMISSION] / 100 : '0';
-        
-        //if san disabled unassign sans config options
-        if ($update[C::PRODUCT_ENABLE_SAN] !== 'on') {
-            main\eServices\ConfigurableOptionService::unassignFromProduct($productId, $update['name']);
-        } else {
-            main\eServices\ConfigurableOptionService::assignToProduct($productId, $update['name']);
-        }
-
-        if ($update[C::PRODUCT_ENABLE_SAN_WILDCARD] !== 'on') {
-            $group = main\eServices\ConfigurableOptionService::getForProductWildcard($productId);
-            main\eServices\ConfigurableOptionService::unassignFromProductWildcard($productId, $group->groupid);
-        } else {
-            $group = main\eServices\ConfigurableOptionService::getForProductWildcard($productId);
-            main\eServices\ConfigurableOptionService::assignToProductWildcard($productId, $update['name'], $group->groupid);
-        }
         
         if (isset($params['issued_ssl_message']) && !empty($params['issued_ssl_message'])) {
             $update[C::OPTION_ISSUED_SSL_MESSAGE] = $params['issued_ssl_message'];

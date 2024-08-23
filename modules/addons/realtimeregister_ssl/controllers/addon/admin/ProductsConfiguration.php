@@ -153,7 +153,12 @@ class ProductsConfiguration extends AbstractController
         }
 
         foreach ($input['currency'] as $key => $value) {
-            $productModel->updateProductPricing($key, $value);
+            $pricing = ['monthly' => $value['monthly'] == 'on' ? 0 : -1,
+                'annually' => $value['annually'] == 'on' ? 0 : -1,
+                'biennially' => $value['biennially'] == 'on' ? 0 : -1,
+                'triennially' => $value['triennially'] == 'on' ? 0 : -1,
+            ];
+            $productModel->updateProductPricing($key, $pricing);
         }
 
         return true;

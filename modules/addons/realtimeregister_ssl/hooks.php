@@ -1,11 +1,11 @@
 <?php
 
-use MGModule\RealtimeRegisterSsl\eHelpers\JsInserter;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl\Addon;
 use MGModule\RealtimeRegisterSsl\eHelpers\Admin;
 use MGModule\RealtimeRegisterSsl\eHelpers\Commission;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
+use MGModule\RealtimeRegisterSsl\eHelpers\JsInserter;
 use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
