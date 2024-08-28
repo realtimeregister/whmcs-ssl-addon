@@ -40,14 +40,12 @@ You are ofcourse welcome to send us requests for new features, suggestions, issu
 - Automated Price import and commission setup
 - Multibrand For WHMCS support
 
-### cPanel AutoSSL Installation 
-We provide ["cPanel AutoSSL installation"](https://github.com/gogetssl/whmcs-addon/wiki/cPanel-AutoSSL), allowing to validate and install SSL certificates automatically. 
+### Plesk/cPanel & DirectAdmin AutoSSL Installation 
+We provide ["AutoSSL installation"](https://github.com/realtimeregister/whmcs-ssl-addon/wiki/AutoSSL) for these three panels, allowing to validate and install SSL certificates automatically. 
 ***
+
+### Plesk module
+We made a Plesk plugin which will be used in order to enable file validations. It will be automatically installed every time it is needed, no further action needed on your part.
 
 ### License
 This project is licensed under the MIT License
-
-### Plesk module
-The plesk module will be used in order to enable file validations. It will be automatically installed every time it is needed, no further action needed on your part.
-
-
