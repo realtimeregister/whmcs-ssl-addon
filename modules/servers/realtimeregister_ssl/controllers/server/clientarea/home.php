@@ -6,26 +6,26 @@ use Exception;
 use MGModule\RealtimeRegisterSsl\controllers\addon\admin\Cron;
 use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails;
+use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
 use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\Server;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Database\Capsule;
-use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
-use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 
 /**
  * Description of home
@@ -111,7 +111,7 @@ class home extends AbstractController
                 try {
                     $certificateDetails = (array)$sslService->configdata;
 
-                    if (isset($certificateDetails['crt']) && !empty($certificateDetails['crt'])) {
+                    if (!empty($certificateDetails['crt'])) {
                         $sslOrderRepo = new OrderRepo();
                         $checkOrderSSL = $sslOrderRepo->checkOrdersInstallation($serviceId);
 
