@@ -276,11 +276,11 @@ add_hook('InvoicePaid', 1, function($vars)
 
 /*
  *
- * assign ssl summary stats to clieat area page 
+ * assign ssl summary stats to client area page
  * 
  */
 
-function REALTIMEREGISTERSSL_displaySSLSummaryStats($vars)
+function realtimeregister_ssl_displaySSLSummaryStats($vars)
 {
     if (
         isset($vars['filename'], $vars['templatefile']) && $vars['filename'] == 'clientarea'
@@ -292,12 +292,13 @@ function REALTIMEREGISTERSSL_displaySSLSummaryStats($vars)
 
             GLOBAl $smarty;
 
+
             Addon::I(true);
 
             $apiConf           = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
             $displaySSLSummary = $apiConf->display_ca_summary;
-            if (!(bool) $displaySSLSummary) {
-                return;
+            if (!$displaySSLSummary) {
+                return '';
             }
 
             $sslSummaryIntegrationCode = '';
@@ -370,7 +371,9 @@ function REALTIMEREGISTERSSL_displaySSLSummaryStats($vars)
         {
         }
     }
+    return '';
 }
+
 add_hook('ClientAreaPage', 1, 'realtimeregister_ssl_displaySSLSummaryStats');
 add_hook('ClientAreaHeadOutput', 999999999999, 'realtimeregister_ssl_displaySSLSummaryStats');
 
