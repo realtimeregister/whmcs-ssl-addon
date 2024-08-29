@@ -21,7 +21,7 @@
         else if($('#main-body form').length > 0) {
             var element = $('#main-body form');
         }
-        
+
         element.append('\
                         <div class="modal fade" id="modalGenerateCsr" role="dialog" aria-hidden="true">\n\
                             <div class="modal-dialog">\n\
@@ -85,12 +85,12 @@
                                     </form>\n\
                                 </div>\n\
                             </div\n\
-                       </div>');  
-        
+                       </div>');
+
 
         $("#countryName option[value=\"{$csrData['country']}\"]").attr('selected','');
 
-        $('#modalgenerateCsrSubmit').prop('disabled',true);                
+        $('#modalgenerateCsrSubmit').prop('disabled',true);
         $.urlParam = function(name){
             var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
             if (results==null){
@@ -104,7 +104,7 @@
         $('textarea[name="csr"]').after('<div align="middle"><button type="button" id="generateCsrBtn" class="btn btn-default" style="margin:5px">{$MGLANG->T('Generate CSR')}</button></div>');
         var token = $('input[name="token"]').val();
         var serviceUrl = 'configuressl.php?cert=' + cert + '&action=generateCsr&json=1&token=' + token,
-        generateCsrBtn = $('#generateCsrBtn'),        
+        generateCsrBtn = $('#generateCsrBtn'),
         generateCsrForm,
         generateCsrModal,
         generateCsrBody,
@@ -113,40 +113,29 @@
         generateCsrDangerAlert,
         generateCsrSubmitBtn,
         body = $('body');
-        function assignModalElements(init) {             
-            
+        function assignModalElements() {
+
             generateCsrModal = $('#modalGenerateCsr');
             generateCsrBody = $('#modalgenerateCsrBody');
-        
-            if (init) {
-                generateCsrBody.contents()
-                    .   filter(function(){
-                    return this.nodeType === 8;
-                })
-                .replaceWith(function(){
-                    return this.data;
-                });
-            }
+            generateCsrBody.contents()
+                .   filter(function(){
+                return this.nodeType === 8;
+            })
+            .replaceWith(function(){
+                return this.data;
+            });
 
-            if (!init) {
-                generateCsrForm = $('#modalgenerateCsrForm');
-                generateCsrSubmitBtn = $('#modalgenerateCsrSubmit');
-                generateCsrCountryName = $('#countryName');                
-                generateCsrInput = $('#modalgenerateCsrInput');
-                generateCsrDangerAlert = $('#modalgenerateCsrDanger');
-                generateCsrStateOrProvinceName = $('#stateOrProvinceName');
-                generateCsrLocalityName = $('#localityName');
-                generateCsrOrganizationName = $('#organizationName');
-                generateCsrOrganizationalUnitName = $('#organizationalUnitName');
-                generateCsrCommonName = $('#commonName');               
-                generateCsrEmailAddress = $('#emailAddress');
-            }
-        }
-
-        function moveModalToBody() {
-            body.append(generateCsrModal.clone());
-            assignModalElements(false);
-            generateCsrModal.remove();
+            generateCsrForm = $('#modalgenerateCsrForm');
+            generateCsrSubmitBtn = $('#modalgenerateCsrSubmit');
+            generateCsrCountryName = $('#countryName');
+            generateCsrInput = $('#modalgenerateCsrInput');
+            generateCsrDangerAlert = $('#modalgenerateCsrDanger');
+            generateCsrStateOrProvinceName = $('#stateOrProvinceName');
+            generateCsrLocalityName = $('#localityName');
+            generateCsrOrganizationName = $('#organizationName');
+            generateCsrOrganizationalUnitName = $('#organizationalUnitName');
+            generateCsrCommonName = $('#commonName');
+            generateCsrEmailAddress = $('#emailAddress');
         }
 
         function unbindOnClickForgenerateCsrBtn() {
@@ -168,7 +157,7 @@
             });
         }
 
-        function showSuccessAlert(msg) {           
+        function showSuccessAlert(msg) {
             element.before('<div class="alert alert-success" id="generateCsrSuccess">\n\
                                             <strong>Success!</strong> <span>'+ msg +'</span>\n\
                                         </div>');
@@ -242,19 +231,19 @@
                             }
                         });
                         if (empty) {
-                            generateCsrSubmitBtn.attr('disabled', 'disabled'); 
+                            generateCsrSubmitBtn.attr('disabled', 'disabled');
                         } else {
-                            generateCsrSubmitBtn.removeAttr('disabled'); 
+                            generateCsrSubmitBtn.removeAttr('disabled');
                         }
                     });
                 });
-            }    
+            }
         function submitgenerateCsrModal() {
-            $('#generateCsrSuccess').remove(); 
-            
+            $('#generateCsrSuccess').remove();
+
             addSpiner(generateCsrSubmitBtn);
             disable(generateCsrSubmitBtn);
-            var data = {                
+            var data = {
                 generateCsrModal: 'yes',
                 countryName: generateCsrCountryName.val(),
                 stateOrProvinceName: generateCsrStateOrProvinceName.val(),
@@ -264,17 +253,17 @@
                 commonName: generateCsrCommonName.val(),
                 emailAddress: generateCsrEmailAddress.val()
             };
-            
-                
+
+
             //if is reissue add additional serviceid field
-            
+
             if($('input[name="reissueServiceID"]').length > 0)
             {
                 var serviceID = $('input[name="reissueServiceID"]').val();
                 data['doNotSaveToDatabase'] = true;
-                data['serviceID'] = serviceID;                
+                data['serviceID'] = serviceID;
             }
-                
+
             $.ajax({
                 url: serviceUrl,
                 type: "POST",
@@ -291,18 +280,18 @@
                         showSuccessAlert(data.msg);
                         var csrTextarea = $('textarea[name="csr"]');
                         var generateCsrBtn = $('#generateCsrBtn');
-                        
+
                         csrTextarea.empty();
                         csrTextarea.remove();
-                        
+
                         var tempkey = data.public_key;
                         var newkey = tempkey.substring(0, tempkey.length - 1);
-                        
+
                         generateCsrBtn.before('<textarea name="csr" id="inputCsr" rows="7" readonly class="form-control">'+newkey+'</textarea>');
                         $('input[name="privateKey"]').remove();
                         $('textarea[name="csr"]').closest('.form-group').after('<input class="form-control" type="hidden" name="privateKey" value="'+data.private_key+'" />');
                         closeModal(generateCsrModal);
-                        
+
                     } else {
                         showDangerAlert(data.msg);
                     }
@@ -316,8 +305,7 @@
                 }
             });
         }
-        assignModalElements(true);
-        moveModalToBody();
+        assignModalElements();
         unbindOnClickForgenerateCsrBtn();
         bindModalFrogenerateCsrBtn();
         validateForm();
@@ -328,7 +316,7 @@
         if(fillVars[i].name === 'privateKey') {
             $('input[name="privateKey"]').remove();
             $('textarea[name="csr"]').closest('.form-group').after('<input class="form-control" type="hidden" name="privateKey" value="'+fillVars[i].value+'" />');
-        }        
+        }
     }
-    
+
 </script>

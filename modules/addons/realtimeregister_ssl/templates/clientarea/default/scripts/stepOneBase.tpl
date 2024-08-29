@@ -21,7 +21,7 @@
 
             if(!$('.primary-content .card-body .alert-danger').length) {
 
-                let contentPage = $('#inputOrderType').parent('div.form-group').parent('div');
+                let contentPage = $('#inputCsr').parent('div.form-group');
 
                 $(contentPage).hide();
                 $(contentPage).parent('div').next("div").hide();
@@ -29,7 +29,7 @@
                     '<h2>{$MGLANG->T('Choose a domain')}</h2>' +
                     '<select id="step-type-data">' +
                     '<option value="custom">{$MGLANG->T('Custom domain')}</option>' +
-                    '<optgroup label="cPanel">' +
+                    '<optgroup label="Server">' +
                     '</optgroup>' +
                     '</select>' +
                     '<div style="margin-top: 20px;" class="form-group"><button id="goto_next_step" class="btn btn-primary" type="button">{$MGLANG->T('Go to next step')}</button></div>' +
@@ -41,8 +41,8 @@
 
                 $('body').on('click', '#goto_next_step', function () {
                     $('.select-cpanel-server').hide();
-                    $('.select-cpanel-server').prev('div').show();
-                    $('.select-cpanel-server').prev('div').parent('div').next('div').show();
+                    $('input[name="CN"]').val($('#step-type-data').val());
+                    $(contentPage).show();
                 });
             } else {
                 $('#inputCsr').parent('div').hide();
