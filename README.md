@@ -16,10 +16,6 @@ Please check the latest [Releases](https://github.com/realtimeregister/whmcs-ssl
 ### WIKI
 Check [WIKI](https://github.com/realtimeregister/whmcs-ssl-addon/wiki) for manuals and description of all features
 
-### API Credentials
-- Please generate API password at [Client area](https://dm.realtimeregister.com) -> Reseller Modules -> API settings
-- Login is the same as login for Client area
-
 ### Suggestions, Bugs, Issues, New Features
 You are ofcourse welcome to send us requests for new features, suggestions, issues or any possible bugs found
 [Submission form](https://github.com/realtimeregister/whmcs-ssl-addon/issues/new/choose)
