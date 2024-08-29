@@ -451,15 +451,15 @@ class home extends AbstractController
                 $resendDcv[] = [
                     "commonName"=> $dcv->commonName,
                     "type" => "EMAIL",
-                    "email" => $dcv->email
+                    "email" => $dcv->email,
                 ];
             }
         }
-        $response = ApiProvider::getInstance()->getApi(CertificatesApi::class)
+        ApiProvider::getInstance()->getApi(CertificatesApi::class)
             ->resendDcv($serviceSSL->getRemoteId(), $resendDcv);
 
         return [
-            'success' => $response['message']
+            'success' => "Successfully resent DCV"
         ];
     }
 
@@ -637,7 +637,7 @@ class home extends AbstractController
         }
 
         try {
-            $response = ApiProvider::getInstance()->getApi(CertificatesApi::class)
+            ApiProvider::getInstance()->getApi(CertificatesApi::class)
                 ->resendDcv($sslService->getRemoteId(), $data);
         } catch (Exception $ex) {
             if (strpos($ex->getMessage(), 'Function is locked for') !== false) {
@@ -671,7 +671,7 @@ class home extends AbstractController
 
         return [
             'success' => 1,
-            'msg' => $response['message']
+            'msg' => "Successfully resent DCV"
         ];
     }
 
@@ -779,30 +779,6 @@ class home extends AbstractController
     {
         $clientCheckCertificateDetails = new ClientRecheckCertificateDetails($input);
         $details = $clientCheckCertificateDetails->run();
-    }
-
-    function changeApproverEmailJSON($input, $vars = array()) {
-
-        $sslRepo   = new SSL();
-        $sslService = $sslRepo->getByServiceId($input['serviceId']);
-
-        $data = [
-            'commonName' => $sslService->getConfigdataKey('commonName'),
-            'type' => 'EMAIL',
-            'email' => $input['newEmail']
-        ];
-
-        /** @var CertificatesApi $certificateApi */
-        $certificateApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-        $response = $certificateApi->resendDcv($sslService->remoteid, $data);
-
-        $sslService->setConfigdataKey("approveremail", $data['approver_email']);
-        $sslService->save();
-
-        return array(
-            'success' => $response['success'],
-            'msg'     => $response['success_message']
-        );
     }
 
     public function getPasswordJSON($input, $vars = [])
