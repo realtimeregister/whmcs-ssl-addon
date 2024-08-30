@@ -25,6 +25,7 @@ use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use MGModule\RealtimeRegisterSsl\Server;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use SandwaveIo\RealtimeRegister\Domain\ResendDcvCollection;
 use WHMCS\Database\Capsule;
 
 /**
@@ -456,7 +457,7 @@ class home extends AbstractController
             }
         }
         ApiProvider::getInstance()->getApi(CertificatesApi::class)
-            ->resendDcv($serviceSSL->getRemoteId(), $resendDcv);
+            ->resendDcv($serviceSSL->getRemoteId(), ResendDcvCollection::fromArray($resendDcv));
 
         return [
             'success' => "Successfully resent DCV"
@@ -638,7 +639,7 @@ class home extends AbstractController
 
         try {
             ApiProvider::getInstance()->getApi(CertificatesApi::class)
-                ->resendDcv($sslService->getRemoteId(), $data);
+                ->resendDcv($sslService->getRemoteId(), ResendDcvCollection::fromArray($data));
         } catch (Exception $ex) {
             if (strpos($ex->getMessage(), 'Function is locked for') !== false) {
                 if (strpos($domain, '___') !== false) {
