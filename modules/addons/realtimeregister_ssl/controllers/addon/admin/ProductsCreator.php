@@ -182,14 +182,20 @@ class ProductsCreator extends AbstractController
     }
 
     public static function displayName($apiProduct) {
-        $certificateType = match ($apiProduct->certificateType) {
-            "MULTI_DOMAIN" => 'Multi Domain',
-            "WILDCARD" => "Wildcard",
-            default => 'Single Domain',
-        };
-        return $apiProduct->brand . " " . $apiProduct->name .  " " . $certificateType;
+         switch ($apiProduct->certificateType) {
+             case "MULTI_DOMAIN":
+             $certificateType = 'Multi Domain';
+             break;
+         case "WILDCARD":
+             $certificateType = 'Wildcard';
+             break;
+         default:
+             $certificateType = 'Single Domain';
+             break;
+         }
+         return $apiProduct->brand . " " . $apiProduct->name . " " .
+             $certificateType;
     }
-
     public function saveItemHTML($input, $vars = [])
     {
         if ($this->checkToken()) {
