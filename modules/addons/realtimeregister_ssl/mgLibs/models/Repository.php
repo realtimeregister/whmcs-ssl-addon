@@ -2,7 +2,7 @@
 
 namespace MGModule\RealtimeRegisterSsl\mgLibs\models;
 use MGModule\RealtimeRegisterSsl as main;
-use \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\PdoWrapper;
+use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\PdoWrapper;
 
 /**
  * Description of abstractModel

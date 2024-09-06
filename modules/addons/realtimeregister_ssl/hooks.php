@@ -9,6 +9,7 @@ use MGModule\RealtimeRegisterSsl\eHelpers\JsInserter;
 use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use MGModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\Activator;
 use MGModule\RealtimeRegisterSsl\Loader;
@@ -188,7 +189,7 @@ add_hook('ClientAreaHeadOutput', 1, function($params)
         });
     </script>';
     }
-    
+
     $show = false;
 
     if (
@@ -248,9 +249,9 @@ add_hook('InvoicePaid', 1, function($vars)
 
     new Loader();
     Addon::I(true);
-    
+
     $invoiceGenerator = new Invoice();
-    
+
     $invoiceInfo = $invoiceGenerator->getInvoiceCreatedInfo($vars['invoiceid']);
     if (!empty($invoiceInfo)) {
         $command = 'SendEmail';
@@ -359,12 +360,12 @@ function realtimeregister_ssl_displaySSLSummaryStats($vars)
                         </div>
                 </div>";
 
-            
-            
-            
+
+
+
             $smarty->assign('sslSummaryIntegrationCode', $sslSummaryIntegrationCode);
-            
-            global $smartyvalues; 
+
+            global $smartyvalues;
             $smartyvalues['sslSummaryIntegrationCode'] = $sslSummaryIntegrationCode;
         }
         catch (Exception $e)
@@ -392,7 +393,7 @@ add_hook('ClientAreaHeadOutput', 1, 'realtimeregister_ssl_loadSSLSummaryCSSStyle
 function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
 {
     GLOBAL $smarty;
-    
+
     try
     {
         require_once __DIR__ . DS . 'Loader.php';
@@ -414,7 +415,7 @@ function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
                 return;
             }
         }
-        
+
         $displaySSLSummary = $apiConf->display_ca_summary;
         if (!(bool) $displaySSLSummary) {
             return;
@@ -480,7 +481,7 @@ function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
     }
     catch (Exception $e)
     {
-        
+
     }
 }
 add_hook('ClientAreaSecondarySidebar', 1, 'realtimeregister_ssl_displaySSLSummaryInSidebar');
@@ -708,53 +709,73 @@ function realtimeregister_ssl_overideProductPricingBasedOnCommission($vars)
     require_once __DIR__ . DS . 'Loader.php';
     new Loader();
     MGModule\RealtimeRegisterSsl\Addon::I(true);
-
-    $return       = [];
     //load module products
     $products     = [];
     $productModel = new Repository();
+    $properties = ["msetupfee", "asetupfee", "bsetupfee", "tsetupfee", "monthly", "annually", "biennially", "triennially"];
 
     if(isset($_SESSION['uid']) && !empty($_SESSION['uid'])) {
-        $clientCurrency = getCurrency($_SESSION['uid']);
+        $clientCurrency = getCurrency($_SESSION['uid'])['id'];
     } else {
         $currency = Capsule::table('tblcurrencies')->where('default', '1')->first();
         $clientCurrency['id'] = isset($_SESSION['currency']) && !empty($_SESSION['currency']) ? $_SESSION['currency']
             : $currency->id;
     }
-    //get Realtime Register Ssl all products
+    // get Realtime Register Ssl all products
     foreach ($productModel->getModuleProducts() as $product) {
         if($product->servertype != 'realtimeregister_ssl') {
             continue;
         }
-        
-        if ($product->id == $vars['pid']) {
-            $commission = MGModule\RealtimeRegisterSsl\eHelpers\Commission::getCommissionValue($vars);
-            
-            foreach ($product->pricing as $pricing) {
-                if ($pricing->currency == $clientCurrency['id']) {
-                    $priceField           = $vars['proddata']['billingcycle'];
-                    if ($priceField == 'onetime') {
-                        $priceField = 'monthly';
-                    }
 
-                    $return = ['recurring' => (float) $pricing->{$priceField} + (float) $pricing->{$priceField}
-                        * (float) $commission,];
+        if ($product->id == $vars['pid']) {
+            $percentage = MGModule\RealtimeRegisterSsl\eHelpers\Commission::getCommissionValue($vars);
+            if (!$percentage) {
+                return [];
+            }
+
+            $configoptions = $vars['proddata']['configoptions'];
+            $discount = 0;
+            dump($configoptions);
+
+            foreach ($configoptions as $optionId => $value) {
+                $option = ConfigurableOptionService::getConfigOptionById($optionId);
+                if (str_contains($option->optionname, 'sans')) {
+                    $optionSub = ConfigurableOptionService::getConfigOptionSubByOptionId($optionId);
+                    $pricing = Capsule::table("tblpricing")
+                        ->where("relid", "=", $optionSub->id)
+                        ->where("currency", "=", $clientCurrency)
+                        ->first();
+                    $quantity = $value;
+                } else {
+                    $pricing = Capsule::table("tblpricing")
+                        ->where("relid", "=", $value)
+                        ->where("currency", "=", $clientCurrency)
+                        ->first();
+                    $quantity = 1;
                 }
+                foreach($properties as $property) {
+                    $discount -= floatval($pricing->{$property}) * $quantity;
+                }
+            }
+
+            if ($discount) {
+                return ['recurring' => $discount / 100 * $percentage];
             }
         }
     }
 
-    return $return;
+    return [];
 }
 
 add_hook('OrderProductPricingOverride', 1, 'realtimeregister_ssl_overideProductPricingBasedOnCommission');
 
 function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts($vars)
-{ 
+{
     global $smarty;
-    global $smartyvalues; 
+    global $smartyvalues;
+
     require_once __DIR__ . DS . 'Loader.php';
-    
+
     new Loader();
     MGModule\RealtimeRegisterSsl\Addon::I(true);
     if($vars['filename'] == 'cart' || $vars['filename'] == 'index') {
@@ -766,7 +787,7 @@ function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts($
                             ->where('id', $product['pid'])
                             ->where('servertype', 'realtimeregister_ssl')
                             ->first();
-                    
+
                     if (isset($productRealtimeRegisterSsl->id) && !empty($productRealtimeRegisterSsl->id)) {
                         $pid = $product['pid'];
 
@@ -785,7 +806,7 @@ function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts($
                             ->where('id', $pid)
                             ->where('servertype', 'realtimeregister_ssl')
                             ->first();
-                    
+
                 if (isset($productRealtimeRegisterSsl->id) && !empty($productRealtimeRegisterSsl->id)) {
                     $commission = MGModule\RealtimeRegisterSsl\eHelpers\Commission::getCommissionValue(['pid' => $pid]);
                     $pricing = MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::getPricingInfo($pid, $commission);
@@ -799,32 +820,32 @@ function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts($
         }
     }
 }
-add_hook('ClientAreaHeadOutput', 999999999999, 'realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts');
+add_hook('ClientAreaHeadOutput', 1, 'realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts');
 
 add_hook('InvoiceCreation', 1, function($vars) {
     $invoiceid = $vars['invoiceid'];
-    
+
     $items = Capsule::table('tblinvoiceitems')->where('invoiceid', $invoiceid)->where('type', 'Upgrade')->get();
-    
+
     foreach ($items as $item) {
         $description = $item->description;
-        
+
         $upgradeid = $item->relid;
         $upgrade = Capsule::table('tblupgrades')->where('id', $upgradeid)->first();
-        
+
         $serviceid = $upgrade->relid;
         $service = Capsule::table('tblhosting')->where('id', $serviceid)->first();
-        
+
         $productid = $service->packageid;
         $product = Capsule::table('tblproducts')->where('id', $productid)
             ->where('paytype', 'onetime')->where('servertype', 'realtimeregister_ssl')->first();
-        
+
         if (isset($product->configoption7) && !empty($product->configoption7)) {
             if (strpos($description, '00/00/0000') !== false) {
                 $description = str_replace('- 00/00/0000', '', $description);
                 $length = strlen($description);
                 $description = substr($description, 0, $length-13);
-                
+
                 Capsule::table('tblinvoiceitems')->where('id', $item->id)->update(
                     ['description' => trim($description)]
                 );
@@ -1001,6 +1022,19 @@ add_hook('ClientAreaFooterOutput', 1, function($vars) {
                     'inputConfigOptionPrefix' => JSInserter::INPUT_CONFIG_OPTION_PREFIX,
                     'productsTotalElementId' => JSInserter::PRODUCTS_TOTAL_ELEMENT_ID,
                 ]
+            );
+        }
+    }
+    return $script;
+});
+
+add_hook('ClientAreaFooterOutput', 2, function($vars) {
+    $script = '';
+
+    if(is_array($vars['configurableoptions'])) {
+        if ($vars['templatefile'] === "configureproduct") {
+            $script = JSInserter::generateScript(
+                'modules/addons/realtimeregister_ssl/js/dist/discount.js', []
             );
         }
     }

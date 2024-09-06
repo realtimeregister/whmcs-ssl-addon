@@ -3,13 +3,13 @@
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use MGModule\RealtimeRegisterSsl\eServices\ScriptService;
+use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use WHMCS\Application;
 
 /**
  * Types:
- * 
+ *
  * * text
  * * password
  * * yesno
@@ -50,22 +50,10 @@ class ConfigOptions
 
     private function getConfigOptions()
     {
-        $apiProducts = Products::getInstance()->getAllProducts();
-        $products = [];
-
-        foreach ($apiProducts as $apiProduct) {
-            $products[$apiProduct->id] = $apiProduct->product;
-        }
-
-        return $this->getFields($products);
-    }
-
-    private function getFields($products)
-    {
+        $product = new Product($_REQUEST['id']);
         return [
-            'Certificate Type' => [
-                'Type' => 'dropdown',
-                'Options' => $products
+            'Product Identifier' => [
+                'Type' => 'text'
             ],
             'Months' => [
                 'Type' => 'text'
@@ -76,17 +64,42 @@ class ConfigOptions
             'Included SANs' => [
                 'Type' => 'text',
             ],
-            'PRICE AUTO DOWNLOAD' => [
-                'Type' => 'text',
+            'Price Auto-Download' => [
+                'Type' => 'yesno'
             ],
-            'COMMISSION' => [
-                'Type' => 'text',
-                'Description' => '<script>$(function(){$("input[name=\"packageconfigoption[5]\"]").parent("td.fieldarea").parent("tr").hide();});</script>'
+            'Included Wildcard SANs' => [
+                'Type' => 'text'
             ],
-            'Months One Time' => [
+            '0' => [
+                'Type' => 'text',
+                'Description' => self::buildConfigOptionsScript($product)
+            ],
+            '1' => [
                 'Type' => 'text',
             ],
         ];
+    }
+
+    private static function buildConfigOptionsScript($product): string
+    {
+        $configOptions = $product->configuration()->getConfigOptions();
+        $script = '<script>'
+            . '$(function(){'
+            . '$("input[name=\"packageconfigoption[1]\"]").prop("disabled", true);'
+            . '$("input[name=\"packageconfigoption[3]\"]").prop("disabled", true);'
+            . '$("input[name=\"packageconfigoption[7]\"]").parent("td.fieldarea").parent("tr").hide();'
+            . '$("input[name=\"packageconfigoption[6]\"]").replaceWith($("input[name=\"packageconfigoption[8]\"]"));';
+
+        if ($configOptions['configoption3'] !== 'on') {
+            $script .= '$("input[name=\"packageconfigoption[4]\"]").prop("disabled", true);';
+        }
+
+        if ($configOptions['configoption13'] !== 'on') {
+            $script .= '$("input[name=\"packageconfigoption[8]\"]").prop("disabled", true);';
+        }
+        
+        $script .= '})</script>';
+        return $script;
     }
 
     private function getErrorOptions($error)
@@ -129,8 +142,8 @@ class ConfigOptions
                 }
 
                 $errorMessage .= "<li>" . sprintf(
-                    $whmcs->get_lang("configoptionqtyminmax"), $optionname, $qtyminimum, $qtymaximum
-                );
+                        $whmcs->get_lang("configoptionqtyminmax"), $optionname, $qtyminimum, $qtymaximum
+                    );
             }
         }
 

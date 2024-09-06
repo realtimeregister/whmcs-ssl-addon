@@ -143,7 +143,7 @@ class ProductsCreator extends AbstractController
                 }
             }
         }
-
+        
         $dummyCurrencies = [];
         foreach ($currencies as $currency) {
             $temp = [];

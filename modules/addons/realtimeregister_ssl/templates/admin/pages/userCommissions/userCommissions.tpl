@@ -53,9 +53,9 @@
                     <th>{$MGLANG->T('table', 'client')}</th>                    
                     <th>{$MGLANG->T('table', 'product')}</th>  
                     <th>{$MGLANG->T('table', 'commission')}</th>  
-                    <th>{$MGLANG->T('table', 'monthly/onetime')}</th> 
-                    <th>{$MGLANG->T('table', 'quarterly')}</th>  
-                    <th>{$MGLANG->T('table', 'semiannually')}</th> 
+                    <th>{$MGLANG->T('table', 'monthly/onetime')}</th>
+                    <th>{$MGLANG->T('table', 'quarterly')}</th>
+                    <th>{$MGLANG->T('table', 'semiannually')}</th>
                     <th>{$MGLANG->T('table', 'annually')}</th>  
                     <th>{$MGLANG->T('table', 'biennially')}</th> 
                     <th>{$MGLANG->T('table', 'triennially')}</th> 
@@ -68,88 +68,7 @@
         </div>
     </div>
 </div>
-                    
-<div class="panel panel-default">
-    <div class="panel-body">
-        <div class="col-lg-12 cronSynchronizationInfo">
-            <legend>{$MGLANG->T('integrationCode','header')}</legend>
-            <div class="col-lg-11 marginated">
-                <span class="text-danger bold">{$MGLANG->T('pleaseNote')}</span>
-                <span>{$MGLANG->T('info')}</span>    
-                <p>{$MGLANG->T('info1')}</p> 
-            </div>
-            <input type="text" class="form-control" value="{$templatePath1}" readonly="" style="min-width: 45%; max-width: 636px;"> 
-            <br />
-            <div class="col-lg-11 marginated">   
-                <p>{$MGLANG->T('info2')}</p> 
-                <textarea cols="20" style="min-width: 50%; resize: none; height: 65px;" disabled="">
-{literal}{if $_pricing}
-	{assign var="pricing" value=$_pricing}
-{/if}{/literal}</textarea>
-            </div>
-            <div class="col-lg-11 marginated">  
-                <p>{$MGLANG->T('info3')}</p> 
-            </div>
-            <input type="text" class="form-control" value="{$templatePath2}" readonly="" style="min-width: 45%; max-width: 636px;"> 
-            <br />
-            <div class="col-lg-11 marginated">   
-                <p>{$MGLANG->T('info4')}</p> 
-                <textarea cols="20" style="min-width: 50%; resize: none; height: 65px;" disabled="">
-{literal}{if $_products}
-	{assign var="products" value=$_products}
-{/if}{/literal}</textarea>
-            </div>
-
-            <br />
-        </div>
-            
-        
-            
-            <div class="col-lg-12 cronSynchronizationInfo" style="margin-top:50px;">
-           
-            <div class="col-lg-11 marginated">
-                <span class="text-danger bold">{$MGLANG->T('pleaseNote')}</span>
-                <span>To display additional SAN information.</span>    
-                <p>Open file "templates/$templatename/clientareaproductdetails.tpl"</p> 
-            </div>
-            
-            <div class="col-lg-11 marginated">   
-                <p>Add the code under this line of code</p> 
-                <textarea cols="20" style="min-width: 60%; resize: none; height: 95px;" disabled="">
-{literal}{if $configurableoptions}
-                        <div class="tab-pane fade{if !$domain && !$moduleclientarea} in active{/if} text-center" id="configoptions">
-                            <div class="alert alert-warning">{$txtincluded}</div>
-                            {foreach from=$configurableoptions item=configoption}{/literal}</textarea>
-            </div>
-
-<div class="col-lg-11 marginated">   
-                <p>Code to add</p> 
-                <textarea cols="20" style="min-width: 60%; resize: none; height: 65px;" disabled="">
-{literal}<div class="alert alert-warning">{$txtincluded}</div>{/literal}</textarea>
-            </div>
-
-<div class="col-lg-11 marginated">
-                
-                <p>Open file "/templates/orderforms/$templatename/configureproduct.tpl"</p> 
-            </div>
-<div class="col-lg-11 marginated">   
-                <p>Add the code above this line of code</p> 
-                <textarea cols="20" style="min-width: 60%; resize: none; height: 95px;" disabled="">
-{literal}{if $configurableoptions}{/literal}</textarea>
-            </div>
-
-<div class="col-lg-11 marginated">   
-                <p>Code to add</p> 
-                <textarea cols="20" style="min-width: 60%; resize: none; height: 65px;" disabled="">
-{literal}<div class="alert alert-warning">{$txtincluded}</div>{/literal}</textarea>
-            </div>
-          
-        </div>
-            
-            
-            
-    </div>
-</div>
+z
 <!--   Add User Commission Rule Modal -->
 <form data-toggle="validator" role="form" id="MGAddCommissionForm">
     <div class="modal fade bs-example-modal-lg" id="MGAddCommission" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -453,9 +372,9 @@
                     return price;
 
                 price = parseFloat(price);
-                multiplier = parseFloat(multiplier) / 100;
+                multiplier = (100 - parseFloat(multiplier)) / 100
 
-                return (price + price * multiplier).toFixed(2);
+                return (price * multiplier).toFixed(2);
             }
 
             function loadProductPricing(select)

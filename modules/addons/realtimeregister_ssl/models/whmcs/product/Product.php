@@ -4,8 +4,8 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\product;
 
 use MGModule\RealtimeRegisterSsl\mgLibs\models\Orm;
 use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
-use MGModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
 use MGModule\RealtimeRegisterSsl\models\whmcs\customFields\Repository;
+use MGModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
 
 /**
  * Description of product
@@ -186,7 +186,7 @@ class Product extends Orm
      * @return \MGModule\RealtimeRegisterSsl\models\product\Configuration
      * @author Michal Czech <michael@modulesgarden.com>
      */
-    protected function loadConfiguration($params = [])
+    public function loadConfiguration($params = [])
     {
         return new Configuration($this->id, $params);
     }
@@ -224,7 +224,7 @@ class Product extends Orm
     public function configOptionsGroups()
     {
     }
-
+    
     public function getId()
     {
         return $this->id;

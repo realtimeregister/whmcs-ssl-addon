@@ -16,10 +16,6 @@ class Whmcs
 
     public static function getPricingInfo($pid, $commission = 0, $inclconfigops = false, $upgrade = false)
     {
-        if (!$commission) {
-            $commission = 0;
-        }
-
         global $CONFIG;
         global $_LANG;
         global $currency;

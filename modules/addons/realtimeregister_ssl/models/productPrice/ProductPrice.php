@@ -39,6 +39,12 @@ class ProductPrice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
      */
     public $action;
 
+    /**
+     * @Column(varchar=3)
+     * @var string
+     */
+    public $currency;
+
     public function getID()
     {
         return $this->id;
@@ -82,5 +88,16 @@ class ProductPrice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     public function setAction(string $action): void
     {
         $this->action = $action;
+    }
+
+
+    public function getCurrency(): string
+    {
+        return $this->action;
+    }
+
+    public function setCurrency(string $currency): void
+    {
+        $this->currency = $currency;
     }
 }

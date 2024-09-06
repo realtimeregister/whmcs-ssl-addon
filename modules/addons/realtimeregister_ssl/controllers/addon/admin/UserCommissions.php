@@ -2,7 +2,10 @@
 
 namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
 
+use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl as main;
+use MGModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
+use MGModule\RealtimeRegisterSsl\models\userDiscount\Repository;
 
 class UserCommissions extends main\mgLibs\process\AbstractController
 {
@@ -50,10 +53,10 @@ class UserCommissions extends main\mgLibs\process\AbstractController
             $productID = $input['product_id'];
             $commission = $input['commission'];
 
-            $commissionRule = new main\models\userCommission\UserCommission();
+            $commissionRule = new main\models\userDiscount\UserDiscount();
             $commissionRule->setClientID($clientID);
             $commissionRule->setProductID($productID);
-            $commissionRule->setCommission((float)$commission / 100);
+            $commissionRule->setPercentage((int) $commission);
             $commissionRule->save();
         } catch (\Exception $e) {
             return [
@@ -122,8 +125,9 @@ class UserCommissions extends main\mgLibs\process\AbstractController
     {
         try {
             $data['data'] = array();
-            $userCommissionRepo = new \MGModule\RealtimeRegisterSsl\models\userCommission\Repository();
-            foreach ($userCommissionRepo->get() as $rule) {
+            $userDiscountRepo = new Repository();
+
+            foreach ($userDiscountRepo->get() as $rule) {
                 $data['data'][] = $this->formatRow('row', $rule);
             }
         } catch (\Exception $ex) {
@@ -145,14 +149,14 @@ class UserCommissions extends main\mgLibs\process\AbstractController
 
             $ruleID = $input['rule_id'];
 
-            $commissionRule = new main\models\userCommission\UserCommission($ruleID);
+            $commissionRule = new main\models\userDiscount\UserDiscount($ruleID);
             $data = [
                 'client' => $this->getClient($commissionRule->getClientID()),
                 'product' => $this->getProduct($commissionRule->getProductID()),
-                'commission' => (float)$commissionRule->getCommission() * 100,
+                'commission' => $commissionRule->getPercentage(),
                 'pricings' => $this->loadPricing(
                     $commissionRule->getProductID(),
-                    $commissionRule->getCommission(),
+                    $commissionRule->getPercentage(),
                     true
                 )
             ];
@@ -173,17 +177,14 @@ class UserCommissions extends main\mgLibs\process\AbstractController
             }
 
             $productID = $input['product_id'];
-
-            $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
-            $pricings = $productModel->getProductPricing($productID);
-
             $ppricings = [];
+            $pricings = $this->getPricings($productID);
+            
             foreach ($pricings as $price) {
+
                 $ppricings[] = [
-                    'code' => $price->code,
+                    'code' => $price->currency,
                     'monthly' => (!in_array($price->monthly, ['-1.00'])) ? $price->monthly : '-',
-                    'quarterly' => (!in_array($price->quarterly, ['-1.00'])) ? $price->quarterly : '-',
-                    'semiannually' => (!in_array($price->semiannually, ['-1.00'])) ? $price->semiannually : '-',
                     'annually' => (!in_array($price->annually, ['-1.00'])) ? $price->annually : '-',
                     'biennially' => (!in_array($price->biennially, ['-1.00'])) ? $price->biennially : '-',
                     'triennially' => (!in_array($price->triennially, ['-1.00'])) ? $price->triennially : '-',
@@ -249,12 +250,12 @@ class UserCommissions extends main\mgLibs\process\AbstractController
         //get product details
         $product = $this->getProduct($item->getProductID());
         //load product pricing
-        $pricings = $this->loadPricing($item->getProductID(), $item->getCommission());
+        $pricings = $this->loadPricing($item->getProductID(), $item->getPercentage());
 
         $data['client'] = $client;
         $data['rule_id'] = $item->getID();
         $data['product'] = $product;
-        $data['commission'] = (float)$item->getCommission() * 100;
+        $data['commission'] = $item->getPercentage();
         $data['pricings'] = $pricings;
 
         $rows = $this->dataTablesParseRow($template, $data);
@@ -284,23 +285,23 @@ class UserCommissions extends main\mgLibs\process\AbstractController
         ];
     }
 
-    private function loadPricing($productID, $comminssion, $returnNoneIfNotSetOrNull = false)
+    private function loadPricing($productID, $percentage, $returnNoneIfNotSetOrNull = false)
     {
-        $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
-        $pricings = $productModel->getProductPricing($productID);
+        $multiplier = (100 - $percentage) / 100;
+        $pricings = $this->getPricings($productID);
         foreach ($pricings as &$price) {
             $price->commission_monthly = (!in_array($price->monthly, ['-1.00', '0.00']))
-                ? (string)((float)$price->monthly + (float)$price->monthly * (float)$comminssion) : '0.00';
+                ? (string)((float)$price->monthly *  $multiplier): '0.00';
             $price->commission_quarterly = (!in_array($price->quarterly, ['-1.00', '0.00']))
-                ? (string)((float)$price->quarterly + (float)$price->quarterly * (float)$comminssion) : '0.00';
+                ? (string)((float)$price->quarterly + (float)$price->quarterly * (float) $multiplier) : '0.00';
             $price->commission_semiannually = (!in_array($price->semiannually, ['-1.00', '0.00']))
-                ? (string)((float)$price->semiannually + (float)$price->semiannually * (float)$comminssion) : '0.00';
+                ? (string)((float)$price->semiannually + (float)$price->semiannually * (float) $multiplier) : '0.00';
             $price->commission_annually = (!in_array($price->annually, ['-1.00', '0.00']))
-                ? (string)((float)$price->annually + (float)$price->annually * (float)$comminssion) : '0.00';
+                ? (string)((float)$price->annually + (float)$price->annually * (float) $multiplier) : '0.00';
             $price->commission_biennially = (!in_array($price->biennially, ['-1.00', '0.00']))
-                ? (string)((float)$price->biennially + (float)$price->biennially * (float)$comminssion) : '0.00';
+                ? (string)((float)$price->biennially + (float)$price->biennially * (float) $multiplier) : '0.00';
             $price->commission_triennially = (!in_array($price->triennially, ['-1.00', '0.00']))
-                ? (string)((float)$price->triennially + (float)$price->triennially * (float)$comminssion) : '0.00';
+                ? (string)((float)$price->triennially + (float)$price->triennially * (float) $multiplier) : '0.00';
 
             if ($returnNoneIfNotSetOrNull) {
                 $price->monthly = (!in_array($price->monthly, ['-1.00', '0.00'])) ? $price->monthly : '-';
@@ -313,6 +314,24 @@ class UserCommissions extends main\mgLibs\process\AbstractController
             }
         }
 
+        return $pricings;
+    }
+
+    /**
+     * @param $productID
+     * @return \Illuminate\Support\Collection
+     */
+    public function getPricings($productID): \Illuminate\Support\Collection
+    {
+        $optionsGroup = ConfigurableOptionService::getForProductPeriod($productID);
+        $optionsGroupSub = Capsule::table("tblproductconfigoptionssub")
+            ->where("configid", '=', $optionsGroup->id)
+            ->where('optionname', '=', '1 years')
+            ->first();
+
+        $pricings = Capsule::table('tblpricing')
+            ->where("relid", "=", $optionsGroupSub->id)
+            ->get();
         return $pricings;
     }
 }
