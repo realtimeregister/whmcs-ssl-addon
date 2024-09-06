@@ -587,29 +587,32 @@ class Cron extends AbstractController
                         ->get();
                     self::generateNewPrice(array_pop($newPrice), $currentPrices, $multiplier);
                 }
-
             } elseif (str_contains($configOption->optionname, 'sans_count')) {
                 $configOptionSub = $configOptionSubs[0];
                 preg_match_all('/\d+/', $configOption->optionname, $matches);
-                $period = intval($matches[0]) * 12;
+
+                $period = intval($matches[0][0]) * 12;
                 $newPrice = array_filter($apiPrices, function ($price) use ($period) {
                     return $price->period == $period  && $price->action === 'EXTRA_DOMAIN';
                 });
-
-                Capsule::table('tblpricing')
+                $currentPrices =  Capsule::table('tblpricing')
                     ->where('relid', '=', $configOptionSub->id)
-                    ->update(['monthly' => array_pop($newPrice)->price / 100 * $multiplier]);
+                    ->get();
+
+                self::generateNewPrice(array_pop($newPrice), $currentPrices, $multiplier);
             } elseif (str_contains($configOption->optionname, 'sans_wildcard_count')) {
                 $configOptionSub = $configOptionSubs[0];
                 preg_match_all('/\d+/', $configOption->optionname, $matches);
-                $period = intval($matches[0]) * 12;
+
+                $period = intval($matches[0][0]) * 12;
                 $newPrice = array_filter($apiPrices, function ($price) use ($period) {
                     return $price->period == $period  && $price->action === 'EXTRA_WILDCARD';
                 });
-
-                Capsule::table('tblpricing')
+                $currentPrices =  Capsule::table('tblpricing')
                     ->where('relid', '=', $configOptionSub->id)
-                    ->update(['monthly' => array_pop($newPrice)->price / 100 * $multiplier]);
+                    ->get();
+
+                self::generateNewPrice(array_pop($newPrice), $currentPrices, $multiplier);
             }
         }
     }
