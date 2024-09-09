@@ -125,7 +125,7 @@ $_LANG['addonAA']['apiConfiguration']['item']['tech_region']['label']           
 $_LANG['addonAA']['apiConfiguration']['item']['testConnection']['content'] = 'Test Connection';
 $_LANG['addonAA']['apiConfiguration']['item']['saveItem']['label']         = 'Save';
 $_LANG['addonAA']['pagesLabels']['label']['productsConfiguration']         = 'Products Configuration';
-$_LANG['addonAA']['pagesLabels']['label']['productsCreator']               = 'Products Creator';
+$_LANG['addonAA']['pagesLabels']['label']['productsCreator']               = 'Product Creator';
 $_LANG['addonAA']['pagesLabels']['apiConfiguration']['saveItem']           = 'Save';
 
 $_LANG['addonAA']['apiConfiguration']['messages']['api_connection_success'] = 'Connection established.';
@@ -160,7 +160,8 @@ $_LANG['addonAA']['productsConfiguration']['allProducts']         = 'All product
 $_LANG['addonAA']['productsConfiguration']['selectedProducts']    = 'Selected products';
 $_LANG['addonAA']['productsConfiguration']['areYouSureManyProducts'] = 'Are you sure you want to use these settings for multiple products?';
 $_LANG['addonAA']['productsConfiguration']['doNotAnything']       = 'Do not anything';
-$_LANG['addonAA']['productsConfiguration']['enableFor']            = 'Enable for period/currency';
+$_LANG['addonAA']['productsConfiguration']['enableFor']            = 'Enable for billing cycle/currency';
+$_LANG['addonAA']['productsConfiguration']['pricingInclude']       = "Prices include commission";
 
 $_LANG['addonAA']['productsConfiguration']['statusEnable']  = 'Enable';
 $_LANG['addonAA']['productsConfiguration']['statusDisable'] = 'Disable';
@@ -190,7 +191,7 @@ $_LANG['addonAA']['productsConfiguration']['save']         = 'Save';
 $_LANG['addonAA']['productsConfiguration']['messages'][''] = '';
 
 
-$_LANG['addonAA']['productsCreator']['singleProductCreator'] = 'Single Product Creator';
+$_LANG['addonAA']['productsCreator']['singleProductCreator'] = 'Single Product Importer';
 $_LANG['addonAA']['productsCreator']['realtimeRegisterSSLProduct']     = 'RealtimeRegisterSSL Product:';
 $_LANG['addonAA']['productsCreator']['productName']          = 'Product Name:';
 $_LANG['addonAA']['productsCreator']['customguide']          = 'Processing SSL message:';
@@ -219,10 +220,10 @@ $_LANG['addonAA']['productsCreator']['pricingTriennially']  = 'Triennially';
 $_LANG['addonAA']['productsCreator']['pricingSetupFee'] = 'Setup Fee';
 $_LANG['addonAA']['productsCreator']['pricingPrice']    = 'Price';
 $_LANG['addonAA']['productsCreator']['pricingEnable']   = 'Enable';
-$_LANG['addonAA']['productsCreator']['saveSingle']      = 'Create Single Product';
+$_LANG['addonAA']['productsCreator']['saveSingle']      = 'Import Single Product';
 
-$_LANG['addonAA']['productsCreator']['multipleProductCreator'] = 'Multiple Product Creator';
-$_LANG['addonAA']['productsCreator']['saveMultiple']           = 'Create Multiple Products';
+$_LANG['addonAA']['productsCreator']['multipleProductCreator'] = 'Multiple Product Importer';
+$_LANG['addonAA']['productsCreator']['saveMultiple']           = 'Import All Products';
 
 $_LANG['addonAA']['productsCreator']['messages']['mass_product_created']    = 'Products has been added as hidden. Go to "Products Configuration" to unhide it. Before that, verify product configuration and set prices.';
 $_LANG['addonAA']['productsCreator']['messages']['single_product_created']  = 'Product has been added as hidden. Go to "Products Configuration" to unhide it. Before that, verify product configuration.';

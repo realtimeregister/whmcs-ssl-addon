@@ -558,7 +558,7 @@ class Cron extends AbstractController
 
         $commission = (new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($productId))
             ->configuration()
-            ->getConfigOptions()['configoption6'];
+            ->getConfigOptions()[C::COMMISSION];
 
         $multiplier = $commission === '' ? 1 : 1 + $commission;
 

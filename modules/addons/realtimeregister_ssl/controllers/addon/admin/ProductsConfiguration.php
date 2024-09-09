@@ -171,7 +171,7 @@ class ProductsConfiguration extends AbstractController
     }
 
     private function recalculatePrices($product, $commission) {
-        if ($product->configoption6 == $commission) {
+        if ($product->{C::COMMISSION} == $commission) {
             return;
         }
 
