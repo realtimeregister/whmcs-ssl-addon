@@ -3,7 +3,7 @@
 use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl\Addon;
 use MGModule\RealtimeRegisterSsl\eHelpers\Admin;
-use MGModule\RealtimeRegisterSsl\eHelpers\Commission;
+use MGModule\RealtimeRegisterSsl\eHelpers\Discount;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use MGModule\RealtimeRegisterSsl\eHelpers\JsInserter;
 use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
@@ -704,7 +704,7 @@ function realtimeregister_ssl_unableDowngradeConfigOption($vars)
 }
 add_hook('ClientAreaPageUpgrade', 1, 'realtimeregister_ssl_unableDowngradeConfigOption');
 
-function realtimeregister_ssl_overideProductPricingBasedOnCommission($vars)
+function realtimeregister_ssl_overideProductPricingBasedOnDiscount($vars)
 {
     require_once __DIR__ . DS . 'Loader.php';
     new Loader();
@@ -728,14 +728,13 @@ function realtimeregister_ssl_overideProductPricingBasedOnCommission($vars)
         }
 
         if ($product->id == $vars['pid']) {
-            $percentage = MGModule\RealtimeRegisterSsl\eHelpers\Commission::getCommissionValue($vars);
+            $percentage = MGModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue($vars);
             if (!$percentage) {
                 return [];
             }
 
             $configoptions = $vars['proddata']['configoptions'];
             $discount = 0;
-            dump($configoptions);
 
             foreach ($configoptions as $optionId => $value) {
                 $option = ConfigurableOptionService::getConfigOptionById($optionId);
@@ -767,7 +766,7 @@ function realtimeregister_ssl_overideProductPricingBasedOnCommission($vars)
     return [];
 }
 
-add_hook('OrderProductPricingOverride', 1, 'realtimeregister_ssl_overideProductPricingBasedOnCommission');
+add_hook('OrderProductPricingOverride', 1, 'realtimeregister_ssl_overideProductPricingBasedOnDiscount');
 
 function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts($vars)
 {
@@ -788,11 +787,11 @@ function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts($
                             ->where('servertype', 'realtimeregister_ssl')
                             ->first();
 
-                    if (isset($productRealtimeRegisterSsl->id) && !empty($productRealtimeRegisterSsl->id)) {
+                    if (!empty($productRealtimeRegisterSsl->id)) {
                         $pid = $product['pid'];
 
-                        $commission = Commission::getCommissionValue(['pid' => $pid]);
-                        $products[$key]['pricing'] = Whmcs::getPricingInfo($pid, $commission, true);
+                        $discount = Discount::getDiscountValue(['pid' => $pid]);
+                        $products[$key]['pricing'] = Whmcs::getPricingInfo($pid, $discount, true);
                     }
                 }
 
@@ -808,7 +807,7 @@ function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts($
                             ->first();
 
                 if (isset($productRealtimeRegisterSsl->id) && !empty($productRealtimeRegisterSsl->id)) {
-                    $commission = MGModule\RealtimeRegisterSsl\eHelpers\Commission::getCommissionValue(['pid' => $pid]);
+                    $commission = MGModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue(['pid' => $pid]);
                     $pricing = MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::getPricingInfo($pid, $commission);
 
                     $smartyvalues['pricing'] = $pricing;

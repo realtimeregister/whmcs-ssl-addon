@@ -14,7 +14,7 @@ class Whmcs
         }
     }
 
-    public static function getPricingInfo($pid, $commission = 0, $inclconfigops = false, $upgrade = false)
+    public static function getPricingInfo($pid, $discount = 0, $inclconfigops = false, $upgrade = false)
     {
         global $CONFIG;
         global $_LANG;
@@ -34,32 +34,29 @@ class Whmcs
             ["type" => "product", "currency" => $currency["id"], "relid" => $pid]
         );
         $data = mysql_fetch_array($result);
-        $msetupfee = $data["msetupfee"];
-        $qsetupfee = $data["qsetupfee"];
-        $ssetupfee = $data["ssetupfee"];
-        $asetupfee = $data["asetupfee"];
-        $bsetupfee = $data["bsetupfee"];
-        $tsetupfee = $data["tsetupfee"];
-        $monthly = (string)((float)$data["monthly"] + (float)$data["monthly"] * (float)$commission);
-        $quarterly = (string)((float)$data["quarterly"] + (float)$data["quarterly"] * (float)$commission);
-        $semiannually = (string)((float)$data["semiannually"] + (float)$data["semiannually"] * (float)$commission);
-        $annually = (string)((float)$data["annually"] + (float)$data["annually"] * (float)$commission);
-        $biennially = (string)((float)$data["biennially"] + (float)$data["biennially"] * (float)$commission);
-        $triennially = (string)((float)$data["triennially"] + (float)$data["triennially"] * (float)$commission);
+        $multiplier = (100 - $discount) / 100;
+        $msetupfee = 0;
+        $asetupfee = 0;
+        $bsetupfee = 0;
+        $tsetupfee = 0;
+        $monthly = 0;
+        $annually = 0;
+        $biennially = 0;
+        $triennially = 0;
         $configoptions = new \WHMCS\Product\ConfigOptions();
         $freedomainpaymentterms = explode(",", $freedomainpaymentterms);
         $monthlypricingbreakdown = $CONFIG["ProductMonthlyPricingBreakdown"];
         $minprice = 0;
         $setupFee = 0;
         $mincycle = "";
-        $hasconfigoptions = false;
         if ($paytype == "free") {
             $pricing["type"] = $mincycle = "free";
         } else {
             if ($paytype == "onetime") {
+                dump($multiplier);
                 if ($inclconfigops) {
-                    $msetupfee += $configoptions->getBasePrice($pid, "msetupfee");
-                    $monthly += $configoptions->getBasePrice($pid, "monthly");
+                    $msetupfee += $configoptions->getBasePrice($pid, "msetupfee") * $multiplier;
+                    $monthly += $configoptions->getBasePrice($pid, "monthly") * $multiplier;
                 }
 
                 $minprice = $monthly;
@@ -79,8 +76,8 @@ class Whmcs
                     $pricing["type"] = "recurring";
                     if (0 <= $monthly) {
                         if ($inclconfigops) {
-                            $msetupfee += $configoptions->getBasePrice($pid, "msetupfee");
-                            $monthly += $configoptions->getBasePrice($pid, "monthly");
+                            $msetupfee += $configoptions->getBasePrice($pid, "msetupfee") * $multiplier;
+                            $monthly += $configoptions->getBasePrice($pid, "monthly") * $multiplier;
                         }
 
                         if (!$mincycle) {
@@ -112,78 +109,10 @@ class Whmcs
                         }
                     }
 
-                    if (0 <= $quarterly) {
-                        if ($inclconfigops) {
-                            $qsetupfee += $configoptions->getBasePrice($pid, "qsetupfee");
-                            $quarterly += $configoptions->getBasePrice($pid, "quarterly");
-                        }
-
-                        if (!$mincycle) {
-                            $minprice = ($monthlypricingbreakdown ? $quarterly / 3 : $quarterly);
-                            $setupFee = $qsetupfee;
-                            $mincycle = "quarterly";
-                            $minMonths = 3;
-                        }
-
-                        if ($monthlypricingbreakdown) {
-                            $pricing["quarterly"] = $_LANG["orderpaymentterm3month"] . " - " . new Price(
-                                    $quarterly / 3, $currency
-                                );
-                        } else {
-                            $pricing["quarterly"] = new Price(
-                                    $quarterly, $currency
-                                ) . " " . $_LANG["orderpaymenttermquarterly"];
-                        }
-
-                        if ($qsetupfee != "0.00") {
-                            $pricing["quarterly"] .= " + " . new Price(
-                                    $qsetupfee, $currency
-                                ) . " " . $_LANG["ordersetupfee"];
-                        }
-
-                        if (in_array("quarterly", $freedomainpaymentterms) && $freedomain && !$upgrade) {
-                            $pricing["quarterly"] .= " (" . $_LANG["orderfreedomainonly"] . ")";
-                        }
-                    }
-
-                    if (0 <= $semiannually) {
-                        if ($inclconfigops) {
-                            $ssetupfee += $configoptions->getBasePrice($pid, "ssetupfee");
-                            $semiannually += $configoptions->getBasePrice($pid, "semiannually");
-                        }
-
-                        if (!$mincycle) {
-                            $minprice = ($monthlypricingbreakdown ? $semiannually / 6 : $semiannually);
-                            $setupFee = $ssetupfee;
-                            $mincycle = "semiannually";
-                            $minMonths = 6;
-                        }
-
-                        if ($monthlypricingbreakdown) {
-                            $pricing["semiannually"] = $_LANG["orderpaymentterm6month"] . " - " . new Price(
-                                    $semiannually / 6, $currency
-                                );
-                        } else {
-                            $pricing["semiannually"] = new Price(
-                                    $semiannually, $currency
-                                ) . " " . $_LANG["orderpaymenttermsemiannually"];
-                        }
-
-                        if ($ssetupfee != "0.00") {
-                            $pricing["semiannually"] .= " + " . new Price(
-                                    $ssetupfee, $currency
-                                ) . " " . $_LANG["ordersetupfee"];
-                        }
-
-                        if (in_array("semiannually", $freedomainpaymentterms) && $freedomain && !$upgrade) {
-                            $pricing["semiannually"] .= " (" . $_LANG["orderfreedomainonly"] . ")";
-                        }
-                    }
-
                     if (0 <= $annually) {
                         if ($inclconfigops) {
-                            $asetupfee += $configoptions->getBasePrice($pid, "asetupfee");
-                            $annually += $configoptions->getBasePrice($pid, "annually");
+                            $asetupfee += $configoptions->getBasePrice($pid, "asetupfee") * $multiplier;
+                            $annually += $configoptions->getBasePrice($pid, "annually") * $multiplier;
                         }
 
                         if (!$mincycle) {
@@ -216,8 +145,8 @@ class Whmcs
 
                     if (0 <= $biennially) {
                         if ($inclconfigops) {
-                            $bsetupfee += $configoptions->getBasePrice($pid, "bsetupfee");
-                            $biennially += $configoptions->getBasePrice($pid, "biennially");
+                            $bsetupfee += $configoptions->getBasePrice($pid, "bsetupfee") * $multiplier;
+                            $biennially += $configoptions->getBasePrice($pid, "biennially") * $multiplier;
                         }
 
                         if (!$mincycle) {
@@ -250,8 +179,8 @@ class Whmcs
 
                     if (0 <= $triennially) {
                         if ($inclconfigops) {
-                            $tsetupfee += $configoptions->getBasePrice($pid, "tsetupfee");
-                            $triennially += $configoptions->getBasePrice($pid, "triennially");
+                            $tsetupfee += $configoptions->getBasePrice($pid, "tsetupfee") * $multiplier;
+                            $triennially += $configoptions->getBasePrice($pid, "triennially") * $multiplier;
                         }
 
                         if (!$mincycle) {
@@ -294,14 +223,6 @@ class Whmcs
             $pricing["cycles"]["monthly"] = $pricing["monthly"];
         }
 
-        if (isset($pricing["quarterly"])) {
-            $pricing["cycles"]["quarterly"] = $pricing["quarterly"];
-        }
-
-        if (isset($pricing["semiannually"])) {
-            $pricing["cycles"]["semiannually"] = $pricing["semiannually"];
-        }
-
         if (isset($pricing["annually"])) {
             $pricing["cycles"]["annually"] = $pricing["annually"];
         }
@@ -316,14 +237,10 @@ class Whmcs
 
         $pricing["rawpricing"] = [
             "msetupfee" => format_as_currency($msetupfee),
-            "qsetupfee" => format_as_currency($qsetupfee),
-            "ssetupfee" => format_as_currency($ssetupfee),
             "asetupfee" => format_as_currency($asetupfee),
             "bsetupfee" => format_as_currency($bsetupfee),
             "tsetupfee" => format_as_currency($tsetupfee),
             "monthly" => format_as_currency($monthly),
-            "quarterly" => format_as_currency($quarterly),
-            "semiannually" => format_as_currency($semiannually),
             "annually" => format_as_currency($annually),
             "biennially" => format_as_currency($biennially),
             "triennially" => format_as_currency($triennially)
@@ -336,14 +253,6 @@ class Whmcs
         ];
         if (isset($minMonths)) {
             switch ($minMonths) {
-                case 3:
-                    $langVar = "shoppingCartProductPerMonth";
-                    $count = "3 ";
-                    break;
-                case 6:
-                    $langVar = "shoppingCartProductPerMonth";
-                    $count = "6 ";
-                    break;
                 case 12:
                     $langVar =
                         ($monthlypricingbreakdown ? "shoppingCartProductPerMonth" : "shoppingCartProductPerYear");

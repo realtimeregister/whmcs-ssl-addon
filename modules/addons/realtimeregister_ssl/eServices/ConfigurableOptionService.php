@@ -295,22 +295,25 @@ class ConfigurableOptionService
                 ->get();
 
             foreach ($configOptionSubs as $configOptionSub) {
-                $pricing = Capsule::table('tblpricing')
+                $pricings = Capsule::table('tblpricing')
                     ->where('relid', '=', $configOptionSub->id)
-                    ->first();
+                    ->get()
+                    ->toArray();
 
-                Capsule::table('tblpricing')
-                    ->where('relid', '=', $configOptionSub->id)
-                    ->update([
-                        "msetupfee" => self::updatePrice($pricing->msetupfee, $product, $commission),
-                        "asetupfee" => self::updatePrice($pricing->asetupfee, $product, $commission),
-                        "bsetupfee" => self::updatePrice($pricing->bsetupfee, $product, $commission),
-                        "tsetupfee" => self::updatePrice($pricing->tsetupfee, $product, $commission),
-                        "monthly" => self::updatePrice($pricing->monthly, $product, $commission),
-                        "annually" => self::updatePrice($pricing->annually, $product, $commission),
-                        "biennially" => self::updatePrice($pricing->biennially, $product, $commission),
-                        "triennially" => self::updatePrice($pricing->triennially, $product, $commission),
-                    ]);
+                foreach ($pricings as $pricing) {
+                    Capsule::table('tblpricing')
+                        ->where('id', '=', $pricing->id)
+                        ->update([
+                            "msetupfee" => self::updatePrice($pricing->msetupfee, $product, $commission),
+                            "asetupfee" => self::updatePrice($pricing->asetupfee, $product, $commission),
+                            "bsetupfee" => self::updatePrice($pricing->bsetupfee, $product, $commission),
+                            "tsetupfee" => self::updatePrice($pricing->tsetupfee, $product, $commission),
+                            "monthly" => self::updatePrice($pricing->monthly, $product, $commission),
+                            "annually" => self::updatePrice($pricing->annually, $product, $commission),
+                            "biennially" => self::updatePrice($pricing->biennially, $product, $commission),
+                            "triennially" => self::updatePrice($pricing->triennially, $product, $commission),
+                        ]);
+                }
             }
         }
     }

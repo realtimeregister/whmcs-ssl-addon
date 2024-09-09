@@ -2,10 +2,12 @@
 
 namespace MGModule\RealtimeRegisterSsl\eHelpers;
 
-class Commission
+use MGModule\RealtimeRegisterSsl\models\userDiscount\Repository;
+
+class Discount
 {
 
-    public static function getCommissionValue($vars)
+    public static function getDiscountValue($vars)
     {
         $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
         
@@ -23,7 +25,7 @@ class Commission
             {
                 if ($client != NULL)
                 {
-                    $commissionRepo = new \MGModule\RealtimeRegisterSsl\models\userDiscount\Repository();
+                    $commissionRepo = new Repository();
                     $rules = $commissionRepo->onlyClientID($client)
                         ->onlyProductID($product->id)
                         ->get();
@@ -31,12 +33,12 @@ class Commission
 
                     if (!empty($rules))
                     {
-                        $commission = $rules[0]->getPercentage();
+                        return $rules[0]->getPercentage();
                     }
                 }
             }
         }
 
-        return $commission;
+        return 0;
     }
 }

@@ -84,7 +84,7 @@ class Configuration extends AbstractConfiguration
             'apiConfiguration' => ['icon' => 'fa fa-key'],
             'productsCreator' => ['icon' => 'fa fa-magic'],
             'productsConfiguration' => ['icon' => 'fa fa-edit'],
-            'userCommissions' => ['icon' => 'fa fa-user-plus'],
+            'userDiscounts' => ['icon' => 'fa fa-user-plus'],
             'orders' => ['icon' => 'fa fa-shopping-cart'],
             'logs' => ['icon' => 'fa fa-list']
         ];

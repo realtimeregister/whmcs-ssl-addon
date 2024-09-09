@@ -88,7 +88,7 @@ if ($get=="name") {
         require_once ROOTDIR.'/modules/addons/realtimeregister_ssl/Loader.php';
         new \MGModule\RealtimeRegisterSsl\Loader();
         MGModule\RealtimeRegisterSsl\Addon::I(true);
-        $commission = MGModule\RealtimeRegisterSsl\eHelpers\Commission::getCommissionValue(['pid' => $pid]);
+        $commission = MGModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue(['pid' => $pid]);
         $price = MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::getPricingInfo($pid, $commission);
 
         if(!$billingCycle || !isset($price['cycles'][$billingCycle]))
