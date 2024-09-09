@@ -1027,19 +1027,6 @@ add_hook('ClientAreaFooterOutput', 1, function($vars) {
     return $script;
 });
 
-add_hook('ClientAreaFooterOutput', 2, function($vars) {
-    $script = '';
-
-    if(is_array($vars['configurableoptions'])) {
-        if ($vars['templatefile'] === "configureproduct") {
-            $script = JSInserter::generateScript(
-                'modules/addons/realtimeregister_ssl/js/dist/discount.js', []
-            );
-        }
-    }
-    return $script;
-});
-
 add_hook('AdminAreaFooterOutput', 1, function($vars)
 {
     if ($vars['filename'] == 'clientsservices' && $_GET['userid'] && $_GET['id']) {
