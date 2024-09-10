@@ -49,6 +49,8 @@ class Configuration
             }
         }
 
+        $i = 1;
+
         if (is_array(self::$_configurationArray) && !empty(self::$_configurationArray)) {
             foreach (self::$_configurationArray as $name) {
                 $this->_configuration[$name] = $params['configoption' . $i];

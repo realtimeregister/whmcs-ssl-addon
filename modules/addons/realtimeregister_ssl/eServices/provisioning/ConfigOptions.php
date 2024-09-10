@@ -70,11 +70,11 @@ class ConfigOptions
             'Included Wildcard SANs' => [
                 'Type' => 'text'
             ],
-            '0' => [
+            'z' => [
                 'Type' => 'text',
                 'Description' => self::buildConfigOptionsScript($product)
             ],
-            '1' => [
+            'x' => [
                 'Type' => 'text',
             ],
         ];

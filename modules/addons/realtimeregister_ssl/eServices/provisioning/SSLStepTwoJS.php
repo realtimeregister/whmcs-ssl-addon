@@ -127,7 +127,7 @@ class SSLStepTwoJS
              $this->csrDecode = $_SESSION['csrDecode'];
              unset($_SESSION['csrDecode']);
         }
-        
+
         $decodedCSR = $this->csrDecode;
         
         Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->update([
@@ -169,19 +169,19 @@ class SSLStepTwoJS
             $mainDomain = $decodedCSR['csrResult']['dnsName(s)'][0];
         }
 
-        $domains = $mainDomain . PHP_EOL . $_POST['fields']['sans_domains'];
+        $domains = $mainDomain
+            . PHP_EOL
+            . $_POST['fields']['sans_domains']
+            . PHP_EOL
+            . $_POST['fields']['wildcard_san'];
         
         $sansDomains = SansDomains::parseDomains(strtolower($domains));
-        $wildcardDomains = SansDomains::parseDomains(strtolower($_POST['fields']['wildcard_san']));
-        
         if (isset($_SESSION['approveremails']) && !empty($_SESSION['approveremails'])) {
             $this->domainsEmailApprovals = $_SESSION['approveremails'];
             unset($_SESSION['approveremails']);
         } else {
             $this->fetchApprovalEmailsForSansDomains($sansDomains);
         }
-
-        $this->fetchApprovalEmailsForSansDomains($wildcardDomains);
 
         if (isset($_POST['privateKey']) && $_POST['privateKey'] != null) {
             $privKey = decrypt($_POST['privateKey']);
@@ -193,13 +193,13 @@ class SSLStepTwoJS
     public function fetchApprovalEmailsForSansDomains($sansDomains): array
     {
         foreach ($sansDomains as $sansDomain) {
+            $queryDomain = str_starts_with($sansDomain, '*.') ? substr($sansDomain, 2) : $sansDomain;
             $this->domainsEmailApprovals[$sansDomain] = [];
             try {
                 /** @var CertificatesApi $certificatesApi */
                 $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-                $apiDomainEmails = $certificatesApi->listDcvEmailAddresses($sansDomain);
+                $apiDomainEmails = $certificatesApi->listDcvEmailAddresses($queryDomain);
             } catch (Exception $e) {
-                continue;
             }
             $this->domainsEmailApprovals[$sansDomain] = $apiDomainEmails;
         }

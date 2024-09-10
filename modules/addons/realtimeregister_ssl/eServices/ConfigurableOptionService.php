@@ -162,7 +162,7 @@ class ConfigurableOptionService
 
         self::insertOptions($apiProductId, $apiProduct, [
             "optionGroupId" => $optionGroupId,
-            "optionName" => provisioning\ConfigOptions::OPTION_SANS_COUNT . "|Additional Single domain SANs",
+            "optionName" => provisioning\ConfigOptions::OPTION_SANS_COUNT . "%s|Additional Single domain SANs (%s)",
             "action" => "EXTRA_DOMAIN",
             "maximum" => $apiProduct->getMaxDomains() - $apiProduct->getIncludedDomains()
         ]);
@@ -178,7 +178,8 @@ class ConfigurableOptionService
 
         self::insertOptions($apiProductId, $apiProduct, [
             "optionGroupId" => $optionGroupId,
-            "optionName" => provisioning\ConfigOptions::OPTION_SANS_WILDCARD_COUNT . "|Additional Wildcard domain SANs",
+            "optionName" => provisioning\ConfigOptions::OPTION_SANS_WILDCARD_COUNT
+                . "%s|Additional Wildcard domain SANs(%s)",
             "action" => "EXTRA_WILDCARD",
             "maximum" => $apiProduct->getMaxDomains() - $apiProduct->getIncludedDomains()
         ]);
@@ -334,6 +335,7 @@ class ConfigurableOptionService
         self::loadPrices($priceRepo, $apiProductId);
 
         foreach($periods as $i => $period) {
+            $years = $period / 12;
             $price = $priceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($apiProductId))
                     ->onlyPeriod($period)
                     ->onlyAction($options['action'])
@@ -341,7 +343,7 @@ class ConfigurableOptionService
                     ->price / 100;
             $option = [
                 'gid' => $options['optionGroupId'],
-                'optionname' => $options['optionName'] .  " (" . $period / 12 . ' years)',
+                'optionname' => sprintf($options['optionName'], $years, $years . ' years'),
                 'optiontype' => 4,
                 'qtyminimum' => 0,
                 'qtymaximum' => $options['maximum'],

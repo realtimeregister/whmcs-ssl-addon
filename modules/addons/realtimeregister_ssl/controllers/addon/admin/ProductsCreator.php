@@ -177,8 +177,7 @@ class ProductsCreator extends AbstractController
             $input[C::PRODUCT_ENABLE_SAN] = $apiProduct->isSanEnabled() ? 'on' : '';
             $input[C::PRODUCT_INCLUDED_SANS] = $apiProduct->isSanEnabled() ? $apiProduct->includedDomains : '';
             $input[C::PRODUCT_ENABLE_SAN_WILDCARD] = $apiProduct->isSanWildcardEnabled() ? 'on' : '';
-            $input[C::PRODUCT_INCLUDED_SANS_WILDCARD]
-                = $apiProduct->isSanWildcardEnabled() ? $apiProduct->includedDomains : '';
+            $input[C::PRODUCT_INCLUDED_SANS_WILDCARD] = $apiProduct->isSanWildcardEnabled() ? 0 : '';
             $input['paytype'] = 'onetime';
             $input['currency'] = $dummyCurrencies;
             $input['autosetup'] = ($apiProduct->getPayType() == 'free') ? 'order' : 'payment';
