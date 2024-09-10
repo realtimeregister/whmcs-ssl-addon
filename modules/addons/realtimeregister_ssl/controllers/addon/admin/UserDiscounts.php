@@ -154,11 +154,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
                 'client' => $this->getClient($discountRule->getClientID()),
                 'product' => $this->getProduct($discountRule->getProductID()),
                 'discount' => $discountRule->getPercentage(),
-                'pricings' => $this->loadPricing(
-                    $discountRule->getProductID(),
-                    $discountRule->getPercentage(),
-                    true
-                )
+                'pricings' => $this->loadPricing($discountRule->getProductID(), $discountRule->getPercentage())
             ];
         } catch (\Exception $ex) {
             return [
@@ -285,7 +281,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
         ];
     }
 
-    private function loadPricing($productID, $percentage, $returnNoneIfNotSetOrNull = false)
+    private function loadPricing($productID, $percentage)
     {
         $multiplier = (100 - $percentage) / 100;
         $pricings = $this->getPricings($productID);
@@ -298,13 +294,6 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
                 ->where("id", '=', $price->currency)
                 ->first()
                 ->code;
-
-            if ($returnNoneIfNotSetOrNull) {
-                $price->monthly = self::getPrice($price->monthly);
-                $price->annually = self::getPrice($price->annually);
-                $price->biennially = self::getPrice($price->biennially);
-                $price->triennially = self::getPrice($price->triennially);
-            }
         }
 
         return $pricings;
