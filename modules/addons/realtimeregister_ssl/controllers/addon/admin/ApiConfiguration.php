@@ -9,7 +9,6 @@ use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\ButtonField;
 use MGModule\RealtimeRegisterSsl\mgLibs\forms\CheckboxField;
 use MGModule\RealtimeRegisterSsl\mgLibs\forms\Creator;
 use MGModule\RealtimeRegisterSsl\mgLibs\forms\LegendField;
@@ -83,36 +82,6 @@ class ApiConfiguration extends AbstractController
 
         $vars['whmcsCurrency'] = $whmcsDefaultCurrency;
         $vars['realtimeregistersslCurrency'] = $realtimeRegisterSslCurrency;
-
-        $field = new LegendField();
-        $field->name = 'price_rate';
-        $form->addField($field);
-
-        $field = new TextField();
-        $field->readonly = false;
-        $field->name = 'rate';
-        $field->required = false;
-        $field->enableDescription = true;
-        $field->value = $input['rate'];
-        $field->error = $this->getFieldError('rate');
-        $form->addField($field);
-
-        $field = new LegendField();
-        $field->name = 'data_migration_legend';
-        $form->addField($field);
-
-        $field = new main\mgLibs\forms\InfoField();
-        $field->values = [
-            (count($oldModuleProducts) || count($oldModuleServices)) ? Lang::T('migrationOldModuleDataExixts') : '',
-            (count($oldModuleProducts)) ? Lang::T('migrationProductIDs') . implode(', ', $oldModuleProducts) : '',
-            (count($oldModuleServices)) ? Lang::T('migrationServiceIDs') . implode(', ', $oldModuleServices) : '',
-            Lang::T('migrationPerformMigration')
-        ];
-        $field->h = 'h5';
-        $form->addField($field);
-
-        $field = new ButtonField();
-        $field->name = 'data_migration';
 
         $form->addField($field);
 
