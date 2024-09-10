@@ -117,9 +117,6 @@ class SSLStepThree
         $order['product'] = $apiProduct->product;
         $order['period'] = intval($this->p['configoptions']['years'][0]) * 12;
 
-        if ($order['period'] === 0) {
-            $order['period'] = $this->p[ConfigOptions::API_PRODUCT_MONTHS];
-        }
         $order['csr'] = str_replace('\n', "\n", $this->p['csr']); // Fix for RT-14675
         /** @var Product $productDetails */
         $productDetails = ApiProvider::getInstance()->getApi(CertificatesApi::class)

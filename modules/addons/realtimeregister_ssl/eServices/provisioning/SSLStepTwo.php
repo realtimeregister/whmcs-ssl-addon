@@ -2,8 +2,8 @@
 
 namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use Illuminate\Database\Capsule\Manager as Capsule;
 use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl\eHelpers\Domains;
 use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -97,7 +97,11 @@ class SSLStepTwo
             $mainDomain = $decodedCSR['altNames'][0];
         }
 
-        $domains = $mainDomain . PHP_EOL . $_POST['fields']['sans_domains']; // . implode(PHP_EOL, $decodedCSR['altNames'] ?: [], );
+        $domains = $mainDomain
+            . PHP_EOL
+            . $_POST['fields']['sans_domains']
+            . PHP_EOL
+            . $_POST['fields']['wildcard_san'];
         $sansDomains = SansDomains::parseDomains(strtolower($domains));
         $approveremails = $step2js->fetchApprovalEmailsForSansDomains($sansDomains);
 
@@ -162,8 +166,9 @@ class SSLStepTwo
             }
         }
 
+        $period = intval($this->p['configoptions']['years'][0]);
         $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
-        $boughtSans = (int)$this->p['configoptions']['sans_wildcard_count'];
+        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period];
 
         $sansLimit = $includedSans + $boughtSans;
         if (count($sansDomainsWildcard) > $sansLimit) {
@@ -205,7 +210,8 @@ class SSLStepTwo
             }
         }
 
-        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
+        $period = intval($this->p['configoptions']['years'][0]);
+        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period];
         $sansLimit = $includedSans + $boughtSans;
 
         if (count($uniqueDomains) > $sansLimit) {
@@ -233,7 +239,10 @@ class SSLStepTwo
         }
 
         if (!$productssl) {
-            $productssl = ApiProvider::getInstance()->getApi(false)->getProduct($this->p['configoption1']);
+            $productssl = ApiProvider::getInstance()
+                ->getApi(CertificatesApi::class)
+                ->getProduct($this->p['configoption1'])
+                ->toArray();
         }
 
         if ($productssl['product']['wildcard_enabled']) {

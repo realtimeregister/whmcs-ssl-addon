@@ -107,6 +107,9 @@
 
         $('#containerApprovalMethodEmail').parent('div').prev('label').prev('h2').hide();
         $('#containerApprovalMethodEmail').parent('div').prev('label').hide();
+        $('#containerApprovalMethodEmail').parent('div').prev('label').prev('label').prev('h2').hide();
+        $('#containerApprovalMethodEmail').parent('div').prev('label').prev('label').hide();
+
         $('#containerApprovalMethodEmail p').next('div').removeClass('col-sm-offset-1');
         $('#containerApprovalMethodEmail p').next('div').removeClass('col-sm-10');
         $('#containerApprovalMethodEmail p').prev('div.alert').hide();

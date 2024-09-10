@@ -42,7 +42,7 @@ class ProductsCreator extends AbstractController
             }
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($input['createSingle'])) {
-                $this->saveProduct($input);
+                $this->saveProducts($vars['currencies'], $input);
                 $vars['success'] = Lang::T('messages', 'single_product_created');
             }
         } catch (Exception $e) {
@@ -131,19 +131,23 @@ class ProductsCreator extends AbstractController
      */
     public function saveProducts($currencies, $post)
     {
-        $apiProducts = $this->apiProductsRepo->getAllProducts();
+        if ($post[C::API_PRODUCT_ID]) {
+            $apiProducts = [$this->apiProductsRepo->getProduct(KeyToIdMapping::getIdByKey($post[C::API_PRODUCT_ID]))];
+        } else {
+            $apiProducts = $this->apiProductsRepo->getAllProducts();
+        }
         $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
         $moduleProducts = $productModel->getModuleProducts('realtimeregister_ssl', $post['gid']);
-        foreach ($moduleProducts as $key => $value) {
-            $moduleProductId = $value->configoption1;
+        foreach ($moduleProducts as $moduleProduct) {
+            $moduleProductId = KeyToIdMapping::getIdByKey($moduleProduct->configoption1);
             foreach ($apiProducts as $key => $value) {
-                if ($moduleProductId == $value->id) {
+                if ($moduleProductId == $value->pid) {
                     unset($apiProducts[$key]);
                     break;
                 }
             }
         }
-
+        
         $dummyCurrencies = [];
         foreach ($currencies as $currency) {
             $temp = [];
@@ -171,9 +175,9 @@ class ProductsCreator extends AbstractController
             $input[C::API_PRODUCT_ID] = $apiProduct->product;
             $input[C::API_PRODUCT_MONTHS] = $apiProduct->getMaxPeriod();
             $input[C::PRODUCT_ENABLE_SAN] = $apiProduct->isSanEnabled() ? 'on' : '';
+            $input[C::PRODUCT_INCLUDED_SANS] = $apiProduct->isSanEnabled() ? $apiProduct->includedDomains : '';
             $input[C::PRODUCT_ENABLE_SAN_WILDCARD] = $apiProduct->isSanWildcardEnabled() ? 'on' : '';
-            $input[C::PRODUCT_INCLUDED_SANS_WILDCARD] = $apiProduct->includedDomains;
-            $input[C::PRODUCT_INCLUDED_SANS] = $apiProduct->includedDomains;
+            $input[C::PRODUCT_INCLUDED_SANS_WILDCARD] = $apiProduct->isSanWildcardEnabled() ? 0 : '';
             $input['paytype'] = 'onetime';
             $input['currency'] = $dummyCurrencies;
             $input['autosetup'] = ($apiProduct->getPayType() == 'free') ? 'order' : 'payment';

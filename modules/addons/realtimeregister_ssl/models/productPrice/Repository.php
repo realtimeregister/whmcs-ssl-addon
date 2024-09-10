@@ -63,6 +63,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
                 $table->string('price');
                 $table->string('period');
                 $table->string("action");
+                $table->string("currency");
             });
         }
     }
@@ -76,6 +77,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
                 $table->string('price');
                 $table->string('period');
                 $table->string("action");
+                $table->string("currency");
             });
         }
     }

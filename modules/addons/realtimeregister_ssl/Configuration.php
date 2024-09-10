@@ -2,15 +2,15 @@
 
 namespace MGModule\RealtimeRegisterSsl;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractConfiguration;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
-use MGModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPriceRepo;
-use MGModule\RealtimeRegisterSsl\models\userCommission\Repository as UserCommissionRepo;
-use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
-use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use MGModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractConfiguration;
+use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
+use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
+use MGModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPriceRepo;
+use MGModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
 
 /**
  * Module Configuration
@@ -84,7 +84,7 @@ class Configuration extends AbstractConfiguration
             'apiConfiguration' => ['icon' => 'fa fa-key'],
             'productsCreator' => ['icon' => 'fa fa-magic'],
             'productsConfiguration' => ['icon' => 'fa fa-edit'],
-            'userCommissions' => ['icon' => 'fa fa-user-plus'],
+            'userDiscounts' => ['icon' => 'fa fa-user-plus'],
             'orders' => ['icon' => 'fa fa-shopping-cart'],
             'logs' => ['icon' => 'fa fa-list']
         ];
@@ -146,7 +146,7 @@ class Configuration extends AbstractConfiguration
     {
         (new APIConfigurationRepo())->createApiConfigurationTable();
         (new ProductPriceRepo())->createApiProductsPricesTable();
-        (new UserCommissionRepo())->createUserCommissionTable();
+        (new UserDiscountRepo())->createUserDiscountTable();
         (new LogsRepo())->createLogsTable();
         (new OrdersRepo())->createOrdersTable();
         (new KeyToIdMapping())->createTable();
@@ -167,7 +167,7 @@ class Configuration extends AbstractConfiguration
     {
         (new APIConfigurationRepo())->dropApiConfigurationTable();
         (new ProductPriceRepo())->dropApiProductsPricesTable();
-        (new UserCommissionRepo())->dropUserCommissionTable();
+        (new UserDiscountRepo())->dropUserDiscountTable();
         (new LogsRepo())->dropLogsTable();
         (new OrdersRepo())->dropOrdersTable();
         (new KeyToIdMapping())->dropTable();
@@ -191,7 +191,7 @@ class Configuration extends AbstractConfiguration
         InvoiceHelper::createPendingPaymentInvoice();
         (new APIConfigurationRepo())->updateApiConfigurationTable();
         (new ProductPriceRepo())->updateApiProductsPricesTable();
-        (new UserCommissionRepo())->updateUserCommissionTable();
+        (new UserDiscountRepo())->updateUserDiscountTable();
         (new LogsRepo())->updateLogsTable();
         (new OrdersRepo())->updateOrdersTable();
     }

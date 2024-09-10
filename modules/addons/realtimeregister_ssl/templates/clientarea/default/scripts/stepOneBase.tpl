@@ -21,18 +21,18 @@
 
             if(!$('.primary-content .card-body .alert-danger').length) {
 
-                let contentPage = $('#inputCsr').parent('div.form-group');
+                const contentPage = $('#inputCsr').parent('div.form-group');
 
                 $(contentPage).hide();
                 $(contentPage).parent('div').next("div").hide();
-                $(contentPage).parent("div").append('<div class="card-body select-cpanel-server">' +
+                $('.alert-info').after('<div class="card-body select-cpanel-server">' +
                     '<h2>{$MGLANG->T('Choose a domain')}</h2>' +
                     '<select id="step-type-data">' +
                     '<option value="custom">{$MGLANG->T('Custom domain')}</option>' +
                     '<optgroup label="Server">' +
                     '</optgroup>' +
                     '</select>' +
-                    '<div style="margin-top: 20px;" class="form-group"><button id="goto_next_step" class="btn btn-primary" type="button">{$MGLANG->T('Go to next step')}</button></div>' +
+                    '<div style="margin-top: 20px;" class="form-group"><button id="goto_next_step" class="btn btn-primary" type="button">{$MGLANG->T('Next')}</button></div>' +
                     '</div>');
 
                 {foreach $domains as $domain}

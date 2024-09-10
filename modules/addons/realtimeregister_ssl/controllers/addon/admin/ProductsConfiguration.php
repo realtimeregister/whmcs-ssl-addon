@@ -68,8 +68,8 @@ class ProductsConfiguration extends AbstractController
                 $apiConfig->isSanEnabled = $apiProduct->isSanEnabled();
                 $apiConfig->isWildcardSanEnabled = $apiProduct->isSanWildcardEnabled();
                 $products[$key]->apiConfig = $apiConfig;
-                $products[$key]->confOption = ConfigurableOptionService::getForProduct($product->id);
-                $products[$key]->confOptionWildcard = ConfigurableOptionService::getForProductWildcard($product->id);
+                $products[$key]->confOption = ConfigurableOptionService::getForProduct($product->id)->toArray();
+                $products[$key]->confOptionWildcard = ConfigurableOptionService::getForProductWildcard($product->id)->toArray();
                 $products[$key]->confOptionPeriod = ConfigurableOptionService::getForProductPeriod($product->id);
             }
 
@@ -111,7 +111,8 @@ class ProductsConfiguration extends AbstractController
                     $productModel->updateProductParam($product->id, 'autosetup', $input['autosetup']);
                 }
                 if (isset($input[C::COMMISSION]) && !empty($input[C::COMMISSION])) {
-                    $productModel->updateProductParam($product->id, C::COMMISSION, ($input[C::COMMISSION] / 100));
+                    $commission = ($input[C::COMMISSION] / 100);
+                    $productModel->updateProductParam($product->id, C::COMMISSION, $commission);
                 }
                 if (isset($input['hidden']) && $input['hidden'] == '1') {
                     $productModel->updateProductParam($product->id, 'hidden', '0');
@@ -149,7 +150,12 @@ class ProductsConfiguration extends AbstractController
         }
 
         foreach ($input['product'] as $key => $value) {
+            $product = $productModel->getById($key);
             $productModel->updateProductDetails($key, $value);
+            $this->recalculatePrices(
+                $product,
+                $value[C::COMMISSION] ? $value[C::COMMISSION] / 100 : 0
+            );
         }
 
         foreach ($input['currency'] as $key => $value) {
@@ -162,6 +168,14 @@ class ProductsConfiguration extends AbstractController
         }
 
         return true;
+    }
+
+    private function recalculatePrices($product, $commission) {
+        if ($product->{C::COMMISSION} == $commission) {
+            return;
+        }
+
+        ConfigurableOptionService::generateNewPricesBasedOnCommission($commission, $product);
     }
 
     public function enableProductJSON($input, $vars = [])

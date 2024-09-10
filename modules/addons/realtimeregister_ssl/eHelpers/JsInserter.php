@@ -13,7 +13,7 @@ class JSInserter
     const INPUT_CONFIG_OPTION_PREFIX = 'inputConfigOption';
     const YEARS_CONFIG_OPTION_PREFIX = 'Years';
     const ADDITIONAL_DOMAIN_CONFIG_OPTION_PREFIX = "Additional Single domain SANs";
-    const WILDCARD_DOMAIN_CONFIG_OPTION_PREFIX = 'Wildcard Domain';
+    const WILDCARD_DOMAIN_CONFIG_OPTION_PREFIX = 'Additional Wildcard domain';
 
 
     /**

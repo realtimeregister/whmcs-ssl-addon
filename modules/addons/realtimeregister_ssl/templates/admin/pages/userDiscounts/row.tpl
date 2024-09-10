@@ -7,7 +7,7 @@
             #{$product.id} {$product.name}
         </a>
     </td>
-    <td>{$commission}</td>
+    <td>{$discount}</td>
     <td>
         {assign var="atLeastOnePrice" value="0"}
         {foreach from=$pricings item=pricing}
@@ -15,37 +15,8 @@
                 {assign var="atLeastOnePrice" value="1"}
                 <span><strong>{$pricing->code}</strong></span>
                 <p style="margin-bottom: 0 !important;">{$MGLANG->T('table', 'basePrice')}{$pricing->monthly}</p>
-                <p>{$MGLANG->T('table', 'priceWithCommission')}{$pricing->commission_monthly}</p>  
+                <p>{$MGLANG->T('table', 'priceWithDiscount')}{$pricing->discountMonthly}</p>
             {/if}           
-        {/foreach}
-        {if $atLeastOnePrice == "0"}
-            <span>-</span>
-        {/if}
-    </td>
-    <td>
-        {assign var="atLeastOnePrice" value="0"}
-        {foreach from=$pricings item=pricing}
-            {if $pricing->quarterly !== '-1.00'}
-                {assign var="atLeastOnePrice" value="1"}
-                <span><strong>{$pricing->code}</strong></span>
-                <p style="margin-bottom: 0 !important;">{$MGLANG->T('table', 'basePrice')}{$pricing->quarterly}</p>
-                <p>{$MGLANG->T('table', 'priceWithCommission')}{$pricing->commission_quarterly}</p>
-            {/if} 
-
-        {/foreach}
-        {if $atLeastOnePrice == "0"}
-            <span>-</span>
-        {/if}
-    </td>
-    <td>
-        {assign var="atLeastOnePrice" value="0"}
-        {foreach from=$pricings item=pricing}
-            {if $pricing->semiannually !== '-1.00'}
-                {assign var="atLeastOnePrice" value="1"}
-                <span><strong>{$pricing->code}</strong></span>
-                <p style="margin-bottom: 0 !important;">{$MGLANG->T('table', 'basePrice')}{$pricing->semiannually}</p>
-                <p>{$MGLANG->T('table', 'priceWithCommission')}{$pricing->commission_semiannually}</p>
-            {/if} 
         {/foreach}
         {if $atLeastOnePrice == "0"}
             <span>-</span>
@@ -58,7 +29,7 @@
                 {assign var="atLeastOnePrice" value="1"}
                 <span><strong>{$pricing->code}</strong></span>
                 <p style="margin-bottom: 0 !important;">{$MGLANG->T('table', 'basePrice')}{$pricing->annually}</p>
-                <p>{$MGLANG->T('table', 'priceWithCommission')}{$pricing->commission_annually}</p>       
+                <p>{$MGLANG->T('table', 'priceWithDiscount')}{$pricing->discountAnnually}</p>
             {/if} 
         {/foreach}
         {if $atLeastOnePrice == "0"}
@@ -72,7 +43,7 @@
                 {assign var="atLeastOnePrice" value="1"}
                 <span><strong>{$pricing->code}</strong></span>
                 <p style="margin-bottom: 0 !important;">{$MGLANG->T('table', 'basePrice')}{$pricing->biennially}</p>
-                <p>{$MGLANG->T('table', 'priceWithCommission')}{$pricing->commission_biennially}</p> 
+                <p>{$MGLANG->T('table', 'priceWithDiscount')}{$pricing->discountBiennially}</p>
             {/if}  
         {/foreach}
         {if $atLeastOnePrice == "0"}
@@ -86,7 +57,7 @@
                 {assign var="atLeastOnePrice" value="1"}
                 <span><strong>{$pricing->code}</strong></span>
                 <p style="margin-bottom: 0 !important;">{$MGLANG->T('table', 'basePrice')}{$pricing->triennially}</p>
-                <p>{$MGLANG->T('table', 'priceWithCommission')}{$pricing->commission_triennially}</p> 
+                <p>{$MGLANG->T('table', 'priceWithDiscount')}{$pricing->discountTriennially}</p>
             {/if} 
         {/foreach}
         {if $atLeastOnePrice == "0"}

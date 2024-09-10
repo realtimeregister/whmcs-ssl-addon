@@ -7,6 +7,9 @@ use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 
 class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
+
+    private static string $TABLE_NAME = 'tblproducts';
+
     public function getModelClass()
     {
         return __NAMESPACE__ . '\ProductConfigurationItem';
@@ -14,7 +17,12 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
 
     public function get()
     {
-        return Capsule::table($this->tableName)->first();
+        return Capsule::table(self::$TABLE_NAME)->first();
+    }
+
+    public function getById($productId)
+    {
+        return Capsule::table(self::$TABLE_NAME)->where('id', '=', $productId)->first();
     }
 
     public function getModuleProducts($moduleName = "realtimeregister_ssl", $gid = 0)
@@ -31,44 +39,13 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
         }
         
         $products = $products->get();
-
-        $allPricingArray = [];
         $allPricingDB = $this->getAllProductPricing();
-        
+
         foreach ($products as $key => $value) {
             foreach($allPricingDB as $sp) {
                 if ($sp->relid == $value->id && $sp->type == 'product') {
                     $products[$key]->pricing[] = $sp;
                 }
-            }
-            
-            //get price with commission
-            $commissonValue = $value->{C::COMMISSION};
-            foreach ($products[$key]->pricing as &$price) {
-                $price->commission_monthly = (!in_array($price->monthly, ['-1.00', '0.00'])) ? (string)number_format(
-                    ((float)$price->monthly + (float)$price->monthly * (float)$commissonValue),
-                    2
-                ) : '0.00';
-                $price->commission_quarterly = (!in_array($price->quarterly, ['-1.00', '0.00'])) ? number_format(
-                    ((float)$price->quarterly + (float)$price->quarterly * (float)$commissonValue),
-                    2
-                ) : '0.00';
-                $price->commission_semiannually = (!in_array($price->semiannually, ['-1.00', '0.00'])) ? number_format(
-                    ((float)$price->semiannually + (float)$price->semiannually * (float)$commissonValue),
-                    2
-                ) : '0.00';
-                $price->commission_annually = (!in_array($price->annually, ['-1.00', '0.00'])) ? number_format(
-                    ((float)$price->annually + (float)$price->annually * (float)$commissonValue),
-                    2
-                ) : '0.00';
-                $price->commission_biennially = (!in_array($price->biennially, ['-1.00', '0.00'])) ? number_format(
-                    ((float)$price->biennially + (float)$price->biennially * (float)$commissonValue),
-                    2
-                ) : '0.00';
-                $price->commission_triennially = (!in_array($price->triennially, ['-1.00', '0.00'])) ? number_format(
-                    ((float)$price->triennially + (float)$price->triennially * (float)$commissonValue),
-                    2
-                ) : '0.00';
             }
          }
 

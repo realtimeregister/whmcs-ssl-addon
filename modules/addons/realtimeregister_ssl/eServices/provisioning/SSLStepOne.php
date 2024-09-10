@@ -39,22 +39,16 @@ class SSLStepOne
         $apiProductId = $this->p[ConfigOptions::API_PRODUCT_ID];
         $apiRepo = new Products();
         $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
-        $apiWebServers = [
-            ['id' => '18', 'software' => 'IIS'],
-            ['id' => '18', 'software' => 'Any Other']
-        ];
 
-        $apiWebServersJSON = json_encode($apiWebServers);
         $fillVarsJSON = json_encode(FlashService::getFieldsMemory($_GET['cert']));
         $sanEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN] === 'on';
         $sanWildcardEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN_WILDCARD] === 'on';
 
+        $period = intval($this->p['configoptions']['years'][0]);
         $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS];
         $includedSansWildcard = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
 
-        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
-
-        $orderTypes = ['new', 'renew'];
+        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period];
 
         $sansLimit = $includedSans + $boughtSans;
 
@@ -68,7 +62,8 @@ class SSLStepOne
         if ($sansLimit > 0 || $sanWildcardEnabledForWHMCSProduct == 'on') {
             $fields['additionalfields'][San::getTitle()] = San::getFields(
                 $sansLimit,
-                $this->p['configoptions']['sans_wildcard_count'] + $includedSansWildcard,
+                (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period]
+                + $includedSansWildcard,
                 $this->p
             );
         }

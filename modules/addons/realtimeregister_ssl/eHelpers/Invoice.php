@@ -9,15 +9,15 @@ namespace MGModule\RealtimeRegisterSsl\eHelpers;
 
 use DateInterval;
 use DateTime;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
 use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use MGModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR;
 use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
-use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
 use MGModule\RealtimeRegisterSsl\models\whmcs\invoices\RepositoryItem;
 use MGModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
@@ -185,8 +185,8 @@ class Invoice
         $dateFormat = 'Y-m-d';
 
         $dateInvoice = date($dateFormat);
-        //get product commission / client commission        
-        $commission = Commission::getCommissionValue(
+        //get discount
+        $discount = Discount::getDiscountValue(
             ['pid' => $service->packageid, 'client' => $service->userid]
         );
 
@@ -253,7 +253,7 @@ class Invoice
             'date' => $dateInvoice,
             'duedate' => $dateInvoice,
             'itemdescription1' => $invoiceItemDescription,
-            'itemamount1' => (float)$itemamount + (float)$itemamount * (float)$commission,
+            'itemamount1' => (float)$itemamount + (float)$itemamount * ((100 - $discount) / 100),
             'itemtaxed1' => $product->tax
         ];
 

@@ -35,14 +35,7 @@ class Configuration
         $this->_productID = $productID;
 
         if (!isset($params['configoption1'])) {
-            $fields = [];
-            for ($i = 1; $i < 25; $i++) {
-                $fields['configoption' . $i] = 'configoption' . $i;
-            }
-
-            $params = Query::select($fields, 'tblproducts', [
-                'id' => $productID
-            ])->fetch();
+            $params = $this->getConfigOptions();
         }
 
         if (empty(self::$_configurationArray)) {
@@ -56,8 +49,9 @@ class Configuration
             }
         }
 
+        $i = 1;
+
         if (is_array(self::$_configurationArray) && !empty(self::$_configurationArray)) {
-            $i = 1;
             foreach (self::$_configurationArray as $name) {
                 $this->_configuration[$name] = $params['configoption' . $i];
                 $i++;
@@ -67,6 +61,17 @@ class Configuration
                 $this->_configuration[$i] = $params['configoption' . $i];
             }
         }
+    }
+
+    public function getConfigOptions() {
+        $fields = [];
+        for ($i = 1; $i < 25; $i++) {
+            $fields['configoption' . $i] = 'configoption' . $i;
+        }
+
+        return Query::select($fields, 'tblproducts', [
+            'id' => $this->_productID
+        ])->fetch();
     }
 
     public function setConfigurationArray(array $configurationArray = [])

@@ -23,12 +23,14 @@ class ProductPrice
             $productPrice->setPeriod($period);
             $productPrice->setPrice($this->price);
             $productPrice->setAction($this->action);
+            $productPrice->setCurrency($this->currency);
 
         } else {
             $priceRow = $productPriceRepo->fetchOne();
 
             $productPrice = new \MGModule\RealtimeRegisterSsl\models\productPrice\ProductPrice($priceRow->getID());
             $productPrice->setPrice($this->price);
+            $productPrice->setCurrency($this->currency);
         }
         $productPrice->save();
     }
