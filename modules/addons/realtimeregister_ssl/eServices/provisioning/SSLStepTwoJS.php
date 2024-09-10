@@ -39,44 +39,8 @@ class SSLStepTwoJS
         }
         try {
             $this->setBrand($_POST);
-            $this->setDisabledValidationMethods($_POST);
-            
-            $service = new Service($this->p['serviceid']);
+            $this->SSLStepTwoJS();
 
-            $product = new Product($service->productID);
-            
-            $productssl = false;
-            $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
-            if ($checkTable) {
-                if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                    $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)
-                        ->where('pid_identifier', $product->configuration()->text_name)->first();
-                    if (isset($productsslDB->data)) {
-                        $productssl['product'] = json_decode($productsslDB->data, true);
-                    }
-                }
-            }
-
-            if (!$productssl) {
-                /** @var CertificatesApi $certificatesApi */
-                $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-                $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
-            }
-
-            if (!$productssl['product']['dcv_email']) {
-                array_push($this->disabledValidationMethods, 'email');
-            }
-
-            if (!$productssl['product']['dcv_dns']) {
-                array_push($this->disabledValidationMethods, 'dns');
-            }
-
-            if (!$productssl['product']['dcv_http']) {
-                array_push($this->disabledValidationMethods, 'http');
-            }
-
-            $this->SSLStepTwoJS($this->p);
-            
             return ScriptService::getSanEmailsScript(
                 json_encode($this->domainsEmailApprovals),
                 json_encode(FlashService::getFieldsMemory($_GET['cert'])),

@@ -6,6 +6,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\ProductsPrices;
+use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use MGModule\RealtimeRegisterSsl\models\productPrice\Repository as ApiProductPriceRepo;
 
 class ConfigurableOptionService
@@ -205,6 +206,10 @@ class ConfigurableOptionService
 
         $priceRepo = new ApiProductPriceRepo();
 
+        $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $currencies = $productModel->getAllCurrencies();
+        $defaultCurrency = $currencies->filter(fn($currency) => $currency->default === 1)->first();
+
         // The prices are sometimes not imported yet, so we force an import when there is no data
         self::loadPrices($priceRepo, $apiProductId);
 
@@ -212,8 +217,8 @@ class ConfigurableOptionService
             $price = $priceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($apiProductId))
                     ->onlyPeriod($period)
                     ->onlyAction("REQUEST")
-                    ->fetchOne()
-                    ->price / 100;
+                    ->fetchOne();
+
             $optionsSub = [
                 'configid' => $optionId,
                 'optionname' => $period / 12 . ' years',
@@ -221,6 +226,7 @@ class ConfigurableOptionService
                 'hidden' => 0,
             ];
             $optionSubId = Capsule::table('tblproductconfigoptionssub')->insertGetId($optionsSub);
+            $basePrice = self::getBasePrice($currencies, $price, $defaultCurrency);
 
             $optionSubPrice = [
                 'type' => 'configoptions',
@@ -232,7 +238,7 @@ class ConfigurableOptionService
                 'asetupfee' => '0.00',
                 'bsetupfee' => '0.00',
                 'tsetupfee' => '0.00',
-                'monthly' => $price,
+                'monthly' => '0.00',
                 'quarterly' => '0.00',
                 'semiannually' => '0.00',
                 'annually' => '0.00',
@@ -240,10 +246,10 @@ class ConfigurableOptionService
                 'triennially' => '0.00',
             ];
 
-            $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
             foreach ($productModel->getAllCurrencies() as $currency) {
                 $optionSubPrice['currency'] = $currency->id;
-                $optionSubId = Capsule::table('tblpricing')->insertGetId($optionSubPrice);
+                $optionSubPrice['monthly'] = $basePrice * $currency->rate;
+                Capsule::table('tblpricing')->insertGetId($optionSubPrice);
             }
         }
     }
@@ -320,12 +326,13 @@ class ConfigurableOptionService
     }
 
     private static function updatePrice($price, $product, $commission) {
-        $oldCommission = $product->configoption6 === '' ? 0 : $product->configoption6;
+        $oldCommission = $product->{ConfigOptions::COMMISSION} === '' ? 0 : $product->{ConfigOptions::COMMISSION};
         return $price == -1.00 ? $price : $price / (1 + $oldCommission) * (1 + $commission);
     }
 
     private static function insertOptions($apiProductId, $apiProduct, array $options) {
         $periods = $apiProduct->getPeriods();
+        $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
 
         sort($periods);
 
@@ -334,13 +341,16 @@ class ConfigurableOptionService
         // The prices are sometimes not imported yet, so we force an import when there is no data
         self::loadPrices($priceRepo, $apiProductId);
 
+        $currencies = $productModel->getAllCurrencies();
+        $defaultCurrency = $currencies->filter(fn($currency) => $currency->default === 1)->first();
+
         foreach($periods as $i => $period) {
             $years = $period / 12;
             $price = $priceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($apiProductId))
                     ->onlyPeriod($period)
                     ->onlyAction($options['action'])
-                    ->fetchOne()
-                    ->price / 100;
+                    ->fetchOne();
+            $basePrice = self::getBasePrice($currencies, $price, $defaultCurrency);
             $option = [
                 'gid' => $options['optionGroupId'],
                 'optionname' => sprintf($options['optionName'], $years, $years . ' years'),
@@ -370,7 +380,7 @@ class ConfigurableOptionService
                 'asetupfee' => '0.00',
                 'bsetupfee' => '0.00',
                 'tsetupfee' => '0.00',
-                'monthly' => $price,
+                'monthly' => '0.00',
                 'quarterly' => '0.00',
                 'semiannually' => '0.00',
                 'annually' => '0.00',
@@ -378,10 +388,10 @@ class ConfigurableOptionService
                 'triennially' => '0.00',
             ];
 
-            $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
             foreach ($productModel->getAllCurrencies() as $currency) {
                 $optionSubPrice['currency'] = $currency->id;
-                $optionSubId = Capsule::table('tblpricing')->insertGetId($optionSubPrice);
+                $optionSubPrice['monthly'] = $basePrice * $currency->rate;
+                Capsule::table('tblpricing')->insertGetId($optionSubPrice);
             }
         }
     }
@@ -415,5 +425,19 @@ class ConfigurableOptionService
         return Capsule::table("tblproductconfigoptionssub")
             ->where("configid", "=", $optionId)
             ->first();
+    }
+
+    public static function getBasePrice($currencies, $apiPrice, $defaultCurrency) {
+        if ($apiPrice->currency !== $defaultCurrency->code) {
+            $currency = $currencies->filter(function($currency) use ($apiPrice) {
+                return $apiPrice->currency === $currency->code;
+            })->first();
+            if ($currency === null) {
+                return -1.00;
+            }
+            return $apiPrice->price / $currency->rate / 100;
+        } else {
+            return $apiPrice->price / 100;
+        }
     }
 }
