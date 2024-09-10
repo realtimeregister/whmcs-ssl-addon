@@ -53,7 +53,6 @@ class Whmcs
             $pricing["type"] = $mincycle = "free";
         } else {
             if ($paytype == "onetime") {
-                dump($multiplier);
                 if ($inclconfigops) {
                     $msetupfee += $configoptions->getBasePrice($pid, "msetupfee") * $multiplier;
                     $monthly += $configoptions->getBasePrice($pid, "monthly") * $multiplier;
