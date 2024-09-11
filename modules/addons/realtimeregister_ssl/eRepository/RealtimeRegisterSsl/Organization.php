@@ -3,7 +3,7 @@
 namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 
 class Organization
 {

@@ -17,7 +17,7 @@ use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwo;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwoJS;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\TerminateAccount;
 use AddonModule\RealtimeRegisterSsl\Loader;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\Server;
 
 if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);

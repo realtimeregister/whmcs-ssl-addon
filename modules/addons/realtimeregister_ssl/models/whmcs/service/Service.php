@@ -2,9 +2,9 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System;
-use AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm;
-use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\orders\Order;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;

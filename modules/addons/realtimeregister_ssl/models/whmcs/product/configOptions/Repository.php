@@ -3,7 +3,7 @@
 namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product\configOptions;
 
 use AddonModule\RealtimeRegisterSsl as main;
-use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 
 /**
  * Product Custom Fields Colletion

@@ -61,7 +61,7 @@ class BillingCycle
             return 'YEARS_' . $period;
         }
 
-        throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Invalid period: ' . $period);
+        throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System('Invalid period: ' . $period);
     }
 
     public static function convertStringToPeriod($string)
@@ -71,7 +71,7 @@ class BillingCycle
             return self::PERIODS[$string];
         }
 
-        throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Invalid period: ' . $string);
+        throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System('Invalid period: ' . $string);
     }
 
     public static function convertPeriodToName($period)
@@ -80,6 +80,6 @@ class BillingCycle
             return $key;
         }
 
-        throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Invalid period: ' . $period);
+        throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System('Invalid period: ' . $period);
     }
 }

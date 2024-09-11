@@ -53,7 +53,7 @@
                     selectEmailHtml = '',
                     fullHtml = '',
                     partHtml = '',
-                    tableBegin = '<div class="col-sm-10 col-sm-offset-1"><table id="selectDcvMethodsTable" class="table"><thead><tr><th>'+'{$MGLANG->T('stepTwoTableLabelDomain')}'+'</th><th>'+'{$MGLANG->T('stepTwoTableLabelDcvMethod')}'+'</th><th>'+'{$MGLANG->T('stepTwoTableLabelEmail')}'+'</th></tr></thead>',
+                    tableBegin = '<div class="col-sm-10 col-sm-offset-1"><table id="selectDcvMethodsTable" class="table"><thead><tr><th>'+'{$ADDONLANG->T('stepTwoTableLabelDomain')}'+'</th><th>'+'{$ADDONLANG->T('stepTwoTableLabelDcvMethod')}'+'</th><th>'+'{$ADDONLANG->T('stepTwoTableLabelEmail')}'+'</th></tr></thead>',
                     tableEnd = '</table></div>',                    
                     selectDcvMethod = '',
                     selectBegin = '<div class="form-group"><select style="width:80%;" type="text" name="selectName" class="form-control">',
@@ -77,9 +77,9 @@
                 }
 
                 selectDcvMethod = '<div class="form-group"><select style="width:65%;" type="text" name="selectName" class="form-control">';
-                selectDcvMethod +='<option value="EMAIL">'+'{$MGLANG->T('dropdownDcvMethodEmail')}'+'</option>';
-                selectDcvMethod += '<option value="HTTP">'+'{$MGLANG->T('dropdownDcvMethodHttp')}'+'</option>';
-                selectDcvMethod += '<option value="DNS">'+'{$MGLANG->T('dropdownDcvMethodDns')}'+'</option>';
+                selectDcvMethod +='<option value="EMAIL">'+'{$ADDONLANG->T('dropdownDcvMethodEmail')}'+'</option>';
+                selectDcvMethod += '<option value="HTTP">'+'{$ADDONLANG->T('dropdownDcvMethodHttp')}'+'</option>';
+                selectDcvMethod += '<option value="DNS">'+'{$ADDONLANG->T('dropdownDcvMethodDns')}'+'</option>';
 
                 selectDcvMethod += '</select>';
 
@@ -150,8 +150,8 @@
         {
             $('#selectDcvMethodsTable').find('th:eq(2)').text('');
             //replace page langs if email method disabled
-            $('#selectDcvMethodsTable').closest('form').find('h2:first').text('{$MGLANG->T('sslcertSelectVerificationMethodTitle')}');  
-            $('#selectDcvMethodsTable').closest('form').find('p:first').text('{$MGLANG->T('sslcertSelectVerificationMethodDescription')}'); 
+            $('#selectDcvMethodsTable').closest('form').find('h2:first').text('{$ADDONLANG->T('sslcertSelectVerificationMethodTitle')}');
+            $('#selectDcvMethodsTable').closest('form').find('p:first').text('{$ADDONLANG->T('sslcertSelectVerificationMethodDescription')}');
         }  
             
         if (!$('select[name="approveremail"] option').length)

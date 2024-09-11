@@ -2,8 +2,8 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm;
-use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\customFields\Repository;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
 

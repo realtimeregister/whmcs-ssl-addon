@@ -77,7 +77,7 @@ class Countries
         return implode(',', $this->countries);
     }
     
-    public function getCountriesForMgAddonDropdown()
+    public function getCountriesForAddonDropdown()
     {
         return $this->countries;
     }

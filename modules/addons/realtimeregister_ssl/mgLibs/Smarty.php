@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs;
 
 /**
  * Smarty Wrapper
@@ -89,7 +89,7 @@ class Smarty
 
         $this->clear();
         
-        self::I()->_smarty->assign('MGLANG', Lang::getInstance());
+        self::I()->_smarty->assign('ADDONLANG', Lang::getInstance());
         
         if (is_array($vars)) {
             foreach($vars as $key => $val) {

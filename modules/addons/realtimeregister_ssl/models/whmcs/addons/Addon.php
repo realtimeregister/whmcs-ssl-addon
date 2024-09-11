@@ -22,7 +22,7 @@ use AddonModule\RealtimeRegisterSsl as main;
  *
  * @Table(name=tbladdons,preventUpdate,prefixed=false)
  */
-class Addon extends main\mgLibs\models\Orm
+class Addon extends main\addonLibs\models\Orm
 {
     /**
      * @Column()

@@ -16,13 +16,13 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\whmcs\emails;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\PdoWrapper;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\PdoWrapper;
 
 /**
  * Description of Repository
  *
  */
-class Templates extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Templates extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {

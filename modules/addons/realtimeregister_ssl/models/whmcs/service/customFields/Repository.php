@@ -76,7 +76,7 @@ class Repository
                 H.id = :account_id
         ";
 
-        $result = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query($query, [
+        $result = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::query($query, [
             'account_id' => $this->serviceID
         ]);
 
@@ -105,7 +105,7 @@ class Repository
         $this->load();
 
         foreach ($this->_customFields as $field) {
-            \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::update(
+            \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::update(
                 'tblcustomfieldsvalues',
                 [
                     'value' => $field->value

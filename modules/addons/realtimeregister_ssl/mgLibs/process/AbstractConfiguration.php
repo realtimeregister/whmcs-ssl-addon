@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\process;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\process;
 
 abstract class AbstractConfiguration
 {

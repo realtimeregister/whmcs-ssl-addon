@@ -21,7 +21,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\invoices;
  * @Table(name=tblinvoices,preventUpdate,prefixed=false)
  *
  */
-class Invoice extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Invoice extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * @Column()

@@ -102,7 +102,7 @@ class Migration
                 $query .= ($i > 0 ? ', ' : '') . $field . '=VALUES(' . $field . ')';
             }
 
-            \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query($query);
+            \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::query($query);
         }
     }
 
@@ -147,7 +147,7 @@ class Migration
 
     private function isModuleExist()
     {
-        $result = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
+        $result = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::select(
             ['value'],
             'tblconfiguration',
             ['setting' => 'ActiveAddonModules']

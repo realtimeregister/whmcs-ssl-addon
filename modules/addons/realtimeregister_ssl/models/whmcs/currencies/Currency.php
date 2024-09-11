@@ -15,8 +15,8 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\whmcs\currencies;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm;
-use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 
 /**
  * Description of Currency

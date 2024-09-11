@@ -1,8 +1,8 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\forms;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\forms;
 use AddonModule\RealtimeRegisterSsl as main;
-use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System;
 
 
 /**
@@ -38,7 +38,7 @@ class Creator
         }
 
         $this->hidden[] = new HiddenField([
-            'name' => 'mg-token'
+            'name' => 'addon-token'
         ,
             'value' => md5(time())
         ]);
@@ -115,8 +115,8 @@ class Creator
 
     public function getHTML($container = 'default', $data = [])
     {
-        main\mgLibs\Lang::stagCurrentContext('generateForm');
-        main\mgLibs\Lang::addToContext($this->name);
+        main\addonLibs\Lang::stagCurrentContext('generateForm');
+        main\addonLibs\Lang::addToContext($this->name);
 
         if ($this->autoPrepare) {
             $this->addIDs .= '_' . $container;
@@ -154,13 +154,13 @@ class Creator
         $data['fields'] = $this->fields;
         $data['hidden'] = $this->hidden;
 
-        $html = main\mgLibs\Smarty::I()->view(
+        $html = main\addonLibs\Smarty::I()->view(
             $container,
             $data,
-            main\mgLibs\process\MainInstance::getModuleTemplatesDir() . DS . 'formFields' . DS . 'containers'
+            main\addonLibs\process\MainInstance::getModuleTemplatesDir() . DS . 'formFields' . DS . 'containers'
         );
 
-        main\mgLibs\Lang::unstagContext('generateForm');
+        main\addonLibs\Lang::unstagContext('generateForm');
 
         $this->getHTMLCount++;
 

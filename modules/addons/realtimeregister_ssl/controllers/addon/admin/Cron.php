@@ -17,7 +17,7 @@ use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigs;
-use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;

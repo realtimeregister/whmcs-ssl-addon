@@ -11,7 +11,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMappi
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;

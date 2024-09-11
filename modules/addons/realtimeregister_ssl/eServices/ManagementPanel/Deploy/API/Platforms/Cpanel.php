@@ -6,7 +6,7 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\P
 
 use GuzzleHttp\Exception\GuzzleException;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
-use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DeployException;
 use function GuzzleHttp\Psr7\build_query;
 
 class Cpanel extends Client implements PlatformInterface

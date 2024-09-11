@@ -6,7 +6,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service;
  * Description of repository
  *
  */
-class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {

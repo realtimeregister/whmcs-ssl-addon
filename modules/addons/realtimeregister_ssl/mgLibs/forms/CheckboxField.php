@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\forms;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\forms;
 use AddonModule\RealtimeRegisterSsl as main;
 
 /**
@@ -37,7 +37,7 @@ class CheckboxField extends AbstractField
         if ($this->translateOptions) {
             $options = [];
             foreach($this->options as $key => $value) {
-                $options[$value] = main\mgLibs\Lang::T($this->name,'',$value); 
+                $options[$value] = main\addonLibs\Lang::T($this->name,'',$value); 
             }
             $this->options = $options;
         }

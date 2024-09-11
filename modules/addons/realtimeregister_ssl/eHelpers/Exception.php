@@ -10,12 +10,12 @@ class Exception {
         
         $class = get_class($ex);
 
-        if ($class === 'AddonModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterException') {
-            return \AddonModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('anErrorOccurred');
+        if ($class === 'AddonModule\RealtimeRegisterSsl\addonLibs\RealtimeRegisterException') {
+            return \AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->T('anErrorOccurred');
         }
         
-        if ($class === 'AddonModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterApiException') {
-            return \AddonModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('anErrorOccurred');
+        if ($class === 'AddonModule\RealtimeRegisterSsl\addonLibs\RealtimeRegisterApiException') {
+            return \AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->T('anErrorOccurred');
         }
 
         if ($class === 'Exception') {

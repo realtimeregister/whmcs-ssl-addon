@@ -2,7 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\whmcs\clients;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\customFields\Repository;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\currencies\Currency;
 

@@ -2,7 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\logs;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository as MainRepository;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository as MainRepository;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Repository extends MainRepository

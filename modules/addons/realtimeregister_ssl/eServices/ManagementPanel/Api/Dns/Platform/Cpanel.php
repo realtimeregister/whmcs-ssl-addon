@@ -3,7 +3,7 @@
 namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform;
 
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Client;
-use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
 
 class Cpanel extends Client implements PlatformInterface
 {

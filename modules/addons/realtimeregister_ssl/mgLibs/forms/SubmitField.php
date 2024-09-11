@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\forms;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\forms;
 
 /**
  * Submit Form Button  

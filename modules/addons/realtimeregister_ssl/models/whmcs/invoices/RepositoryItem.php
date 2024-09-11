@@ -19,7 +19,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\invoices;
  * Description of Repository
  *
  */
-class RepositoryItem extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class RepositoryItem extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {

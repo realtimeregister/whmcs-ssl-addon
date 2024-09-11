@@ -8,9 +8,9 @@ class TemplateService
     {
         \AddonModule\RealtimeRegisterSsl\Addon::I(true);
         $dir = \AddonModule\RealtimeRegisterSsl\Addon::getModuleTemplatesDir();
-        return \AddonModule\RealtimeRegisterSsl\mgLibs\Smarty::I()->view($dir . '/' . $template, $vars);
+        return \AddonModule\RealtimeRegisterSsl\addonLibs\Smarty::I()->view($dir . '/' . $template, $vars);
         $path = $dir . '/' . $template;
         $path = str_replace('\\', '/', $path);
-        return \AddonModule\RealtimeRegisterSsl\mgLibs\Smarty::I()->view($path, $vars);
+        return \AddonModule\RealtimeRegisterSsl\addonLibs\Smarty::I()->view($path, $vars);
     }
 }

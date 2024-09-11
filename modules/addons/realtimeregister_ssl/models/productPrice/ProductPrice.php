@@ -5,7 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\productPrice;
 /**
  * @Table(name=REALTIMEREGISTERSSL_api_product_prices)
  */
-class ProductPrice extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class ProductPrice extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * 

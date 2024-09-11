@@ -1,12 +1,12 @@
 
 {literal}
     <script>
-        var pleaseSelectOnePlaceholder = '{/literal}{$MGLANG->T('modal','pleaseSelecetOnePlaceholder')}{literal}';
-        var pleaseSelectProductFirst = '{/literal}{$MGLANG->T('modal','pleaseSelectProductFirst')}{literal}';
-        var noDataAvailable = '{/literal}{$MGLANG->T('modal','noDataAvailable')}{literal}';
-        var pleaseSelectClientFirst = '{/literal}{$MGLANG->T('modal','selectClientFirstPlaceholder')}{literal}';
-        var noClientAvaialblePlaceholder = '{/literal}{$MGLANG->T('modal','noClientAvaialblePlaceholder')}{literal}';
-        var noProductAvaialblePlaceholder = '{/literal}{$MGLANG->T('modal','noProductAvaialblePlaceholder')}{literal}';
+        var pleaseSelectOnePlaceholder = '{/literal}{$ADDONLANG->T('modal','pleaseSelecetOnePlaceholder')}{literal}';
+        var pleaseSelectProductFirst = '{/literal}{$ADDONLANG->T('modal','pleaseSelectProductFirst')}{literal}';
+        var noDataAvailable = '{/literal}{$ADDONLANG->T('modal','noDataAvailable')}{literal}';
+        var pleaseSelectClientFirst = '{/literal}{$ADDONLANG->T('modal','selectClientFirstPlaceholder')}{literal}';
+        var noClientAvaialblePlaceholder = '{/literal}{$ADDONLANG->T('modal','noClientAvaialblePlaceholder')}{literal}';
+        var noProductAvaialblePlaceholder = '{/literal}{$ADDONLANG->T('modal','noProductAvaialblePlaceholder')}{literal}';
 
     </script>
 {/literal}
@@ -28,11 +28,11 @@
 </style>
 <div class="box light">
     <div class="row">
-        <div class="col-lg-12" id="mg-home-content" >
-            <legend>{$MGLANG->T('title')}</legend>
+        <div class="col-lg-12" id="addon-home-content" >
+            <legend>{$ADDONLANG->T('title')}</legend>
             <div class="row">
                 <div class="col-lg-2">
-                    <button type="button" class="btn btn-success btn-inverse" id="addUserDiscountRule">{$MGLANG->T('addNewDiscountRule')}</button>
+                    <button type="button" class="btn btn-success btn-inverse" id="addUserDiscountRule">{$ADDONLANG->T('addNewDiscountRule')}</button>
                 </div>
             </div>
             <div id="rulesTable">
@@ -48,14 +48,14 @@
                         <col style="width: 7%"/>
                     </colgroup>
                     <thead>
-                    <th>{$MGLANG->T('table', 'client')}</th>
-                    <th>{$MGLANG->T('table', 'product')}</th>
-                    <th>{$MGLANG->T('table', 'discount')}</th>
-                    <th>{$MGLANG->T('table', 'monthly/onetime')}</th>
-                    <th>{$MGLANG->T('table', 'annually')}</th>
-                    <th>{$MGLANG->T('table', 'biennially')}</th>
-                    <th>{$MGLANG->T('table', 'triennially')}</th>
-                    <th>{$MGLANG->T('table', 'actions')}</th>
+                    <th>{$ADDONLANG->T('table', 'client')}</th>
+                    <th>{$ADDONLANG->T('table', 'product')}</th>
+                    <th>{$ADDONLANG->T('table', 'discount')}</th>
+                    <th>{$ADDONLANG->T('table', 'monthly/onetime')}</th>
+                    <th>{$ADDONLANG->T('table', 'annually')}</th>
+                    <th>{$ADDONLANG->T('table', 'biennially')}</th>
+                    <th>{$ADDONLANG->T('table', 'triennially')}</th>
+                    <th>{$ADDONLANG->T('table', 'actions')}</th>
                     </thead>
                     <tbody>
                     </tbody>
@@ -72,7 +72,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title">{$MGLANG->T('modal', 'addDiscountRule')} <strong></strong></h4>
+                    <h4 class="modal-title">{$ADDONLANG->T('modal', 'addDiscountRule')} <strong></strong></h4>
                 </div>
                 <div class="modal-loader" style="display:none;"></div>
                 <div class="modal-body">
@@ -91,13 +91,13 @@
                     </div>
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="mg-access-client" class="col-sm-2 control-label">{$MGLANG->T('modal','client')}</label>
+                            <label for="addon-access-client" class="col-sm-2 control-label">{$ADDONLANG->T('modal','client')}</label>
                             <div class="col-sm-9">
-                                <select name="client" class="form-control" id="mg-access-client" placeholder="" required="">
+                                <select name="client" class="form-control" id="addon-access-client" placeholder="" required="">
                                     {if $clients|@count == 0}
-                                        <option value="" disabled selected>{$MGLANG->T('modal','noClientAvailable')}</option>
+                                        <option value="" disabled selected>{$ADDONLANG->T('modal','noClientAvailable')}</option>
                                     {else}
-                                        <option value="" disabled selected>{$MGLANG->T('modal','pleaseSelecetOnePlaceholder')}</option>
+                                        <option value="" disabled selected>{$ADDONLANG->T('modal','pleaseSelecetOnePlaceholder')}</option>
                                         {foreach from=$clients item=client}
                                             <option value="{$client.id}">#{$client.id} {$client.name}</option>
                                         {/foreach}
@@ -108,31 +108,31 @@
                     </div>
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="mg-access-product" class="col-sm-2 control-label">{$MGLANG->T('modal','product')}</label>
+                            <label for="addon-access-product" class="col-sm-2 control-label">{$ADDONLANG->T('modal','product')}</label>
                             <div class="col-sm-9">
-                                <select name="product" class="form-control" id="mg-access-product" placeholder="" required="">
-                                    <option value='' disabled="" selected="">{$MGLANG->T('modal','selectClientFirstPlaceholder')}</option>
+                                <select name="product" class="form-control" id="addon-access-product" placeholder="" required="">
+                                    <option value='' disabled="" selected="">{$ADDONLANG->T('modal','selectClientFirstPlaceholder')}</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="mg-access-product" class="col-sm-2 control-label">{$MGLANG->T('modal','productPrice')}</label>
+                            <label for="addon-access-product" class="col-sm-2 control-label">{$ADDONLANG->T('modal','productPrice')}</label>
                             <div class="col-sm-9">
                                 <table id="product_price" class="table table-striped">
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            <th>{$MGLANG->T('modal', 'monthly/onetime')}</th>
-                                            <th>{$MGLANG->T('modal', 'annually')}</th>
-                                            <th>{$MGLANG->T('modal', 'biennially')}</th>
-                                            <th>{$MGLANG->T('modal', 'triennially')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'monthly/onetime')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'annually')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'biennially')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'triennially')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td colspan="8" align="center">{$MGLANG->T('modal','pleaseSelectProductFirst')}</td>
+                                            <td colspan="8" align="center">{$ADDONLANG->T('modal','pleaseSelectProductFirst')}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -141,29 +141,29 @@
                     </div>
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="mg-access-discount" class="col-sm-2 control-label">{$MGLANG->T('modal','discount')}</label>
+                            <label for="addon-access-discount" class="col-sm-2 control-label">{$ADDONLANG->T('modal','discount')}</label>
                             <div class="col-sm-9">
-                                <input name="discount" value="" class="form-control" id="mg-access-discount" placeholder=""  type="text" required="" pattern="\d*">
+                                <input name="discount" value="" class="form-control" id="addon-access-discount" placeholder=""  type="text" required="" pattern="\d*">
                             </div>
                         </div>
                     </div>
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="mg-access-product" class="col-sm-2 control-label">{$MGLANG->T('modal','productPriceWithDiscount')}</label>
+                            <label for="addon-access-product" class="col-sm-2 control-label">{$ADDONLANG->T('modal','productPriceWithDiscount')}</label>
                             <div class="col-sm-9">
                                 <table id="product_price_with_discount" class="table table-striped">
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            <th>{$MGLANG->T('modal', 'monthly/onetime')}</th>
-                                            <th>{$MGLANG->T('modal', 'annually')}</th>
-                                            <th>{$MGLANG->T('modal', 'biennially')}</th>
-                                            <th>{$MGLANG->T('modal', 'triennially')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'monthly/onetime')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'annually')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'biennially')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'triennially')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td colspan="8" align="center">{$MGLANG->T('modal','pleaseSelectProductFirst')}</td>
+                                            <td colspan="8" align="center">{$ADDONLANG->T('modal','pleaseSelectProductFirst')}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -173,8 +173,8 @@
 
                 </div>
                 <div class="modal-footer" style="margin-top:  5px;">
-                    <button type="button" class="btn btn-success btn-inverse" id="addNewUserDiscountRule">{$MGLANG->T('modal','add')}</button>
-                    <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$MGLANG->T('modal','close')}</button>
+                    <button type="button" class="btn btn-success btn-inverse" id="addNewUserDiscountRule">{$ADDONLANG->T('modal','add')}</button>
+                    <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$ADDONLANG->T('modal','close')}</button>
                 </div>
             </div>
         </div>
@@ -187,7 +187,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title">{$MGLANG->T('modal', 'editDiscountRule')} <strong></strong></h4>
+                    <h4 class="modal-title">{$ADDONLANG->T('modal', 'editDiscountRule')} <strong></strong></h4>
                 </div>
                 <div class="modal-loader" style="display:none;"></div>
                 <div class="modal-body">
@@ -207,41 +207,41 @@
                     <input type="hidden" value="" name="rule_id" />
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="mg-access-client" class="col-sm-2 control-label">{$MGLANG->T('modal','client')}</label>
+                            <label for="addon-access-client" class="col-sm-2 control-label">{$ADDONLANG->T('modal','client')}</label>
                             <div class="col-sm-9">
-                                <select name="client" class="form-control" id="mg-access-client" placeholder="" required="" readonly="">
-                                    <option value="" disabled selected>{$MGLANG->T('modal','noClientAvailable')}</option>
+                                <select name="client" class="form-control" id="addon-access-client" placeholder="" required="" readonly="">
+                                    <option value="" disabled selected>{$ADDONLANG->T('modal','noClientAvailable')}</option>
                                 </select>
                             </div>``
                         </div>
                     </div>
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="mg-access-product" class="col-sm-2 control-label">{$MGLANG->T('modal','product')}</label>
+                            <label for="addon-access-product" class="col-sm-2 control-label">{$ADDONLANG->T('modal','product')}</label>
                             <div class="col-sm-9">
-                                <select name="product" class="form-control" id="mg-access-product" placeholder="" required="" readonly="">
-                                    <option value="" disabled selected>{$MGLANG->T('modal','noProductAvailable')}</option>
+                                <select name="product" class="form-control" id="addon-access-product" placeholder="" required="" readonly="">
+                                    <option value="" disabled selected>{$ADDONLANG->T('modal','noProductAvailable')}</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="mg-access-product" class="col-sm-2 control-label">{$MGLANG->T('modal','productPrice')}</label>
+                            <label for="addon-access-product" class="col-sm-2 control-label">{$ADDONLANG->T('modal','productPrice')}</label>
                             <div class="col-sm-9">
                                 <table id="product_price" class="table table-striped">
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            <th>{$MGLANG->T('modal', 'monthly/onetime')}</th>
-                                            <th>{$MGLANG->T('modal', 'annually')}</th>
-                                            <th>{$MGLANG->T('modal', 'biennially')}</th>
-                                            <th>{$MGLANG->T('modal', 'triennially')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'monthly/onetime')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'annually')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'biennially')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'triennially')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td colspan="8" align="center">{$MGLANG->T('modal','pleaseSelectProductFirst')}</td>
+                                            <td colspan="8" align="center">{$ADDONLANG->T('modal','pleaseSelectProductFirst')}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -250,29 +250,29 @@
                     </div>
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="mg-edit-discount" class="col-sm-2 control-label">{$MGLANG->T('modal','discount')}</label>
+                            <label for="addon-edit-discount" class="col-sm-2 control-label">{$ADDONLANG->T('modal','discount')}</label>
                             <div class="col-sm-9">
-                                <input name="discount" value="" class="form-control" id="mg-edit-discount" placeholder=""  type="text" required="" pattern="\d*">
+                                <input name="discount" value="" class="form-control" id="addon-edit-discount" placeholder=""  type="text" required="" pattern="\d*">
                             </div>
                         </div>
                     </div>
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="mg-access-product" class="col-sm-2 control-label">{$MGLANG->T('modal','productPriceWithDiscount')}</label>
+                            <label for="addon-access-product" class="col-sm-2 control-label">{$ADDONLANG->T('modal','productPriceWithDiscount')}</label>
                             <div class="col-sm-9">
                                 <table id="product_price_with_discount" class="table table-striped">
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            <th>{$MGLANG->T('modal', 'monthly/onetime')}</th>
-                                            <th>{$MGLANG->T('modal', 'annually')}</th>
-                                            <th>{$MGLANG->T('modal', 'biennially')}</th>
-                                            <th>{$MGLANG->T('modal', 'triennially')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'monthly/onetime')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'annually')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'biennially')}</th>
+                                            <th>{$ADDONLANG->T('modal', 'triennially')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td colspan="8" align="center">{$MGLANG->T('modal','pleaseSelectProductFirst')}</td>
+                                            <td colspan="8" align="center">{$ADDONLANG->T('modal','pleaseSelectProductFirst')}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -282,8 +282,8 @@
 
                 </div>
                 <div class="modal-footer" style="margin-top:  5px;">
-                    <button type="button" class="btn btn-primary btn-inverse" id="updateUserDiscountRule">{$MGLANG->T('modal','edit')}</button>
-                    <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$MGLANG->T('modal','close')}</button>
+                    <button type="button" class="btn btn-primary btn-inverse" id="updateUserDiscountRule">{$ADDONLANG->T('modal','edit')}</button>
+                    <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$ADDONLANG->T('modal','close')}</button>
                 </div>
             </div>
         </div>
@@ -295,15 +295,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">{$MGLANG->T('modal','removeRule')}</h4>
+                <h4 class="modal-title" id="myModalLabel">{$ADDONLANG->T('modal','removeRule')}</h4>
             </div>
             <div class="modal-body">
                 <input type='hidden' name='rule_id'/>
-                <h4 class="text-center">{$MGLANG->T('modal','removeRuleInfo')} <b id="MGremoveInformation"></b></h4>
+                <h4 class="text-center">{$ADDONLANG->T('modal','removeRuleInfo')} <b id="MGremoveInformation"></b></h4>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-inverse" id="removeRuleButton" data-dismiss="modal">{$MGLANG->T('modal','remove')}</button>
-                <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$MGLANG->T('modal','close')}</button>
+                <button type="button" class="btn btn-danger btn-inverse" id="removeRuleButton" data-dismiss="modal">{$ADDONLANG->T('modal','remove')}</button>
+                <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$ADDONLANG->T('modal','close')}</button>
             </div>
         </div>
     </div>
@@ -570,7 +570,6 @@
 
                 });
                 $(document).on('change', "select[name='client']", function () {
-                    console.log("loading products");
                     loadAvailalbleProducts($(this))
                 });
 

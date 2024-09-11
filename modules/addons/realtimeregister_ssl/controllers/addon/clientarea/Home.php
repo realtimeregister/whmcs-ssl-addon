@@ -2,7 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\controllers\addon\clientarea;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 
 /**
  * Description of home

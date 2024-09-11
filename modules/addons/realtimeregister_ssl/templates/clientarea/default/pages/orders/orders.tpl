@@ -2,14 +2,14 @@
 <h4>{$pageTitle}</h4>
 <div class="box light">
     <div class="row">
-        <div class="col-lg-12" id="mg-categories-content" >
-            <table class="table table-striped dataTable no-footer" id="mg-data-list" >
+        <div class="col-lg-12" id="addon-categories-content" >
+            <table class="table table-striped dataTable no-footer" id="addon-data-list" >
                 <thead>
                     <tr>
-                        <th>{$MGLANG->T('sslSummaryOrdersPage','Product/Service')}</th>
-                        <th>{$MGLANG->T('sslSummaryOrdersPage','Pricing')}</th>
-                        <th>{$MGLANG->T('sslSummaryOrdersPage','Next Due Date')}</th>
-                        <th>{$MGLANG->T('sslSummaryOrdersPage','Status')}</th> 
+                        <th>{$ADDONLANG->T('sslSummaryOrdersPage','Product/Service')}</th>
+                        <th>{$ADDONLANG->T('sslSummaryOrdersPage','Pricing')}</th>
+                        <th>{$ADDONLANG->T('sslSummaryOrdersPage','Next Due Date')}</th>
+                        <th>{$ADDONLANG->T('sslSummaryOrdersPage','Status')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -20,10 +20,10 @@
 </div>
 {literal}
     <script type="text/javascript">        
-        var zeroRecordsLang = '{/literal}{$MGLANG->absoluteT('Nothing to display')}{literal}';
-        var searchLang = '{/literal}{$MGLANG->absoluteT('Search')}{literal}';
-        var previousLang = '{/literal}{$MGLANG->absoluteT('Previous')}{literal}';
-        var nextLang = '{/literal}{$MGLANG->absoluteT('Next')}{literal}';
+        var zeroRecordsLang = '{/literal}{$ADDONLANG->absoluteT('Nothing to display')}{literal}';
+        var searchLang = '{/literal}{$ADDONLANG->absoluteT('Search')}{literal}';
+        var previousLang = '{/literal}{$ADDONLANG->absoluteT('Previous')}{literal}';
+        var nextLang = '{/literal}{$ADDONLANG->absoluteT('Next')}{literal}';
     </script>
     <script type="text/javascript" src="{/literal}{$assetsURL}{literal}/js/pages/orders.js"></script>
 

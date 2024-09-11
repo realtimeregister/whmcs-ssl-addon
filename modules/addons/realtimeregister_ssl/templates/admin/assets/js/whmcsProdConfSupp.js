@@ -1,9 +1,9 @@
 jQuery(document).ready(function(){
-    jQuery('#MGNextIsWHMCSConfig').next().hide();
+    jQuery('#AddonNextIsWHMCSConfig').next().hide();
     
     var relation = {};
     
-    jQuery('#MGNextIsWHMCSConfig').next().find('input').each(function(){
+    jQuery('#AddonNextIsWHMCSConfig').next().find('input').each(function(){
         
         var name = jQuery(this).parent().prev().text();
         

@@ -3,7 +3,7 @@
 namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions;
 
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
-use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 
 /**
  * Description of repository

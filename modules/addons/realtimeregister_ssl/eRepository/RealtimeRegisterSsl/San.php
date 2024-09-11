@@ -3,7 +3,7 @@
 namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 
 class San
 {

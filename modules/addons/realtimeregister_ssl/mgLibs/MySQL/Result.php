@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\MySQL;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\MySQL;
 
 
 /**

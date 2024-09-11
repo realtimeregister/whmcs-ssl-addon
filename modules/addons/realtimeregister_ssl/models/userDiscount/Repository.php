@@ -8,7 +8,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
  * Description of repository
  *
  */
-class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public $tableName = 'mgfw_REALTIMEREGISTERSSL_user_discount';
 

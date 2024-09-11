@@ -1,7 +1,7 @@
 <div data-is-form class="form-horizontal normal-form" >
     <div class="form-group">
         <div class="col-lg-12">
-            <legend>{$MGLANG->T('header')}</legend>
+            <legend>{$ADDONLANG->T('header')}</legend>
         </div>
     </div>
     {foreach from=$hidden item=field}

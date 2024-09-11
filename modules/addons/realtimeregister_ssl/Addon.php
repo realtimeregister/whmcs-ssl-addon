@@ -2,8 +2,8 @@
 
 namespace AddonModule\RealtimeRegisterSsl;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs\error\Register;
-use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDriver;
+use AddonModule\RealtimeRegisterSsl\addonLibs\error\Register;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractMainDriver;
 use Exception;
 
 class Addon extends AbstractMainDriver
@@ -13,7 +13,7 @@ class Addon extends AbstractMainDriver
      */
     public function loadAddonConfiguration()
     {
-        $result = mgLibs\MySQL\Query::select(
+        $result = addonLibs\MySQL\Query::select(
             [
                 'setting',
                 'value'
@@ -197,14 +197,14 @@ class Addon extends AbstractMainDriver
             return $content;
         } catch (Exception $ex) {
             self::dump($ex);
-            mgLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
+            addonLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
 
             $message = $ex->getMessage();
             if (method_exists($ex, 'getToken')) {
-                $message .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                $message .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
             }
 
-            return mgLibs\Smarty::I()->view('fatal', [
+            return addonLibs\Smarty::I()->view('fatal', [
                 'message' => $message
             ]);
         }
@@ -293,18 +293,18 @@ class Addon extends AbstractMainDriver
                 Register::register($ex);
                 $vars['error'] = $ex->getMessage();
                 if (method_exists($ex, 'getToken')) {
-                    $vars['error'] .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                    $vars['error'] .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
                 }
             }
 
-            mgLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
+            addonLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
 
-            $html = mgLibs\Smarty::I()->view('main', $vars);
+            $html = addonLibs\Smarty::I()->view('main', $vars);
 
             if (self::I()->isDebug()) {
                 $tmp = '<div style="color: #a94442;background-color: #f2dede;border-color: #dca7a7;font-size:20px;padding:10px;"><strong>Module is under development Mode!!!!!!!!!!!!!!!</strong></div>';
 
-                if ($langs = mgLibs\Lang::getMissingLangs()) {
+                if ($langs = addonLibs\Lang::getMissingLangs()) {
                     $tmp .= '<pre>';
                     foreach ($langs as $lk => $lang) {
                         $tmp .= $lk . " = '" . $lang . "';\n";
@@ -319,14 +319,14 @@ class Addon extends AbstractMainDriver
             self::dump($ex);
 
             Register::register($ex);
-            mgLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
+            addonLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
 
             $message = $ex->getMessage();
             if (method_exists($ex, 'getToken')) {
-                $message .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                $message .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
             }
 
-            return mgLibs\Smarty::I()->view('fatal', [
+            return addonLibs\Smarty::I()->view('fatal', [
                 'message' => $message,
                 'assetsURL' => self::I()->getAssetsURL()
 
@@ -392,13 +392,13 @@ class Addon extends AbstractMainDriver
             ];
 
             try {
-                $vars['MGLANG'] = mgLibs\Lang::getInstance();
+                $vars['ADDONLANG'] = addonLibs\Lang::getInstance();
                 list($content, $success, $error) = self::I()->runControler($page, $action, $input, 'HTML');
 
                 if (self::I()->isDebug()) {
                     $html = '<div style="color: #a94442;background-color: #f2dede;border-color: #dca7a7;font-size:20px;padding:10px;"><strong>Module is under development Mode!!!!!!!!!!!!!!!</strong></div>';
 
-                    if ($langs = mgLibs\Lang::getMissingLangs()) {
+                    if ($langs = addonLibs\Lang::getMissingLangs()) {
                         $html .= '<pre>';
                         foreach ($langs as $lk => $lang) {
                             $html .= $lk . " = '" . $lang . "';\n";
@@ -416,17 +416,17 @@ class Addon extends AbstractMainDriver
             } catch (Exception $ex) {
                 self::dump($ex);
                 Register::register($ex);
-                $vars['error'] = mgLibs\Lang::absoluteT($ex->getMessage());
+                $vars['error'] = addonLibs\Lang::absoluteT($ex->getMessage());
                 if (method_exists($ex, 'getToken')) {
-                    $vars['error'] .= mgLibs\Lang::absoluteT($ex->getMessage());
+                    $vars['error'] .= addonLibs\Lang::absoluteT($ex->getMessage());
                 }
             }
         } catch (Exception $ex) {
             self::dump($ex);
             Register::register($ex);
-            $vars['error'] = mgLibs\Lang::absoluteT('generalError');
+            $vars['error'] = addonLibs\Lang::absoluteT('generalError');
             if (method_exists($ex, 'getToken')) {
-                $vars['error'] .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                $vars['error'] .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
             }
         }
 
@@ -460,7 +460,7 @@ class Addon extends AbstractMainDriver
                 $content['result'] = 'success';
             }
 
-            if ($langs = mgLibs\Lang::getMissingLangs()) {
+            if ($langs = addonLibs\Lang::getMissingLangs()) {
                 $html = '<pre>';
                 foreach ($langs as $lk => $lang) {
                     $html .= $lk . " = '" . $lang . "';\n";
@@ -478,7 +478,7 @@ class Addon extends AbstractMainDriver
             $content['result'] = 'error';
             $content['error'] = $ex->getMessage();
             if (method_exists($ex, 'getToken')) {
-                $content['error'] .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                $content['error'] .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
             }
         }
 
@@ -509,7 +509,7 @@ class Addon extends AbstractMainDriver
                 $content['result'] = 'success';
             }
 
-            if ($langs = mgLibs\Lang::getMissingLangs()) {
+            if ($langs = addonLibs\Lang::getMissingLangs()) {
                 $html = '<pre>';
                 foreach ($langs as $lk => $lang) {
                     $html .= $lk . " = '" . $lang . "';\n";
@@ -525,9 +525,9 @@ class Addon extends AbstractMainDriver
             self::dump($ex);
             $content['result'] = 'error';
             Register::register($ex);
-            $content['error'] = mgLibs\Lang::absoluteT('generalError');
+            $content['error'] = addonLibs\Lang::absoluteT('generalError');
             if (method_exists($ex, 'getToken')) {
-                $content['error'] .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                $content['error'] .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
             }
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\process;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\process;
 use AddonModule\RealtimeRegisterSsl as main;
 
 /**
@@ -28,13 +28,13 @@ class MainInstance
 
     /**
      * 
-     * @return main\mgLibs\process\AbstractMainDriver
+     * @return main\addonLibs\process\AbstractMainDriver
      * @throws exceptions\System
      */
     static function I()
     {
         if(empty(self::$_instanceName)) {
-            throw new main\mgLibs\exceptions\System('Instance is not set');
+            throw new main\addonLibs\exceptions\System('Instance is not set');
         }
         return call_user_func([self::$_instanceName,'I']);
     }

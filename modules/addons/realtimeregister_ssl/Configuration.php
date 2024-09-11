@@ -5,7 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractConfiguration;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractConfiguration;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;

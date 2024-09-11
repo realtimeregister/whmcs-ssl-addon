@@ -1,7 +1,7 @@
 jQuery(document).ready(function () {
     var mgDataTable;
 
-    mgDataTable = $('#mg-data-list').dataTable({
+    mgDataTable = $('#addon-data-list').dataTable({
         processing: false,
         searching: true,
         autoWidth: false,
@@ -47,7 +47,7 @@ jQuery(document).ready(function () {
         }
     });
     
-    $('#mg-data-list').on('click', ' tr', function(){
+    $('#addon-data-list').on('click', ' tr', function(){
         $(this).find('form[name="redirectToService"]').submit(); 
     });
 });

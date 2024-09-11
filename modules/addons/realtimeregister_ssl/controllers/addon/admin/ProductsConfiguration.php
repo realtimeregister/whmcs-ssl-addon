@@ -7,11 +7,11 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMappi
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
-use AddonModule\RealtimeRegisterSsl\mgLibs\forms\Popup;
-use AddonModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
-use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Smarty;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\Popup;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Smarty;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 
 /*

@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\forms;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\forms;
 use AddonModule\RealtimeRegisterSsl as main;
 
 
@@ -38,11 +38,11 @@ class SelectPicker extends AbstractField
         
         if ($this->translateOptions) {
             if (!is_array($this->options)) {
-                throw new main\mgLibs\exceptions\System('Invalid Fields Options');
+                throw new main\addonLibs\exceptions\System('Invalid Fields Options');
             }
             $options = [];
             foreach($this->options as $value) {
-                $options[$value] = main\mgLibs\Lang::T($this->formName,$this->name,'options',$value); 
+                $options[$value] = main\addonLibs\Lang::T($this->formName,$this->name,'options',$value); 
             }
             $this->options = $options;
         }

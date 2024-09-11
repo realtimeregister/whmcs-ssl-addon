@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns;
 
 use Exception;
-use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
 
 class Manage
 {

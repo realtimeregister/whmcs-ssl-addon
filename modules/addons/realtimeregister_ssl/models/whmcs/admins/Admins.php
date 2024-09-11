@@ -19,7 +19,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\admins;
 /**
  * Description of Repository
  */
-class Admins extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Admins extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {

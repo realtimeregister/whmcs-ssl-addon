@@ -1,9 +1,9 @@
 jQuery(document).ready(function(){
-    jQuery('#MGNextIsWHMCSConfig').next().hide();
+    jQuery('#AddonNextIsWHMCSConfig').next().hide();
     
     var relation = {};
     
-    jQuery('#MGNextIsWHMCSConfig').next().find('input').each(function(){
+    jQuery('#AddonNextIsWHMCSConfig').next().find('input').each(function(){
         
         var name = jQuery(this).parent().prev().text();
         
@@ -15,13 +15,13 @@ jQuery(document).ready(function(){
         }).change();
     });
     
-    $('*[data-is-form] button[name="mg-action"]').click(function(){
+    $('*[data-is-form] button[name="addon-action"]').click(function(){
         data = jQuery(this).closest('*[data-is-form]').MGGetForms();
         JSONParser.request(jQuery(this).val(),data,function(result){
             if(result.success){
-                jQuery('#MGAlerts').alerts('success',result.success);
+                jQuery('#AddonAlerts').alerts('success',result.success);
             }else{
-                jQuery('#MGAlerts').alerts('danger',result.error);
+                jQuery('#AddonAlerts').alerts('danger',result.error);
             }
         });
     });

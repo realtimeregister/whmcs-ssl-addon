@@ -6,7 +6,7 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Pla
 
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Client;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
-use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 

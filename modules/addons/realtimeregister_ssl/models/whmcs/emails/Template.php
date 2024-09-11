@@ -20,7 +20,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\emails;
  *
  * @Table(name=tblemailtemplates,preventUpdate,prefixed=false)
  */
-class Template extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Template extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      *

@@ -6,7 +6,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\servers;
  * Server Model
  * @Table(name=tblservers,preventUpdate,prefixed=false)
  */
-class Server extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Server extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * @Column()
@@ -68,7 +68,7 @@ class Server extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
     public function __construct($id = false, $data = [])
     {
         if ($id !== false && empty($data)) {
-            $data = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
+            $data = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::select(
                 self::fieldDeclaration(),
                 self::tableName(),
                 [
@@ -77,7 +77,7 @@ class Server extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
             )->fetch();
 
             if (empty($data)) {
-                throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Unable to find Item with ID:' . $id);
+                throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System('Unable to find Item with ID:' . $id);
             }
         }
 

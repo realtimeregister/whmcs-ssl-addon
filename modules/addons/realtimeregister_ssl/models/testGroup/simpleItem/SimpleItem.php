@@ -9,7 +9,7 @@ use AddonModule\RealtimeRegisterSsl\models\testGroup\testItem\TestItem;
  * 
  * @Table(name=simple_item)
  */
-class SimpleItem extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class SimpleItem extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * ID field

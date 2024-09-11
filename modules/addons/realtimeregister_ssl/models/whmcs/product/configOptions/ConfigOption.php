@@ -7,7 +7,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product\configOptions;
  *
  * @Table(name=tblproductconfigoptions,preventUpdate,prefixed=false)
  */
-class ConfigOption extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class ConfigOption extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      *

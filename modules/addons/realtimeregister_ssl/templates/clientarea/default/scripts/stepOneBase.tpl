@@ -6,7 +6,7 @@
 
             $('#inputCsr').attr('readonly','');
 
-            $('<div><input style="width: 15px;height: 15px;float: left;" type="checkbox" id="csrReadOnly" /><label for="csrReadOnly" style="font-size: 13px;float: left;margin-top: -20px;margin-left: 20px;">{$MGLANG->T('csrReadOnly')}</label></div>').insertBefore("#inputCsr");
+            $('<div><input style="width: 15px;height: 15px;float: left;" type="checkbox" id="csrReadOnly" /><label for="csrReadOnly" style="font-size: 13px;float: left;margin-top: -20px;margin-left: 20px;">{$ADDONLANG->T('csrReadOnly')}</label></div>').insertBefore("#inputCsr");
 
             $('body').on('change','#csrReadOnly',function (){
                 if(this.checked)
@@ -26,13 +26,13 @@
                 $(contentPage).hide();
                 $(contentPage).parent('div').next("div").hide();
                 $('.alert-info').after('<div class="card-body select-cpanel-server">' +
-                    '<h2>{$MGLANG->T('Choose a domain')}</h2>' +
+                    '<h2>{$ADDONLANG->T('Choose a domain')}</h2>' +
                     '<select id="step-type-data">' +
-                    '<option value="custom">{$MGLANG->T('Custom domain')}</option>' +
+                    '<option value="custom">{$ADDONLANG->T('Custom domain')}</option>' +
                     '<optgroup label="Server">' +
                     '</optgroup>' +
                     '</select>' +
-                    '<div style="margin-top: 20px;" class="form-group"><button id="goto_next_step" class="btn btn-primary" type="button">{$MGLANG->T('Next')}</button></div>' +
+                    '<div style="margin-top: 20px;" class="form-group"><button id="goto_next_step" class="btn btn-primary" type="button">{$ADDONLANG->T('Next')}</button></div>' +
                     '</div>');
 
                 {foreach $domains as $domain}

@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\models;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\models;
 use AddonModule\RealtimeRegisterSsl as main;
 
 /**
@@ -102,7 +102,7 @@ class TableContructor
         $this->mainNameSpace    = $namespace;
         $this->prefix           = $prefix;
         
-        $result = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query("SHOW Tables");
+        $result = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::query("SHOW Tables");
         while($column = $result->fetchColumn()) {
             $this->existsTables[] = $column;
         }
@@ -114,7 +114,7 @@ class TableContructor
             $class = $this->mainNameSpace."\\".$model;
 
             if (!class_exists($class)) {
-                throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Model Class Not Exists');
+                throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System('Model Class Not Exists');
             }
 
             $structure = $class::getTableStructure();
@@ -132,11 +132,11 @@ class TableContructor
         }
         
         if (empty($structure['name'])) {
-            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Table name is empty');
+            throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System('Table name is empty');
         }
         
         if (in_array($structure['name'], $this->declaredTables) && !isset($structure['multipleUsage'])) {
-            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Table declared in other model');
+            throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System('Table declared in other model');
         }
         
         $this->declaredTables[] = $structure['name'];
@@ -158,7 +158,7 @@ class TableContructor
         $updateColumns = [];
         
         if (in_array($tableName, $this->existsTables)) {
-            $result = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query("SHOW COLUMNS IN `$tableName`");
+            $result = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::query("SHOW COLUMNS IN `$tableName`");
 
             while ($row = $result->fetch()) {
                 $existsColumns[$row['Field']] = $row;
@@ -176,7 +176,7 @@ class TableContructor
             }
 
             if ($type == null) {
-                throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
+                throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System(
                     'Unable to find provided column type: ('.implode(',',$options).')'
                 );
             }
@@ -275,26 +275,26 @@ class TableContructor
         if (in_array($tableName, $this->existsTables)) {
             foreach ($updateColumns as $column => $definition) {
                 $sql = "ALTER TABLE `$tableName` CHANGE `$column` $definition";
-                main\mgLibs\MySQL\Query::query($sql);
+                main\addonLibs\MySQL\Query::query($sql);
             }
             
             foreach ($addNewColumns as $definition) {
                 $sql = "ALTER TABLE `$tableName`  ADD $definition";
-                main\mgLibs\MySQL\Query::query($sql);
+                main\addonLibs\MySQL\Query::query($sql);
             }
         } else {
             $sql = 'CREATE TABLE `'.$tableName.'` (';
             $sql .= implode(",\n",$addNewColumns);      
             $sql .= ') ENGINE='.$engine.' DEFAULT CHARSET='.$charset;
 
-            main\mgLibs\MySQL\Query::query($sql);
+            main\addonLibs\MySQL\Query::query($sql);
         }
     }
     
     function createRefrences()
     {
         foreach ($this->refrences as $table => $refrences) {
-            $result = main\mgLibs\MySQL\Query::query("
+            $result = main\addonLibs\MySQL\Query::query("
                 SHOW CREATE TABLE `".$table."`");
             
             $row = $result->fetch();
@@ -317,7 +317,7 @@ class TableContructor
                             `".$table."` 
                         DROP FOREIGN KEY `$refName`;";
                     
-                    main\mgLibs\MySQL\Query::query($sql);
+                    main\addonLibs\MySQL\Query::query($sql);
                 }
                 
                 $sql = "ALTER TABLE 
@@ -333,7 +333,7 @@ class TableContructor
                     
                 ";
                 
-                main\mgLibs\MySQL\Query::query($sql);
+                main\addonLibs\MySQL\Query::query($sql);
             }
         }
     }

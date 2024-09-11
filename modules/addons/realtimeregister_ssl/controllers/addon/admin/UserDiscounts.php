@@ -7,7 +7,7 @@ use AddonModule\RealtimeRegisterSsl as main;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository;
 
-class UserDiscounts extends main\mgLibs\process\AbstractController
+class UserDiscounts extends main\addonLibs\process\AbstractController
 {
     /**
      * This is default page.
@@ -40,13 +40,13 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
     {
         try {
             if (!isset($input['client_id']) or !trim($input['client_id'])) {
-                throw new \Exception(main\mgLibs\Lang::T('messages', 'clientIDNotProvided'));
+                throw new \Exception(main\addonLibs\Lang::T('messages', 'clientIDNotProvided'));
             }
             if (!isset($input['product_id']) or !trim($input['product_id'])) {
-                throw new \Exception(main\mgLibs\Lang::T('messages', 'productIDNotProvided'));
+                throw new \Exception(main\addonLibs\Lang::T('messages', 'productIDNotProvided'));
             }
             if (!isset($input['discount']) or !trim($input['discount'])) {
-                throw new \Exception(main\mgLibs\Lang::T('messages', 'discountIDNotProvided'));
+                throw new \Exception(main\addonLibs\Lang::T('messages', 'discountIDNotProvided'));
             }
 
             $clientID = $input['client_id'];
@@ -66,7 +66,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
         }
 
         return [
-            'success' => main\mgLibs\Lang::T('messages', 'addSuccess')
+            'success' => main\addonLibs\Lang::T('messages', 'addSuccess')
         ];
     }
 
@@ -74,7 +74,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
     {
         try {
             if (!isset($input['rule_id']) or !trim($input['rule_id'])) {
-                throw new \Exception(main\mgLibs\Lang::T('messages', 'ruleIDNotProvided'));
+                throw new \Exception(main\addonLibs\Lang::T('messages', 'ruleIDNotProvided'));
             }
 
             $ruleID = $input['rule_id'];
@@ -89,7 +89,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
         }
 
         return [
-            'success' => main\mgLibs\Lang::T('messages', 'removeSuccess')
+            'success' => main\addonLibs\Lang::T('messages', 'removeSuccess')
         ];
     }
 
@@ -97,10 +97,10 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
     {
         try {
             if (!isset($input['rule_id']) || !trim($input['rule_id'])) {
-                throw new \Exception(main\mgLibs\Lang::T('messages', 'ruleIDNotProvided'));
+                throw new \Exception(main\addonLibs\Lang::T('messages', 'ruleIDNotProvided'));
             }
             if (!isset($input['discount']) || !trim($input['discount'])) {
-                throw new \Exception(main\mgLibs\Lang::T('messages', 'discountIDNotProvided'));
+                throw new \Exception(main\addonLibs\Lang::T('messages', 'discountIDNotProvided'));
             }
 
             $ruleID = $input['rule_id'];
@@ -117,7 +117,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
         }
 
         return [
-            'success' => main\mgLibs\Lang::T('messages', 'updateSuccess')
+            'success' => main\addonLibs\Lang::T('messages', 'updateSuccess')
         ];
     }
 
@@ -144,7 +144,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
         try {
             $data = [];
             if (!isset($input['rule_id']) or !trim($input['rule_id'])) {
-                throw new \Exception(main\mgLibs\Lang::T('messages', 'ruleIDNotProvided'));
+                throw new \Exception(main\addonLibs\Lang::T('messages', 'ruleIDNotProvided'));
             }
 
             $ruleID = $input['rule_id'];
@@ -169,7 +169,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
     {
         try {
             if (!isset($input['product_id']) or !trim($input['product_id'])) {
-                throw new \Exception(main\mgLibs\Lang::T('messages', 'productIDNotProvided'));
+                throw new \Exception(main\addonLibs\Lang::T('messages', 'productIDNotProvided'));
             }
 
             $productID = $input['product_id'];

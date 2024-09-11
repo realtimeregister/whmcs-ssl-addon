@@ -7,10 +7,10 @@
     <td>
         {if $status == 'Pending Verification'}
             <span class="label label-warning">{$status}</span>
-            <button data-id="{$id}" class="setVerified btn btn-success btn-sm">{$MGLANG->T('table', 'set as verified')}</button>
+            <button data-id="{$id}" class="setVerified btn btn-success btn-sm">{$ADDONLANG->T('table', 'set as verified')}</button>
         {elseif $status == 'Pending Installation'}
             <span class="label label-primary">{$status}</span>
-            <button data-id="{$id}" class="setInstalled btn btn-success btn-sm">{$MGLANG->T('table', 'set as installed')}</button>
+            <button data-id="{$id}" class="setInstalled btn btn-success btn-sm">{$ADDONLANG->T('table', 'set as installed')}</button>
         {elseif $status == 'Success'}
             <span class="label label-success">{$status}</span>
         {else}

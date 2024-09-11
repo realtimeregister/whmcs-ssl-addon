@@ -1,8 +1,8 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\process;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\process;
 use AddonModule\RealtimeRegisterSsl as main;
-use AddonModule\RealtimeRegisterSsl\mgLibs;
+use AddonModule\RealtimeRegisterSsl\addonLibs;
 
 /**
  * Main Abstract Controller 
@@ -81,7 +81,7 @@ abstract class AbstractMainDriver
             MainInstance::setInstanceName($class);
                         
             self::$_instance = new $class();
-            self::$_instance->_mainNamespace = substr(__NAMESPACE__,0,  strpos(__NAMESPACE__, '\mgLibs'));
+            self::$_instance->_mainNamespace = substr(__NAMESPACE__,0,  strpos(__NAMESPACE__, '\addonLibs'));
             self::$_instance->_mainDIR = call_user_func([$class,'getMainDIR']);
 
             $class= self::$_instance->_mainNamespace.'\Configuration';
@@ -98,8 +98,8 @@ abstract class AbstractMainDriver
                 self::$_instance->_debug = true;
             }
                       
-            main\mgLibs\MySQL\Query::useCurrentConnection();
-            main\mgLibs\Lang::getInstance(self::$_instance->_mainDIR.DS.'langs');
+            main\addonLibs\MySQL\Query::useCurrentConnection();
+            main\addonLibs\Lang::getInstance(self::$_instance->_mainDIR.DS.'langs');
         }
         
         return self::$_instance;
@@ -157,7 +157,7 @@ abstract class AbstractMainDriver
         
     function setMainLangContext()
     {
-        mgLibs\Lang::setContext($this->getType().($this->isAdmin()?'AA':'CA'));
+        addonLibs\Lang::setContext($this->getType().($this->isAdmin()?'AA':'CA'));
     }
     
     /**
@@ -167,8 +167,8 @@ abstract class AbstractMainDriver
      * @param array $input input array
      * @param string $type type of request
      * @return array
-     * @throws main\mgLibs\exceptions\System
-     * @throws main\mgLibs\exceptions\System
+     * @throws main\addonLibs\exceptions\System
+     * @throws main\addonLibs\exceptions\System
      */
     function runControler($controller,$action = 'index',$input = [], $type = 'HTML')
     {
@@ -177,24 +177,24 @@ abstract class AbstractMainDriver
                 ) . "\\" . ($this->_isAdmin ? 'admin' : 'clientarea') . "\\" . $controller;
 
             if (!class_exists($className)) {
-                throw new main\mgLibs\exceptions\System("Unable to find page");
+                throw new main\addonLibs\exceptions\System("Unable to find page");
             }
 
             $controllerOBJ = new $className($input);
 
             // display the page or not
             if (method_exists($controllerOBJ, "isActive") && !$controllerOBJ->{"isActive"}())
-                throw new mgLibs\exceptions\System("No access to this page");
+                throw new addonLibs\exceptions\System("No access to this page");
 
             if (!method_exists($controllerOBJ, $action.$type)) {
-                throw new main\mgLibs\exceptions\System("Unable to find Action: ".$action.$type);
+                throw new main\addonLibs\exceptions\System("Unable to find Action: ".$action.$type);
             }
 
-            main\mgLibs\Lang::stagCurrentContext('generate'.$controller);
+            main\addonLibs\Lang::stagCurrentContext('generate'.$controller);
                        
-            main\mgLibs\Lang::addToContext(lcfirst ($controller));
+            main\addonLibs\Lang::addToContext(lcfirst ($controller));
 
-            main\mgLibs\Smarty::I()->setTemplateDir(
+            main\addonLibs\Smarty::I()->setTemplateDir(
                 self::I()->getModuleTemplatesDir() . DS . 'pages' . DS . lcfirst($controller)
             );
 
@@ -203,19 +203,19 @@ abstract class AbstractMainDriver
             switch ($type) {
                 case 'HTML':
                     if(empty($result['tpl'])) {
-                        throw new main\mgLibs\exceptions\System("Provide Template Name");
+                        throw new main\addonLibs\exceptions\System("Provide Template Name");
                     }
                     
                     $success = isset($result['vars']['success'])?$result['vars']['success']:false;
                     $error = isset($result['vars']['error'])?$result['vars']['error']:false;
-                    $result = main\mgLibs\Smarty::I()->view($result['tpl'], $result['vars']);
+                    $result = main\addonLibs\Smarty::I()->view($result['tpl'], $result['vars']);
                 break;
                 default:
                     $success = isset($result['success'])?$result['success']:false;
                     $error = isset($result['error'])?$result['error']:false;
             }
 
-            main\mgLibs\Lang::unstagContext('generate'.$controller);
+            main\addonLibs\Lang::unstagContext('generate'.$controller);
 
             return [
                 $result,
@@ -223,7 +223,7 @@ abstract class AbstractMainDriver
                 $error
             ];
         } catch (\Exception $ex) {
-            main\mgLibs\Lang::unstagContext('generate'.$controller);
+            main\addonLibs\Lang::unstagContext('generate'.$controller);
             throw $ex;
             return false;
         }

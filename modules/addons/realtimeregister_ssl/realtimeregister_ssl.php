@@ -7,7 +7,6 @@ if (!defined('DS')) {
 require_once __DIR__ . DS . 'Loader.php';
 new \AddonModule\RealtimeRegisterSsl\Loader();
 
-#MGLICENSE_FUNCTIONS#
 
 function realtimeregister_ssl_config(){
     return AddonModule\RealtimeRegisterSsl\Addon::config();
@@ -26,7 +25,6 @@ function realtimeregister_ssl_upgrade($vars){
 }
 
 function realtimeregister_ssl_output($params){
-    #MGLICENSE_CHECK_ECHO_AND_RETURN_MESSAGE#
     AddonModule\RealtimeRegisterSsl\Addon::I(FALSE,$params);
     
     if (!empty($_REQUEST['json'])) {
@@ -46,7 +44,6 @@ function realtimeregister_ssl_output($params){
 }
 
 function realtimeregister_ssl_clientarea(){
-    #MGLICENSE_CHECK_ECHO_AND_RETURN_MESSAGE#
 
     if (!empty($_REQUEST['json'])) {
         ob_clean();

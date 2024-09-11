@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\process;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\process;
 use AddonModule\RealtimeRegisterSsl as main;
 
 /**
@@ -10,13 +10,13 @@ use AddonModule\RealtimeRegisterSsl as main;
  */
 abstract class AbstractController
 {
-    public $mgToken = null;
+    public $addonToken = null;
     private $registredValidationErros = [];
             
     function __construct($input = null)
     {
-        if(isset($input['mg-token'])) {
-            $this->mgToken = $input['mg-token'];
+        if(isset($input['addon-token'])) {
+            $this->addonToken = $input['addon-token'];
         }
     }
     
@@ -39,21 +39,21 @@ abstract class AbstractController
     function checkToken($token = null)
     {
         if($token === null) {
-            $token = $this->mgToken;
+            $token = $this->addonToken;
         }
         
-        if($_SESSION['mg-token'] === $token) {
+        if($_SESSION['addon-token'] === $token) {
             return false;
         }
         
-        $_SESSION['mg-token'] = $token;
+        $_SESSION['addon-token'] = $token;
         
         return true;
     }
     
     function dataTablesParseRow($template,$data)
     {
-        $row = main\mgLibs\Smarty::I()->view($template,$data);
+        $row = main\addonLibs\Smarty::I()->view($template,$data);
         
         $output = [];
         
@@ -79,7 +79,7 @@ abstract class AbstractController
         
         $message = [];
         foreach ($this->registredValidationErros[$field] as $type) {
-            $message[] = main\mgLibs\Lang::absoluteT($langspace,$type);
+            $message[] = main\addonLibs\Lang::absoluteT($langspace,$type);
         }
         
         return implode(',',$message);

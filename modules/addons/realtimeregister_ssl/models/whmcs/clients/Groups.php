@@ -22,7 +22,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\clients;
  *
  * @SuppressWarnings(PHPMD)
  */
-class Groups extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Groups extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {

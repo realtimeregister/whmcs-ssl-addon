@@ -1,8 +1,8 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\MySQL;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\MySQL;
 use Illuminate\Database\Capsule\Manager;
-use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Codes;
 use PDO;
 
 /**
@@ -26,7 +26,7 @@ class Query
 
     /**
      *
-     * @var \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query
+     * @var \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query
      */
     private static $_instance;
 
@@ -51,13 +51,13 @@ class Query
      * @param string $password
      * @param string $dbname
      * @param string $connectionName
-     * @return \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query
+     * @return \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query
      * @throws \AddonModule\RealtimeRegisterSsl\exception\System
      */
     public static function I()
     {
         if (empty(self::$_instance)) {
-            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Object not Spawned');
+            throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System('Object not Spawned');
         }
         return self::$_instance;
     }
@@ -89,9 +89,9 @@ class Query
     public static function connectFromFile($file)
     {
         if (!file_exists($file)) {
-            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
+            throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System(
                 'DB Connection File does not exits',
-                \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes::MYSQL_MISING_CONFIG_FILE
+                \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Codes::MYSQL_MISING_CONFIG_FILE
             );
         }
 
@@ -102,9 +102,9 @@ class Query
         foreach ($config as $connectionName => $config) {
             if ($config['host']) {
                 if (!extension_loaded('PDO')) {
-                    throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
+                    throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System(
                         'Missing PDO Extension',
-                        \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes::MYSQL_MISING_PDO_EXTENSION
+                        \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Codes::MYSQL_MISING_PDO_EXTENSION
                     );
                 }
 
@@ -117,7 +117,7 @@ class Query
 
                     self::$_instance->connection[$connectionName]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 } catch (\Exception $ex) {
-                    throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('SQL Connection Error', Codes::MYSQL_CONNECTION_FAILED);
+                    throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System('SQL Connection Error', Codes::MYSQL_CONNECTION_FAILED);
                 }
             }
         }
@@ -144,14 +144,14 @@ class Query
      * @param array $params
      * @param string $connectionName
      * @return result
-     * @throws \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System
+     * @throws \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System
      */
     public static function query($query, array $params = [], $connectionName = 'default')
     {
         if (!isset(self::$_instance->connection[$connectionName])) {
-            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
+            throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System(
                 "Connection " . $connectionName . ' not exits',
-                \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes::MYSQL_MISING_CONNECTION
+                \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Codes::MYSQL_MISING_CONNECTION
             );
         }
 

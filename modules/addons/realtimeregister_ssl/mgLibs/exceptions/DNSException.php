@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\exceptions;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\exceptions;
 
 class DNSException extends \Exception
 {

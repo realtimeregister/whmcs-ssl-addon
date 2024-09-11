@@ -24,79 +24,79 @@
         <div class="panel-body">
 
             <div class="button-container pull-right">
-                <button type="button" class="btn btn-primary save-all-products">{$MGLANG->T('save_all_products')}</button>
+                <button type="button" class="btn btn-primary save-all-products">{$ADDONLANG->T('save_all_products')}</button>
             </div>
 
             <! --- start new form --->
-            <form action="" method="post" class="form-horizontal margin-bottom-15" onsubmit="return confirm('{$MGLANG->T('areYouSureManyProducts')}');">
+            <form action="" method="post" class="form-horizontal margin-bottom-15" onsubmit="return confirm('{$ADDONLANG->T('areYouSureManyProducts')}');">
 
                 <input type="hidden" name="many-products" value="1">
 
                 <div style="padding:0 15px;">
-                    <h2 style="margin-bottom:50px">{$MGLANG->T('setForManyProducts')}</h2>
+                    <h2 style="margin-bottom:50px">{$ADDONLANG->T('setForManyProducts')}</h2>
 
                     <div class="form-group">
-                        <label class="control-label col-sm-2">{$MGLANG->T('issued_ssl_message')}</label>
+                        <label class="control-label col-sm-2">{$ADDONLANG->T('issued_ssl_message')}</label>
                         <div class="col-sm-10" style="padding:0;">
-                            <textarea class="form-control mg-product-commission" name="issued_ssl_message"></textarea>
+                            <textarea class="form-control addon-product-commission" name="issued_ssl_message"></textarea>
                         </div>
                     </div>
 
                     <div class="form-group">
-                            <label class="control-label col-sm-2">{$MGLANG->T('customguide')}</label>
+                            <label class="control-label col-sm-2">{$ADDONLANG->T('customguide')}</label>
                             <div class="col-sm-10" style="padding:0;">
-                                <textarea class="form-control mg-product-commission" name="custom_guide"></textarea>
+                                <textarea class="form-control addon-product-commission" name="custom_guide"></textarea>
                             </div>
                         </div>
 
                     <div class="row">
 
                         <div class="form-group">
-                            <label class="control-label col-sm-2">{$MGLANG->T('autoSetup')}</label>
+                            <label class="control-label col-sm-2">{$ADDONLANG->T('autoSetup')}</label>
                             <div class="col-sm-10">
                                 <select name="autosetup" class="form-control">
-                                    <option value="donot">{$MGLANG->T('doNotAnything')}</option>
-                                    <option value="order">{$MGLANG->T('autoSetupOrder')}</option>
-                                    <option value="payment">{$MGLANG->T('autoSetupPayment')}</option>
-                                    <option value="on">{$MGLANG->T('autoSetupOn')}</option>
-                                    <option value="">{$MGLANG->T('autoSetupOff')}</option>
+                                    <option value="donot">{$ADDONLANG->T('doNotAnything')}</option>
+                                    <option value="order">{$ADDONLANG->T('autoSetupOrder')}</option>
+                                    <option value="payment">{$ADDONLANG->T('autoSetupPayment')}</option>
+                                    <option value="on">{$ADDONLANG->T('autoSetupOn')}</option>
+                                    <option value="">{$ADDONLANG->T('autoSetupOff')}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-sm-2">{$MGLANG->T('commission')}</label>
+                            <label class="control-label col-sm-2">{$ADDONLANG->T('commission')}</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control mg-product-commission" name="configoption6" value="" pattern="\d*">
+                                <input type="text" class="form-control addon-product-commission" name="configoption6" value="" pattern="\d*">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-sm-2">{$MGLANG->T('statusEnabled')}</label>
+                            <label class="control-label col-sm-2">{$ADDONLANG->T('statusEnabled')}</label>
                             <div class="col-sm-10" style="padding-top: 8px;">
-                                <input class="form-check-input mg-js-pricing-auto-download" name="hidden" value="1" type="checkbox" style="margin-top: -46px;">
+                                <input class="form-check-input addon-js-pricing-auto-download" name="hidden" value="1" type="checkbox" style="margin-top: -46px;">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-sm-2">{$MGLANG->T('priceAutoDownlaod')}</label>
+                            <label class="control-label col-sm-2">{$ADDONLANG->T('priceAutoDownlaod')}</label>
                             <div class="col-sm-10" style="padding-top: 8px;">
-                                <input class="form-check-input mg-js-pricing-auto-download" name="configoption5" value="1" type="checkbox" style="margin-top: -46px;">
+                                <input class="form-check-input addon-js-pricing-auto-download" name="configoption5" value="1" type="checkbox" style="margin-top: -46px;">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-sm-2">{$MGLANG->T('allOrSelectedProducts')}</label>
+                            <label class="control-label col-sm-2">{$ADDONLANG->T('allOrSelectedProducts')}</label>
                             <div class="col-sm-10">
                                 <select name="type" class="form-control">
-                                    <option value="all">{$MGLANG->T('allProducts')}</option>
-                                    <option value="selected">{$MGLANG->T('selectedProducts')}</option>
+                                    <option value="all">{$ADDONLANG->T('allProducts')}</option>
+                                    <option value="selected">{$ADDONLANG->T('selectedProducts')}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group" >
-                            <label class="control-label col-sm-2">{$MGLANG->T('selectProducts')}</label>
+                            <label class="control-label col-sm-2">{$ADDONLANG->T('selectProducts')}</label>
                             <div class="col-sm-10">
                                 <select multiple name="products[]" class="form-control" disabled>
                                     {foreach $products as $product}
@@ -107,7 +107,7 @@
                         </div>
 
 
-                        <input type="submit" name="saveProduct" class="btn btn-success" value="{$MGLANG->T('save')}" />
+                        <input type="submit" name="saveProduct" class="btn btn-success" value="{$ADDONLANG->T('save')}" />
 
                     </div>
                 </div>
@@ -125,28 +125,28 @@
                         <input type="hidden" name="product[{$product->id}][id]" value="{$product->id}"/>
                         <td>
                             <div class="form-group">
-                                <label class="control-label col-sm-2">{$MGLANG->T('realtimeRegisterSSLProduct')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('realtimeRegisterSSLProduct')}</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" value="{$product->configoption1}" disabled>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label col-sm-2">{$MGLANG->T('productName')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('productName')}</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" name="product[{$product->id}][name]" value="{$product->name}">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label col-sm-2">{$MGLANG->T('issued_ssl_message')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('issued_ssl_message')}</label>
                                 <div class="col-sm-10">
                                     <textarea class="form-control" name="product[{$product->id}][issued_ssl_message]">{$product->configoption23}</textarea>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label col-sm-2">{$MGLANG->T('customguide')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('customguide')}</label>
                                 <div class="col-sm-10">
                                     <textarea class="form-control" name="product[{$product->id}][custom_guide]">{$product->configoption24}</textarea>
                                 </div>
@@ -154,18 +154,18 @@
 
 
                             <div class="form-group">
-                                <label class="control-label col-sm-2">{$MGLANG->T('autoSetup')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('autoSetup')}</label>
                                 <div class="col-sm-10">
                                     <select name="product[{$product->id}][autosetup]" class="form-control">
-                                        <option value="order" {if $product->autosetup == 'order'}selected=""{/if}>{$MGLANG->T('autoSetupOrder')}</option>
-                                        <option value="payment" {if $product->autosetup == 'payment'}selected=""{/if}>{$MGLANG->T('autoSetupPayment')}</option>
-                                        <option value="on" {if $product->autosetup == 'on'}selected=""{/if}>{$MGLANG->T('autoSetupOn')}</option>
-                                        <option value="" {if $product->autosetup == ''}selected=""{/if}>{$MGLANG->T('autoSetupOff')}</option>
+                                        <option value="order" {if $product->autosetup == 'order'}selected=""{/if}>{$ADDONLANG->T('autoSetupOrder')}</option>
+                                        <option value="payment" {if $product->autosetup == 'payment'}selected=""{/if}>{$ADDONLANG->T('autoSetupPayment')}</option>
+                                        <option value="on" {if $product->autosetup == 'on'}selected=""{/if}>{$ADDONLANG->T('autoSetupOn')}</option>
+                                        <option value="" {if $product->autosetup == ''}selected=""{/if}>{$ADDONLANG->T('autoSetupOff')}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-sm-2">{$MGLANG->T('months')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('months')}</label>
                                 <div class="col-sm-10">
                                     <div  class="maxMonths {if $product->paytype == 'onetime'}hidden{/if}">{$product->apiConfig->peroids}</div>
                                     <input {if $product->paytype == 'onetime'}class="hidden" disabled=""{/if} type="hidden" name="product[{$product->id}][configoption2]" value="{$product->apiConfig->peroids}"></input>
@@ -183,7 +183,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-sm-2">{$MGLANG->T('includedSans')}</label>
+                                    <label class="control-label col-sm-2">{$ADDONLANG->T('includedSans')}</label>
                                     <div class="col-sm-10">
                                         <input type="number" class="form-control" name="product[{$product->id}][configoption4]" value="{$product->configoption4}" {if !$product->apiConfig->isSanEnabled} disabled {/if}>
                                     </div>
@@ -195,7 +195,7 @@
                                     <input type="checkbox" class="hidden" name="product[{$product->id}][configoption13]" value="on" style="margin-top: 10px;" {if $product->configoption13 === 'on'} checked {/if}{if !$product->apiConfig->isWildcardSanEnabled} disabled {/if}>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-sm-2">{$MGLANG->T('includedSansWildcard')}</label>
+                                    <label class="control-label col-sm-2">{$ADDONLANG->T('includedSansWildcard')}</label>
                                     <div class="col-sm-10">
                                         <input type="number" class="form-control" name="product[{$product->id}][configoption8]" value="{$product->configoption8}" {if !$product->apiConfig->isWildcardSanEnabled} disabled {/if}>
                                     </div>
@@ -203,81 +203,81 @@
                             {/if}
 
                             <div class="form-group">
-                                <label class="control-label col-sm-2">{$MGLANG->T('status')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('status')}</label>
                                 <div class="col-sm-10">
                                     <div class="buttons-container">
                                         {if $product->hidden eq 0}
-                                            <button type="button" data-product-id="{$product->id}" class="btn btn-danger disable-product">{$MGLANG->T('statusDisable')}</button>
+                                            <button type="button" data-product-id="{$product->id}" class="btn btn-danger disable-product">{$ADDONLANG->T('statusDisable')}</button>
                                         {else}
-                                            <button type="button" data-product-id="{$product->id}" class="btn btn-success enable-product">{$MGLANG->T('statusEnable')}</button>
+                                            <button type="button" data-product-id="{$product->id}" class="btn btn-success enable-product">{$ADDONLANG->T('statusEnable')}</button>
                                         {/if}
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label col-sm-2">{$MGLANG->T('paymentType')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('paymentType')}</label>
                                 <div class="col-sm-10">
-                                    <select name="product[{$product->id}][paytype]" class="form-control mg-js-pricing-select" data-id="{$product->id}">
-                                        <option {if $product->paytype == 'free'}selected{/if} value="free">{$MGLANG->T('paymentTypeFree')}</option>
-                                        <option {if $product->paytype == 'recurring'}selected{/if} value="recurring">{$MGLANG->T('paymentTypeRecurring')}</option>
-                                        <option {if $product->paytype == 'onetime'}selected{/if} value="onetime">{$MGLANG->T('paymentTypeOneTime')}</option>
+                                    <select name="product[{$product->id}][paytype]" class="form-control addon-js-pricing-select" data-id="{$product->id}">
+                                        <option {if $product->paytype == 'free'}selected{/if} value="free">{$ADDONLANG->T('paymentTypeFree')}</option>
+                                        <option {if $product->paytype == 'recurring'}selected{/if} value="recurring">{$ADDONLANG->T('paymentTypeRecurring')}</option>
+                                        <option {if $product->paytype == 'onetime'}selected{/if} value="onetime">{$ADDONLANG->T('paymentTypeOneTime')}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-sm-2">{$MGLANG->T('commission')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('commission')}</label>
                                 <div class="col-sm-10">
                                     {if $product->configoption6}
-                                        <input type="text" class="form-control mg-product-commission" name="product[{$product->id}][configoption6]" value="{math equation="x * y" x=$product->configoption6 y=100}" data-id="{$product->id}" {if $product->paytype == 'free'}readonly=""{/if} pattern="\d*"/>
+                                        <input type="text" class="form-control addon-product-commission" name="product[{$product->id}][configoption6]" value="{math equation="x * y" x=$product->configoption6 y=100}" data-id="{$product->id}" {if $product->paytype == 'free'}readonly=""{/if} pattern="\d*"/>
                                     {else}
-                                        <input type="text" class="form-control mg-product-commission" name="product[{$product->id}][configoption6]" value="" data-id="{$product->id}" {if $product->paytype == 'free'}readonly=""{/if} pattern="\d*"/>
+                                        <input type="text" class="form-control addon-product-commission" name="product[{$product->id}][configoption6]" value="" data-id="{$product->id}" {if $product->paytype == 'free'}readonly=""{/if} pattern="\d*"/>
                                     {/if}
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-sm-2">{$MGLANG->T('priceAutoDownlaod')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('priceAutoDownlaod')}</label>
                                 <div class="col-sm-10" style="padding-top: 8px;">
-                                    <input class="form-check-input mg-js-pricing-auto-download" name="product[{$product->id}][configoption5]" data-id="{$product->id}" value="1" {if $product->configoption5} checked="" {/if} {if $product->paytype == 'free'}readonly="" disabled=""{/if} type="checkbox" />
+                                    <input class="form-check-input addon-js-pricing-auto-download" name="product[{$product->id}][configoption5]" data-id="{$product->id}" value="1" {if $product->configoption5} checked="" {/if} {if $product->paytype == 'free'}readonly="" disabled=""{/if} type="checkbox" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label col-sm-2">{$MGLANG->T('configurableOptionsPeriod')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptionsPeriod')}</label>
                                 <div class="col-sm-10">
-                                    <a href="#" onclick="manageconfigoptions('{$product->confOptionPeriod->id}');return false;" class="btn btn-success">{$MGLANG->T('editPrices')}</a>
-                                    <small>{$MGLANG->T('pricingInclude')}</small>
+                                    <a href="#" onclick="manageconfigoptions('{$product->confOptionPeriod->id}');return false;" class="btn btn-success">{$ADDONLANG->T('editPrices')}</a>
+                                    <small>{$ADDONLANG->T('pricingInclude')}</small>
                                 </div>
                             </div>
 
                             {if $product->apiConfig->isSanEnabled}
                                 <div class="form-group">
-                                    <label class="control-label col-sm-2">{$MGLANG->T('configurableOptions')}</label>
+                                    <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptions')}</label>
                                     <div class="col-sm-10">
                                         {foreach from=$product->confOption key=i item=confOption}
                                             <a href="#" onclick="manageconfigoptions('{$confOption->id}');return false;"
-                                            class="btn btn-success">{$i + 1} {$MGLANG->T('editYears')}</a>
+                                            class="btn btn-success">{$i + 1} {$ADDONLANG->T('editYears')}</a>
                                         {/foreach}
-                                        <small>{$MGLANG->T('pricingInclude')}</small>
+                                        <small>{$ADDONLANG->T('pricingInclude')}</small>
                                     </div>
                                 </div>
                             {/if}
 
                             {if $product->apiConfig->isWildcardSanEnabled}
                                 <div class="form-group">
-                                    <label class="control-label col-sm-2">{$MGLANG->T('configurableOptionsWildcard')}</label>
+                                    <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptionsWildcard')}</label>
                                     <div class="col-sm-10">
                                         {foreach from=$product->confOptionWildcard key=i item=confOption}
                                             <a href="#" onclick="manageconfigoptions('{$confOption->id}');return false;"
-                                            class="btn btn-success">{$i + 1} {$MGLANG->T('editYears')}</a>
+                                            class="btn btn-success">{$i + 1} {$ADDONLANG->T('editYears')}</a>
                                         {/foreach}
-                                        <small>{$MGLANG->T('pricingInclude')}</small>
+                                        <small>{$ADDONLANG->T('pricingInclude')}</small>
                                     </div>
                                 </div>
                             {/if}
 
-                            <div class="form-group" id="mg-js-pricing-group-{$product->id}" {if $product->paytype == 'free'}style="display: none;"{/if}>
-                                <label class="control-label col-sm-2">{$MGLANG->T('enableFor')}</label>
+                            <div class="form-group" id="addon-js-pricing-group-{$product->id}" {if $product->paytype == 'free'}style="display: none;"{/if}>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('enableFor')}</label>
                                 <div class="col-sm-10">
 
                                     <div class="product_prices">
@@ -285,10 +285,10 @@
                                             <tbody>
                                                 <tr style="text-align:center;font-weight:bold">
                                                     <td></td>
-                                                    <td class="prod-pricing-monthly-onetime">{$MGLANG->T('pricingMonthly')}</td>
-                                                    {if in_array('12',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$MGLANG->T('pricingAnnually')}</td>{/if}
-                                                    {if in_array('24',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$MGLANG->T('pricingBiennially')}</td>{/if}
-                                                    {if in_array('36',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$MGLANG->T('pricingTriennially')}</td>{/if}
+                                                    <td class="prod-pricing-monthly-onetime">{$ADDONLANG->T('pricingMonthly')}</td>
+                                                    {if in_array('12',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$ADDONLANG->T('pricingAnnually')}</td>{/if}
+                                                    {if in_array('24',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$ADDONLANG->T('pricingBiennially')}</td>{/if}
+                                                    {if in_array('36',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$ADDONLANG->T('pricingTriennially')}</td>{/if}
                                                 </tr>
                                                 {foreach from=$product->pricing item=pricing}
                                                     <tr style="text-align:center" bgcolor="#ffffff" currency="{$pricing->code}">
@@ -323,11 +323,11 @@
                         </td>
                         </tr>
                     </table>
-                    <input type="submit" name="saveProduct" class="btn btn-success" value="{$MGLANG->T('save')}" />
+                    <input type="submit" name="saveProduct" class="btn btn-success" value="{$ADDONLANG->T('save')}" />
                 </form>
             {/foreach}
             <div class="button-container pull-right">
-                <button type="button" class="btn btn-primary save-all-products">{$MGLANG->T('save_all_products')}</button>
+                <button type="button" class="btn btn-primary save-all-products">{$ADDONLANG->T('save_all_products')}</button>
             </div>
         </div>
     </div>
@@ -340,7 +340,7 @@
 
                 $('body').on('click','.save-all-products', function(){
 
-                    $('#MGLoader').show();
+                    $('#AddonLoader').show();
 
                     var promises = [];
 
@@ -368,9 +368,9 @@
                     });
 
                     $.when.apply(null, promises).done(function(){
-                        $('#MGAlerts div[data-prototype="success"] strong').text('{/literal}{$MGLANG->T('products_saved')}{literal}');
-                        $('#MGAlerts div[data-prototype="success"]').show();
-                        $('#MGLoader').hide();
+                        $('#AddonAlerts div[data-prototype="success"] strong').text('{/literal}{$ADDONLANG->T('products_saved')}{literal}');
+                        $('#AddonAlerts div[data-prototype="success"]').show();
+                        $('#AddonLoader').hide();
                         $("html, body").animate({ scrollTop: 0 }, "slow");
                     });
                 });
@@ -390,14 +390,14 @@
 
                 });
 
-                $('.mg-js-create-oprions').on('click', function () {
+                $('.addon-js-create-options').on('click', function () {
                     $('#createConfOptionsFormId').val($(this).data('id'));
                     $('#createConfOptionsFormName').val($(this).data('name'));
                     $('#createConfOptionsForm').submit();
                 });
 
 
-                $('.mg-js-create-oprions-wildcard').on('click', function () {
+                $('.addon-js-create-options-wildcard').on('click', function () {
                     $('#createConfOptionsFormIdWildcard').val($(this).data('id'));
                     $('#createConfOptionsFormNameWildcard').val($(this).data('name'));
                     $('#createConfOptionsFormWildcard').submit();
@@ -431,9 +431,9 @@
 
                 function switchButtons(type, container, productId) {
                     if (type == 'enToDis') {
-                        container.parent().html('<button type="button" data-product-id="' + productId + '" class="btn btn-danger disable-product">{/literal}{$MGLANG->T('statusDisable')}{literal}</button>');
+                        container.parent().html('<button type="button" data-product-id="' + productId + '" class="btn btn-danger disable-product">{/literal}{$ADDONLANG->T('statusDisable')}{literal}</button>');
                     } else {
-                        container.parent().html('<button type="button" data-product-id="' + productId + '" class="btn btn-success enable-product">{/literal}{$MGLANG->T('statusEnable')}{literal}</button>');
+                        container.parent().html('<button type="button" data-product-id="' + productId + '" class="btn btn-success enable-product">{/literal}{$ADDONLANG->T('statusEnable')}{literal}</button>');
                     }
                 }
 
@@ -543,13 +543,13 @@
                     var type = select.val();
                     if (type === 'free') {
                         setAsNonOneTime(select);
-                        $('#mg-js-pricing-group-' + productId).hide();
+                        $('#addon-js-pricing-group-' + productId).hide();
                     } else if (type === 'onetime') {
                         setAsOneTime(select, type);
-                        $('#mg-js-pricing-group-' + productId).show();
+                        $('#addon-js-pricing-group-' + productId).show();
                     } else {
                         setAsNonOneTime(select, type);
-                        $('#mg-js-pricing-group-' + productId).show();
+                        $('#addon-js-pricing-group-' + productId).show();
                     }
                 }
 
@@ -602,17 +602,17 @@
 
                     if (checked)
                     {
-                        $('#mg-js-pricing-group-' + productId).find('input[id^="pricing_"]').prop('readonly', true);
+                        $('#addon-js-pricing-group-' + productId).find('input[id^="pricing_"]').prop('readonly', true);
                     } else
                     {
-                        $('#mg-js-pricing-group-' + productId).find('input[id^="pricing_"]').prop('readonly', false);
+                        $('#addon-js-pricing-group-' + productId).find('input[id^="pricing_"]').prop('readonly', false);
                     }
                 }
                 function changePriceWithCommission(input) {
                     var commissionValue = parseFloat(input.val());
                     var productId = input.data('id');
                     //var priceWithCommission = price + price * commissionValue/100;
-                    //var price = parseFloat($('#mg-js-pricing-group-' + productId).find('input[id^="pricing_"]').val());
+                    //var price = parseFloat($('#addon-js-pricing-group-' + productId).find('input[id^="pricing_"]').val());
 
                     var checkboxes = input.parents('#product_configuration').find('.product_prices').find('.pricingtgl');
                     checkboxes.each(function (index) {
@@ -632,29 +632,29 @@
                     });
                 }
 
-                $('.mg-js-pricing-select').each(function () {
+                $('.addon-js-pricing-select').each(function () {
                     showHidePricing($(this));
                 });
 
-                $('.mg-js-pricing-select').on('change', function () {
+                $('.addon-js-pricing-select').on('change', function () {
                     showHidePricing($(this), true);
                     showHidePeriodSelection($(this));
                 });
 
-                $('.mg-js-pricing-select').on('change', function () {
+                $('.addon-js-pricing-select').on('change', function () {
                     showHidePricing($(this), true);
                     showHidePeriodSelection($(this));
                     enableDisableCommission($(this));
                     enableDisableAutoPriceUpdate($(this));
                 });
-                $('.mg-js-pricing-auto-download').on('change', function () {
+                $('.addon-js-pricing-auto-download').on('change', function () {
                     enableDisablePriceField($(this))
                 });
-                $('.mg-product-commission').on('change keyup paste', function () {
+                $('.addon-product-commission').on('change keyup paste', function () {
                     changePriceWithCommission($(this))
                 });
                 $('input[id^="pricing_"]').on('change keyup paste', function () {
-                    changePriceWithCommission($(this).parents('#product_configuration').find('.mg-product-commission'))
+                    changePriceWithCommission($(this).parents('#product_configuration').find('.addon-product-commission'))
                 });
             });
         {/literal}

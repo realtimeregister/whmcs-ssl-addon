@@ -1,8 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * MGMF product developed. (2016-02-09)
- * *
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -22,7 +20,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\admins;
  *
  * @Table(name=tbladminroles,preventUpdate,prefixed=false)
  */
-class Role  extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Role  extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      *

@@ -1,14 +1,14 @@
 <?php
 
 namespace AddonModule\RealtimeRegisterSsl\models\testGroup\TestItem;
-use AddonModule\RealtimeRegisterSsl\mgLibs;
+use AddonModule\RealtimeRegisterSsl\addonLibs;
 use AddonModule\RealtimeRegisterSsl\models\testGroup\simpleItem;
 
 /**
  * Description of repository
  *
  */
-class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {
@@ -19,7 +19,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Reposito
     {
         $sql = "
             SELECT
-                ".mgLibs\MySQL\Query::formatSelectFields(testItem::fieldDeclaration(),'B')."
+                ".addonLibs\MySQL\Query::formatSelectFields(testItem::fieldDeclaration(),'B')."
                 ,count(S.`". simpleItem\simpleItem::getProperyColumn('id')."`) as simpleNum
             FROM
                 ".testItem::tableName()." B
@@ -30,7 +30,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Reposito
                 .testItem::getProperyColumn('id')."`
         ";
 
-        $conditionParsed = mgLibs\MySQL\Query::parseConditions($this->_filters,$params,'B');
+        $conditionParsed = addonLibs\MySQL\Query::parseConditions($this->_filters,$params,'B');
 
         if ($conditionParsed) {
             $sql .= " WHERE ".$conditionParsed;
@@ -38,9 +38,9 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Reposito
         
         $sql .= " GROUP BY `B`.`".testItem::getProperyColumn('id')."` ";
 
-        $sql .= mgLibs\MySQL\Query::formarLimit($this->_limit, $this->_offest);
+        $sql .= addonLibs\MySQL\Query::formarLimit($this->_limit, $this->_offest);
 
-        $result = mgLibs\MySQL\Query::query($sql,$params);
+        $result = addonLibs\MySQL\Query::query($sql,$params);
         
         $output = [];
         

@@ -2,8 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use Exception;
-use Illuminate\Database\Capsule\Manager as Capsule;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Domains;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
@@ -17,11 +16,12 @@ use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
 use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
+use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
@@ -97,7 +97,7 @@ class ClientReissueCertificate
                 $ssl = new SSL();
                 $ssldata = $ssl->getByServiceId($this->p['serviceid']);
                 $this->setApproverData($ssldata);
-                $this->vars['countries'] = Countries::getInstance()->getCountriesForMgAddonDropdown();
+                $this->vars['countries'] = Countries::getInstance()->getCountriesForAddonDropdown();
                 return $this->build(self::STEP_TWO);
             } catch (Exception $ex) {
                 $this->vars['errors'][] = \AddonModule\RealtimeRegisterSsl\eHelpers\Exception::e($ex);
@@ -119,7 +119,7 @@ class ClientReissueCertificate
         // Display csr generator
         $apiConf = (new Repository())->get();
         $displayCsrGenerator = $apiConf->display_csr_generator;
-        $countriesForGenerateCsrForm = Countries::getInstance()->getCountriesForMgAddonDropdown();
+        $countriesForGenerateCsrForm = Countries::getInstance()->getCountriesForAddonDropdown();
 
         // Get selected default country for CSR Generator
         $defaultCsrGeneratorCountry = ($displayCsrGenerator) ? $apiConf->default_csr_generator_country : '';

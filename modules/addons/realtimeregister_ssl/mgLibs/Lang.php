@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs;
 
 /**
  * Simple class to translating languages

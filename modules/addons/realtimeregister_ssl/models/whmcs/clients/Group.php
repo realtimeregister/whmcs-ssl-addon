@@ -22,7 +22,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\clients;
  * @Table(name=tblclientgroups,preventUpdate,prefixed=false)
  * @SuppressWarnings(PHPMD)
  */
-class Group extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Group extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      *

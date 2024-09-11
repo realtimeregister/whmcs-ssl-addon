@@ -2,7 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\testGroup\TestItem;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs;
+use AddonModule\RealtimeRegisterSsl\addonLibs;
 use AddonModule\RealtimeRegisterSsl\models\testGroup\simpleItem\simpleItem;
 
 /**
@@ -10,7 +10,7 @@ use AddonModule\RealtimeRegisterSsl\models\testGroup\simpleItem\simpleItem;
  *
  * @Table(name=test_item)
  */
-class TestItem extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class TestItem extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     static $avaibleOptionsA = [
         1 => 'Option1'
@@ -107,7 +107,7 @@ class TestItem extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
         if ($id !== false && empty($data)) {
             $sql = "
                 SELECT
-                    " . mgLibs\MySQL\Query::formatSelectFields(testItem::fieldDeclaration(), 'B') . "
+                    " . addonLibs\MySQL\Query::formatSelectFields(testItem::fieldDeclaration(), 'B') . "
                     ,count(S." . SimpleItem::getProperyColumn('id') . ") as simpleNum
                 FROM
                     " . testItem::tableName() . " B
@@ -119,10 +119,10 @@ class TestItem extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
                     B.id
             ";
 
-            $data = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query($sql, ['id' => $id])->fetch();
+            $data = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::query($sql, ['id' => $id])->fetch();
 
             if (empty($data)) {
-                throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Unable to find Element with ID:' . $id);
+                throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System('Unable to find Element with ID:' . $id);
             }
         }
 
@@ -149,7 +149,7 @@ class TestItem extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
         ];
 
         if ($this->id) {
-            \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::update(
+            \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::update(
                 self::tableName(),
                 $data,
                 [
@@ -157,7 +157,7 @@ class TestItem extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
                 ]
             );
         } else {
-            $this->id = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::insert(self::tableName(), $data);
+            $this->id = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::insert(self::tableName(), $data);
         }
     }
 }

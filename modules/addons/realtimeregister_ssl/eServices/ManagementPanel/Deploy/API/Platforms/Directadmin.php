@@ -6,7 +6,7 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\API\P
 
 use GuzzleHttp\Exception\GuzzleException;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
-use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DeployException;
 
 class Directadmin extends Client implements PlatformInterface
 {

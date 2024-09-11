@@ -5,18 +5,18 @@
 </style>
 <div class="box light">
     <div class="row">
-        <div class="col-lg-12" id="mg-home-content" >
-            <legend>{$MGLANG->T('title')}</legend>
+        <div class="col-lg-12" id="addon-home-content" >
+            <legend>{$ADDONLANG->T('title')}</legend>
             <div id="ordersTable">
                 <table width="100%" class="table table-striped" >
                     <thead>
-                    <th>{$MGLANG->T('table', 'id')}</th>
-                    <th>{$MGLANG->T('table', 'client')}</th>
-                    <th>{$MGLANG->T('table', 'service')}</th>
-                    <th>{$MGLANG->T('table', 'order')}</th>
-                    <th>{$MGLANG->T('table', 'verification_method')}</th>
-                    <th>{$MGLANG->T('table', 'status')}</th>
-                    <th>{$MGLANG->T('table', 'date')}</th>
+                    <th>{$ADDONLANG->T('table', 'id')}</th>
+                    <th>{$ADDONLANG->T('table', 'client')}</th>
+                    <th>{$ADDONLANG->T('table', 'service')}</th>
+                    <th>{$ADDONLANG->T('table', 'order')}</th>
+                    <th>{$ADDONLANG->T('table', 'verification_method')}</th>
+                    <th>{$ADDONLANG->T('table', 'status')}</th>
+                    <th>{$ADDONLANG->T('table', 'date')}</th>
                     </thead>
                     <tbody>
                     </tbody>

@@ -24,7 +24,7 @@
         text-align: left !important;
     }
 </style>
-<script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
+<script type="text/javascript" src="{$assetsURL}/js/addonLibs.js"></script>
 {if $allOk === true}
     <table id="mainTable" class="table table-bordered">
         <colgroup>
@@ -35,47 +35,47 @@
             {if $activationStatus === 'active' || $activationStatus == 'COMPETED'}
                 {if $configoption23}
                     <tr>
-                        <td class="text-left">{$MGLANG->T('issued_ssl_message')}</td>
+                        <td class="text-left">{$ADDONLANG->T('issued_ssl_message')}</td>
                         <td class="text-left">{$configoption23|nl2br}</td>
                     </tr>
                 {/if}
             {/if}
             {if $activationStatus === 'processing' && $custom_guide} 
             <tr>
-                <td class="text-left">{$MGLANG->T('custom_guide')}</td>
+                <td class="text-left">{$ADDONLANG->T('custom_guide')}</td>
                 <td class="text-left">{$custom_guide|nl2br}</td>
             </tr>
             {/if}
             {if $activationStatus === 'processing' && $configoption24}
             <tr>
-                <td class="text-left">{$MGLANG->T('custom_guide')}</td>
+                <td class="text-left">{$ADDONLANG->T('custom_guide')}</td>
                 <td class="text-left">{$configoption24|nl2br}</td>
             </tr>
             {/if}
             <tr>
-                <td class="text-left" >{$MGLANG->T('configurationStatus')}</td>
-                <td class="text-left">{$MGLANG->T($configurationStatus)}{if $configurationStatus === 'Awaiting Configuration'} - <a href="{$configurationURL}">{$MGLANG->T('configureNow')}</a>{/if}</td>
+                <td class="text-left" >{$ADDONLANG->T('configurationStatus')}</td>
+                <td class="text-left">{$ADDONLANG->T($configurationStatus)}{if $configurationStatus === 'Awaiting Configuration'} - <a href="{$configurationURL}">{$ADDONLANG->T('configureNow')}</a>{/if}</td>
             </tr>
             {if $activationStatus}
                 <tr>
-                    <td class="text-left">{$MGLANG->T('activationStatus')}</td>
+                    <td class="text-left">{$ADDONLANG->T('activationStatus')}</td>
                     <td class="text-left">
                         {if $activationStatus === 'active' || $activationStatus === 'COMPLETED'}
-                            {$MGLANG->T('activationStatusActive')}
+                            {$ADDONLANG->T('activationStatusActive')}
                         {elseif $activationStatus === 'new_order'}
-                            {$MGLANG->T('activationStatusNewOrder')}
+                            {$ADDONLANG->T('activationStatusNewOrder')}
                         {elseif $activationStatus === 'pending'}
-                            {$MGLANG->T('activationStatusPending')}
+                            {$ADDONLANG->T('activationStatusPending')}
                         {elseif $activationStatus === 'cancelled'}
-                            {$MGLANG->T('activationStatusCancelled')}
+                            {$ADDONLANG->T('activationStatusCancelled')}
                         {elseif $activationStatus === 'payment needed'}
-                            {$MGLANG->T('activationStatusPaymentNeeded')}
+                            {$ADDONLANG->T('activationStatusPaymentNeeded')}
                         {elseif $activationStatus === 'processing'}
-                            {$MGLANG->T('activationStatusProcessing')}
+                            {$ADDONLANG->T('activationStatusProcessing')}
                         {elseif $activationStatus === 'incomplete'}
-                            {$MGLANG->T('activationStatusIncomplete')}
+                            {$ADDONLANG->T('activationStatusIncomplete')}
                         {elseif $activationStatus === 'rejected'}
-                            {$MGLANG->T('activationStatusRejected')}
+                            {$ADDONLANG->T('activationStatusRejected')}
                         {else}
                             {$activationStatus|ucfirst}
                         {/if}
@@ -84,55 +84,55 @@
             {/if}
             {if $activationStatus === 'active' || $activationStatus === 'COMPLETED'}
                 <tr>
-                    <td class="text-left">{$MGLANG->T('validFrom')}</td>
+                    <td class="text-left">{$ADDONLANG->T('validFrom')}</td>
                     <td class="text-left">{$validFrom}</td>
                 </tr>
                 <tr>
-                    <td class="text-left">{$MGLANG->T('validTill')}</td>
+                    <td class="text-left">{$ADDONLANG->T('validTill')}</td>
                     <td class="text-left">{$validTill}</td>
                 </tr>
                 {if $subscriptionEnds}
                     <tr>
-                        <td class="text-left">{$MGLANG->T('subscriptionStarts')}</td>
+                        <td class="text-left">{$ADDONLANG->T('subscriptionStarts')}</td>
                         <td class="text-left">{$subscriptionStarts}</td>
                     </tr>
                     <tr>
-                        <td class="text-left">{$MGLANG->T('subscriptionEnds')}</td>
+                        <td class="text-left">{$ADDONLANG->T('subscriptionEnds')}</td>
                         <td class="text-left">{$subscriptionEnds}</td>
                     </tr>
                     <tr>
-                        <td class="text-left">{$MGLANG->T('nextReissue')}</td>
-                        <td class="text-left"><strong>{$MGLANG->T('Reissue SSL within')} {$nextReissue} {$MGLANG->T('days')}</strong></td>
+                        <td class="text-left">{$ADDONLANG->T('nextReissue')}</td>
+                        <td class="text-left"><strong>{$ADDONLANG->T('Reissue SSL within')} {$nextReissue} {$ADDONLANG->T('days')}</strong></td>
                     </tr>
                 {else}
                     <tr>
-                        <td class="text-left">{$MGLANG->T('nextRenewal')}</td>
-                        <td class="text-left"><strong>{$MGLANG->T('Renew SSL within')} {$nextReissue} {$MGLANG->T('days')}</strong></td>
+                        <td class="text-left">{$ADDONLANG->T('nextRenewal')}</td>
+                        <td class="text-left"><strong>{$ADDONLANG->T('Renew SSL within')} {$nextReissue} {$ADDONLANG->T('days')}</strong></td>
                     </tr>
                 {/if}
             {/if}
             <!--{if $order_id}
                 <tr>
-                    <td class="text-left">{$MGLANG->T('Order ID')}</td>
+                    <td class="text-left">{$ADDONLANG->T('Order ID')}</td>
                     <td class="text-left">{$order_id}</td>
                 </tr>
             {/if}
             -->
             {if $domain}
                 <tr>
-                    <td class="text-left">{$MGLANG->T('domain')}</td>
+                    <td class="text-left">{$ADDONLANG->T('domain')}</td>
                     <td class="text-left">{$domain}</td>
                 </tr>
             {/if}
             {if $approver_email}
                 <tr>
-                    <td class="text-left">{$MGLANG->T('Approver email')}</td>
+                    <td class="text-left">{$ADDONLANG->T('Approver email')}</td>
                     <td class="text-left">{$approver_email}</td>
                 </tr>
             {/if}
             {if $partner_order_id}
                 <tr>
-                    <td class="text-left">{$MGLANG->T('Partner Order ID')}</td>
+                    <td class="text-left">{$ADDONLANG->T('Partner Order ID')}</td>
                     <td class="text-left">{$partner_order_id}</td>
                 </tr>
             {/if}
@@ -140,21 +140,21 @@
             {if $approver_method}
                 {if $dcv_method == 'http'}
                     <tr>
-                        <td class="text-left">{$MGLANG->T('hashFile')}</td>
+                        <td class="text-left">{$ADDONLANG->T('hashFile')}</td>
                         <td class="text-left" style="max-width:200px; word-wrap: break-word;">{$approver_method.$dcv_method.link}</td>
                     </tr>
                     <tr>
-                        <td class="text-left">{$MGLANG->T('content')}</td>
+                        <td class="text-left">{$ADDONLANG->T('content')}</td>
                         <td class="text-left" style="max-width:200px; word-wrap: break-word;">{foreach $approver_method.$dcv_method.content as $content}{$content}<br />{/foreach}</td>
                     </tr>
                 {else}
                     <tr id="validationData" >
                         {if $dcv_method == 'email'}
-                            <td class="text-left">{$MGLANG->T('validationEmail')}</td>
+                            <td class="text-left">{$ADDONLANG->T('validationEmail')}</td>
                             <td class="text-left" >{$approver_method}</td>
                         {/if}
                         {if $dcv_method == 'dns'}
-                            <td class="text-left ">{$MGLANG->T('dnsCnameRecord')}</td>
+                            <td class="text-left ">{$ADDONLANG->T('dnsCnameRecord')}</td>
                             <td class="text-left" style="max-width:200px; word-wrap: break-word;">{$approver_method.dns.record|strtolower|replace:'cname':'CNAME'}</td>
                         {/if}
                     </tr>
@@ -163,22 +163,22 @@
 
             {if $sans}
                 <tr>
-                    <td class="text-left">{$MGLANG->T('sans')}</td>
+                    <td class="text-left">{$ADDONLANG->T('sans')}</td>
                     <td id="sansTd" colspan="2" class="text-left">
                             <table class="sansTable table table-bordered" >
                             <tbody>
                             {foreach $sans as $san}
                                 <tr>
-                                    <td colspan="2" class="text-center">{$MGLANG->T({$san.san_name})}</td>
+                                    <td colspan="2" class="text-center">{$ADDONLANG->T({$san.san_name})}</td>
                                 </tr>
                                 {if $san.method == 'http'}
                                     {if $activationStatus === 'processing'}
                                         <tr>
-                                            <td style="width: 15%" class="text-left">{$MGLANG->T('hashFile')}</td>
+                                            <td style="width: 15%" class="text-left">{$ADDONLANG->T('hashFile')}</td>
                                             <td class="text-left" style="max-width:200px; word-wrap: break-word;">{$san.san_validation.link}</td>
                                         </tr>
                                         <tr>
-                                            <td style="width: 15%" class="text-left">{$MGLANG->T('content')}</td>
+                                            <td style="width: 15%" class="text-left">{$ADDONLANG->T('content')}</td>
                                             <td class="text-left" style="max-width:200px; word-wrap: break-word;">{foreach $san.san_validation.content as $content}{$content}<br />{/foreach}</td>
                                         </tr>
                                     {/if}
@@ -186,7 +186,7 @@
                                     {if $san.method == 'dns'}
                                         {if $activationStatus === 'processing'}
                                             <tr>
-                                                <td style="width: 15%" class="text-left">{$MGLANG->T('dnsCnameRecord')}</td>
+                                                <td style="width: 15%" class="text-left">{$ADDONLANG->T('dnsCnameRecord')}</td>
                                                 <td class="text-left" style="max-width:200px; word-wrap: break-word;">{$san.san_validation|strtolower|replace:'cname':'CNAME'}</td>
                                             </tr>
                                         {/if}
@@ -194,7 +194,7 @@
                                         {if $san.san_validation != ''}
                                             {if $activationStatus === 'processing'}
                                                 <tr>
-                                                    <td style="width: 15%" class="text-left">{$MGLANG->T('validationEmail')}</td>
+                                                    <td style="width: 15%" class="text-left">{$ADDONLANG->T('validationEmail')}</td>
                                                     <td class="text-left" style="word-wrap: break-word;">{$san.san_validation}</td>
                                                 </tr>
                                             {/if}
@@ -207,69 +207,69 @@
                     </td>
                 </tr>
                <!--<tr>
-                    <td class="text-left">{$MGLANG->T('sans')}</td>
+                    <td class="text-left">{$ADDONLANG->T('sans')}</td>
                     <td class="text-left">{$sans}</td>
                 </tr>-->
             {/if}
             {if $crt}
                 <tr>
-                    <td class="text-left">{$MGLANG->T('crt')}</td>
+                    <td class="text-left">{$ADDONLANG->T('crt')}</td>
                     <td class="text-left"><textarea onfocus="this.select()" rows="5" class="form-control">{$crt}</textarea></td>
                 </tr>
             {/if}
             {if $ca}
                 <tr>
-                    <td class="text-left">{$MGLANG->T('ca_chain')}</td>
+                    <td class="text-left">{$ADDONLANG->T('ca_chain')}</td>
                     <td class="text-left"><textarea onfocus="this.select()" rows="5" class="form-control">{$ca}</textarea></td>
                 </tr>
             {/if}
             {if $csr}
                 <tr>
-                    <td class="text-left">{$MGLANG->T('csr')}</td>
+                    <td class="text-left">{$ADDONLANG->T('csr')}</td>
                     <td class="text-left"><textarea onfocus="this.select()" rows="5" class="form-control">{$csr}</textarea></td>
                 </tr>
             {/if}
             <tr id="additionalActionsTr">
-                <td class="text-left">{$MGLANG->T('Actions')}</td>
+                <td class="text-left">{$ADDONLANG->T('Actions')}</td>
                 <td id="additionalActionsTd" class="text-left">
                     {if $visible_renew_button}
                     {if $displayRenewButton}
-                        <button type="button" id="btnRenew" class="btn btn-default" style="margin:2px">{$MGLANG->T('renew')}</button>
+                        <button type="button" id="btnRenew" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('renew')}</button>
                     {/if}
                     {/if}
                     {if $dcv_method == 'email'}
-                        <button type="button" id="resend-validation-email" class="btn btn-default" style="margin:2px">{$MGLANG->T('resendValidationEmail')}</button>
+                        <button type="button" id="resend-validation-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('resendValidationEmail')}</button>
                     {/if}
                     {if $activationStatus == 'processing' || $activationStatus == 'cancelled'}
                     {if $btndownload}
-                        <a href="{$btndownload}"><button type="button" class="btn btn-default" style="margin:2px">{$MGLANG->T('download')}</button></a>
+                        <a href="{$btndownload}"><button type="button" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('download')}</button></a>
                     {/if}
                     {if isset($approver_method.http) || isset($approver_method.dns) || $san_revalidate}
-                        <button type="button" id="btnRevalidateNew" class="btn btn-default" style="margin:2px">{$MGLANG->T('revalidate')}</button>
+                        <button type="button" id="btnRevalidateNew" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('revalidate')}</button>
                     {/if}
                     {/if}
 
                     {if $btnInstallCrt}
-                        <button type="button" id="installCertificate" class="btn btn-default" style="margin:2px">{$MGLANG->T('installCertificateBtn')}</button>
+                        <button type="button" id="installCertificate" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('installCertificateBtn')}</button>
                     {/if}
 
                     {if $configurationStatus != 'Awaiting Configuration'}
                         {if $activationStatus == 'processing' || $activationStatus == 'SUSPENDED'}
-                            <button type="button" id="btnRevalidate" class="btn btn-default" style="margin:2px">{$MGLANG->T('domainvalidationmethod')}</button>
+                            <button type="button" id="btnRevalidate" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('domainvalidationmethod')}</button>
                         {elseif $activationStatus == 'active' || $activationStatus === 'COMPLETED'}
-                            <a class="btn btn-default" role="button" href="" id="Action_Custom_Module_Button_Reissue_Certificate">{$MGLANG->T('reissueCertificate')}</a>
-                            <button type="button" id="send-certificate-email" class="btn btn-default" style="margin:2px">{$MGLANG->T('sendCertificate')}</button>
-                            {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default" style="margin:2px">{$MGLANG->T('downloadca')}</button></a>{/if}
-                            {if $downloadcrt}<a href="{$downloadcrt}"><button type="button" id="download-crt" class="btn btn-default" style="margin:2px">{$MGLANG->T('downloadcrt')}</button></a>{/if}
-                            {if $downloadcsr}<a href="{$downloadcsr}"><button type="button" id="download-csr" class="btn btn-default" style="margin:2px">{$MGLANG->T('downloadcsr')}</button></a>{/if}
-                            {if $downloadpem}<a href="{$downloadpem}"><button type="button" id="download-ca" class="btn btn-default" style="margin:2px">{$MGLANG->T('downloadpem')}</button></a>{/if}
+                            <a class="btn btn-default" role="button" href="" id="Action_Custom_Module_Button_Reissue_Certificate">{$ADDONLANG->T('reissueCertificate')}</a>
+                            <button type="button" id="send-certificate-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('sendCertificate')}</button>
+                            {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadca')}</button></a>{/if}
+                            {if $downloadcrt}<a href="{$downloadcrt}"><button type="button" id="download-crt" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadcrt')}</button></a>{/if}
+                            {if $downloadcsr}<a href="{$downloadcsr}"><button type="button" id="download-csr" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadcsr')}</button></a>{/if}
+                            {if $downloadpem}<a href="{$downloadpem}"><button type="button" id="download-ca" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadpem')}</button></a>{/if}
                         {/if}
-                        <!--<button type="button" id="{if $dcv_method == 'email'}btnChange_Approver_Email{else}btnRevalidate{/if}" class="btn btn-default" style="margin:2px">{if $dcv_method == 'email'}{$MGLANG->T('changeValidationEmail')}{else}{$MGLANG->T('revalidate')}{/if}</button>-->
+                        <!--<button type="button" id="{if $dcv_method == 'email'}btnChange_Approver_Email{else}btnRevalidate{/if}" class="btn btn-default" style="margin:2px">{if $dcv_method == 'email'}{$ADDONLANG->T('changeValidationEmail')}{else}{$ADDONLANG->T('revalidate')}{/if}</button>-->
                         {if $privateKey}
-                        <button type="button" id="getPrivateKey" class="btn btn-default" style="margin:2px">{$MGLANG->T('getPrivateKeyBtn')}</button>
+                        <button type="button" id="getPrivateKey" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('getPrivateKeyBtn')}</button>
                         {/if}
                         {if $activationStatus == 'unpaid'}
-                            <button type="button" id="recheckDetails" class="btn btn-default" style="margin:2px">{$MGLANG->T('recheckCertificateDetails')}</button>
+                            <button type="button" id="recheckDetails" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('recheckCertificateDetails')}</button>
                         {/if}
                     {/if}
                 </td>
@@ -297,9 +297,9 @@
                 <div class="modal-header panel-heading">
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">&times;</span>
-                        <span class="sr-only">{$MGLANG->T('Close')}</span>
+                        <span class="sr-only">{$ADDONLANG->T('Close')}</span>
                     </button>
-                    <h4 class="modal-title">{$MGLANG->T('renewModalTitle')}</h4>
+                    <h4 class="modal-title">{$ADDONLANG->T('renewModalTitle')}</h4>
                 </div>
                 <div class="modal-body panel-body" id="modalRenewBody">
 
@@ -311,16 +311,16 @@
                     </div>
                     <form class="form-horizontal" role="form" id="modalRenewForm">
                             <div class="col-sm-12" style="padding: 25px;">
-                                {$MGLANG->T('renewModalConfirmInformation')}
+                                {$ADDONLANG->T('renewModalConfirmInformation')}
                             </div>
                     </form>
                 </div>
                 <div class="modal-footer panel-footer">
                     <button type="button" id="modalRenewSubmit" class="btn btn-primary">
-                        {$MGLANG->T('Submit')}
+                        {$ADDONLANG->T('Submit')}
                     </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">
-                        {$MGLANG->T('Close')}
+                        {$ADDONLANG->T('Close')}
                     </button>
                 </div>
             </div>
@@ -391,7 +391,7 @@
             }
 
             function showSuccessAlert(msg) {
-                var reloadInfo = '{$MGLANG->T('redirectToInvoiceInformation')}'
+                var reloadInfo = '{$ADDONLANG->T('redirectToInvoiceInformation')}'
                 show(renewSuccessAlert);
                 hide(renewDangerAlert);
                 renewSuccessAlert.children('span').html(msg + ' ' + reloadInfo);
@@ -435,7 +435,7 @@
             }
 
             function anErrorOccurred() {
-                showDangerAlert('{$MGLANG->T('anErrorOccurred')}');
+                showDangerAlert('{$ADDONLANG->T('anErrorOccurred')}');
             }
 
             function isJsonString(str) {
@@ -459,7 +459,7 @@
                     renewModal: 'yes',
                     serviceId: {$serviceid},
                     userID: {$userid},
-                    'mg-action': 'renew'
+                    'addon-action': 'renew'
                 };
                 $.ajax({
                     url: serviceUrl,
@@ -483,7 +483,7 @@
                         } else {
                             if(typeof data.data.invoiceID !== 'undefined')
                             {
-                                var reloadInfo = '{$MGLANG->T('redirectToInvoiceInformation')}'
+                                var reloadInfo = '{$ADDONLANG->T('redirectToInvoiceInformation')}'
                                 showDangerAlert(data.error + ' ' + reloadInfo);
                                 window.setTimeout(function(){ window.location.replace('viewinvoice.php?id=' + data.data.invoiceID) }, 5000);
                             } else {
@@ -516,9 +516,9 @@
                 <div class="modal-header panel-heading">
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">&times;</span>
-                        <span class="sr-only">{$MGLANG->T('Close')}</span>
+                        <span class="sr-only">{$ADDONLANG->T('Close')}</span>
                     </button>
-                    <h4 class="modal-title">{$MGLANG->T('revalidateModalTitle')}</h4>
+                    <h4 class="modal-title">{$ADDONLANG->T('revalidateModalTitle')}</h4>
                 </div>
                 <div {if $sans}style="overflow-y: auto; height:{if $sans|@count == 1 }200{elseif $sans|@count == 2}275{else}350{/if}px;"{/if} class="modal-body panel-body" id="modalRevalidateBody">
 
@@ -533,9 +533,9 @@
                                 <table class="table revalidateTable">
                                     <thead>
                                         <tr>
-                                            <th>{$MGLANG->T('revalidateModalDomainLabel')}</th>
-                                            <th style="width:35%;">{$MGLANG->T('revalidateModalMethodLabel')}</th>
-                                            <th> {if 'email'|in_array:$disabledValidationMethods} {else}{$MGLANG->T('revalidateModalEmailLabel')}{/if}</th>
+                                            <th>{$ADDONLANG->T('revalidateModalDomainLabel')}</th>
+                                            <th style="width:35%;">{$ADDONLANG->T('revalidateModalMethodLabel')}</th>
+                                            <th> {if 'email'|in_array:$disabledValidationMethods} {else}{$ADDONLANG->T('revalidateModalEmailLabel')}{/if}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -544,15 +544,15 @@
                                             <td>
                                                 <div class="form-group">
                                                     <select style="width:70%;" type="text" name="newDcvMethod_0" class="form-control modalRevalidateInput" >
-                                                        <option value="" selected>{$MGLANG->T('pleaseChooseOne')}</option>
+                                                        <option value="" selected>{$ADDONLANG->T('pleaseChooseOne')}</option>
                                                         {if !'email'|in_array:$disabledValidationMethods}
-                                                            <option value="email">{$MGLANG->T('revalidateModalMethodEmail')}</option>
+                                                            <option value="email">{$ADDONLANG->T('revalidateModalMethodEmail')}</option>
                                                         {/if}
                                                         {if !'http'|in_array:$disabledValidationMethods}
-                                                            <option value="http">{$MGLANG->T('revalidateModalMethodHttp')}</option>
+                                                            <option value="http">{$ADDONLANG->T('revalidateModalMethodHttp')}</option>
                                                         {/if}
                                                         {if !'dns'|in_array:$disabledValidationMethods}
-                                                        <option value="dns">{$MGLANG->T('revalidateModalMethodDns')}</option>
+                                                        <option value="dns">{$ADDONLANG->T('revalidateModalMethodDns')}</option>
                                                         {/if}
                                                         
                                                     </select>
@@ -561,7 +561,7 @@
                                             <td>
                                                 <div style="display:none;" class="form-group newApproverEmailFormGroup_0">
                                                     <select type="text" name="newApproverEmailInput_0"class="form-control newApproverEmailInputValidation"/>
-                                                        <option id="loadingDomainEmails">{$MGLANG->T('loading')}</option>
+                                                        <option id="loadingDomainEmails">{$ADDONLANG->T('loading')}</option>
                                                     </select>
                                                 </div>
                                             </td>
@@ -579,22 +579,22 @@
                                                         <td>
                                                             <div class="form-group">
                                                                 <select style="width:70%;" type="text" name="newDcvMethod_{$i}" class="form-control modalRevalidateInput">
-                                                                    <option value="" selected>{$MGLANG->T('pleaseChooseOne')}</option>
+                                                                    <option value="" selected>{$ADDONLANG->T('pleaseChooseOne')}</option>
                                                                     {if !'email'|in_array:$disabledValidationMethods}
-                                                                        <option value="email">{$MGLANG->T('revalidateModalMethodEmail')}</option>
+                                                                        <option value="email">{$ADDONLANG->T('revalidateModalMethodEmail')}</option>
                                                                     {/if}
                                                                     {if !'http'|in_array:$disabledValidationMethods}
-                                                                        <option value="http">{$MGLANG->T('revalidateModalMethodHttp')}</option>
+                                                                        <option value="http">{$ADDONLANG->T('revalidateModalMethodHttp')}</option>
                                                                     {/if}
                                                                     {if !'dns'|in_array:$disabledValidationMethods}
-                                                                        <option value="dns">{$MGLANG->T('revalidateModalMethodDns')}</option>
+                                                                        <option value="dns">{$ADDONLANG->T('revalidateModalMethodDns')}</option>
                                                                     {/if}
                                                                 </select>
                                                             </div>
                                                         <td>
                                                             <div style="display:none;" class="form-group newApproverEmailFormGroup_{$i}">
                                                                 <select type="text" name="newApproverEmailInput_{$i}" class="form-control newApproverEmailInputValidation"/>
-                                                                    <option id="loadingDomainEmails">{$MGLANG->T('loading')}</option>
+                                                                    <option id="loadingDomainEmails">{$ADDONLANG->T('loading')}</option>
                                                                 </select>
                                                             </div>
                                                         </td>
@@ -610,10 +610,10 @@
                 </div>
                 <div class="modal-footer panel-footer">
                     <button type="button" id="modalRevalidateSubmit" class="btn btn-primary">
-                        {$MGLANG->T('Submit')}
+                        {$ADDONLANG->T('Submit')}
                     </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">
-                        {$MGLANG->T('Close')}
+                        {$ADDONLANG->T('Close')}
                     </button>
                 </div>
             </div>
@@ -704,7 +704,7 @@
             }
 
             function showSuccessAlert(msg) {
-                var reloadInfo = '{$MGLANG->T('reloadInformation')}'
+                var reloadInfo = '{$ADDONLANG->T('reloadInformation')}'
                 show(revalidateSuccessAlert);
                 hide(revalidateDangerAlert);
                 revalidateSuccessAlert.children('span').html(msg + ' ' + reloadInfo);
@@ -748,7 +748,7 @@
             }
 
             function anErrorOccurred() {
-                showDangerAlert('{$MGLANG->T('anErrorOccurred')}');
+                showDangerAlert('{$ADDONLANG->T('anErrorOccurred')}');
             }
 
             function isJsonString(str) {
@@ -799,15 +799,15 @@
                     
                 });
                 if(jQuery.isEmptyObject(newMethods)) {
-                    showDangerAlert('{$MGLANG->T('noValidationMethodSelected')}');
+                    showDangerAlert('{$ADDONLANG->T('noValidationMethodSelected')}');
                     removeSpiner(revalidateSubmitBtn);
                     enable(revalidateSubmitBtn);
                     return;
                 }
                 var noEmailError = '';
                 $.each(newMethods,function(key, value){
-                    if(value === '{$MGLANG->T('pleaseChooseOne')}' || value === '{$MGLANG->T('loading')}') {
-                        noEmailError = '{$MGLANG->T('noEmailSelectedForDomain')}' + key.replace("___", "*");
+                    if(value === '{$ADDONLANG->T('pleaseChooseOne')}' || value === '{$ADDONLANG->T('loading')}') {
+                        noEmailError = '{$ADDONLANG->T('noEmailSelectedForDomain')}' + key.replace("___", "*");
                         return true;
                     }
                 });
@@ -824,7 +824,7 @@
                     serviceId: {$serviceid},
                     userID: {$userid},
                     brand: '{$brand}',
-                    'mg-action': 'revalidate'
+                    'addon-action': 'revalidate'
                 };
                 $.ajax({
                     url: serviceUrl,
@@ -888,7 +888,7 @@
                         <span aria-hidden="true">&times;</span>
                         <span class="sr-only">Close</span>
                     </button>
-                    <h4 class="modal-title">{$MGLANG->T('changeApproverEmailModalModalTitle')}</h4>
+                    <h4 class="modal-title">{$ADDONLANG->T('changeApproverEmailModalModalTitle')}</h4>
                 </div>
                 <div class="modal-body panel-body" id="modalChangeApprovedEmailBody">
                     <div class="alert alert-success hidden" id="modalChangeApprovedEmailSuccess">
@@ -898,20 +898,20 @@
                         <strong>Error!</strong> <span></span>
                     </div>
                     <div class="form-group newApproverEmailFormGroup">
-                        <label class="col-sm-3 control-label">{$MGLANG->T('newApproverEmailModalModalLabel')}</label>
+                        <label class="col-sm-3 control-label">{$ADDONLANG->T('newApproverEmailModalModalLabel')}</label>
                         <div class="col-sm-9">
                             <select type="text" name="newApproverEmailInput_0" id="modalChangeApprovedEmailInput" class="form-control"/>
-                                <option id="loadingDomainEmails">{$MGLANG->T('loading')}</option>
+                                <option id="loadingDomainEmails">{$ADDONLANG->T('loading')}</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer panel-footer">
                     <button type="button" id="modalChangeApprovedEmailSubmit" class="btn btn-primary">
-                        {$MGLANG->T('Submit')}
+                        {$ADDONLANG->T('Submit')}
                     </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">
-                        {$MGLANG->T('Close')}
+                        {$ADDONLANG->T('Close')}
                     </button>
                 </div>
             </div>
@@ -979,7 +979,7 @@
             }
 
             function showSuccessAlert(msg) {
-                var reloadInfo = '{$MGLANG->T('reloadInformation')}'
+                var reloadInfo = '{$ADDONLANG->T('reloadInformation')}'
                 show(changeEmailSuccessAlert);
                 hide(changeEmailDangerAlert);
                 changeEmailSuccessAlert.children('span').html(msg + ' ' + reloadInfo);
@@ -1023,7 +1023,7 @@
             }
 
             function anErrorOccurred() {
-                showDangerAlert('{$MGLANG->T('anErrorOccurred')}');
+                showDangerAlert('{$ADDONLANG->T('anErrorOccurred')}');
             }
 
             function isJsonString(str) {
@@ -1044,7 +1044,7 @@
                     serviceId: {$serviceid},
                     userID: {$userid},
                     json: 1,
-                    'mg-action': 'changeApproverEmail'
+                    'addon-action': 'changeApproverEmail'
                 };
                 $.ajax({
                     type: "POST",
@@ -1095,7 +1095,7 @@
                         <span aria-hidden="true">&times;</span>
                         <span class="sr-only">Close</span>
                     </button>
-                    <h4 class="modal-title">{$MGLANG->T('viewPrivateKeyModalTitle')}</h4>
+                    <h4 class="modal-title">{$ADDONLANG->T('viewPrivateKeyModalTitle')}</h4>
                 </div>
                 <div class="modal-body panel-body" id="modalViewPrivateKey">
                      <div class="form-group">
@@ -1104,7 +1104,7 @@
                 </div>
                 <div class="modal-footer panel-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">
-                        {$MGLANG->T('Close')}
+                        {$ADDONLANG->T('Close')}
                     </button>
                 </div>
             </div>
@@ -1116,7 +1116,7 @@
 
             function getDomainEmails(serviceid = null, domain, index){
                 var brand = {/literal}'{$brand}'{literal};
-                var serviceUrl = 'clientarea.php?action=productdetails&json=1&mg-action=getApprovalEmailsForDomain&brand=' + brand + '&domain=' + domain;
+                var serviceUrl = 'clientarea.php?action=productdetails&json=1&addon-action=getApprovalEmailsForDomain&brand=' + brand + '&domain=' + domain;
 
                 serviceUrl += '&id=' + {/literal}'{$serviceid}'{literal};
 
@@ -1132,7 +1132,7 @@
                             data = JSON.parse(ret);
                             if (data.success === 1) {
                                 var  htmlOptions = [];
-                                htmlOptions += '<option>'+{/literal}'{$MGLANG->T('pleaseChooseOne')}'{literal}+'</option>';
+                                htmlOptions += '<option>'+{/literal}'{$ADDONLANG->T('pleaseChooseOne')}'{literal}+'</option>';
                                 var domainEmails = data.data.domainEmails;
                                 for (var i = 0; i < domainEmails.length; i++) {
                                      htmlOptions += '<option value="' + domainEmails[i] + '">' + domainEmails[i] + '</option>';
@@ -1163,11 +1163,11 @@
                     $('#resend-validation-email').append(' <i id="resendSpinner" class="fa fa-spinner fa-spin"></i>');
                     JSONParser.request('resendValidationEmail',{json: 1, id: serviceid}, function (data) {
                         if (data.success == true) {
-                            $('#MGAlerts>div[data-prototype="success"]').show();
-                            $('#MGAlerts>div[data-prototype="success"] strong').html(data.message);
+                            $('#AddonAlerts>div[data-prototype="success"]').show();
+                            $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
                         } else if (data.success == false) {
-                            $('#MGAlerts>div[data-prototype="error"]').show();
-                            $('#MGAlerts>div[data-prototype="error"] strong').html(data.message);
+                            $('#AddonAlerts>div[data-prototype="error"]').show();
+                            $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
                         }
                         $('#resend-validation-email').find('.fa-spinner').remove();
                     }, false);
@@ -1177,11 +1177,11 @@
                     $('#send-certificate-email').append(' <i id="resendSpinner" class="fa fa-spinner fa-spin"></i>');
                     JSONParser.request('sendCertificateEmail',{json: 1, id: serviceid}, function (data) {
                         if (data.success == true) {
-                            $('#MGAlerts>div[data-prototype="success"]').show();
-                            $('#MGAlerts>div[data-prototype="success"] strong').html(data.message);
+                            $('#AddonAlerts>div[data-prototype="success"]').show();
+                            $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
                         } else if (data.success == false) {
-                            $('#MGAlerts>div[data-prototype="error"]').show();
-                            $('#MGAlerts>div[data-prototype="error"] strong').html(data.message);
+                            $('#AddonAlerts>div[data-prototype="error"]').show();
+                            $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
                         }
                         $('#send-certificate-email').find('.fa-spinner').remove();
                     }, false);
@@ -1191,14 +1191,14 @@
                     $('#getPrivateKey').append(' <i class="fa fa-spinner fa-spin"></i>');
                     JSONParser.request('getPrivateKey',{json: 1,id: serviceid}, function (data) {
                         if (data.success == true) {
-                            $('#MGAlerts>div').css('display', 'none');
+                            $('#AddonAlerts>div').css('display', 'none');
                             $('#getPrivateKey').find('.fa-spinner').remove();
                             $('#viewPrivateKey').modal('toggle');
                             $('#privateKey').text(data.privateKey);
                         } else if (data.success == false) {
                             $('#getPrivateKey').find('.fa-spinner').remove();
-                            $('#MGAlerts>div[data-prototype="error"]').show();
-                            $('#MGAlerts>div[data-prototype="error"] strong').html(data.message);
+                            $('#AddonAlerts>div[data-prototype="error"]').show();
+                            $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
                         }
                     }, false);
                 });
@@ -1208,14 +1208,14 @@
                     $('#installCertificate').append(' <i class="fa fa-spinner fa-spin"></i>');
                     JSONParser.request('installCertificate',{json: 1,id: serviceid}, function (data) {
                         if (data.success == true) {
-                            $('#MGAlerts>div').css('display', 'none');
+                            $('#AddonAlerts>div').css('display', 'none');
                             $('#installCertificate').find('.fa-spinner').remove();
-                            $('#MGAlerts>div[data-prototype="success"]').show();
-                            $('#MGAlerts>div[data-prototype="success"] strong').html(data.message);
+                            $('#AddonAlerts>div[data-prototype="success"]').show();
+                            $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
                         } else if (data.success == false) {
                             $('#installCertificate').find('.fa-spinner').remove();
-                            $('#MGAlerts>div[data-prototype="error"]').show();
-                            $('#MGAlerts>div[data-prototype="error"] strong').html(data.message);
+                            $('#AddonAlerts>div[data-prototype="error"]').show();
+                            $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
                         }
                     }, false);
                 });
@@ -1226,14 +1226,14 @@
                     $('#btnRevalidateNew').append(' <i class="fa fa-spinner fa-spin"></i>');
                     JSONParser.request('revalidateNew',{json: 1,id: serviceid}, function (data) {
                         if (data.success == true) {
-                            $('#MGAlerts>div').css('display', 'none');
+                            $('#AddonAlerts>div').css('display', 'none');
                             $('#btnRevalidateNew').find('.fa-spinner').remove();
-                            $('#MGAlerts>div[data-prototype="success"]').show();
-                            $('#MGAlerts>div[data-prototype="success"] strong').html(data.message);
+                            $('#AddonAlerts>div[data-prototype="success"]').show();
+                            $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
                         } else if (data.success == false) {
                             $('#btnRevalidateNew').find('.fa-spinner').remove();
-                            $('#MGAlerts>div[data-prototype="error"]').show();
-                            $('#MGAlerts>div[data-prototype="error"] strong').html(data.message);
+                            $('#AddonAlerts>div[data-prototype="error"]').show();
+                            $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
                         }
                     }, false);
                 });
@@ -1241,11 +1241,11 @@
                 jQuery('#reissue-order').on("click",function(){
                     JSONParser.request('reIssueOrder',{json: 1}, function (data) {
                         if (data.success == true) {
-                            $('#MGAlerts>div[data-prototype="success"]').show();
-                            $('#MGAlerts>div[data-prototype="success"] strong').html(data.message);
+                            $('#AddonAlerts>div[data-prototype="success"]').show();
+                            $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
                         } else if (data.success == false) {
-                            $('#MGAlerts>div[data-prototype="error"]').show();
-                            $('#MGAlerts>div[data-prototype="error"] strong').html(data.message);
+                            $('#AddonAlerts>div[data-prototype="error"]').show();
+                            $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
                         }
                     }, false);
                 });
@@ -1284,31 +1284,31 @@
                             <col width="60%"/>
                         </colgroup>
                         <tr id="configuration_status">
-                            <td class="text-left" >{$MGLANG->T('configurationStatus')}</td>
+                            <td class="text-left" >{$ADDONLANG->T('configurationStatus')}</td>
                             <td class="text-left"></td>
                         </tr>
                         <tr id="order_status">
-                            <td class="text-left">{$MGLANG->T('activationStatus')}</td>
+                            <td class="text-left">{$ADDONLANG->T('activationStatus')}</td>
                             <td class="text-left"></td>
                         </tr>
                         <tr id="valid_from">
-                            <td class="text-left">{$MGLANG->T('validFrom')}</td>
+                            <td class="text-left">{$ADDONLANG->T('validFrom')}</td>
                             <td class="text-left"></td>
                         </tr>
                         <tr id="valid_till">
-                            <td class="text-left">{$MGLANG->T('validTill')}</td>
+                            <td class="text-left">{$ADDONLANG->T('validTill')}</td>
                             <td class="text-left"></td>
                         </tr>
                         <tr id="domain">
-                            <td class="text-left">{$MGLANG->T('domain')}</td>
+                            <td class="text-left">{$ADDONLANG->T('domain')}</td>
                             <td class="text-left"></td>
                         </tr>
                         <tr id="partner_order_id">
-                            <td class="text-left">{$MGLANG->T('Partner Order ID')}</td>
+                            <td class="text-left">{$ADDONLANG->T('Partner Order ID')}</td>
                             <td class="text-left"></td>
                         </tr>
                         <tr id="sans">
-                            <td class="text-left">{$MGLANG->T('sans')}</td>
+                            <td class="text-left">{$ADDONLANG->T('sans')}</td>
                             <td id="sansTd" colspan="2" class="text-left">
                                 <table class="sansTable table table-bordered" >
 
@@ -1316,15 +1316,15 @@
                             </td>
                         </tr>
                         <tr id="crt">
-                            <td class="text-left">{$MGLANG->T('crt')}</td>
+                            <td class="text-left">{$ADDONLANG->T('crt')}</td>
                             <td class="text-left"><textarea onfocus="this.select()" rows="5" class="form-control"></textarea></td>
                         </tr>
                         <tr id="ca">
-                            <td class="text-left">{$MGLANG->T('ca_chain')}</td>
+                            <td class="text-left">{$ADDONLANG->T('ca_chain')}</td>
                             <td class="text-left"><textarea onfocus="this.select()" rows="5" class="form-control"></textarea></td>
                         </tr>
                         <tr id="csr">
-                            <td class="text-left">{$MGLANG->T('csr')}</td>
+                            <td class="text-left">{$ADDONLANG->T('csr')}</td>
                             <td class="text-left"><textarea onfocus="this.select()" rows="5" class="form-control"></textarea></td>
                         </tr>
                     </table>
@@ -1342,7 +1342,7 @@
     {literal}
     $(document).ready(function () {
 
-        var serviceUrl = 'clientarea.php?action=productdetails&id='+ {/literal}'{$serviceid}'{literal} + '&mg-action=getCertificateDetails&json=1',
+        var serviceUrl = 'clientarea.php?action=productdetails&id='+ {/literal}'{$serviceid}'{literal} + '&addon-action=getCertificateDetails&json=1',
                 recheckBtn = $('#recheckDetails');
 
         function showLoader()

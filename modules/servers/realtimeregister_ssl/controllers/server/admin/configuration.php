@@ -2,13 +2,13 @@
 
 namespace AddonModule\RealtimeRegisterSsl\controllers\server\admin;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs\forms\ButtonField;
-use AddonModule\RealtimeRegisterSsl\mgLibs\forms\CheckboxField;
-use AddonModule\RealtimeRegisterSsl\mgLibs\forms\Creator;
-use AddonModule\RealtimeRegisterSsl\mgLibs\forms\SelectField;
-use AddonModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
-use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\ButtonField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\CheckboxField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\Creator;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\SelectField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\models\testGroup\testItem\TestItem;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 
@@ -170,7 +170,7 @@ class configuration extends AbstractController
         $form->addField($field);
 
         //pole button submit
-        $form->addField('submit','mg-action', [
+        $form->addField('submit','addon-action', [
             'value'     => 'saveItem'
         ]);
         

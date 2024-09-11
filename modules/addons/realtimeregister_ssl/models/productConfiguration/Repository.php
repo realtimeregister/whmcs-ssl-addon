@@ -5,7 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\productConfiguration;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 
-class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
 
     private static string $TABLE_NAME = 'tblproducts';

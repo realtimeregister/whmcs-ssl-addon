@@ -7,7 +7,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\orders;
  *
  * @Table(name=tblorders,preventUpdate,prefixed=false)
  */
-class Order extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Order extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      *

@@ -13,17 +13,17 @@
 
 <div class="box light">
     <div class="row">
-        <div class="col-lg-12" id="mg-categories-content" >
-            <table class="table table-hover" id="mg-data-list" >
+        <div class="col-lg-12" id="addon-categories-content" >
+            <table class="table table-hover" id="addon-data-list" >
                 <thead>
                     <tr>
-                        <th>{$MGLANG->T('Product/Service')}</th>
-                        <th>{$MGLANG->T('Username')}</th>
-                        <th>{$MGLANG->T('Password')}</th>
-                        <th>{$MGLANG->T('Billing Cycle')}</th>
-                        <th>{$MGLANG->T('Next Due Date')}</th>
-                        <th>{$MGLANG->T('IP Address')}</th>
-                        <th>{$MGLANG->T('Status')}</th>
+                        <th>{$ADDONLANG->T('Product/Service')}</th>
+                        <th>{$ADDONLANG->T('Username')}</th>
+                        <th>{$ADDONLANG->T('Password')}</th>
+                        <th>{$ADDONLANG->T('Billing Cycle')}</th>
+                        <th>{$ADDONLANG->T('Next Due Date')}</th>
+                        <th>{$ADDONLANG->T('IP Address')}</th>
+                        <th>{$ADDONLANG->T('Status')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,7 +38,7 @@
             var mgDataTable;
 
             jQuery(document).ready(function () {
-                mgDataTable = $('#mg-data-list').dataTable({
+                mgDataTable = $('#addon-data-list').dataTable({
                     processing: false,
                     searching: true,
                     autoWidth: false,
@@ -73,12 +73,12 @@
                             'aTargets': ['nosort']
                         }],
                     language: {
-                        "zeroRecords": "{/literal}{$MGLANG->absoluteT('Nothing to display')}{literal}",
+                        "zeroRecords": "{/literal}{$ADDONLANG->absoluteT('Nothing to display')}{literal}",
                         "infoEmpty": "",
-                        "search": "{/literal}{$MGLANG->absoluteT('Search')}{literal}",
+                        "search": "{/literal}{$ADDONLANG->absoluteT('Search')}{literal}",
                         "paginate": {
-                            "previous": "{/literal}{$MGLANG->absoluteT('Previous')}{literal}"
-                            , "next": "{/literal}{$MGLANG->absoluteT('Next')}{literal}"
+                            "previous": "{/literal}{$ADDONLANG->absoluteT('Previous')}{literal}"
+                            , "next": "{/literal}{$ADDONLANG->absoluteT('Next')}{literal}"
                         }
                     }
                 });
@@ -86,7 +86,7 @@
             });
             
             //show password
-            $("#mg-categories-content").on("click",".mg-show-password",function(e){
+            $("#addon-categories-content").on("click",".addon-show-password",function(e){
                 e.preventDefault();
                 var inputPassword = $(this).closest("div").find(".form-control");
                 JSONParser.request(

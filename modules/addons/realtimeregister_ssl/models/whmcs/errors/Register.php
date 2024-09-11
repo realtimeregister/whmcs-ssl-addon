@@ -7,7 +7,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\errors;
  *
  * @SuppressWarnings(PHPMD)
  */
-class Register extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Register extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * Register Exception in WHMCS Module Log
@@ -24,7 +24,7 @@ class Register extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
         $debug = print_r($ex, true);
 
-        \logModuleCall("MGError", __NAMESPACE__, [
+        \logModuleCall("AddonError", __NAMESPACE__, [
             'message' => $ex->getMessage(),
             'code' => $ex->getCode(),
             'token' => $token

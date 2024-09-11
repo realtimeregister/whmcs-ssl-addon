@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform;
 
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Client;
-use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
 use SimpleXMLElement;
 
 class Plesk extends Client implements PlatformInterface

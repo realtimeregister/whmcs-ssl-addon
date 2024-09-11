@@ -9,7 +9,7 @@ use AddonModule\RealtimeRegisterSsl as main;
  *
  * @Table(name=tblcustomfields,preventUpdate,prefixed=false)
  */
-class CustomField extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class CustomField extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * @Column()
@@ -122,14 +122,14 @@ class CustomField extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
                 'type' => $this->parentType
             ];
 
-            $data = AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
+            $data = AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::select(
                 self::$fieldDeclaration,
                 self::tableName(),
                 $conditions
             )->fetch();
 
             if (empty($data)) {
-                throw new main\mgLibs\exceptions\System('Unable to find custom field:' . http_build_query($conditions));
+                throw new main\addonLibs\exceptions\System('Unable to find custom field:' . http_build_query($conditions));
             }
         }
 
@@ -178,7 +178,7 @@ class CustomField extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
         }
 
         if ($this->id) {
-            main\mgLibs\MySQL\Query::update(
+            main\addonLibs\MySQL\Query::update(
                 self::tableName(),
                 $data,
                 [
@@ -186,7 +186,7 @@ class CustomField extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
                 ]
             );
         } else {
-            $this->id = main\mgLibs\MySQL\Query::insert(
+            $this->id = main\addonLibs\MySQL\Query::insert(
                 self::tableName(),
                 $data
             );

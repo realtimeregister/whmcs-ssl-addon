@@ -2,9 +2,9 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System;
-use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
-use AddonModule\RealtimeRegisterSsl\mgLibs\process\MainInstance;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\MainInstance;
 
 /**
  * Description of configuration

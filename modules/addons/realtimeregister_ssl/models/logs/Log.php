@@ -2,7 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\logs;
 
-use AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm;
 
 /**
  * @Table(name=REALTIMEREGISTERSSL_logs,prefixed=true)

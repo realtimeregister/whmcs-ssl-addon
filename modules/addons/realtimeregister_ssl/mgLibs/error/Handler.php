@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\error;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\error;
 use AddonModule\RealtimeRegisterSsl as main;
 
 /**
@@ -60,7 +60,7 @@ class Handler
             return true;
         }
 
-        throw new main\mgLibs\exceptions\syntaxError($message, $level, 0, $line, $file);
+        throw new main\addonLibs\exceptions\syntaxError($message, $level, 0, $line, $file);
     }
     
     public function handleShutdown()

@@ -5,18 +5,18 @@
 </style>
 <div class="box light">
     <div class="row">
-        <div class="col-lg-12" id="mg-home-content" >
-            <legend>{$MGLANG->T('title')}</legend>
+        <div class="col-lg-12" id="addon-home-content" >
+            <legend>{$ADDONLANG->T('title')}</legend>
             <div id="logsTable">
                 <table width="100%" class="table table-striped" >
                     <thead>
-                        <th>{$MGLANG->T('table', 'id')}</th>
-                        <th>{$MGLANG->T('table', 'client')}</th>
-                        <th>{$MGLANG->T('table', 'service')}</th>
-                        <th>{$MGLANG->T('table', 'type')}</th>
-                        <th>{$MGLANG->T('table', 'msg')}</th>
-                        <th>{$MGLANG->T('table', 'date')}</th>
-                        <th>{$MGLANG->T('table', 'actions')}</th>
+                        <th>{$ADDONLANG->T('table', 'id')}</th>
+                        <th>{$ADDONLANG->T('table', 'client')}</th>
+                        <th>{$ADDONLANG->T('table', 'service')}</th>
+                        <th>{$ADDONLANG->T('table', 'type')}</th>
+                        <th>{$ADDONLANG->T('table', 'msg')}</th>
+                        <th>{$ADDONLANG->T('table', 'date')}</th>
+                        <th>{$ADDONLANG->T('table', 'actions')}</th>
                     </thead>
                     <tbody>
                     </tbody>
@@ -25,7 +25,7 @@
 
             <div class="buttons-list">
                 <button id="clearAllLogs" class="btn btn-success" type="button">
-                    {$MGLANG->T('button', 'clear_logs')}
+                    {$ADDONLANG->T('button', 'clear_logs')}
                 </button>
             </div>
 
@@ -38,15 +38,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">{$MGLANG->T('modal','removeLog')}</h4>
+                <h4 class="modal-title" id="myModalLabel">{$ADDONLANG->T('modal','removeLog')}</h4>
             </div>
             <div class="modal-body">
                 <input type='hidden' name='log_id'/>
-                <h4 class="text-center">{$MGLANG->T('modal','removeLogInfo')} <b id="MGremoveInformation"></b></h4>
+                <h4 class="text-center">{$ADDONLANG->T('modal','removeLogInfo')} <b id="MGremoveInformation"></b></h4>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-inverse" id="removeLogButton" data-dismiss="modal">{$MGLANG->T('modal','remove')}</button>
-                <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$MGLANG->T('modal','close')}</button>
+                <button type="button" class="btn btn-danger btn-inverse" id="removeLogButton" data-dismiss="modal">{$ADDONLANG->T('modal','remove')}</button>
+                <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$ADDONLANG->T('modal','close')}</button>
             </div>
         </div>
     </div>
@@ -57,14 +57,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">{$MGLANG->T('modal','clearLogs')}</h4>
+                <h4 class="modal-title" id="myModalLabel">{$ADDONLANG->T('modal','clearLogs')}</h4>
             </div>
             <div class="modal-body">
-                <h4 class="text-center">{$MGLANG->T('modal','clearLogsInfo')} <b id="MGremoveInformation"></b></h4>
+                <h4 class="text-center">{$ADDONLANG->T('modal','clearLogsInfo')} <b id="MGremoveInformation"></b></h4>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-inverse" id="clearLogsButton" data-dismiss="modal">{$MGLANG->T('modal','Clear')}</button>
-                <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$MGLANG->T('modal','close')}</button>
+                <button type="button" class="btn btn-danger btn-inverse" id="clearLogsButton" data-dismiss="modal">{$ADDONLANG->T('modal','Clear')}</button>
+                <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$ADDONLANG->T('modal','close')}</button>
             </div>
         </div>
     </div>

@@ -6,7 +6,7 @@ use Exception;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 class ClientContactDetails

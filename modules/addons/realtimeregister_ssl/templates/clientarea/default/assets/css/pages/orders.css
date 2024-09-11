@@ -1,10 +1,10 @@
-#mg-data-list  th{
+#addon-data-list  th{
     text-align: center;
 }
-#mg-data-list  td:not(:first-child){
+#addon-data-list  td:not(:first-child){
     text-align: center;
 }
-#mg-data-list  tr{
+#addon-data-list  tr{
     cursor: pointer;
 }
 .status {
@@ -40,7 +40,7 @@ table.dataTable thead .sorting::after, table.dataTable thead .sorting_asc::after
     border-left-color: rgb(204, 204, 204);
     border-radius: 4px;
 }
-#MGLoader {
+#AddonLoader {
     position:fixed;
     padding:0;
     margin:0;

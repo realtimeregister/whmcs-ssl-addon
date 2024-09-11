@@ -12,7 +12,7 @@ use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\Activator;
 use AddonModule\RealtimeRegisterSsl\Loader;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\Server;
 use Illuminate\Database\Capsule\Manager as Capsule;

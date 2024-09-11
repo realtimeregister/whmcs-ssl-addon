@@ -44,7 +44,7 @@
 
                 <form class="form-horizontal" role="form" id="modalReissueForm">
                     <input type="hidden" name="formStep" id="modalReissueFormStepInput">
-                    <div class="form-group mg-js-step-one">
+                    <div class="form-group addon-js-step-one">
                         <label class="col-sm-3 control-label">Web Server</label>
                         <div class="col-sm-9">
                             <select type="text" name="webServer" class="form-control" id="modalReissueWebServerInput">
@@ -52,9 +52,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="clearfix mg-js-step-one"></div>
-                    <br class="mg-js-step-one">
-                    <div class="form-group mg-js-step-one">
+                    <div class="clearfix addon-js-step-one"></div>
+                    <br class="addon-js-step-one">
+                    <div class="form-group addon-js-step-one">
                         <label  class="col-sm-3 control-label">CSR</label>
                         <div class="col-sm-9">
                             <textarea rows="3" class="form-control" name="csr" id="modalReissueCsrInput">-----BEGIN CERTIFICATE REQUEST-----
@@ -63,11 +63,11 @@
                         </div>
                     </div>
 
-                    <div class="clearfix mg-js-step-one"></div>
-                    <br class="mg-js-step-one">
+                    <div class="clearfix addon-js-step-one"></div>
+                    <br class="addon-js-step-one">
 
                     {if $sansLimit}
-                        <div class="form-group mg-js-step-one">
+                        <div class="form-group addon-js-step-one">
                             <label  class="col-sm-3 control-label">SAN Single Domains ({$sansLimit})</label>
                             <div class="col-sm-9">
                                 <textarea rows="3" class="form-control" name="sanDomains" id="modalReissueSansInput"></textarea>
@@ -75,11 +75,11 @@
                         </div>
                     {/if}
 
-                    <div class="clearfix mg-js-step-one"></div>
-                    <br class="mg-js-step-one">
+                    <div class="clearfix addon-js-step-one"></div>
+                    <br class="addon-js-step-one">
 
                     {if $sansLimitWildcard}
-                        <div class="form-group mg-js-step-one">
+                        <div class="form-group addon-js-step-one">
                             <label  class="col-sm-3 control-label">SAN Wildcard Domains ({$sansLimitWildcard})</label>
                             <div class="col-sm-9">
                                 <textarea rows="3" class="form-control" name="sanDomainsWildcard" id="modalReissueSansWildcardInput"></textarea>
@@ -87,7 +87,7 @@
                         </div>
                     {/if}
 
-                    <div class="form-group mg-js-step-two">
+                    <div class="form-group addon-js-step-two">
                         <label  class="col-sm-3 control-label">Email Approvals</label>
                         <div class="col-sm-9">
                             <div id="modalReissueEmailApprovalsArea"></div>
@@ -96,10 +96,10 @@
                 </form>
             </div>
             <div class="modal-footer panel-footer">
-                <button type="button" id="modalReissueContinue" disabled class="btn btn-primary mg-js-step-one">
+                <button type="button" id="modalReissueContinue" disabled class="btn btn-primary addon-js-step-one">
                     Continue
                 </button>
-                <button type="button" id="modalReissueSubmit" class="btn btn-primary mg-js-step-two">
+                <button type="button" id="modalReissueSubmit" class="btn btn-primary addon-js-step-two">
                     Submit
                 </button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">
@@ -310,7 +310,7 @@
         }
 
         function renderWebServers(list) {
-            optionsHtml = optionsHtml + '<option value="0">'+'{$MGLANG->T('Please choose one...')}'+'</option>';
+            optionsHtml = optionsHtml + '<option value="0">'+'{$ADDONLANG->T('Please choose one...')}'+'</option>';
             for (var i = 0; i < list.length; i++) {
                 optionsHtml = optionsHtml + '<option value="' + list[i].id + '">' + list[i].software + '</option>';
             }
@@ -396,20 +396,20 @@
         }
 
         function switchToStepOne() {
-            $('.mg-js-step-one').show();
-            $('.mg-js-step-two').hide();
+            $('.addon-js-step-one').show();
+            $('.addon-js-step-two').hide();
             reissueFormStepInput.val('one');
         }
 
         function switchToStepTwo() {
-            $('.mg-js-step-one').hide();
-            $('.mg-js-step-two').show();
+            $('.addon-js-step-one').hide();
+            $('.addon-js-step-two').show();
             reissueFormStepInput.val('two');
         }
 
         function switchToStepThree() {
-            $('.mg-js-step-one').hide();
-            $('.mg-js-step-two').hide();
+            $('.addon-js-step-one').hide();
+            $('.addon-js-step-two').hide();
             reissueCsrInput.val(reissueCsrDefault);
             reissueSansInput.val('');
             reissueFormStepInput.val('three');

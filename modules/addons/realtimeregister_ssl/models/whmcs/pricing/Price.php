@@ -24,7 +24,7 @@ use AddonModule\RealtimeRegisterSsl\models\whmcs\currencies\Currency;
  * @Table(name=tblpricing,preventUpdate,prefixed=false)
  * @SuppressWarnings(PHPMD)
  */
-class Price extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Price extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * @Column()
@@ -266,7 +266,7 @@ class Price extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
             case BillingCycle::YEARS_10:
                 return $this->getBiennially();
             default:
-                throw new main\mgLibs\exceptions\System('Invalid billing cycle: ' . $billingCycle);
+                throw new main\addonLibs\exceptions\System('Invalid billing cycle: ' . $billingCycle);
         }
     }
 }

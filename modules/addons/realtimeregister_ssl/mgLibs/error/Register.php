@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\error;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\error;
 use AddonModule\RealtimeRegisterSsl as main;
 
 /**
@@ -22,10 +22,10 @@ class Register
         if (self::$_errorRegister && class_exists(self::$_errorRegister,false)) {
             call_user_func([self::$_errorRegister,'register',$ex]);
         } elseif(
-            class_exists(main\mgLibs\process\MainInstance::I()->getMainNamespace().'\models\whmcs\errors\Register')
+            class_exists(main\addonLibs\process\MainInstance::I()->getMainNamespace().'\models\whmcs\errors\Register')
         ) {
             call_user_func(
-                [main\mgLibs\process\MainInstance::I()->getMainNamespace().'\models\whmcs\errors\Register','register'],
+                [main\addonLibs\process\MainInstance::I()->getMainNamespace().'\models\whmcs\errors\Register','register'],
                 $ex
             );
         } else {
@@ -38,7 +38,7 @@ class Register
             $debug = print_r($ex,true);
 
             \logModuleCall(
-                "MGError",
+                "AddonError",
                 __NAMESPACE__,
                 [
                     'message' => $ex->getMessage(),

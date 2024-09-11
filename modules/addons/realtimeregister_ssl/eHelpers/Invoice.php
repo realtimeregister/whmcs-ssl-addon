@@ -17,7 +17,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR;
-use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\RepositoryItem;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;

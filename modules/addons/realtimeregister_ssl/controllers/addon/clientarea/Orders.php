@@ -8,7 +8,7 @@ use AddonModule\RealtimeRegisterSsl as main;
  * Description of home
  *
  */
-class Orders extends main\mgLibs\process\AbstractController
+class Orders extends main\addonLibs\process\AbstractController
 {
     private $type= 'total';
     private $permittedTypes = ['total', 'unpaid', 'processing', 'expires_soon'];
@@ -20,7 +20,7 @@ class Orders extends main\mgLibs\process\AbstractController
 
         $vars['orderType'] = $this->type;
         $vars['assetsURL'] = main\Server::I()->getAssetsURL();
-        $vars['pageTitle'] = main\mgLibs\Lang::getInstance()->absoluteT(
+        $vars['pageTitle'] = main\addonLibs\Lang::getInstance()->absoluteT(
             'addonCA',
             'sslSummaryOrdersPage',
             'pageTitle',

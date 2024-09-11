@@ -4,7 +4,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\userDiscount;
 /**
  * @Table(name=REALTIMEREGISTERSSL_user_discount,prefixed=true)
  */
-class UserDiscount extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class UserDiscount extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      *

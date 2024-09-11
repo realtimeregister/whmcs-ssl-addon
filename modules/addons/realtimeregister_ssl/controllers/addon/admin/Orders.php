@@ -3,10 +3,10 @@
 namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
-use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Smarty;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Smarty;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use WHMCS\Database\Capsule as DB;

@@ -5,7 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 use Exception;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Domains;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 
 class GenerateCSR
 {

@@ -20,7 +20,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\domains;
  *
  * @Table(name=tbldomainpricing,preventUpdate,prefixed=false)
  */
-class DomainTld extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class DomainTld extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * @Column()

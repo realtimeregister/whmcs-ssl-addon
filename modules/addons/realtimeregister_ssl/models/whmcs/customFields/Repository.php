@@ -27,7 +27,7 @@ class Repository
     {
         $this->type = $type;
         $this->relationID = $relationID;
-        $result = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
+        $result = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::select(
             customField::fieldDeclaration(),
             customField::tableName(),
             [

@@ -5,7 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\userCommission;
 /**
  * @Table(name=REALTIMEREGISTERSSL_user_commission,prefixed=true)
  */
-class UserCommission extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class UserCommission extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * 

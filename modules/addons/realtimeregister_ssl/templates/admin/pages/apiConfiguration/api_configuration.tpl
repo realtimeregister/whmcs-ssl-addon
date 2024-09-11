@@ -19,67 +19,67 @@ Proin malesuada eros in risus accumsan euismod. Vivamus lacinia pellentesque nun
         <form class="form-horizontal normal-form">
             <div class="form-group">
                 <div class="col-lg-12 cronSynchronizationInfo">
-                    <legend>{$MGLANG->T('crons','header')}</legend>
+                    <legend>{$ADDONLANG->T('crons','header')}</legend>
 
                     <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$MGLANG->T('DailyCron','pleaseNote')}</span>
-                        <span>{$MGLANG->T('DailyCron', 'info')}</span>                        
+                        <span class="text-danger bold">{$ADDONLANG->T('DailyCron','pleaseNote')}</span>
+                        <span>{$ADDONLANG->T('DailyCron', 'info')}</span>
                     </div>
-                    <input type="text" class="form-control" value="{$MGLANG->T('DailyCron', 'commandLine', 'cronFrequency')} {$cronCommandLine8}" readonly=""> 
+                    <input type="text" class="form-control" value="{$ADDONLANG->T('DailyCron', 'commandLine', 'cronFrequency')} {$cronCommandLine8}" readonly="">
                     <br />
                     <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$MGLANG->T('cronProcessing','pleaseNote')}</span>
-                        <span>{$MGLANG->T('cronProcessing', 'info')}</span>                        
+                        <span class="text-danger bold">{$ADDONLANG->T('cronProcessing','pleaseNote')}</span>
+                        <span>{$ADDONLANG->T('cronProcessing', 'info')}</span>
                     </div>
-                    <input type="text" class="form-control" value="{$MGLANG->T('cronProcessing', 'commandLine', 'cronFrequency')} {$cronCommandLine7}" readonly=""> 
+                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronProcessing', 'commandLine', 'cronFrequency')} {$cronCommandLine7}" readonly="">
                     <br />
 
                     <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$MGLANG->T('cronSynchronization','pleaseNote')}</span>
-                        <span>{$MGLANG->T('cronSynchronization', 'info')}</span>                        
+                        <span class="text-danger bold">{$ADDONLANG->T('cronSynchronization','pleaseNote')}</span>
+                        <span>{$ADDONLANG->T('cronSynchronization', 'info')}</span>
                     </div>
-                    <input type="text" class="form-control" value="{$MGLANG->T('cronSynchronization', 'commandLine', 'cronFrequency')} {$cronCommandLine}" readonly=""> 
+                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronSynchronization', 'commandLine', 'cronFrequency')} {$cronCommandLine}" readonly="">
                     <br />
                     <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$MGLANG->T('cronSSLSummaryStats','pleaseNote')}</span>
-                        <span>{$MGLANG->T('cronSSLSummaryStats', 'info')}</span>
+                        <span class="text-danger bold">{$ADDONLANG->T('cronSSLSummaryStats','pleaseNote')}</span>
+                        <span>{$ADDONLANG->T('cronSSLSummaryStats', 'info')}</span>
                     </div>
-                    <input type="text" class="form-control" value="{$MGLANG->T('cronSSLSummaryStats', 'commandLine', 'cronFrequency')} {$cronCommandLine2}" readonly=""> 
+                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronSSLSummaryStats', 'commandLine', 'cronFrequency')} {$cronCommandLine2}" readonly="">
                     <br />
                     <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$MGLANG->T('cronRenewal','pleaseNote')}</span>
-                        <span>{$MGLANG->T('cronRenewal', 'info')}</span>
+                        <span class="text-danger bold">{$ADDONLANG->T('cronRenewal','pleaseNote')}</span>
+                        <span>{$ADDONLANG->T('cronRenewal', 'info')}</span>
                     </div>                   
                     <br />
-                    <input type="text" class="form-control" value="{$MGLANG->T('cronRenewal', 'commandLine', 'cronFrequency')} {$cronCommandLine3}" readonly=""> 
+                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronRenewal', 'commandLine', 'cronFrequency')} {$cronCommandLine3}" readonly="">
                     <br />                    
                     <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$MGLANG->T('cronSendCertificate','pleaseNote')}</span>
-                        <span>{$MGLANG->T('cronSendCertificate', 'info')}</span>
+                        <span class="text-danger bold">{$ADDONLANG->T('cronSendCertificate','pleaseNote')}</span>
+                        <span>{$ADDONLANG->T('cronSendCertificate', 'info')}</span>
                     </div> 
                     <br />
-                    <input type="text" class="form-control" value="{$MGLANG->T('cronSendCertificate', 'commandLine', 'cronFrequency')} {$cronCommandLine4}" readonly=""> 
+                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronSendCertificate', 'commandLine', 'cronFrequency')} {$cronCommandLine4}" readonly="">
                     <br />                    
                     <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$MGLANG->T('cronPriceUpdater','pleaseNote')}</span>
-                        <span>{$MGLANG->T('cronPriceUpdater', 'info')}</span>
+                        <span class="text-danger bold">{$ADDONLANG->T('cronPriceUpdater','pleaseNote')}</span>
+                        <span>{$ADDONLANG->T('cronPriceUpdater', 'info')}</span>
                     </div> 
                     <br />
-                    <input type="text" class="form-control" value="{$MGLANG->T('cronPriceUpdater', 'commandLine', 'cronFrequency')} {$cronCommandLine5}" readonly="">
+                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronPriceUpdater', 'commandLine', 'cronFrequency')} {$cronCommandLine5}" readonly="">
                     <br /> 
                             <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$MGLANG->T('cronCertificateDetailsUpdater','pleaseNote')}</span>
-                        <span>{$MGLANG->T('cronCertificateDetailsUpdater', 'info')}</span>
+                        <span class="text-danger bold">{$ADDONLANG->T('cronCertificateDetailsUpdater','pleaseNote')}</span>
+                        <span>{$ADDONLANG->T('cronCertificateDetailsUpdater', 'info')}</span>
                     </div> 
                     <br />
-                    <input type="text" class="form-control" value="{$MGLANG->T('cronCertificateDetailsUpdater', 'commandLine', 'cronFrequency')} {$cronCommandLine6}" readonly="">
+                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronCertificateDetailsUpdater', 'commandLine', 'cronFrequency')} {$cronCommandLine6}" readonly="">
                     <br />
                     <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$MGLANG->T('cronCertificateInstaller','pleaseNote')}</span>
-                        <span>{$MGLANG->T('cronCertificateInstaller', 'info')}</span>
+                        <span class="text-danger bold">{$ADDONLANG->T('cronCertificateInstaller','pleaseNote')}</span>
+                        <span>{$ADDONLANG->T('cronCertificateInstaller', 'info')}</span>
                     </div>
                     <br />
-                    <input type="text" class="form-control" value="{$MGLANG->T('cronCertificateInstaller', 'commandLine', 'cronFrequency')} {$cronCommandLine9}" readonly="">
+                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronCertificateInstaller', 'commandLine', 'cronFrequency')} {$cronCommandLine9}" readonly="">
 
                 </div>
             </div>
@@ -94,7 +94,7 @@ Proin malesuada eros in risus accumsan euismod. Vivamus lacinia pellentesque nun
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">{$MGLANG->T('modal','migrationData')}</h4>
+                <h4 class="modal-title" id="myModalLabel">{$ADDONLANG->T('modal','migrationData')}</h4>
             </div>
             <div class="modal-body">
                 <div class="modal-alerts">
@@ -110,19 +110,19 @@ Proin malesuada eros in risus accumsan euismod. Vivamus lacinia pellentesque nun
                         </div>
                     </div>
                 </div> 
-                <h4 class="text-center">{$MGLANG->T('modal','dataMigrationInfo')} </h4>
-                <h4 class="text-center">{$MGLANG->T('modal','dataMigrationInfo2')} </h4>
+                <h4 class="text-center">{$ADDONLANG->T('modal','dataMigrationInfo')} </h4>
+                <h4 class="text-center">{$ADDONLANG->T('modal','dataMigrationInfo2')} </h4>
                 <div style='padding-left: 15px;'>
                     <ul>
-                        <li><h4>{$MGLANG->T('modal','dataMigrationInfoAction', '0')}</h4></li>
-                        <li><h4>{$MGLANG->T('modal','dataMigrationInfoAction', '1')}</h4></li>
-                        <li><h4>{$MGLANG->T('modal','dataMigrationInfoAction', '2')}</h4></li>
+                        <li><h4>{$ADDONLANG->T('modal','dataMigrationInfoAction', '0')}</h4></li>
+                        <li><h4>{$ADDONLANG->T('modal','dataMigrationInfoAction', '1')}</h4></li>
+                        <li><h4>{$ADDONLANG->T('modal','dataMigrationInfoAction', '2')}</h4></li>
                     </ul> 
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success btn-inverse" id="runMigrationButton" data-dismiss="modal">{$MGLANG->T('modal','import')}</button>
-                <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$MGLANG->T('modal','close')}</button>
+                <button type="button" class="btn btn-success btn-inverse" id="runMigrationButton" data-dismiss="modal">{$ADDONLANG->T('modal','import')}</button>
+                <button type="button" class="btn btn-default btn-inverse" data-dismiss="modal">{$ADDONLANG->T('modal','close')}</button>
             </div>
         </div>
     </div>
@@ -169,11 +169,11 @@ Proin malesuada eros in risus accumsan euismod. Vivamus lacinia pellentesque nun
 
                 JSONParser.request('testConnection', {api_login: login, api_password: password}, function (data) {
                     if (data.success == true) {
-                        $('#MGAlerts>div[data-prototype="success"]').show();
-                        $('#MGAlerts>div[data-prototype="success"] strong').html(data.message);
+                        $('#AddonAlerts>div[data-prototype="success"]').show();
+                        $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
                     } else if (data.success == false) {
-                        $('#MGAlerts>div[data-prototype="error"]').show();
-                        $('#MGAlerts>div[data-prototype="error"] strong').html(data.message);
+                        $('#AddonAlerts>div[data-prototype="error"]').show();
+                        $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
                     }
                 }, false);
             });

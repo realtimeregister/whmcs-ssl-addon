@@ -1,8 +1,8 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\models;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\models;
 use AddonModule\RealtimeRegisterSsl as main;
-use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\PdoWrapper;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\PdoWrapper;
 
 /**
  * Description of abstractModel
@@ -66,7 +66,7 @@ abstract class Repository
      */
     function get()
     {
-        $result = main\mgLibs\MySQL\Query::select(
+        $result = main\addonLibs\MySQL\Query::select(
             self::fieldDeclaration(),
             self::tableName(),
             $this->_filters,
@@ -95,7 +95,7 @@ abstract class Repository
             $first = $fields[$first];
         }
 
-        return main\mgLibs\MySQL\Query::count(
+        return main\addonLibs\MySQL\Query::count(
             $first,
             self::tableName(),
             $this->_filters,
@@ -107,7 +107,7 @@ abstract class Repository
     
     function delete()
     {
-        return main\mgLibs\MySQL\Query::delete(
+        return main\addonLibs\MySQL\Query::delete(
             self::tableName(),
             $this->_filters
         );
@@ -116,7 +116,7 @@ abstract class Repository
     /**
      * 
      * @param array $ids
-     * @return \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
+     * @return \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
      */
     public function idIn(array $ids)
     {
@@ -146,11 +146,11 @@ abstract class Repository
      /**
      * 
      * @return orm
-     * @throws main\mgLibs\exceptions\System
+     * @throws main\addonLibs\exceptions\System
      */
     public function fetchOne() {
   
-        $result = main\mgLibs\MySQL\Query::select(
+        $result = main\addonLibs\MySQL\Query::select(
             self::fieldDeclaration(),
             self::tableName(),
             $this->_filters,
@@ -166,7 +166,7 @@ abstract class Repository
                 $criteria[] = "{$k}: $v";
             }
             $criteria = implode(", ", $criteria);
-            throw new main\mgLibs\exceptions\System("Unable to find '{$class}' with criteria: ({$criteria}) ");
+            throw new main\addonLibs\exceptions\System("Unable to find '{$class}' with criteria: ({$criteria}) ");
         }
         
         return new $class($row['id'], $row);

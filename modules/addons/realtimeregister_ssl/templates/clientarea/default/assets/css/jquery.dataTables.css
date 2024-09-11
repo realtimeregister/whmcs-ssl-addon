@@ -317,19 +317,19 @@ div.FixedHeader_Cloned table {
 	margin: 0 !important
 }
 
-.mg-wrapper .dataTables_wrapper {
+.addon-wrapper .dataTables_wrapper {
     background-color: white !important;
     border: none !important;
     border-radius: none !important;
 }
 
-.mg-wrapper .dataTables_wrapper .dataTables_info {
+.addon-wrapper .dataTables_wrapper .dataTables_info {
      background-color: white !important;
     border: none !important;
  }
 
  
- .mg-wrapper .dataTables_wrapper .dataTables_filter label .form-control {
+ .addon-wrapper .dataTables_wrapper .dataTables_filter label .form-control {
     background-color: #ffffff;
     background-image: none;
     border: 1px solid #cccccc;
@@ -338,6 +338,6 @@ div.FixedHeader_Cloned table {
     transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
     height: 30px;;
 }
- .mg-wrapper  .dataTables_wrapper .dataTables_length label .form-control {
+ .addon-wrapper  .dataTables_wrapper .dataTables_length label .form-control {
      height: 30px;
  }

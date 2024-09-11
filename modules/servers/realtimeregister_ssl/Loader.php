@@ -57,7 +57,7 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
          *
          * @param string $className
          * @return bool
-         * @throws \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\base
+         * @throws \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\base
          * @throws \Exception
          */
         static function loader($className){
@@ -100,13 +100,13 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
                 
                 if (!class_exists(__NAMESPACE__.$originClassName) && !interface_exists(__NAMESPACE__.$originClassName)) {
                     $error['message'] = 'Unable to find class:'.$originClassName.' in file:'.$foundFile;
-                    $error['code']    = \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes::MISSING_FILE_CLASS;
+                    $error['code']    = \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Codes::MISSING_FILE_CLASS;
                 }
             } 
             
             if ($error) {
-                if (class_exists(__NAMESPACE__.'\mgLibs\exceptions\Base',false)) {
-                    throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\Base($error['message'], $error['code']);
+                if (class_exists(__NAMESPACE__.'\addonLibs\exceptions\Base',false)) {
+                    throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Base($error['message'], $error['code']);
                 } else {
                     throw new \Exception($error['message'], $error['code']);
                 }

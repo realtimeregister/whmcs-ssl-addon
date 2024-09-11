@@ -20,7 +20,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product;
  *
  * @Table(name=tblproductgroups,preventUpdate,prefixed=false)
  */
-class ProductGroup extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class ProductGroup extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      *

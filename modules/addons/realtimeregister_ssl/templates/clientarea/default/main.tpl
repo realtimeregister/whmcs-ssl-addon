@@ -1,4 +1,4 @@
-<div class="mg-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true">
+<div class="addon-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=all" rel="stylesheet" type="text/css"/> 
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/font-awesome.css" />
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/simple-line-icons.css" rel="stylesheet">
@@ -10,8 +10,8 @@
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/onoffswitch.css" />
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/jquery-ui.min.css" />
 
-    <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/mg-style.css" rel="stylesheet">    
-    <script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
+    <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/addon-style.css" rel="stylesheet">
+    <script type="text/javascript" src="{$assetsURL}/js/addonLibs.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/bootstrap.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/dataTables.bootstrap.js"></script>
@@ -38,7 +38,7 @@
                                             {if $category.label}
                                                 {$subpage.label} 
                                             {else}
-                                                <span class="mg-pages-label">{$MGLANG->T('pagesLabels','label' , $catName)}</span>
+                                                <span class="addon-pages-label">{$ADDONLANG->T('pagesLabels','label' , $catName)}</span>
                                             {/if}
                                             <i class="fa fa-angle-down dropdown-angle"></i>
                                             </a>
@@ -48,7 +48,7 @@
                                             {if $category.label}
                                                 {$subpage.label}
                                             {else}
-                                                <span class="mg-pages-label">{$MGLANG->T('pagesLabels','label', $catName)}</span>
+                                                <span class="addon-pages-label">{$ADDONLANG->T('pagesLabels','label', $catName)}</span>
                                             {/if}
                                             <i class="fa fa-angle-down dropdown-angle"></i>
                                             </a>
@@ -62,7 +62,7 @@
                                                         {if $subCategory.label}
                                                             {$subCategory.label}
                                                         {else}
-                                                            {$MGLANG->T('pagesLabels',$catName,$subCatName)}
+                                                            {$ADDONLANG->T('pagesLabels',$catName,$subCatName)}
                                                         {/if}
                                                         </a>
                                                     {else}
@@ -71,7 +71,7 @@
                                                         {if $subCategory.label}
                                                             {$subCategory.label}
                                                         {else}
-                                                            {$MGLANG->T('pagesLabels',$catName,$subCatName)}
+                                                            {$ADDONLANG->T('pagesLabels',$catName,$subCatName)}
                                                         {/if}
                                                     </a>
                                                     {/if}
@@ -86,7 +86,7 @@
                                             {if $category.label}
                                                 <span>{$subpage.label}</span>
                                             {else}
-                                                <span>{$MGLANG->T('pagesLabels', 'label', $catName)}</span>
+                                                <span>{$ADDONLANG->T('pagesLabels', 'label', $catName)}</span>
                                             {/if}
                                         </a>
                                     </li>
@@ -99,7 +99,7 @@
         </div>
         <div class="clearfix"></div>              
         <div class="page-container">
-            <div class="row-fluid" id="MGAlerts">
+            <div class="row-fluid" id="AddonAlerts">
                 {if $error}
                     <div class="alert alert-danger">
                         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
@@ -134,7 +134,7 @@
             </div>
         </div>
     </div>
-    <div id="MGLoader" style="display:none;" >
+    <div id="AddonLoader" style="display:none;" >
         <div>
             <img src="{$assetsURL}/img/ajax-loader.gif" alt="Loading ..." />
         </div>

@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\models;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\models;
 use AddonModule\RealtimeRegisterSsl as main;
 
 /**
@@ -25,13 +25,13 @@ abstract class Base
      * Disable Get Function
      *
      * @param string $property
-     * @throws main\mgLibs\exceptions\System
+     * @throws main\addonLibs\exceptions\System
      */
     function __get($property)
     {
-        throw new main\mgLibs\exceptions\System(
+        throw new main\addonLibs\exceptions\System(
             'Property: '.$property.' does not exits in: '.get_called_class(),
-            main\mgLibs\exceptions\Codes::PROPERTY_NOT_EXISTS
+            main\addonLibs\exceptions\Codes::PROPERTY_NOT_EXISTS
         );
     }
     
@@ -40,13 +40,13 @@ abstract class Base
      *
      * @param string $property
      * @param string $value
-     * @throws main\mgLibs\exceptions\System
+     * @throws main\addonLibs\exceptions\System
      */
     function __set($property, $value)
     {
-        throw new main\mgLibs\exceptions\System(
+        throw new main\addonLibs\exceptions\System(
             'Property: '.$property.' does not exits in: '.get_called_class(),
-            main\mgLibs\exceptions\Codes::PROPERTY_NOT_EXISTS
+            main\addonLibs\exceptions\Codes::PROPERTY_NOT_EXISTS
         );
     }
     
@@ -55,13 +55,13 @@ abstract class Base
      *
      * @param string $function
      * @param string $params
-     * @throws main\mgLibs\exceptions\System
+     * @throws main\addonLibs\exceptions\System
      */
     function __call($function, $params)
     {
-        throw new main\mgLibs\exceptions\System(
+        throw new main\addonLibs\exceptions\System(
             'Function: '.$function.' does not exits in: '.get_called_class(),
-            main\mgLibs\exceptions\Codes::PROPERTY_NOT_EXISTS
+            main\addonLibs\exceptions\Codes::PROPERTY_NOT_EXISTS
         );
     }
     
@@ -115,7 +115,7 @@ abstract class Base
         return base64_encode(
             mcrypt_encrypt(
                 MCRYPT_RIJNDAEL_256,
-                main\mgLibs\process\MainInstance::I()->getEncryptKey(),
+                main\addonLibs\process\MainInstance::I()->getEncryptKey(),
                 $input,
                 MCRYPT_MODE_ECB)
         );
@@ -136,7 +136,7 @@ abstract class Base
         return trim(
             mcrypt_decrypt(
                 MCRYPT_RIJNDAEL_256,
-                main\mgLibs\process\MainInstance::I()->getEncryptKey(),
+                main\addonLibs\process\MainInstance::I()->getEncryptKey(),
                 base64_decode($input),
                 MCRYPT_MODE_ECB
             )

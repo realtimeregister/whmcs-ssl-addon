@@ -18,7 +18,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product;
  * Description of repository
  *
  */
-class ProductGroups extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class ProductGroups extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {

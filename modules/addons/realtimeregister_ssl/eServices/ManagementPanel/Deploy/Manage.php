@@ -6,7 +6,7 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy;
 
 use Exception;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\Platforms\PlatformInterface;
-use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DeployException;
 
 class Manage
 {

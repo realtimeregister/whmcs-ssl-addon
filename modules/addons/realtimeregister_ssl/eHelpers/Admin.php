@@ -18,7 +18,7 @@ class Admin
     
     public static function getAdminUserName() {
         if (!self::$adminUserName) {
-            self::$adminUserName = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query(
+            self::$adminUserName = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::query(
                 'SELECT username FROM tbladmins LIMIT 1'
             )->fetchColumn('username');
         }

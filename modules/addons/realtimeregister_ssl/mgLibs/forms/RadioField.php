@@ -1,6 +1,6 @@
 <?php
 
-namespace AddonModule\RealtimeRegisterSsl\mgLibs\forms;
+namespace AddonModule\RealtimeRegisterSsl\addonLibs\forms;
 use AddonModule\RealtimeRegisterSsl as main;
 
 /**
@@ -36,7 +36,7 @@ class RadioField extends AbstractField
         if ($this->translateOptions) {
             $options = [];
             foreach ($this->options as $value) {
-                $options[$value] = main\mgLibs\Lang::T($this->formName,$this->name,'options',$value); 
+                $options[$value] = main\addonLibs\Lang::T($this->formName,$this->name,'options',$value); 
             }
             $this->options = $options;
         }

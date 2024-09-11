@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use Exception;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Organization;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
@@ -12,8 +12,8 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\San;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
-use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use Exception;
 
 class SSLStepOne
 {
@@ -70,7 +70,7 @@ class SSLStepOne
         if ($apiProduct->isOrganizationRequired()) {
             $fields['additionalfields'][Organization::getTitle()] = Organization::getFields();
         }
-        $countriesForGenerateCsrForm = Countries::getInstance()->getCountriesForMgAddonDropdown();
+        $countriesForGenerateCsrForm = Countries::getInstance()->getCountriesForAddonDropdown();
 
         //get selected default country for CSR Generator
         $defaultCsrGeneratorCountry = ($displayCsrGenerator) ? $apiConf->default_csr_generator_country : '';

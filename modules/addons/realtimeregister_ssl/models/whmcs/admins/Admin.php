@@ -1,10 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * MGMF product developed. (2016-02-10)
- * *
- *
- *
  *
  * This software is furnished under a license and may be used and copied
  * only  in  accordance  with  the  terms  of such  license and with the
@@ -25,7 +21,7 @@ use AddonModule\RealtimeRegisterSsl as main;
  *
  * @Table(name=tbladmins,preventUpdate,prefixed=false)
  */
-class Admin extends main\mgLibs\models\Orm
+class Admin extends main\addonLibs\models\Orm
 {
     /**
      *

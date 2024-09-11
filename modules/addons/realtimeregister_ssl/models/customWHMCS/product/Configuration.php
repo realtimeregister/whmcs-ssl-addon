@@ -5,7 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl\models\customWHMCS\product;
 /**
  * @Table(name=custom_configuration)
  */
-class Configuration extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Configuration extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * 
