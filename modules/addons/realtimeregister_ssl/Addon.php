@@ -2,9 +2,9 @@
 
 namespace AddonModule\RealtimeRegisterSsl;
 
-use Exception;
 use AddonModule\RealtimeRegisterSsl\mgLibs\error\Register;
 use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDriver;
+use Exception;
 
 class Addon extends AbstractMainDriver
 {
@@ -83,9 +83,9 @@ class Addon extends AbstractMainDriver
         }
 
         if ($page) {
-            $url .= '&mg-page=' . $page;
+            $url .= '&addon-page=' . $page;
             if ($action) {
-                $url .= '&mg-action=' . $action;
+                $url .= '&addon-action=' . $action;
             }
 
             if ($params) {
@@ -105,11 +105,11 @@ class Addon extends AbstractMainDriver
         }
 
         if ($page) {
-            $url .= '&mg-page=' . $page;
+            $url .= '&addon-page=' . $page;
         }
 
         if ($action) {
-            $url .= '&mg-action=' . $action;
+            $url .= '&addon-action=' . $action;
         }
 
         if ($params) {
@@ -122,9 +122,9 @@ class Addon extends AbstractMainDriver
     public static function genJSONUrl($page)
     {
         if (self::I()->isAdmin()) {
-            return 'addonmodules.php?module=' . self::I()->configuration()->systemName . '&json=1&mg-page=' . $page;
+            return 'addonmodules.php?module=' . self::I()->configuration()->systemName . '&json=1&addon-page=' . $page;
         } else {
-            return 'index.php?m=' . self::I()->configuration()->systemName . '&json=1&mg-page=' . $page;
+            return 'index.php?m=' . self::I()->configuration()->systemName . '&json=1&addon-page=' . $page;
         }
     }
 
@@ -189,9 +189,9 @@ class Addon extends AbstractMainDriver
             self::I()->isAdmin(true);
             self::I()->setMainLangContext();
 
-            $page = empty($input['mg-page']) ? 'Home' : $input['mg-page'];
+            $page = empty($input['addon-page']) ? 'Home' : $input['addon-page'];
             $page = ucfirst($page);
-            $action = empty($input['mg-action']) ? 'index' : $input['mg-action'];
+            $action = empty($input['addon-action']) ? 'index' : $input['addon-action'];
 
             list($content) = self::I()->runControler($page, $action, $input, 'CustomHTML');
             return $content;
@@ -249,28 +249,28 @@ class Addon extends AbstractMainDriver
             }
 
 
-            if (empty($input['mg-page'])) {
-                $input['mg-page'] = key($menu);
+            if (empty($input['addon-page'])) {
+                $input['addon-page'] = key($menu);
             }
 
-            if ($input['mg-page']) {
+            if ($input['addon-page']) {
                 $breadcrumb[0] = [
-                    'name' => $input['mg-page'],
-                    'url' => $menu[$input['mg-page']]['url'],
-                    'icon' => $menu[$input['mg-page']]['icon']
+                    'name' => $input['addon-page'],
+                    'url' => $menu[$input['addon-page']]['url'],
+                    'icon' => $menu[$input['addon-page']]['icon']
                 ];
-                if ($input['mg-action']) {
+                if ($input['addon-action']) {
                     $breadcrumb[1] = [
-                        'name' => $input['mg-action'],
-                        'url' => $menu[$input['mg-page']]['submenu'][$input['mg-action']]['url'],
-                        'icon' => $menu[$input['mg-page']]['submenu'][$input['mg-action']]['icon']
+                        'name' => $input['addon-action'],
+                        'url' => $menu[$input['addon-page']]['submenu'][$input['addon-action']]['url'],
+                        'icon' => $menu[$input['addon-page']]['submenu'][$input['addon-action']]['icon']
                     ];
                 }
             }
 
 
-            $page = $input['mg-page'];
-            $action = empty($input['mg-action']) ? 'index' : $input['mg-action'];
+            $page = $input['addon-page'];
+            $action = empty($input['addon-action']) ? 'index' : $input['addon-action'];
             $page = ucfirst($page);
             $vars = [
                 'assetsURL' => self::I()->getAssetsURL(),
@@ -360,8 +360,8 @@ class Addon extends AbstractMainDriver
             $menu[$catName] = $category;
         }
 
-        if (empty($input['mg-page'])) {
-            $input['mg-page'] = key($menu);
+        if (empty($input['addon-page'])) {
+            $input['addon-page'] = key($menu);
         }
 
         $output = [
@@ -375,12 +375,12 @@ class Addon extends AbstractMainDriver
         try {
             self::I()->setMainLangContext();
 
-            $page = ucfirst($input['mg-page']);
-            if (!empty($input['mg-page'])) {
-                $url = self::I()->getUrl($input['mg-page']);
-                $breadcrumb[$url] = $input['mg-page'];
+            $page = ucfirst($input['addon-page']);
+            if (!empty($input['addon-page'])) {
+                $url = self::I()->getUrl($input['addon-page']);
+                $breadcrumb[$url] = $input['addon-page'];
             }
-            $action = empty($input['mg-action']) ? 'index' : $input['mg-action'];
+            $action = empty($input['addon-action']) ? 'index' : $input['addon-action'];
             $vars = [
                 'assetsURL' => self::I()->getAssetsURL(),
                 'mainURL' => self::I()->getUrl(),
@@ -441,11 +441,11 @@ class Addon extends AbstractMainDriver
         $content = [];
 
         $page = 'home';
-        if (!empty($input['mg-page'])) {
-            $page = $input['mg-page'];
+        if (!empty($input['addon-page'])) {
+            $page = $input['addon-page'];
         }
         $page = ucfirst($page);
-        $action = empty($input['mg-action']) ? 'index' : $input['mg-action'];
+        $action = empty($input['addon-action']) ? 'index' : $input['addon-action'];
         try {
             self::I()->isAdmin(true);
             self::I()->setMainLangContext();
@@ -490,11 +490,11 @@ class Addon extends AbstractMainDriver
         $content = [];
 
         $page = 'home';
-        if (!empty($input['mg-page'])) {
-            $page = $input['mg-page'];
+        if (!empty($input['addon-page'])) {
+            $page = $input['addon-page'];
         }
         $page = ucfirst($page);
-        $action = empty($input['mg-action']) ? 'index' : $input['mg-action'];
+        $action = empty($input['addon-action']) ? 'index' : $input['addon-action'];
 
         try {
             self::I()->setMainLangContext();

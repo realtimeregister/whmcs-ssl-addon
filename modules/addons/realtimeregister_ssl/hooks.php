@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Capsule\Manager as Capsule;
 use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Discount;
@@ -16,6 +15,7 @@ use AddonModule\RealtimeRegisterSsl\Loader;
 use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\Server;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Service\Service;
 use WHMCS\View\Formatter\Price;
@@ -331,7 +331,7 @@ function realtimeregister_ssl_displaySSLSummaryStats($vars)
                                         <h3 class=\"panel-title\">
                                                 <div class=\"pull-right\">
                                                         <a class=\"btn btn-default bg-color-gold btn-xs\"
-                                                                href=\"index.php?m=realtimeregister_ssl&mg-page=Orders&type=total\">
+                                                                href=\"index.php?m=realtimeregister_ssl&addon-page=Orders&type=total\">
                                                                 <i class=\"fas fa-plus\"></i>
                                                                 $viewAll
                                                         </a>
@@ -342,17 +342,17 @@ function realtimeregister_ssl_displaySSLSummaryStats($vars)
                                 </div>
                                 <div>
                                         <div class=\"dsb-box col-sm-4\">
-                                                <a href=\"index.php?m=realtimeregister_ssl&mg-page=Orders&type=unpaid\">
+                                                <a href=\"index.php?m=realtimeregister_ssl&addon-page=Orders&type=unpaid\">
                                                         <div><i class=\"fa fa-credit-card icon icon col-sm-12\"></i><span>$unpaidLang<u>$unpaidOrders</u></span></div>
                                                 </a>
                                         </div>
                                         <div class=\"dsb-box col-sm-4\">
-                                                <a href=\"index.php?m=realtimeregister_ssl&mg-page=Orders&type=processing\">
+                                                <a href=\"index.php?m=realtimeregister_ssl&addon-page=Orders&type=processing\">
                                                         <div><i class=\"fa fa-cogs icon col-sm-12\"></i><span>$processingLang<u>$processingOrders</u></span></div>
                                                 </a>
                                         </div>
                                         <div class=\"dsb-box col-sm-4\">
-                                                <a href=\"index.php?m=realtimeregister_ssl&mg-page=Orders&type=expires_soon\">
+                                                <a href=\"index.php?m=realtimeregister_ssl&addon-page=Orders&type=expires_soon\">
                                                         <div><i class=\"fa fa-hourglass-half icon col-sm-12\"></i><span>$expiresSoonLang<u>$expiresSoonOrders</u></span></div>
                                                 </a>
                                         </div>
@@ -446,7 +446,7 @@ function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
                 'uniqueSubMenuSLLSummaryTotal', [
             'name'  => 'totalOrders',
             'label' => Lang::getInstance()->absoluteT('addonCA', 'sslSummary', 'total'),
-            'uri'   => 'index.php?m=realtimeregister_ssl&mg-page=Orders&type=total',
+            'uri'   => 'index.php?m=realtimeregister_ssl&addon-page=Orders&type=total',
             'order' => 10,
             'badge' => $totalOrders,
             ]
@@ -455,7 +455,7 @@ function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
                 'uniqueSubMenuSLLSummaryUnpaid', [
             'name'  => 'unpaidOrders',
             'label' => Lang::getInstance()->absoluteT('addonCA', 'sslSummary', 'unpaid'),
-            'uri'   => 'index.php?m=realtimeregister_ssl&mg-page=Orders&type=unpaid',
+            'uri'   => 'index.php?m=realtimeregister_ssl&addon-page=Orders&type=unpaid',
             'order' => 11,
             'badge' => $unpaidOrders,
             ]
@@ -464,7 +464,7 @@ function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
                 'uniqueSubMenuSLLSummaryProcessing', [
             'name'  => 'processingOrders',
             'label' => Lang::getInstance()->absoluteT('addonCA', 'sslSummary', 'processing'),
-            'uri'   => 'index.php?m=realtimeregister_ssl&mg-page=Orders&type=processing',
+            'uri'   => 'index.php?m=realtimeregister_ssl&addon-page=Orders&type=processing',
             'order' => 12,
             'badge' => $processingOrders,
             ]
@@ -473,7 +473,7 @@ function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
                 'uniqueSubMenuSLLSummaryExpires', [
             'name'  => 'expiresSoonOrders',
             'label' => Lang::absoluteT('addonCA', 'sslSummary', 'expiresSoon'),
-            'uri'   => 'index.php?m=realtimeregister_ssl&mg-page=Orders&type=expires_soon',
+            'uri'   => 'index.php?m=realtimeregister_ssl&addon-page=Orders&type=expires_soon',
             'order' => 13,
             'badge' => $expiresSoonOrders,
             ]

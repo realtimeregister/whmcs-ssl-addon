@@ -41,14 +41,14 @@ var JSONParser = {
         }
         
         if(typeof data === "object"){
-            data['mg-action'] = action;
+            data['addon-action'] = action;
             if(this.currentPage){
-                data['mg-page']    = this.currentPage;
+                data['addon-page']    = this.currentPage;
             }
         }else if(typeof data ===  "string"){
-            data += "&mg-action="+action;
+            data += "&addon-action="+action;
             if(this.currentPage)
-              data +="&mg-page=" +this.currentPage;
+              data +="&addon-page=" +this.currentPage;
         }
         
         if(loader === undefined)

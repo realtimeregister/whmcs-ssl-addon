@@ -339,7 +339,7 @@
                 var client_id = select.val();
                 var modal = select.parents('.modal');
 
-                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=userDiscounts', 'POST');
+                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=userDiscounts', 'POST');
                 JSONParser.request('loadAvailableProducts', {client_id: client_id}, function (data) {
                     if (data.products) {
                         var options = '<option disabled="" selected="" value="">' + pleaseSelectOnePlaceholder + '</option>';
@@ -374,7 +374,7 @@
                 if (isNaN(discount))
                     discount = 0;
 
-                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=userDiscounts', 'POST');
+                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=userDiscounts', 'POST');
                 JSONParser.request('loadProductPricing', {product_id: product_id}, function (data) {
                     if (data.pricings) {
                         var rows = generatePricingstableRows(data, discount);
@@ -401,7 +401,7 @@
                 }
 
 
-                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=userDiscounts', 'POST');
+                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=userDiscounts', 'POST');
                 JSONParser.request('loadProductPricing', { product_id }, function (data) {
                     if (data.pricings) {
                         var rowsWithPriceDiscountHtml = generatePricingstableRows(data, discount)['rowsWithPriceDiscountHtml'];
@@ -436,7 +436,7 @@
                     return false;
                 }
 
-                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=userDiscounts', 'POST');
+                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=userDiscounts', 'POST');
                 JSONParser.request('addNewDiscountRule', {client_id: client_id, product_id: product_id, discount: discount}, function (data) {
                     if (data.success) {
                         $('#rulesTable table').DataTable().ajax.reload();
@@ -481,7 +481,7 @@
 
                 var rule_id = modal.find('input[name="rule_id"]').val();
 
-                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=userDiscounts', 'POST');
+                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=userDiscounts', 'POST');
                 JSONParser.request('removeDiscountRule', {rule_id: rule_id}, function (data) {
                     if (data.success) {
                         $('#rulesTable table').DataTable().ajax.reload();
@@ -505,7 +505,7 @@
                     return false;
                 }
 
-                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=userDiscounts', 'POST');
+                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=userDiscounts', 'POST');
                 JSONParser.request('updateDiscountRule', { rule_id, discount }, function (data) {
                     if (data.success) {
                         $('#rulesTable table').DataTable().ajax.reload();
@@ -534,7 +534,7 @@
                                 'getDiscountRules'
                                 , {
                                     json: true,
-                                    'mg-page': 'userDiscounts'
+                                    'addon-page': 'userDiscounts'
                                 }
                         , function (data) {
                             callback(data);
@@ -604,7 +604,7 @@
 
                     modal.find('input[name="rule_id"]').val($(this).data('id'));
 
-                    JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=userDiscounts', 'POST');
+                    JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=userDiscounts', 'POST');
                     JSONParser.request('getSingleDiscountRule', {rule_id: rule_id}, function (data) {
                         if (data) {
 

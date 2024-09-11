@@ -2,7 +2,6 @@
 
 namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
-use Exception;
 use AddonModule\RealtimeRegisterSsl as main;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Migration;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -19,6 +18,7 @@ use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Products;
+use Exception;
 use SandwaveIo\RealtimeRegister\Api\CustomersApi;
 use SandwaveIo\RealtimeRegister\Domain\PriceCollection;
 use WHMCS\Database\Capsule;
@@ -431,7 +431,7 @@ class ApiConfiguration extends AbstractController
         $field->error = $this->getFieldError('tech_region');
         $form->addField($field);
 
-        $form->addField('submit', 'mg-action', [
+        $form->addField('submit', 'addon-action', [
             'value' => 'saveItem'
         ]);
 

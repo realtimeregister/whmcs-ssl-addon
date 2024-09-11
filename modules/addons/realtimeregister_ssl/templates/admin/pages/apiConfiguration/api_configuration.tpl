@@ -195,7 +195,7 @@ Proin malesuada eros in risus accumsan euismod. Vivamus lacinia pellentesque nun
                 var modal = $("#MGDataMigration");
                 $(this).append(' <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>');
                 removeErrorStyle($(modal));
-                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=apiConfiguration', 'POST');
+                JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=apiConfiguration', 'POST');
                 JSONParser.request('runMigration', {}, function (data) {
 
                     if (data.success) {

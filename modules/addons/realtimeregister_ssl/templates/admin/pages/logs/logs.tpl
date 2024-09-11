@@ -100,7 +100,7 @@
         {
             var modal = button.parents('.modal');
             var log_id = modal.find('input[name="log_id"]').val();
-            JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=logs', 'POST');
+            JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=logs', 'POST');
             JSONParser.request('removeLog', {log_id: log_id}, function (data) {
                 if (data.success) {
                     $('#logsTable table').DataTable().ajax.reload();
@@ -114,7 +114,7 @@
         function clearLogs(button)
         {
             var modal = button.parents('.modal');
-            JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=logs', 'POST');
+            JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=logs', 'POST');
             JSONParser.request('clearLogs', {}, function (data) {
                 if (data.success) {
                     $('#logsTable table').DataTable().ajax.reload();
@@ -140,7 +140,7 @@
                     let filter = {};
                     JSONParser.request(
                         'getLogs',
-                        {json: true,'mg-page':'logs',filter:filter,order:data.order[0],limit: data.length,offset: data.start,search:data.search.value},
+                        {json: true,'addon-page':'logs',filter:filter,order:data.order[0],limit: data.length,offset: data.start,search:data.search.value},
                         function (data) {
                             callback(data);
                         }

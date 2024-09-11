@@ -42,14 +42,14 @@ var JSONParser = {
         }
         
         if(typeof data === "object"){
-            data['mg-action'] = action;
+            data['addon-action'] = action;
             if(this.currentPage){
-                data['mg-page']    = this.currentPage;
+                data['addon-page']    = this.currentPage;
             }
         }else if(typeof data ===  "string"){
-            data += "&mg-action="+action;
+            data += "&addon-action="+action;
             if(this.currentPage)
-              data +="&mg-page=" +this.currentPage;
+              data +="&addon-page=" +this.currentPage;
         }
         
         if(loader === undefined)
@@ -276,7 +276,7 @@ jQuery.fn.MGModalActions = function(){
                                 if(element.attr('type') == 'checkbox')
                                 {
                                     if(typeof value == 'object'){
-                                        for(x in value)
+                                        for(const x in value)
                                         {
                                             modal.find('input[type=checkbox][name="'+name+'"][value="'+value[x]+'"]').attr('checked','checked');
                                         }

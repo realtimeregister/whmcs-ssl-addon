@@ -43,7 +43,7 @@
                 let filter = {};
                 JSONParser.request(
                     'getOrders',
-                    {json: true, 'mg-page': 'orders',filter:filter,order:data.order[0],limit: data.length,offset: data.start,search:data.search.value},
+                    {json: true, 'addon-page': 'orders',filter:filter,order:data.order[0],limit: data.length,offset: data.start,search:data.search.value},
                     function (data) {
                         callback(data);
                     }
@@ -65,7 +65,7 @@
 
         $('body').on('click', '.setVerified', function (){
             let id = $(this).attr('data-id');
-            JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=orders', 'POST');
+            JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=orders', 'POST');
             JSONParser.request('setVerified', {id:id}, function (data) {
                 if (data.success) {
                     $('#ordersTable table').DataTable().ajax.reload();
@@ -75,7 +75,7 @@
 
         $('body').on('click', '.setInstalled', function (){
             let id = $(this).attr('data-id');
-            JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&mg-page=orders', 'POST');
+            JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=orders', 'POST');
             JSONParser.request('setInstalled', {id:id}, function (data) {
                 if (data.success) {
                     $('#ordersTable table').DataTable().ajax.reload();
