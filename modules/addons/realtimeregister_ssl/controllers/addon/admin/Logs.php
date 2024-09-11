@@ -2,12 +2,12 @@
 
 namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
-use AddonModule\RealtimeRegisterSsl\models\logs\Repository;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Smarty;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
-use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use WHMCS\Database\Capsule as DB;
 
 class Logs extends AbstractController

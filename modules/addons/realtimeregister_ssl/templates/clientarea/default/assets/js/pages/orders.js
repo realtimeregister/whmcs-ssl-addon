@@ -1,7 +1,7 @@
 jQuery(document).ready(function () {
-    var mgDataTable;
+    var addonDataTable;
 
-    mgDataTable = $('#addon-data-list').dataTable({
+    addonDataTable = $('#addon-data-list').dataTable({
         processing: false,
         searching: true,
         autoWidth: false,

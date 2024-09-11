@@ -55,7 +55,7 @@ class UpdateConfigData
             if (
                 !isset($this->sslService->configdata->product_brand) || empty($this->sslService->configdata->product_brand)
             ) {
-                $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+                $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
 
                 $brandName = null;
                 if ($checkTable !== false) {
@@ -64,7 +64,7 @@ class UpdateConfigData
                     } else {
                         $id = KeyToIdMapping::getIdByKey($order['command']['product']);
                     }
-                    $productData = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where([
+                    $productData = Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where([
                             'pid' => $id
                         ]
                     )->first();

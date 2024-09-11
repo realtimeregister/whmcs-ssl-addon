@@ -126,7 +126,7 @@
                     </div>
                 </div>
             </div>
-            <div class="page-content" id="MGPage{$currentPageName}">
+            <div class="page-content" id="AddonPage{$currentPageName}">
                 <div class="container-fluid">
                     
                     {$content}

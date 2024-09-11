@@ -33,7 +33,7 @@
     </div>
 </div>
 
-<div class="modal fade bs-example-modal-lg" id="MGLogRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade bs-example-modal-lg" id="AddonLogRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -42,7 +42,7 @@
             </div>
             <div class="modal-body">
                 <input type='hidden' name='log_id'/>
-                <h4 class="text-center">{$ADDONLANG->T('modal','removeLogInfo')} <b id="MGremoveInformation"></b></h4>
+                <h4 class="text-center">{$ADDONLANG->T('modal','removeLogInfo')} <b id="AddonremoveInformation"></b></h4>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger btn-inverse" id="removeLogButton" data-dismiss="modal">{$ADDONLANG->T('modal','remove')}</button>
@@ -52,7 +52,7 @@
     </div>
 </div>
 
-<div class="modal fade bs-example-modal-lg" id="MGClearLogs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade bs-example-modal-lg" id="AddonClearLogs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -60,7 +60,7 @@
                 <h4 class="modal-title" id="myModalLabel">{$ADDONLANG->T('modal','clearLogs')}</h4>
             </div>
             <div class="modal-body">
-                <h4 class="text-center">{$ADDONLANG->T('modal','clearLogsInfo')} <b id="MGremoveInformation"></b></h4>
+                <h4 class="text-center">{$ADDONLANG->T('modal','clearLogsInfo')} <b id="AddonremoveInformation"></b></h4>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger btn-inverse" id="clearLogsButton" data-dismiss="modal">{$ADDONLANG->T('modal','Clear')}</button>
@@ -161,13 +161,13 @@
             initDatatable();
 
             $(document).on('click', '.deleteItem', function () {
-                var modal = $("#MGLogRemove");
+                var modal = $("#AddonLogRemove");
                 openModal(modal);
                 $(modal).find('input[name="log_id"]').val($(this).data('id'));
             });
 
             $(document).on('click', '#clearAllLogs', function () {
-                var modal = $("#MGClearLogs");
+                var modal = $("#AddonClearLogs");
                 openModal(modal);
             });
 

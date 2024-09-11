@@ -35,10 +35,10 @@
 {literal}
     <script type="text/javascript">
         jQuery(document).ready(function () {
-            var mgDataTable;
+            var addonDataTable;
 
             jQuery(document).ready(function () {
-                mgDataTable = $('#addon-data-list').dataTable({
+                addonDataTable = $('#addon-data-list').dataTable({
                     processing: false,
                     searching: true,
                     autoWidth: false,

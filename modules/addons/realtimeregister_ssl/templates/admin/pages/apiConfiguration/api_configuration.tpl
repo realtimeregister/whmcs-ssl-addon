@@ -89,7 +89,7 @@ Proin malesuada eros in risus accumsan euismod. Vivamus lacinia pellentesque nun
 </div>
 
 <!-- Import Data & Configuration Modal  -->
-<div class="modal fade bs-example-modal-lg" id="MGDataMigration" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade bs-example-modal-lg" id="AddonDataMigration" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -186,13 +186,13 @@ Proin malesuada eros in risus accumsan euismod. Vivamus lacinia pellentesque nun
                 }
             });
             jQuery('button[name="data_migration"]').click(function () {
-                var modal = $("#MGDataMigration");
+                var modal = $("#AddonDataMigration");
                 removeErrorStyle($(modal));
                 $(modal).find('.fa-spinner').remove();
                 $(modal).modal();
             });
             $(document).on('click', '#runMigrationButton', function () {
-                var modal = $("#MGDataMigration");
+                var modal = $("#AddonDataMigration");
                 $(this).append(' <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>');
                 removeErrorStyle($(modal));
                 JSONParser.create('addonmodules.php?module=realtimeregister_ssl&json=1&addon-page=apiConfiguration', 'POST');

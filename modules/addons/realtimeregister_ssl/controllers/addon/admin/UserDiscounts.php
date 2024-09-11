@@ -2,10 +2,10 @@
 
 namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
-use Illuminate\Database\Capsule\Manager as Capsule;
 use AddonModule\RealtimeRegisterSsl as main;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 class UserDiscounts extends main\addonLibs\process\AbstractController
 {

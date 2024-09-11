@@ -200,7 +200,7 @@ jQuery.fn.loader = function(action)
     }
 }
 
-jQuery.fn.MGGetForms = function(action)
+jQuery.fn.AddonGetForms = function(action)
 {
     var that = this;
     var data = {};
@@ -583,7 +583,7 @@ jQuery.fn.AddonModalActions = function(){
 
                     var target = jQuery(this).attr('data-modal-target');
 
-                    var data = jQuery(this).closest('.modal').MGGetForms();
+                    var data = jQuery(this).closest('.modal').AddonGetForms();
                     
                     that.modalAction(action,target,data);
                 });

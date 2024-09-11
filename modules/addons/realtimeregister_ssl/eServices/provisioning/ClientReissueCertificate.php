@@ -249,10 +249,10 @@ class ClientReissueCertificate
         $disabledValidationMethods = [];
 
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
+            if (Capsule::schema()->hasColumn(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+                $productsslDB = Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
                     'pid',
                     $product->configuration()->text_name
                 )->first();
@@ -323,10 +323,10 @@ class ClientReissueCertificate
         $product = new Product($service->productID);
 
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
+            if (Capsule::schema()->hasColumn(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+                $productsslDB = Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
                     'pid',
                     $product->configuration()->text_name
                 )->first();

@@ -7,22 +7,22 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eHelpers;
 
-use DateInterval;
-use DateTime;
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Illuminate\Database\Schema\Blueprint;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR;
-use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\RepositoryItem;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
+use DateInterval;
+use DateTime;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\Schema\Blueprint;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Module\Server;
 use WHMCS\Product\Product;
@@ -35,8 +35,8 @@ class Invoice
 {
     protected static $adminUserName = null;
 
-    public const INVOICE_INFOS_TABLE_NAME = 'mgfw_REALTIMEREGISTERSSL_invoices_info';
-    public const INVOICE_PENDINGPAYMENT_TABLE_NAME = 'mgfw_REALTIMEREGISTERSSL_invoices_pendingpayment';
+    public const INVOICE_INFOS_TABLE_NAME = 'mod_REALTIMEREGISTERSSL_invoices_info';
+    public const INVOICE_PENDINGPAYMENT_TABLE_NAME = 'mod_REALTIMEREGISTERSSL_invoices_pendingpayment';
 
     public static function createInfosTable()
     {

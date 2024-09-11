@@ -12,11 +12,11 @@ use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use Exception;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\DomainControlValidation;
 use WHMCS\Database\Capsule;
-use Exception;
 
 class Renew
 {
@@ -94,9 +94,9 @@ class Renew
 
     private function createRenewTable()
     {
-        $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_renew');
+        $checkTable = Capsule::schema()->hasTable('mod_REALTIMEREGISTERSSL_renew');
         if ($checkTable === false) {
-            Capsule::schema()->create('mgfw_REALTIMEREGISTERSSL_renew', function ($table) {
+            Capsule::schema()->create('mod_REALTIMEREGISTERSSL_renew', function ($table) {
                 $table->increments('id');
                 $table->integer('serviceid');
                 $table->dateTime('date');
@@ -108,7 +108,7 @@ class Renew
     {
         $this->createRenewTable();
 
-        $renew = Capsule::table('mgfw_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->where(
+        $renew = Capsule::table('mod_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->where(
             'date',
             'like',
             date('Y-m-d H') . '%'
@@ -123,14 +123,14 @@ class Renew
     {
         $this->createRenewTable();
 
-        $renew = Capsule::table('mgfw_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->first();
+        $renew = Capsule::table('mod_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->first();
 
         if (isset($renew->id) && !empty($renew->id)) {
-            Capsule::table('mgfw_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->update([
+            Capsule::table('mod_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->update([
                 'date' => date('Y-m-d H:i:s')
             ]);
         } else {
-            Capsule::table('mgfw_REALTIMEREGISTERSSL_renew')->insert([
+            Capsule::table('mod_REALTIMEREGISTERSSL_renew')->insert([
                 'serviceid' => $serviceid,
                 'date' => date('Y-m-d H:i:s')
             ]);

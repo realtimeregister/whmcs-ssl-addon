@@ -1,6 +1,7 @@
 <?php
 
 use AddonModule\RealtimeRegisterSsl\Addon;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Discount;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
@@ -12,7 +13,6 @@ use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\Activator;
 use AddonModule\RealtimeRegisterSsl\Loader;
-use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\Server;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -100,7 +100,7 @@ add_hook('ClientAreaPage', 1, function($params) {
 
         Invoice::createPendingPaymentInvoice();
         $check = Capsule::table(
-            'mgfw_REALTIMEREGISTERSSL_invoices_pendingpayment'
+            'mod_REALTIMEREGISTERSSL_invoices_pendingpayment'
         )->where('user_id', $_SESSION['uid'])->where('invoice_id', $params['invoiceid'])->first();
         if (!isset($check->id))
         {

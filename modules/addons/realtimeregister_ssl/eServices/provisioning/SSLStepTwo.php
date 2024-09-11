@@ -2,8 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use Exception;
-use Illuminate\Database\Capsule\Manager as Capsule;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Domains;
 use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -11,9 +10,10 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMappi
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
-use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
+use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 
 class SSLStepTwo
@@ -25,11 +25,11 @@ class SSLStepTwo
     public function __construct(&$params)
     {
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+            if (Capsule::schema()->hasColumn(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
                 $productsslDB = Capsule::table(
-                    Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND
+                    Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND
                 )->where('pid', KeyToIdMapping::getIdByKey($params['configoption1']))->first();
                 if (isset($productsslDB->data)) {
                     $productssl['product'] = json_decode($productsslDB->data, true);
@@ -60,10 +60,10 @@ class SSLStepTwo
         $product = new Product($service->productID);
 
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)
+            if (Capsule::schema()->hasColumn(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+                $productsslDB = Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)
                     ->where('pid', $product->id)->first();
                 if (isset($productsslDB->data)) {
                     $productssl['product'] = json_decode($productsslDB->data, true);
@@ -227,10 +227,10 @@ class SSLStepTwo
         $decodedCSR = $this->csrDecode;
         $_SESSION['csrDecode'] = $decodedCSR;
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)
+            if (Capsule::schema()->hasColumn(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+                $productsslDB = Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)
                     ->where('pid', KeyToIdMapping::getIdByKey($this->p['configoption1']))->first();
                 if (isset($productsslDB->data)) {
                     $productssl['product'] = json_decode($productsslDB->data, true);

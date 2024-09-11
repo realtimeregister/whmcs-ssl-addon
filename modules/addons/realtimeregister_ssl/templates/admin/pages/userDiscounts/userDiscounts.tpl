@@ -66,8 +66,8 @@
 </div>
 
 <!--   Add User Discount Rule Modal -->
-<form data-toggle="validator" role="form" id="MGAddDiscountForm">
-    <div class="modal fade bs-example-modal-lg" id="MGAddDiscount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<form data-toggle="validator" role="form" id="AddonAddDiscountForm">
+    <div class="modal fade bs-example-modal-lg" id="AddonAddDiscount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -181,8 +181,8 @@
     </div>
 </form>
 <!--   Edit User Discount Rule Modal -->
-<form data-toggle="validator" role="form" id="MGEditDiscountForm">
-    <div class="modal fade bs-example-modal-lg" id="MGEditDiscount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<form data-toggle="validator" role="form" id="AddonEditDiscountForm">
+    <div class="modal fade bs-example-modal-lg" id="AddonEditDiscount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -290,7 +290,7 @@
     </div>
 </form>
 <!-- Remove Rule Modal  -->
-<div class="modal fade bs-example-modal-lg" id="MGRuleRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade bs-example-modal-lg" id="AddonRuleRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -299,7 +299,7 @@
             </div>
             <div class="modal-body">
                 <input type='hidden' name='rule_id'/>
-                <h4 class="text-center">{$ADDONLANG->T('modal','removeRuleInfo')} <b id="MGremoveInformation"></b></h4>
+                <h4 class="text-center">{$ADDONLANG->T('modal','removeRuleInfo')} <b id="AddonremoveInformation"></b></h4>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger btn-inverse" id="removeRuleButton" data-dismiss="modal">{$ADDONLANG->T('modal','remove')}</button>
@@ -559,7 +559,7 @@
 
                 //Add New User Discount Rule Modal
                 $(document).on('click', '#addUserDiscountRule', function (e) {
-                    var modal = $("#MGAddDiscount");
+                    var modal = $("#AddonAddDiscount");
                     openModal(modal)
                     var optionHTML = '<option value="" selected="" disabled="">' + pleaseSelectClientFirst + '</option>'
                     $(modal).find('select[name="product"]').html(optionHTML)
@@ -586,7 +586,7 @@
                 });
 
                 $(document).on('click', '.deleteItem', function () {
-                    var modal = $("#MGRuleRemove");
+                    var modal = $("#AddonRuleRemove");
                     openModal(modal);
                     $(modal).find('input[name="rule_id"]').val($(this).data('id'));
                 });
@@ -596,7 +596,7 @@
                 });
 
                 $(document).on('click', '.editItem', function () {
-                    var modal = $("#MGEditDiscount");
+                    var modal = $("#AddonEditDiscount");
 
                     removeErrorStyle($(modal));
                     var rule_id = $(this).data('id');

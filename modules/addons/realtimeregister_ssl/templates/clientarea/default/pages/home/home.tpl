@@ -225,10 +225,10 @@
     </style>
     <script type="text/javascript">
         jQuery(document).ready(function () {
-            var mgDataTable;
+            var addonDataTable;
 
             jQuery(document).ready(function () {
-                mgDataTable = $('#addon-data-list').dataTable({
+               addonDataTable = $('#addon-data-list').dataTable({
                     processing: false,
                     searching: true,
                     autoWidth: false,
@@ -277,7 +277,7 @@
 
                 $('#addon-categories-content').AddonModalActions();
                 $('#addon-modal-delete-entity, #addon-form-add-new').on('hidden.bs.modal', function () {
-                    var api = mgDataTable.api();
+                    var api = addonDataTable.api();
                     api.ajax.reload(function () {
                     }, false);
                 });

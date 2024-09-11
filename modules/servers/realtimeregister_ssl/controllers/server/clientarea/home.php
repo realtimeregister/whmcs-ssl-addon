@@ -2,7 +2,8 @@
 
 namespace AddonModule\RealtimeRegisterSsl\controllers\server\clientarea;
 
-use Exception;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\controllers\addon\admin\Cron;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -16,13 +17,12 @@ use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
-use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
-use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\Server;
+use Exception;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\ResendDcvCollection;
@@ -221,10 +221,10 @@ class home extends AbstractController
 
                     $product = new Product($input['params']['pid']);
                     $productssl = false;
-                    $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+                    $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
                     if ($checkTable) {
-                        if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                            $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)
+                        if (Capsule::schema()->hasColumn(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+                            $productsslDB = Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)
                                 ->where('pid', KeyToIdMapping::getIdByKey($product->configuration()->text_name))
                                 ->first();
                             if (isset($productsslDB->data)) {

@@ -10,12 +10,12 @@
 </div>
 {if $showPassword}
     <div class="col-sm-1" style="padding-left:0px; margin-top:6px;">
-        <a href="#" ><i class="glyphicon glyphicon-search mgfw-button-show-password"></i></a>
+        <a href="#" ><i class="glyphicon glyphicon-search mod-button-show-password"></i></a>
     </div>
     {literal}
         <script type="text/javascript">
              jQuery(document).ready(function (){
-                  $(".mgfw-button-show-password").click(function(e){
+                  $(".mod-button-show-password").click(function(e){
                       e.preventDefault();
                       $("#{/literal}{$id}{literal}").prop("type")=="password" ?   $("#{/literal}{$id}{literal}").prop("type", 'text') :  $("#{/literal}{$id}{literal}").prop("type", 'password')
                   });

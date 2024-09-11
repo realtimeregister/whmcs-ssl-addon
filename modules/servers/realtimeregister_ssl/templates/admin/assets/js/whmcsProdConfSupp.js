@@ -16,7 +16,7 @@ jQuery(document).ready(function(){
     });
     
     $('*[data-is-form] button[name="addon-action"]').click(function(){
-        data = jQuery(this).closest('*[data-is-form]').MGGetForms();
+        data = jQuery(this).closest('*[data-is-form]').AddonGetForms();
         JSONParser.request(jQuery(this).val(),data,function(result){
             if(result.success){
                 jQuery('#AddonAlerts').alerts('success',result.success);

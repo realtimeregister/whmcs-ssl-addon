@@ -2,9 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
-use DateTime;
-use Exception;
-use Illuminate\Database\Capsule\Manager as Capsule;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
@@ -17,8 +15,10 @@ use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigs;
-use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
+use DateTime;
+use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\Product;
@@ -333,9 +333,9 @@ class Cron extends AbstractController
 
         $this->sslRepo = new SSL();
 
-        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable === false) {
-            Capsule::schema()->create(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, function ($table) {
+            Capsule::schema()->create(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, function ($table) {
                 $table->increments('id');
                 $table->integer('pid');
                 $table->string('pid_identifier');
@@ -344,7 +344,7 @@ class Cron extends AbstractController
             });
         }
 
-        Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
+        Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
 
         $certificatedApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
         $i = 0;
@@ -352,7 +352,7 @@ class Cron extends AbstractController
         while ($apiProducts = $certificatedApi->listProducts(10, $i)) {
             /** @var Product $apiProduct */
             foreach ($apiProducts->toArray() as $apiProduct) {
-                Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
+                Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
                     'pid' => KeyToIdMapping::getIdByKey($apiProduct['product']),
                     'pid_identifier' => $apiProduct['product'],
                     'brand' => $apiProduct['brand'],

@@ -10,7 +10,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
  */
 class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
-    public $tableName = 'mgfw_REALTIMEREGISTERSSL_user_discount';
+    public $tableName = 'mod_REALTIMEREGISTERSSL_user_discount';
 
     public function getModelClass()
     {

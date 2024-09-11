@@ -8,7 +8,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 class KeyToIdMapping
 {
-    const REALTIMEREGISTERSSL_KEY_ID_MAPPING = 'mgfw_REALTIMEREGISTERSSL_key_id_mapping';
+    const REALTIMEREGISTERSSL_KEY_ID_MAPPING = 'mod_REALTIMEREGISTERSSL_key_id_mapping';
 
     public function createTable(): void
     {

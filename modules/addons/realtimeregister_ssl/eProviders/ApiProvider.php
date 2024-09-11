@@ -47,7 +47,7 @@ class ApiProvider
      */
     private function initApi(string $className): void
     {
-        $apiKeyRecord = Capsule::table('mgfw_REALTIMEREGISTERSSL_api_configuration')->first();
+        $apiKeyRecord = Capsule::table('mod_REALTIMEREGISTERSSL_api_configuration')->first();
 
         $apiUrl = $this->apiUrl;
         if ($apiKeyRecord->api_test === 1) {
