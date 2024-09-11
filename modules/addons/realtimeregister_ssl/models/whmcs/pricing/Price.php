@@ -13,10 +13,10 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\pricing;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\pricing;
 
-use MGModule\RealtimeRegisterSsl as main;
-use MGModule\RealtimeRegisterSsl\models\whmcs\currencies\Currency;
+use AddonModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\currencies\Currency;
 
 /**
  * Description of Pricing
@@ -24,7 +24,7 @@ use MGModule\RealtimeRegisterSsl\models\whmcs\currencies\Currency;
  * @Table(name=tblpricing,preventUpdate,prefixed=false)
  * @SuppressWarnings(PHPMD)
  */
-class Price extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Price extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      * @Column()

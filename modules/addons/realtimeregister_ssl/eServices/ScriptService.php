@@ -1,10 +1,10 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices;
+namespace AddonModule\RealtimeRegisterSsl\eServices;
 
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
-use MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
-use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 
 class ScriptService
 {

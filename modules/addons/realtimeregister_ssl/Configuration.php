@@ -1,16 +1,16 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl;
 
-use MGModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractConfiguration;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
-use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
-use MGModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPriceRepo;
-use MGModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractConfiguration;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
+use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPriceRepo;
+use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
 
 
 class Configuration extends AbstractConfiguration

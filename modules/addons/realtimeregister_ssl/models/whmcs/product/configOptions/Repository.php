@@ -1,9 +1,9 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\product\configOptions;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product\configOptions;
 
-use MGModule\RealtimeRegisterSsl as main;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
 
 /**
  * Product Custom Fields Colletion

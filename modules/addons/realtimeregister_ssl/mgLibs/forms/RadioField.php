@@ -1,7 +1,7 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\forms;
-use MGModule\RealtimeRegisterSsl as main;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\forms;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Select Form Field

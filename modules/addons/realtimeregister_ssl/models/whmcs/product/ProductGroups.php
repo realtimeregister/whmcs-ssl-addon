@@ -12,13 +12,13 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\product;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product;
 
 /**
  * Description of repository
  *
  */
-class ProductGroups extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class ProductGroups extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public function getModelClass()
     {

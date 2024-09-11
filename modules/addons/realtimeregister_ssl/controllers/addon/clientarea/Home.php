@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\addon\clientarea;
+namespace AddonModule\RealtimeRegisterSsl\controllers\addon\clientarea;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
 
 /**
  * Description of home

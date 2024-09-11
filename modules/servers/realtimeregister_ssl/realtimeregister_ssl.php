@@ -1,30 +1,30 @@
 <?php
 
-use MGModule\RealtimeRegisterSsl\eServices\FlashService;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminCustomButtonArray;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminRecheckCertificateDetails;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminReissueCertificate;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminResendApproverEmail;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminResendCertificate;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminServicesTabFields;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\AdminViewCertificate;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientContactDetails;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ClientReissueCertificate;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\Renew;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepThree;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwo;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwoJS;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\TerminateAccount;
-use MGModule\RealtimeRegisterSsl\Loader;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\Server;
+use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminCustomButtonArray;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminRecheckCertificateDetails;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminReissueCertificate;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminResendApproverEmail;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminResendCertificate;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminServicesTabFields;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminViewCertificate;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ClientContactDetails;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ClientReissueCertificate;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\Renew;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepThree;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwo;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwoJS;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\TerminateAccount;
+use AddonModule\RealtimeRegisterSsl\Loader;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\Server;
 
 if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
 
 require_once __DIR__ . DS . 'Loader.php';
 new Loader();
-MGModule\RealtimeRegisterSsl\Server::I();
+AddonModule\RealtimeRegisterSsl\Server::I();
 
 if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
@@ -43,22 +43,22 @@ function realtimeregister_ssl_ConfigOptions() {
 }
 
 function realtimeregister_ssl_CreateAccount($params) {
-    $createAccount = new MGModule\RealtimeRegisterSsl\eServices\provisioning\CreateAccount($params);
+    $createAccount = new AddonModule\RealtimeRegisterSsl\eServices\provisioning\CreateAccount($params);
     return $createAccount->run();
 }
 
 function realtimeregister_ssl_SuspendAccount($params) {
-    $suspendAccount = new MGModule\RealtimeRegisterSsl\eServices\provisioning\SuspendAccount($params);
+    $suspendAccount = new AddonModule\RealtimeRegisterSsl\eServices\provisioning\SuspendAccount($params);
     return $suspendAccount->run();
 }
 
 function realtimeregister_ssl_UnsuspendAccount($params) {
-    $unsuspendAccount = new MGModule\RealtimeRegisterSsl\eServices\provisioning\UnsuspendAccount($params);
+    $unsuspendAccount = new AddonModule\RealtimeRegisterSsl\eServices\provisioning\UnsuspendAccount($params);
     return $unsuspendAccount->run();
 }
 
 function realtimeregister_ssl_SSLStepOne($params) {
-    $SSLStepOne = new MGModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepOne($params);
+    $SSLStepOne = new AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepOne($params);
     return $SSLStepOne->run();
 }
 
@@ -129,7 +129,7 @@ function realtimeregister_ssl_AdminServicesTabFields(array $params) {
 }
 
 function realtimeregister_ssl_SSLAdminGetCertificate($p) {
-    return MGModule\RealtimeRegisterSsl\eServices\provisioning\GetCertificate::runBySslId($p['serviceid']);
+    return AddonModule\RealtimeRegisterSsl\eServices\provisioning\GetCertificate::runBySslId($p['serviceid']);
 }
 
 function realtimeregister_ssl_FlashErrorStepOne() {
@@ -177,7 +177,7 @@ function realtimeregister_ssl_ClientArea(array $params)
 {
     if (!empty($_REQUEST['json'])) {
         header('Content-Type: text/plain');
-        echo MGModule\RealtimeRegisterSsl\Server::getJSONClientAreaPage($params, $_REQUEST);
+        echo AddonModule\RealtimeRegisterSsl\Server::getJSONClientAreaPage($params, $_REQUEST);
         die();
     }
     

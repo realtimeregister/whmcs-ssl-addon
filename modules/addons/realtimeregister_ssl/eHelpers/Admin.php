@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-namespace MGModule\RealtimeRegisterSsl\eHelpers;
+namespace AddonModule\RealtimeRegisterSsl\eHelpers;
 
 /**
  * Description of Invoice
@@ -18,7 +18,7 @@ class Admin
     
     public static function getAdminUserName() {
         if (!self::$adminUserName) {
-            self::$adminUserName = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query(
+            self::$adminUserName = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query(
                 'SELECT username FROM tbladmins LIMIT 1'
             )->fetchColumn('username');
         }

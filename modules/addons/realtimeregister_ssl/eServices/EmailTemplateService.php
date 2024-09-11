@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices;
+namespace AddonModule\RealtimeRegisterSsl\eServices;
 
-use MGModule\RealtimeRegisterSsl\eModels\whmcs\EmailTemplate;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\EmailTemplate;
 use WHMCS\Database\Capsule;
 
 class EmailTemplateService

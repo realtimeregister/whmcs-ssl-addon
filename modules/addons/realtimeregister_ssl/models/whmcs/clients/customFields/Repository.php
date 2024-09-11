@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\clients\customFields;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\clients\customFields;
 
-use MGModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Description of repository
@@ -71,7 +71,7 @@ class Repository
                 V.relid = :account_id:
         ";
 
-        $result = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query($query, [
+        $result = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query($query, [
             'account_id' => $this->serviceID
         ]);
 

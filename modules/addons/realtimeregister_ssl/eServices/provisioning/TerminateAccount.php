@@ -1,9 +1,9 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 
 class TerminateAccount
@@ -30,7 +30,7 @@ class TerminateAccount
      */
     private function terminateAccount(): void
     {
-        $ssl = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $ssl = new \AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $serviceSSL = $ssl->getByServiceId($this->p['serviceid']);
         
         if (is_null($serviceSSL)) {

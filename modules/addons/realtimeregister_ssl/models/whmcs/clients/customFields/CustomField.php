@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\clients\customFields;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\clients\customFields;
 
 class CustomField
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\MySQL;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\MySQL;
 
 /**
  * MySQL Exception
  *
  */
-class Exception extends \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System
+class Exception extends \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System
 {
     private $_query;
     public function __construct($message, $query, $code = 0, $previous = null)

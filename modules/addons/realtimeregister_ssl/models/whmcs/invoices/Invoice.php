@@ -13,7 +13,7 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\invoices;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\invoices;
 
 /**
  * Description of Item
@@ -21,7 +21,7 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\invoices;
  * @Table(name=tblinvoices,preventUpdate,prefixed=false)
  *
  */
-class Invoice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Invoice extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      * @Column()
@@ -117,19 +117,19 @@ class Invoice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client
      */
     public function getClient()
     {
         if (!empty($this->_client)) {
             return $this->_client;
         }
-        return $this->_client = new \MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client($this->getUserId());
+        return $this->_client = new \AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client($this->getUserId());
     }
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\item
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\item
      */
     public function items()
     {
@@ -137,7 +137,7 @@ class Invoice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
             return $this->_items;
         }
 
-        $itemsRepository = new \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\RepositoryItem();
+        $itemsRepository = new \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\RepositoryItem();
         $itemsRepository->onlyInvoiceId($this->id);
         $this->_items = $itemsRepository->get();
 
@@ -147,7 +147,7 @@ class Invoice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param int $id
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     public function setId($id)
     {
@@ -158,7 +158,7 @@ class Invoice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param int $userId
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     public function setUserId($userId)
     {
@@ -169,7 +169,7 @@ class Invoice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param int $invoiceNum
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     public function setInvoiceNum($invoiceNum)
     {
@@ -180,7 +180,7 @@ class Invoice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $date
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     public function setDate($date)
     {
@@ -191,7 +191,7 @@ class Invoice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $duedate
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     public function setDuedate($duedate)
     {
@@ -202,7 +202,7 @@ class Invoice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $datepaid
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     public function setDatepaid($datepaid)
     {
@@ -213,7 +213,7 @@ class Invoice extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $subtotal
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     public function setSubtotal($subtotal)
     {

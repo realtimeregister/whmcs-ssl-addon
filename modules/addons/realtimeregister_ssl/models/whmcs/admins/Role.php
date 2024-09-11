@@ -15,14 +15,14 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\admins;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\admins;
 
 /**
  * Description of Roles
  *
  * @Table(name=tbladminroles,preventUpdate,prefixed=false)
  */
-class Role  extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Role  extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      *

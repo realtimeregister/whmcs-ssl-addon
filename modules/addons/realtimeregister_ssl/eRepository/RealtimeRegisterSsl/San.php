@@ -1,9 +1,9 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
 
 class San
 {

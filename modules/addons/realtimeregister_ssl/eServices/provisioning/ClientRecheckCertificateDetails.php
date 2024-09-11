@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use MGModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl as main;
 
 class ClientRecheckCertificateDetails extends Ajax
 {
@@ -29,7 +29,7 @@ class ClientRecheckCertificateDetails extends Ajax
 
     public function getCertificateDetails()
     {
-        $sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $sslRepo = new \AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $sslService = $sslRepo->getByServiceId($this->parameters['serviceId']);
 
         if (is_null($sslService)) {
@@ -40,7 +40,7 @@ class ClientRecheckCertificateDetails extends Ajax
             throw new \Exception('An error occurred');
         }
 
-        $configDataUpdate = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData($sslService);
+        $configDataUpdate = new \AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData($sslService);
         $orderStatus = $configDataUpdate->run();
 
         $return = [];

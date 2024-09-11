@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File;
 
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
 
 class Manage
 {
@@ -15,7 +15,7 @@ class Manage
     private static $instance;
 
     /**
-     * @param \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel $panel
+     * @param \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel $panel
      * @throws FileException
      */
     public static function loadPanel($panel, array $options = [])
@@ -29,7 +29,7 @@ class Manage
 
 
     /**
-     * @param \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel $panel
+     * @param \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel $panel
      * @return mixed
      * @throws FileException
      */
@@ -71,7 +71,7 @@ class Manage
      */
     private static function makeInstance(array $panel, array $options)
     {
-        $api = '\MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Platforms\\' . ucfirst($panel['platform']);
+        $api = '\AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Platforms\\' . ucfirst($panel['platform']);
 
         if (!class_exists($api)) {
             throw new FileException(sprintf("Platform `%s` not supported.", $panel['platform']), 12);

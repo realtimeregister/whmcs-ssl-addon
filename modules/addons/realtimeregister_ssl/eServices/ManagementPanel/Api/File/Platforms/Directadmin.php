@@ -1,9 +1,9 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Platforms;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Platforms;
 
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Client;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Client;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
 
 class Directadmin extends Client implements PlatformInterface
 {

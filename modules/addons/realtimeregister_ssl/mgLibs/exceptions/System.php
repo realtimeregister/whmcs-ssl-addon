@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\exceptions;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\exceptions;
 
 /**
  * Use for general module errors

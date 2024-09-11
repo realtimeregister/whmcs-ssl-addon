@@ -1,13 +1,13 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\product\configOptions;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product\configOptions;
 
 /**
  * Config Options Model
  *
  * @Table(name=tblproductconfigoptions,preventUpdate,prefixed=false)
  */
-class ConfigOption extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class ConfigOption extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      *

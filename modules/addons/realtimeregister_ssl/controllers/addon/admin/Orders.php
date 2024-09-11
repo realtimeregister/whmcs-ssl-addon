@@ -1,14 +1,14 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
+namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
-use MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
-use MGModule\RealtimeRegisterSsl\models\orders\Repository;
-use MGModule\RealtimeRegisterSsl\mgLibs\Smarty;
-use MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
-use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Smarty;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use WHMCS\Database\Capsule as DB;
 
 class Orders extends AbstractController

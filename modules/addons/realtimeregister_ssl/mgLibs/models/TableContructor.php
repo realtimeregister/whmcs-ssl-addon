@@ -1,7 +1,7 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\models;
-use MGModule\RealtimeRegisterSsl as main;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\models;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Description of tableContructor
@@ -102,7 +102,7 @@ class TableContructor
         $this->mainNameSpace    = $namespace;
         $this->prefix           = $prefix;
         
-        $result = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query("SHOW Tables");
+        $result = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query("SHOW Tables");
         while($column = $result->fetchColumn()) {
             $this->existsTables[] = $column;
         }
@@ -114,7 +114,7 @@ class TableContructor
             $class = $this->mainNameSpace."\\".$model;
 
             if (!class_exists($class)) {
-                throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Model Class Not Exists');
+                throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Model Class Not Exists');
             }
 
             $structure = $class::getTableStructure();
@@ -132,11 +132,11 @@ class TableContructor
         }
         
         if (empty($structure['name'])) {
-            throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Table name is empty');
+            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Table name is empty');
         }
         
         if (in_array($structure['name'], $this->declaredTables) && !isset($structure['multipleUsage'])) {
-            throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Table declared in other model');
+            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Table declared in other model');
         }
         
         $this->declaredTables[] = $structure['name'];
@@ -158,7 +158,7 @@ class TableContructor
         $updateColumns = [];
         
         if (in_array($tableName, $this->existsTables)) {
-            $result = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query("SHOW COLUMNS IN `$tableName`");
+            $result = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query("SHOW COLUMNS IN `$tableName`");
 
             while ($row = $result->fetch()) {
                 $existsColumns[$row['Field']] = $row;
@@ -176,7 +176,7 @@ class TableContructor
             }
 
             if ($type == null) {
-                throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
+                throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
                     'Unable to find provided column type: ('.implode(',',$options).')'
                 );
             }

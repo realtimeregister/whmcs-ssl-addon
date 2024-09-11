@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\Platforms\PlatformInterface;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\Platforms\PlatformInterface;
+use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
 
 class Manage
 {
@@ -89,7 +89,7 @@ class Manage
      */
     public static function loadPanel($domain, $options = [])
     {
-        $panel = new \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage($domain);
+        $panel = new \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage($domain);
 
         if (!isset(self::$instance)) {
             self::$instance = self::makeInstance($panel, $options);
@@ -110,16 +110,16 @@ class Manage
     }
 
     /**
-     * @param \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage $panel
+     * @param \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage $panel
      * @param array $options
-     * @return \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\Platforms\PlatformInterface
+     * @return \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\Platforms\PlatformInterface
      * @throws Exception
      */
     private static function makeInstance($panel, $options)
     {
         $panelData = $panel->getPanelData();
         self::$panel = $panelData['platform'];
-        $API = sprintf("\MGModule\RealtimeRegisterSsl\\eServices\ManagementPanel\Deploy\Api\Platforms\%s",
+        $API = sprintf("\AddonModule\RealtimeRegisterSsl\\eServices\ManagementPanel\Deploy\Api\Platforms\%s",
             ucfirst($panelData['platform']));
 
         if (!class_exists($API)) {

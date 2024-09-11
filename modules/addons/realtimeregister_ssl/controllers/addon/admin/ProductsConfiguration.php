@@ -1,18 +1,18 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
+namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\Popup;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
-use MGModule\RealtimeRegisterSsl\mgLibs\Smarty;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\Popup;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Smarty;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 
 /*
  * Base example
@@ -51,7 +51,7 @@ class ProductsConfiguration extends AbstractController
 
                 $vars['success'] = Lang::T('messages', 'product_saved');
             }
-            $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+            $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
             $products = $productModel->getModuleProducts();
             foreach ($products as $key => $product) {
                 try {
@@ -93,7 +93,7 @@ class ProductsConfiguration extends AbstractController
 
     public function saveProducts($input = [], $vars = [])
     {
-        $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
         if (isset($input['many-products']) && $input['many-products'] == '1') {
             $products = [];
 
@@ -184,7 +184,7 @@ class ProductsConfiguration extends AbstractController
         if (!empty($productId)) {
             $productId = trim($input['productId']);
 
-            $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+            $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
             if ($productModel->enableProduct($productId)) {
                 return [
                     'success' => Lang::T('messages', '')
@@ -203,7 +203,7 @@ class ProductsConfiguration extends AbstractController
         if (!empty($productId)) {
             $productId = trim($input['productId']);
 
-            $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+            $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
             if ($productModel->disableProduct($productId)) {
                 return [
                     'success' => Lang::T('messages', '')

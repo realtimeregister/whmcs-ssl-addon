@@ -1,7 +1,7 @@
 <?php
 
-use MGModule\RealtimeRegisterSsl\Addon;
-use MGModule\RealtimeRegisterSsl\Loader;
+use AddonModule\RealtimeRegisterSsl\Addon;
+use AddonModule\RealtimeRegisterSsl\Loader;
 
 define('DS', DIRECTORY_SEPARATOR);
 define('WHMCS_MAIN_DIR', substr(dirname(__FILE__),0, strpos(dirname(__FILE__),'modules'.DS.'addons')));

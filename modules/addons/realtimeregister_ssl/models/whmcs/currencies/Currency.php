@@ -13,10 +13,10 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\currencies;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\currencies;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\models\Orm;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
 
 /**
  * Description of Currency

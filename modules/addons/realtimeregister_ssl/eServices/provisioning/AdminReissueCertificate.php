@@ -1,23 +1,23 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eHelpers\Domains;
-use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
-use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\WebServers;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
-use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Domains;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
+use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\WebServers;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use function ModuleBuildParams;

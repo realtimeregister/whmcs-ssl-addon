@@ -16,9 +16,9 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\admins;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\admins;
 
-use MGModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Description of Admin

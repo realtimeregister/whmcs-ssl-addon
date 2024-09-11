@@ -13,13 +13,13 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\pricing;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\pricing;
 
 /**
  * Description of Repository
  *
  */
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public function getModelClass()
     {

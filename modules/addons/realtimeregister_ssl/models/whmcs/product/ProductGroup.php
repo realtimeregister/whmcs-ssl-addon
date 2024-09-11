@@ -13,14 +13,14 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\product;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product;
 
 /**
  * Description of ProductGroup
  *
  * @Table(name=tblproductgroups,preventUpdate,prefixed=false)
  */
-class ProductGroup extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class ProductGroup extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      *

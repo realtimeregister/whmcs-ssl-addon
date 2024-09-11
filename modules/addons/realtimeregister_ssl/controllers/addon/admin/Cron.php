@@ -1,24 +1,24 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
+namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use DateTime;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\RealtimeRegisterSsl\eHelpers\Admin;
-use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
-use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\ProductsPrices;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigs;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
-use MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\ProductsPrices;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigs;
+use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\Product;
@@ -134,7 +134,7 @@ class Cron extends AbstractController
     public function notifyCRON($input, $vars = [])
     {
         //get renewal settings
-        $apiConf                      = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+        $apiConf                      = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
         $auto_renew_invoice_one_time  = (bool) $apiConf->auto_renew_invoice_one_time;
         $auto_renew_invoice_reccuring = (bool) $apiConf->auto_renew_invoice_reccuring;
 //        $renew_new_order              = (bool) $apiConf->renew_new_order;
@@ -263,7 +263,7 @@ class Cron extends AbstractController
         $emailSendsCount = 0;
         $this->sslRepo   = new SSL();
 
-        $services = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
+        $services = new \AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
         $services->onlyStatus(['Active']);
 
         foreach ($services->get() as $service) {
@@ -273,7 +273,7 @@ class Cron extends AbstractController
                 continue;
             }
 
-            $SSLOrder = new \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL();
+            $SSLOrder = new \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL();
             /** @var SSL $ssl */
             $ssl = $SSLOrder->getWhere(['serviceid' => $service->id, 'userid' => $service->clientID])->first();
 
@@ -296,7 +296,7 @@ class Cron extends AbstractController
                 continue;
             }
 
-            $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+            $apiConf = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
 
             $sendCertificateTemplate = $apiConf->send_certificate_template;
             if ($sendCertificateTemplate == null) {
@@ -371,7 +371,7 @@ class Cron extends AbstractController
         $sslOrders = $this->getSSLOrders();
 
         foreach ($sslOrders as $sslService) {
-            $sslService = \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL::hydrate([$sslService])[0];
+            $sslService = \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL::hydrate([$sslService])[0];
 
             $configDataUpdate = new UpdateConfigData($sslService);
             $configDataUpdate->run();
@@ -392,7 +392,7 @@ class Cron extends AbstractController
 
         $this->sslRepo   = new SSL();
 
-        $services = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
+        $services = new \AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
         $services->onlyStatus(['Active', 'Suspended']);
 
         foreach ($services->get() as $service) {
@@ -402,7 +402,7 @@ class Cron extends AbstractController
                 continue;
             }
 
-            $SSLOrder = new \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL();
+            $SSLOrder = new \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL();
             $ssl = $SSLOrder->getWhere(['serviceid' => $service->id, 'userid' => $service->clientID])->first();
 
             if ($ssl == NULL || $ssl->remoteid == '') {
@@ -556,7 +556,7 @@ class Cron extends AbstractController
             ->where('description', '=', 'Auto generated by module - RealtimeRegisterSSL #' . $productId)
             ->first();
 
-        $commission = (new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($productId))
+        $commission = (new \AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product($productId))
             ->configuration()
             ->getConfigOptions()[C::COMMISSION];
 

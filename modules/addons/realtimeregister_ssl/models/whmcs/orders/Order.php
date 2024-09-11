@@ -1,13 +1,13 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\orders;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\orders;
 
 /**
  * Description of order
  *
  * @Table(name=tblorders,preventUpdate,prefixed=false)
  */
-class Order extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Order extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      *
@@ -60,24 +60,24 @@ class Order extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client
+     * @var \AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client
      */
     private $_client;
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
+     * @var \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     private $_invoice;
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client
      */
     public function client()
     {
         if (empty($this->_client)) {
-            $this->_client = new \MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client($this->userid);
+            $this->_client = new \AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client($this->userid);
         }
 
         return $this->_client;
@@ -85,12 +85,12 @@ class Order extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice
      */
     public function invoice()
     {
         if (empty($this->_invoice)) {
-            $this->_invoice = new \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice($this->invoiceid);
+            $this->_invoice = new \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice($this->invoiceid);
         }
 
         return $this->_invoice;

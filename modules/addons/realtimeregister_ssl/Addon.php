@@ -1,10 +1,10 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\mgLibs\error\Register;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDriver;
+use AddonModule\RealtimeRegisterSsl\mgLibs\error\Register;
+use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDriver;
 
 class Addon extends AbstractMainDriver
 {

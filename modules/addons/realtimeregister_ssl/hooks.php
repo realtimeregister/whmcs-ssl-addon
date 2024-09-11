@@ -1,21 +1,21 @@
 <?php
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\RealtimeRegisterSsl\Addon;
-use MGModule\RealtimeRegisterSsl\eHelpers\Admin;
-use MGModule\RealtimeRegisterSsl\eHelpers\Discount;
-use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
-use MGModule\RealtimeRegisterSsl\eHelpers\JsInserter;
-use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
-use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\Activator;
-use MGModule\RealtimeRegisterSsl\Loader;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
-use MGModule\RealtimeRegisterSsl\Server;
+use AddonModule\RealtimeRegisterSsl\Addon;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Discount;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
+use AddonModule\RealtimeRegisterSsl\eHelpers\JsInserter;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
+use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\Activator;
+use AddonModule\RealtimeRegisterSsl\Loader;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\Server;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Service\Service;
 use WHMCS\View\Formatter\Price;
@@ -196,7 +196,7 @@ add_hook('ClientAreaHeadOutput', 1, function($params)
         $params['filename'] === 'configuressl' && $params['loggedin'] == '1' && isset($_REQUEST['action'])
         && $_REQUEST['action'] === 'generateCsr'
     ) {
-        $GenerateCsr = new MGModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR($params, $_POST);
+        $GenerateCsr = new AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR($params, $_POST);
         echo $GenerateCsr->run();
         die();
     }
@@ -296,7 +296,7 @@ function realtimeregister_ssl_displaySSLSummaryStats($vars)
 
             Addon::I(true);
 
-            $apiConf           = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+            $apiConf           = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
             $displaySSLSummary = $apiConf->display_ca_summary;
             if (!$displaySSLSummary) {
                 return '';
@@ -312,7 +312,7 @@ function realtimeregister_ssl_displaySSLSummaryStats($vars)
             $viewAll         = Lang::T('viewAll');
 
             //get ssl statistics
-            $sslSummaryStats = new MGModule\RealtimeRegisterSsl\eHelpers\SSLSummary($_SESSION['uid']);
+            $sslSummaryStats = new AddonModule\RealtimeRegisterSsl\eHelpers\SSLSummary($_SESSION['uid']);
 
             $totalOrders = $sslSummaryStats->getTotalSSLOrdersCount();
 
@@ -401,7 +401,7 @@ function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
 
         Addon::I(true);
 
-        $apiConf           = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+        $apiConf           = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
 
         if(!isset($apiConf->sidebar_templates) || empty($apiConf->sidebar_templates)) {
             if (in_array($smarty->tpl_vars['templatefile']->value, ['clientareahome']) || !isset($_SESSION['uid'])) {
@@ -422,7 +422,7 @@ function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
         }
 
         //get ssl statistics
-        $sslSummaryStats = new MGModule\RealtimeRegisterSsl\eHelpers\SSLSummary($_SESSION['uid']);
+        $sslSummaryStats = new AddonModule\RealtimeRegisterSsl\eHelpers\SSLSummary($_SESSION['uid']);
 
         $totalOrders       = $sslSummaryStats->getTotalSSLOrdersCount();
         if ((int) $totalOrders == 0) {
@@ -535,10 +535,10 @@ function realtimeregister_ssl_unableDowngradeConfigOption($vars)
             return;
         }
         //get config option id related to sans_count and current value
-        $CORepo = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository($serviceID);
-        if (isset($CORepo->{MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions::OPTION_SANS_COUNT})) {
-            $sanCountConfigOptionValue = $CORepo->{MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions::OPTION_SANS_COUNT};
-            $sanCountConfigOptionID    = $CORepo->getID(MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions::OPTION_SANS_COUNT);
+        $CORepo = new \AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository($serviceID);
+        if (isset($CORepo->{AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions::OPTION_SANS_COUNT})) {
+            $sanCountConfigOptionValue = $CORepo->{AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions::OPTION_SANS_COUNT};
+            $sanCountConfigOptionID    = $CORepo->getID(AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions::OPTION_SANS_COUNT);
         }
         //array(COID => array('minQuantity' => int, 'maxQuantity' => int))
         $configOptionscustomMinMaxQuantities = [
@@ -549,7 +549,7 @@ function realtimeregister_ssl_unableDowngradeConfigOption($vars)
         ];
         $whmcs                               = WHMCS\Application::getInstance();
         $configoption                        = $whmcs->get_req_var("configoption");
-        $configOptionsService                = new MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions();
+        $configOptionsService                = new AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions();
         $configOpsReturn                     = $configOptionsService->validateAndSanitizeQuantityConfigOptions($configoption, $configOptionscustomMinMaxQuantities);
 
         if ($orderStatus['status'] == 'active' && $configOpsReturn) {
@@ -708,7 +708,7 @@ function realtimeregister_ssl_overideProductPricingBasedOnDiscount($vars)
 {
     require_once __DIR__ . DS . 'Loader.php';
     new Loader();
-    MGModule\RealtimeRegisterSsl\Addon::I(true);
+    AddonModule\RealtimeRegisterSsl\Addon::I(true);
     //load module products
     $products     = [];
     $productModel = new Repository();
@@ -728,7 +728,7 @@ function realtimeregister_ssl_overideProductPricingBasedOnDiscount($vars)
         }
 
         if ($product->id == $vars['pid']) {
-            $percentage = MGModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue($vars);
+            $percentage = AddonModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue($vars);
             if (!$percentage) {
                 return [];
             }
@@ -776,7 +776,7 @@ function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts($
     require_once __DIR__ . DS . 'Loader.php';
 
     new Loader();
-    MGModule\RealtimeRegisterSsl\Addon::I(true);
+    AddonModule\RealtimeRegisterSsl\Addon::I(true);
     if($vars['filename'] == 'cart' || $vars['filename'] == 'index') {
         switch ($smarty->tpl_vars['templatefile']->value) {
             case 'products':
@@ -807,8 +807,8 @@ function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts($
                             ->first();
 
                 if (isset($productRealtimeRegisterSsl->id) && !empty($productRealtimeRegisterSsl->id)) {
-                    $commission = MGModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue(['pid' => $pid]);
-                    $pricing = MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::getPricingInfo($pid, $commission);
+                    $commission = AddonModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue(['pid' => $pid]);
+                    $pricing = AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs::getPricingInfo($pid, $commission);
 
                     $smartyvalues['pricing'] = $pricing;
                     $smarty->assign('pricing', $pricing);

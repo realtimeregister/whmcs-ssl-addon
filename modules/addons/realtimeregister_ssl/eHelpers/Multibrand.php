@@ -1,9 +1,9 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eHelpers;
+namespace AddonModule\RealtimeRegisterSsl\eHelpers;
 
-use MGModule\Multibrand\Core\Server;
-use MGModule\Multibrand\Loader;
+use AddonModule\Multibrand\Core\Server;
+use AddonModule\Multibrand\Loader;
 use MultibrandFunctionality\app\models\Brand;
 use MultibrandFunctionality\app\models\BrandRelations;
 use WHMCS\Database\Capsule;

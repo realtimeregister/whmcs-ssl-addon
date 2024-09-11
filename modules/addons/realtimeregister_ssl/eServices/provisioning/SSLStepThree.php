@@ -1,20 +1,20 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
-use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\FlashService;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
-use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
-use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
+use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\CertificateInfoProcess;
@@ -31,7 +31,7 @@ class SSLStepThree
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @var \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     private $sslConfig;
 
@@ -39,7 +39,7 @@ class SSLStepThree
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product
+     * @var \AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product
      */
     private $apiProduct;
 
@@ -334,7 +334,7 @@ class SSLStepThree
 
         foreach ($orderDetails['validations']['dcv'] as $data) {
             try {
-                $panel = \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel::getPanelData($data['commonName']);
+                $panel = \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel::getPanelData($data['commonName']);
 
                 if ($data['type'] == 'FILE') {
                     $result = FileControl::create(

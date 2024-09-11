@@ -13,14 +13,14 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\domains;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\domains;
 
 /**
  * Description of DomainPrice
  *
  * @Table(name=tbldomainpricing,preventUpdate,prefixed=false)
  */
-class DomainTld extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class DomainTld extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      * @Column()
@@ -103,7 +103,7 @@ class DomainTld extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
     /**
      * Get Pricing
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\Price[]
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\Price[]
      */
     public function getDomainRegisterPricing()
     {
@@ -111,7 +111,7 @@ class DomainTld extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
             return $this->_domainRegisterPricing;
         }
 
-        $repositor = new \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\Repository();
+        $repositor = new \AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\Repository();
         $repositor->onlyDomainRegister();
         $repositor->withRelation($this->id);
         $repositor->withDomainCycle();
@@ -126,7 +126,7 @@ class DomainTld extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
     public function getPrice($currencyId, $billingCycle)
     {
-        $repositor = new \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\Repository();
+        $repositor = new \AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\Repository();
         $repositor->onlyDomainRegister();
         $repositor->withRelation($this->id);
         $repositor->withDomainCycle();

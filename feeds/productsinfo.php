@@ -86,10 +86,10 @@ if ($get=="name") {
     $currencyID = $currency['id'];
     if ($data['servertype'] == 'realtimeregister_ssl') {
         require_once ROOTDIR.'/modules/addons/realtimeregister_ssl/Loader.php';
-        new \MGModule\RealtimeRegisterSsl\Loader();
-        MGModule\RealtimeRegisterSsl\Addon::I(true);
-        $discount = MGModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue(['pid' => $pid]);
-        $price = MGModule\RealtimeRegisterSsl\eHelpers\Whmcs::getPricingInfo($pid, $discount, true);
+        new \AddonModule\RealtimeRegisterSsl\Loader();
+        AddonModule\RealtimeRegisterSsl\Addon::I(true);
+        $discount = AddonModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue(['pid' => $pid]);
+        $price = AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs::getPricingInfo($pid, $discount, true);
 
         if(!$billingCycle || !isset($price['cycles'][$billingCycle]))
         {

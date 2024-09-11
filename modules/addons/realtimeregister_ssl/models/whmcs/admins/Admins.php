@@ -14,12 +14,12 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\admins;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\admins;
 
 /**
  * Description of Repository
  */
-class Admins extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Admins extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public function getModelClass()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl;
 
 use Exception;
 

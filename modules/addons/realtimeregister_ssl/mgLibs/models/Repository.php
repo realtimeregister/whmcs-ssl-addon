@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\models;
-use MGModule\RealtimeRegisterSsl as main;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\PdoWrapper;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\models;
+use AddonModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\PdoWrapper;
 
 /**
  * Description of abstractModel
@@ -116,7 +116,7 @@ abstract class Repository
     /**
      * 
      * @param array $ids
-     * @return \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+     * @return \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
      */
     public function idIn(array $ids)
     {

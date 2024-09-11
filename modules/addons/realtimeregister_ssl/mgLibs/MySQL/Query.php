@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\MySQL;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\MySQL;
 use Illuminate\Database\Capsule\Manager;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes;
+use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes;
 use PDO;
 
 /**
@@ -26,7 +26,7 @@ class Query
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query
+     * @var \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query
      */
     private static $_instance;
 
@@ -51,13 +51,13 @@ class Query
      * @param string $password
      * @param string $dbname
      * @param string $connectionName
-     * @return \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query
-     * @throws \MGModule\RealtimeRegisterSsl\exception\System
+     * @return \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query
+     * @throws \AddonModule\RealtimeRegisterSsl\exception\System
      */
     public static function I()
     {
         if (empty(self::$_instance)) {
-            throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Object not Spawned');
+            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Object not Spawned');
         }
         return self::$_instance;
     }
@@ -84,14 +84,14 @@ class Query
      *
      * @param string $file
      * @return boolean
-     * @throws \MGModule\RealtimeRegisterSsl\exception\System
+     * @throws \AddonModule\RealtimeRegisterSsl\exception\System
      */
     public static function connectFromFile($file)
     {
         if (!file_exists($file)) {
-            throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
+            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
                 'DB Connection File does not exits',
-                \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes::MYSQL_MISING_CONFIG_FILE
+                \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes::MYSQL_MISING_CONFIG_FILE
             );
         }
 
@@ -102,9 +102,9 @@ class Query
         foreach ($config as $connectionName => $config) {
             if ($config['host']) {
                 if (!extension_loaded('PDO')) {
-                    throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
+                    throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
                         'Missing PDO Extension',
-                        \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes::MYSQL_MISING_PDO_EXTENSION
+                        \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes::MYSQL_MISING_PDO_EXTENSION
                     );
                 }
 
@@ -117,7 +117,7 @@ class Query
 
                     self::$_instance->connection[$connectionName]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 } catch (\Exception $ex) {
-                    throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System('SQL Connection Error', Codes::MYSQL_CONNECTION_FAILED);
+                    throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('SQL Connection Error', Codes::MYSQL_CONNECTION_FAILED);
                 }
             }
         }
@@ -144,14 +144,14 @@ class Query
      * @param array $params
      * @param string $connectionName
      * @return result
-     * @throws \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System
+     * @throws \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System
      */
     public static function query($query, array $params = [], $connectionName = 'default')
     {
         if (!isset(self::$_instance->connection[$connectionName])) {
-            throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
+            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System(
                 "Connection " . $connectionName . ' not exits',
-                \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes::MYSQL_MISING_CONNECTION
+                \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes::MYSQL_MISING_CONNECTION
             );
         }
 

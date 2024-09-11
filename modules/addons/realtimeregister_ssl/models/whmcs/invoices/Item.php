@@ -13,7 +13,7 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\invoices;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\invoices;
 
 /**
  * Description of Item
@@ -21,7 +21,7 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\invoices;
  * @Table(name=tblinvoiceitems,preventUpdate,prefixed=false)
  *
  */
-class Item extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Item extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      * @Column()

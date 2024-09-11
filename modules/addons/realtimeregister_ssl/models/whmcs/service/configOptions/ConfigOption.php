@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\service\configOptions;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions;
 
 class ConfigOption
 {

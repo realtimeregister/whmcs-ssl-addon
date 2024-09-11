@@ -1,12 +1,12 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Domain\Certificate;
 use SandwaveIo\RealtimeRegister\Domain\Enum\DownloadFormatEnum;
@@ -14,14 +14,14 @@ use SandwaveIo\RealtimeRegister\Domain\Enum\DownloadFormatEnum;
 class UpdateConfigs
 {
     private $sslService;
-    private ?\MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL $sslRepo;
+    private ?\AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL $sslRepo;
     private bool $processingOnly;
     private array $cids;
 
     public function __construct($cids, $processingOnly)
     {
         $this->cids = $cids;
-        $this->sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $this->sslRepo = new \AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $this->processingOnly = $processingOnly;
     }
     

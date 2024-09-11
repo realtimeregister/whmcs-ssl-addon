@@ -1,13 +1,13 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl;
 
 /**
  * Description of Addon
  *
  * @SuppressWarnings(PHPMD)
  */
-class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDriver
+class Server extends \AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDriver
 {
     /**
      * Return Tempalates Path
@@ -113,10 +113,10 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
                 $vars['error'] = $error;
             } catch (\Exception $ex) {
                 self::dump($ex);
-                \MGModule\RealtimeRegisterSsl\mgLibs\error\Register::register($ex);
-                $vars['error'] = \MGModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('generalError');
+                \AddonModule\RealtimeRegisterSsl\mgLibs\error\Register::register($ex);
+                $vars['error'] = \AddonModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('generalError');
                 if (method_exists($ex, 'getToken')) {
-                    $vars['error'] .= ' '.\MGModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('token').$ex->getToken();
+                    $vars['error'] .= ' '.\AddonModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('token').$ex->getToken();
                 }
             }
 
@@ -172,15 +172,15 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
             } catch (\Exception $ex) {
                 self::dump($ex);
                 $content['result'] = 'error';
-                \MGModule\RealtimeRegisterSsl\mgLibs\error\Register::register($ex);
+                \AddonModule\RealtimeRegisterSsl\mgLibs\error\Register::register($ex);
                 if ($ex->getMessage()) {
                     $content['error'] = $ex->getMessage();
                 } else {
-                    $content['error'] = \MGModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('generalError');
+                    $content['error'] = \AddonModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('generalError');
                 }
 
                 if (method_exists($ex, 'getToken')) {
-                    $content['error'] .= ' '.\MGModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('token').$ex->getToken();
+                    $content['error'] .= ' '.\AddonModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('token').$ex->getToken();
                 }
             }
 
@@ -215,10 +215,10 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
                     die();
                 }
 
-                \MGModule\RealtimeRegisterSsl\mgLibs\error\Register::register($ex);
+                \AddonModule\RealtimeRegisterSsl\mgLibs\error\Register::register($ex);
                 $message = $ex->getMessage();
                 if (method_exists($ex, 'getToken')) {
-                    $message .= ' '.\MGModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('token').$ex->getToken();
+                    $message .= ' '.\AddonModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('token').$ex->getToken();
                 }
                 return $message;
             }
@@ -261,7 +261,7 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
 
             foreach (self::I()->configuration()->getServerMenu() as $pageName => $pageConfig){
                 $pageConf = [
-                    'title' => \MGModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('pages',$pageName,'title')
+                    'title' => \AddonModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('pages',$pageName,'title')
                     ,'url'  => 'configproducts.php?action=edit&id='.$input['id'].'&tab=2&mg-page='.$pageName
                 ];
 
@@ -284,15 +284,15 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
                 $vars['error'] = $error;
             } catch (\Exception $ex) {
                 self::dump($ex);
-                \MGModule\RealtimeRegisterSsl\mgLibs\error\Register::register($ex);
+                \AddonModule\RealtimeRegisterSsl\mgLibs\error\Register::register($ex);
                 $vars['error'] = $ex->getMessage();
                 if (method_exists($ex, 'getToken')) {
-                    $vars['error'] .= '. '.\MGModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('token').$ex->getToken();
+                    $vars['error'] .= '. '.\AddonModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('token').$ex->getToken();
                 }
             }
 
-            \MGModule\RealtimeRegisterSsl\mgLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
-            $content = \MGModule\RealtimeRegisterSsl\mgLibs\Smarty::I()->view('main',$vars);
+            \AddonModule\RealtimeRegisterSsl\mgLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
+            $content = \AddonModule\RealtimeRegisterSsl\mgLibs\Smarty::I()->view('main',$vars);
 
             if (self::I()->isDebug()) {
                 $html = '<div style="color: #a94442;background-color: #f2dede;border-color: #dca7a7;font-size:20px;padding:10px;"><strong>Module is under development Mode!!!!!!!!!!!!!!!</strong></div>';
@@ -361,11 +361,11 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
                 $content['data']    = $result;
             } catch (\Exception $ex) {
                 self::dump($ex);
-                \MGModule\RealtimeRegisterSsl\mgLibs\error\Register::register($ex);
+                \AddonModule\RealtimeRegisterSsl\mgLibs\error\Register::register($ex);
                 $content['result'] = 'error';
                 $content['error']  = $ex->getMessage();
                 if (method_exists($ex, 'getToken')) {
-                    $content['error'] .= ' '.\MGModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('token').$ex->getToken();
+                    $content['error'] .= ' '.\AddonModule\RealtimeRegisterSsl\mgLibs\Lang::absoluteT('token').$ex->getToken();
                 }
             }
 

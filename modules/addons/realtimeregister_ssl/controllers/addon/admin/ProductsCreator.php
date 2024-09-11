@@ -1,18 +1,18 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
+namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\Popup;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
-use MGModule\RealtimeRegisterSsl\mgLibs\Smarty;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\Popup;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Smarty;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use WHMCS\Product\Group;
 
 class ProductsCreator extends AbstractController
@@ -26,7 +26,7 @@ class ProductsCreator extends AbstractController
     {
         try {
             $this->apiProductsRepo = Products::getInstance();
-            $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+            $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
             $vars['currencies'] = $productModel->getAllCurrencies();
             $vars['apiProducts'] = $this->apiProductsRepo->getAllProducts();
             $vars['apiProductsCount'] = count($this->apiProductsRepo->getAllProducts());
@@ -89,7 +89,7 @@ class ProductsCreator extends AbstractController
             $productData[C::OPTION_CUSTOM_GUIDE] = $input['custom_guide'];
         }
 
-        $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
         $newProductId = $productModel->createNewProduct($productData);
         foreach ($input['currency'] as $key => $value) {
             $value['relid'] = $newProductId;
@@ -136,7 +136,7 @@ class ProductsCreator extends AbstractController
         } else {
             $apiProducts = $this->apiProductsRepo->getAllProducts();
         }
-        $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
         $moduleProducts = $productModel->getModuleProducts('realtimeregister_ssl', $post['gid']);
         foreach ($moduleProducts as $moduleProduct) {
             $moduleProductId = KeyToIdMapping::getIdByKey($moduleProduct->configoption1);

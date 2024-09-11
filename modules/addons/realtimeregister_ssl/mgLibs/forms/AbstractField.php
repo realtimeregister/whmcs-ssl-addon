@@ -1,7 +1,7 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\forms;
-use MGModule\RealtimeRegisterSsl as main;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\forms;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Abstract Form Field
@@ -68,18 +68,18 @@ abstract class AbstractField
             $this->enableLabel = false;
         }
         
-        \MGModule\RealtimeRegisterSsl\mgLibs\Lang::stagCurrentContext('generateField');
+        \AddonModule\RealtimeRegisterSsl\mgLibs\Lang::stagCurrentContext('generateField');
         
         if($this->type == 'submit') {
-            \MGModule\RealtimeRegisterSsl\mgLibs\Lang::addToContext($this->value);
+            \AddonModule\RealtimeRegisterSsl\mgLibs\Lang::addToContext($this->value);
         } else {
-            \MGModule\RealtimeRegisterSsl\mgLibs\Lang::addToContext($this->name);
+            \AddonModule\RealtimeRegisterSsl\mgLibs\Lang::addToContext($this->name);
         }
         
-        $this->html = \MGModule\RealtimeRegisterSsl\mgLibs\Smarty::I()->view(
+        $this->html = \AddonModule\RealtimeRegisterSsl\mgLibs\Smarty::I()->view(
             $this->type,
             (array)$this,
-            \MGModule\RealtimeRegisterSsl\mgLibs\process\MainInstance::getModuleTemplatesDir().DS.'formFields'
+            \AddonModule\RealtimeRegisterSsl\mgLibs\process\MainInstance::getModuleTemplatesDir().DS.'formFields'
         );
         
         main\mgLibs\Lang::unstagContext('generateField');

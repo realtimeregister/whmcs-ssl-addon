@@ -1,7 +1,7 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\error;
-use MGModule\RealtimeRegisterSsl as main;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\error;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Error Handler 

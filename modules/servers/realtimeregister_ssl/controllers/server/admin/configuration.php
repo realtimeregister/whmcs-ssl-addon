@@ -1,16 +1,16 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\server\admin;
+namespace AddonModule\RealtimeRegisterSsl\controllers\server\admin;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\ButtonField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\CheckboxField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\Creator;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\SelectField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
-use MGModule\RealtimeRegisterSsl\models\testGroup\testItem\TestItem;
-use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\ButtonField;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\CheckboxField;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\Creator;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\SelectField;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\models\testGroup\testItem\TestItem;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 
 /**
  * Description of configuration

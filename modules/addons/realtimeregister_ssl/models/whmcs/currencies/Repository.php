@@ -12,12 +12,12 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\currencies;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\currencies;
 
 /**
  * Description of Repository
  */
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public function getModelClass()
     {

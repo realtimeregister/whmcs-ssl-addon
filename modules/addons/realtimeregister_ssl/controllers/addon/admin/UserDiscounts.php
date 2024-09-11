@@ -1,11 +1,11 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
+namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\RealtimeRegisterSsl as main;
-use MGModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
-use MGModule\RealtimeRegisterSsl\models\userDiscount\Repository;
+use AddonModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
+use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository;
 
 class UserDiscounts extends main\mgLibs\process\AbstractController
 {
@@ -17,7 +17,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
         //get all clients
         $vars['clients'] = [];
 
-        $clietnsRepo = new \MGModule\RealtimeRegisterSsl\models\whmcs\clients\Clients();
+        $clietnsRepo = new \AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Clients();
         foreach ($clietnsRepo->get() as $key => $client) {
             $vars['clients'][] = [
                 'id' => $client->id,
@@ -201,7 +201,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
     {
         try {
             $products = [];
-            $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+            $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
             //get Realtime Register Ssl all products
             foreach ($productModel->getModuleProducts() as $product) {
                 //skip free products
@@ -210,7 +210,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
                 }
 
                 //exclude products for which commision is already added for gicen client
-                $userDiscountRepo = new \MGModule\RealtimeRegisterSsl\models\userDiscount\Repository();
+                $userDiscountRepo = new \AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository();
                 $userDiscountRepo->onlyProductID($product->id);
 
                 if (isset($input['client_id'])) {
@@ -261,7 +261,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
 
     private function getClient($id)
     {
-        $clientDetails = new \MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client($id);
+        $clientDetails = new \AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client($id);
 
         return [
             'id' => $clientDetails->id,
@@ -273,7 +273,7 @@ class UserDiscounts extends main\mgLibs\process\AbstractController
 
     private function getProduct($id)
     {
-        $productDetails = new \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product($id);
+        $productDetails = new \AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product($id);
 
         return [
             'id' => $productDetails->id,

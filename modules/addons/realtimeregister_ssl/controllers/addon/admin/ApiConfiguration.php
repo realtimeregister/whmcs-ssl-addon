@@ -1,24 +1,24 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
+namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl as main;
-use MGModule\RealtimeRegisterSsl\eHelpers\Migration;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\CheckboxField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\Creator;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\LegendField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\SelectField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\TextareaField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
-use MGModule\RealtimeRegisterSsl\models\whmcs\product\Products;
+use AddonModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Migration;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\CheckboxField;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\Creator;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\LegendField;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\SelectField;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\TextareaField;
+use AddonModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Products;
 use SandwaveIo\RealtimeRegister\Api\CustomersApi;
 use SandwaveIo\RealtimeRegister\Domain\PriceCollection;
 use WHMCS\Database\Capsule;

@@ -1,13 +1,13 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices;
+namespace AddonModule\RealtimeRegisterSsl\eServices;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\RealtimeRegisterSsl\eHelpers\Whmcs;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\ProductsPrices;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
-use MGModule\RealtimeRegisterSsl\models\productPrice\Repository as ApiProductPriceRepo;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\ProductsPrices;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
+use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ApiProductPriceRepo;
 
 class ConfigurableOptionService
 {
@@ -206,7 +206,7 @@ class ConfigurableOptionService
 
         $priceRepo = new ApiProductPriceRepo();
 
-        $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
         $currencies = $productModel->getAllCurrencies();
         $defaultCurrency = $currencies->filter(fn($currency) => $currency->default === 1)->first();
 
@@ -332,7 +332,7 @@ class ConfigurableOptionService
 
     private static function insertOptions($apiProductId, $apiProduct, array $options) {
         $periods = $apiProduct->getPeriods();
-        $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
 
         sort($periods);
 

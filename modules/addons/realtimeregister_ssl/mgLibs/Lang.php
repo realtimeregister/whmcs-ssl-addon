@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs;
 
 /**
  * Simple class to translating languages
@@ -11,7 +11,7 @@ class Lang
 {
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\Lang
+     * @var \AddonModule\RealtimeRegisterSsl\Lang
      */
     private static $instance;
     private $dir;
@@ -40,7 +40,7 @@ class Lang
      * 
      * @param type $dir
      * @param type $lang
-     * @return \MGModule\RealtimeRegisterSsl\Lang
+     * @return \AddonModule\RealtimeRegisterSsl\Lang
      */
     public static function getInstance($dir = null, $lang = null)
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\MySQL;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\MySQL;
 use Illuminate\Database\Capsule\Manager as DB;
 
 /**

@@ -1,9 +1,9 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform;
 
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Client;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Client;
+use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
 
 class Cpanel extends Client implements PlatformInterface
 {

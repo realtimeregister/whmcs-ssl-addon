@@ -15,14 +15,14 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\clients;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\clients;
 
 /**
  * Description of Repository
  *
  * @SuppressWarnings(PHPMD)
  */
-class Groups extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Groups extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public function getModelClass()
     {

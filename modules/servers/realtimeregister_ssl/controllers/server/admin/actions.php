@@ -1,12 +1,12 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\server\admin;
+namespace AddonModule\RealtimeRegisterSsl\controllers\server\admin;
 
 /**
  * Description of actions
  *
  */
-class actions extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController
+class actions extends \AddonModule\RealtimeRegisterSsl\mgLibs\process\AbstractController
 {
     function createAction($input)
     {

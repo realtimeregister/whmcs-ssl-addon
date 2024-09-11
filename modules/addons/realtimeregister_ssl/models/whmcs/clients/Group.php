@@ -14,7 +14,7 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\clients;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\clients;
 
 /**
  * Description of Group
@@ -22,7 +22,7 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\clients;
  * @Table(name=tblclientgroups,preventUpdate,prefixed=false)
  * @SuppressWarnings(PHPMD)
  */
-class Group extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Group extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      *

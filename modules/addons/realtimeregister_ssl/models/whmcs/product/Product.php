@@ -1,11 +1,11 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\product;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\models\Orm;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
-use MGModule\RealtimeRegisterSsl\models\whmcs\customFields\Repository;
-use MGModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
+use AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\customFields\Repository;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
 
 /**
  * Description of product
@@ -158,7 +158,7 @@ class Product extends Orm
             ]
         )->fetchColumn();
 
-        return new \MGModule\RealtimeRegisterSsl\models\whmcs\servers\Server($server);
+        return new \AddonModule\RealtimeRegisterSsl\models\whmcs\servers\Server($server);
     }
 
     /**
@@ -179,7 +179,7 @@ class Product extends Orm
      * Load Configuration
      *
      * @param array $params
-     * @return \MGModule\RealtimeRegisterSsl\models\product\Configuration
+     * @return \AddonModule\RealtimeRegisterSsl\models\product\Configuration
      */
     public function loadConfiguration($params = [])
     {

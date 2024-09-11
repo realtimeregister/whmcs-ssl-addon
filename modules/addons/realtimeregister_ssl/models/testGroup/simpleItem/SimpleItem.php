@@ -1,15 +1,15 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\testGroup\simpleItem;
+namespace AddonModule\RealtimeRegisterSsl\models\testGroup\simpleItem;
 
-use MGModule\RealtimeRegisterSsl\models\testGroup\testItem\TestItem;
+use AddonModule\RealtimeRegisterSsl\models\testGroup\testItem\TestItem;
 
 /**
  * Example Item Class
  * 
  * @Table(name=simple_item)
  */
-class SimpleItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class SimpleItem extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      * ID field

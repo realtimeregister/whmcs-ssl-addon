@@ -1,16 +1,16 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\testGroup\TestItem;
+namespace AddonModule\RealtimeRegisterSsl\models\testGroup\TestItem;
 
-use MGModule\RealtimeRegisterSsl\mgLibs;
-use MGModule\RealtimeRegisterSsl\models\testGroup\simpleItem\simpleItem;
+use AddonModule\RealtimeRegisterSsl\mgLibs;
+use AddonModule\RealtimeRegisterSsl\models\testGroup\simpleItem\simpleItem;
 
 /**
  * Example Item Class
  *
  * @Table(name=test_item)
  */
-class TestItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class TestItem extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     static $avaibleOptionsA = [
         1 => 'Option1'
@@ -119,10 +119,10 @@ class TestItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
                     B.id
             ";
 
-            $data = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query($sql, ['id' => $id])->fetch();
+            $data = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query($sql, ['id' => $id])->fetch();
 
             if (empty($data)) {
-                throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Unable to find Element with ID:' . $id);
+                throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System('Unable to find Element with ID:' . $id);
             }
         }
 
@@ -149,7 +149,7 @@ class TestItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
         ];
 
         if ($this->id) {
-            \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::update(
+            \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::update(
                 self::tableName(),
                 $data,
                 [
@@ -157,7 +157,7 @@ class TestItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
                 ]
             );
         } else {
-            $this->id = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::insert(self::tableName(), $data);
+            $this->id = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::insert(self::tableName(), $data);
         }
     }
 }

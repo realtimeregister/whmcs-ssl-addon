@@ -1,9 +1,9 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel;
 
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Exceptions\PanelException;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Exceptions\PanelException;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Domain\Certificate;
 

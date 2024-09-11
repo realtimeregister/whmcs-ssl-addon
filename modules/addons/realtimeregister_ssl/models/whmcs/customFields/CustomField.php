@@ -1,15 +1,15 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\customFields;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\customFields;
 
-use MGModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Product Custom Fields depends on WHMCS
  *
  * @Table(name=tblcustomfields,preventUpdate,prefixed=false)
  */
-class CustomField extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class CustomField extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      * @Column()
@@ -122,7 +122,7 @@ class CustomField extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
                 'type' => $this->parentType
             ];
 
-            $data = MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
+            $data = AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
                 self::$fieldDeclaration,
                 self::tableName(),
                 $conditions

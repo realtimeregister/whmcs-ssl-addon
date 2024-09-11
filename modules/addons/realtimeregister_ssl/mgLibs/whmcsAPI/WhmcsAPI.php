@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\whmcsAPI;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\whmcsAPI;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
 
 class WhmcsAPI
 {
@@ -23,7 +23,7 @@ class WhmcsAPI
         $result = localAPI($command,$config,self::getAdmin());
         
         if ($result['result'] == 'error') {
-            throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\WhmcsAPI($result['message']);
+            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\WhmcsAPI($result['message']);
         }
         
         return $result;
@@ -36,7 +36,7 @@ class WhmcsAPI
         
         $result = localAPI("getadmindetails", [],$username);
         if ($result['result'] == 'error') {
-            throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\WhmcsAPI($result['message']);
+            throw new \AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\WhmcsAPI($result['message']);
         }
             
         $result['allowedpermissions'] = explode(",", $result['allowedpermissions']);

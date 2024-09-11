@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
 
@@ -26,7 +26,7 @@ class AdminViewCertificate extends Ajax
 
     private function viewCertificate()
     {
-        $sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $sslRepo = new \AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $sslService = $sslRepo->getByServiceId($this->p['serviceId']);
 
         if (is_null($sslService)) {

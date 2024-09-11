@@ -1,11 +1,11 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\productConfiguration;
+namespace AddonModule\RealtimeRegisterSsl\models\productConfiguration;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
 
     private static string $TABLE_NAME = 'tblproducts';

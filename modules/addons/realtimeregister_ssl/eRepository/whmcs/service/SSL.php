@@ -1,15 +1,15 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\whmcs\service;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service;
 
-use MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL as Model;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL as Model;
 use Exception;
 
 class SSL
 {
     /**
      * @param int $id
-     * @return \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @return \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     public function getSingle($id)
     {
@@ -22,7 +22,7 @@ class SSL
 
     /**
      * @param int $id
-     * @return \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @return \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     public function getByServiceId($id)
     {
@@ -30,7 +30,7 @@ class SSL
     }
     /**
      * @param int $id
-     * @return \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @return \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     public function getByRemoteId($id)
     {
@@ -39,7 +39,7 @@ class SSL
 
     /**
      * @param string $status
-     * @return \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @return \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     public function getBy($where, $realtimeregisterssl = false)
     {

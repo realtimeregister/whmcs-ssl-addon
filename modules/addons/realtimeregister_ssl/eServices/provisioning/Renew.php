@@ -1,17 +1,17 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
-use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\DomainControlValidation;
@@ -24,7 +24,7 @@ class Renew
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @var \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     private $sslService;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\RealtimeRegisterSsl\eHelpers\Fill;
-use MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Fill;
+use AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 
 class Products

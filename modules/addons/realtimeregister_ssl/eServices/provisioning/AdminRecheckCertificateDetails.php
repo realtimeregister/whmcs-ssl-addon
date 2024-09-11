@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
 use SandwaveIo\RealtimeRegister\Domain\Certificate;
@@ -27,7 +27,7 @@ class AdminRecheckCertificateDetails extends Ajax
 
     private function getCertificateDetails()
     {
-        $sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $sslRepo = new \AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $sslService = $sslRepo->getByServiceId($this->parameters['serviceId']);
 
         if (is_null($sslService)) {
@@ -38,7 +38,7 @@ class AdminRecheckCertificateDetails extends Ajax
             throw new Exception('An error occurred');
         }
    
-        $configDataUpdate = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData($sslService);
+        $configDataUpdate = new \AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData($sslService);
         /** @var Certificate $orderStatus */
         $orderStatus = $configDataUpdate->run();
 

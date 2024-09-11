@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Client;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Client;
 
 use GuzzleHttp\Utils;
 

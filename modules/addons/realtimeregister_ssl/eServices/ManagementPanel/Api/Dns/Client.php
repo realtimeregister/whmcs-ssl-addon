@@ -1,9 +1,9 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
+use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
 
 class Client
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs;
 
 /**
  * Smarty Wrapper

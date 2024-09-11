@@ -1,11 +1,11 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\customWHMCS\product;
+namespace AddonModule\RealtimeRegisterSsl\models\customWHMCS\product;
 
 /**
  * @Table(name=custom_configuration)
  */
-class Configuration extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Configuration extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      * 

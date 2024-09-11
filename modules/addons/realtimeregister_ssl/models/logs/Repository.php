@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\logs;
+namespace AddonModule\RealtimeRegisterSsl\models\logs;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\models\Repository as MainRepository;
+use AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository as MainRepository;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Repository extends MainRepository

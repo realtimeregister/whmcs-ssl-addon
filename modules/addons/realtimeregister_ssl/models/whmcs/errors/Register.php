@@ -1,13 +1,13 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\errors;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\errors;
 
 /**
  * Register Error in WHMCS Module Log
  *
  * @SuppressWarnings(PHPMD)
  */
-class Register extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Register extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     /**
      * Register Exception in WHMCS Module Log

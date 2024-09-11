@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client;
 
 class Api extends Client
 {

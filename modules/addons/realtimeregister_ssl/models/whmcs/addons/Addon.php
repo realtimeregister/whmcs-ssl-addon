@@ -13,9 +13,9 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\addons;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\addons;
 
-use MGModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Description of Addon

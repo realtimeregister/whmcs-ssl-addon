@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\process;
-use MGModule\RealtimeRegisterSsl as main;
-use MGModule\RealtimeRegisterSsl\mgLibs;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\process;
+use AddonModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl\mgLibs;
 
 /**
  * Main Abstract Controller 

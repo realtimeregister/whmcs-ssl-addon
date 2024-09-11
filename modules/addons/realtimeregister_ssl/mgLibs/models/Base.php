@@ -1,7 +1,7 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\models;
-use MGModule\RealtimeRegisterSsl as main;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\models;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Description of abstractModel

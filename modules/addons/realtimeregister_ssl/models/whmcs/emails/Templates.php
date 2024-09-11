@@ -14,15 +14,15 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\emails;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\emails;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\PdoWrapper;
+use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\PdoWrapper;
 
 /**
  * Description of Repository
  *
  */
-class Templates extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Templates extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public function getModelClass()
     {
@@ -49,7 +49,7 @@ class Templates extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\emails\Templates
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\emails\Templates
      */
     public function onlyGeneral()
     {
@@ -59,7 +59,7 @@ class Templates extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\emails\Templates
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\emails\Templates
      */
     public function onlyAdmin()
     {
@@ -70,7 +70,7 @@ class Templates extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
     /**
      *
      * @param string $name
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\emails\Templates
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\emails\Templates
      */
     public function onlyName($name)
     {

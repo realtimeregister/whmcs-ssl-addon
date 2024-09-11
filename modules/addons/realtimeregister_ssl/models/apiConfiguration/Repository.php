@@ -1,10 +1,10 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\apiConfiguration;
+namespace AddonModule\RealtimeRegisterSsl\models\apiConfiguration;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public $tableName = 'mgfw_REALTIMEREGISTERSSL_api_configuration';
 

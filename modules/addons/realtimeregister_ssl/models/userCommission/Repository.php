@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\userCommission;
+namespace AddonModule\RealtimeRegisterSsl\models\userCommission;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
@@ -8,7 +8,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
  * Description of repository
  *
  */
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public $tableName = 'mgfw_REALTIMEREGISTERSSL_user_commission';
 

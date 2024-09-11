@@ -16,12 +16,12 @@
  * ********************************************************************
  */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\admins;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\admins;
 
 /**
  * Description of Repository
  */
-class Roles extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Roles extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public function getModelClass()
     {

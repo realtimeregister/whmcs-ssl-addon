@@ -1,14 +1,14 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\product\configOptions;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product\configOptions;
 
-use MGModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Description of group
  * @Table(name=tblproductconfiggroups,preventUpdate,prefixed=false)
  */
-class Group extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Group extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
     private $_relatedPID = [];
     private $_configOptions = [];
@@ -41,7 +41,7 @@ class Group extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     function getRelatedPIDs()
     {
         if (empty($this->_relatedPID)) {
-            $result = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
+            $result = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
                 [
                     'pid'
                 ],

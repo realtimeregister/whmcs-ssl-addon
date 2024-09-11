@@ -1,27 +1,27 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\RealtimeRegisterSsl\eHelpers\Domains;
-use MGModule\RealtimeRegisterSsl\eHelpers\Invoice;
-use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
-use MGModule\RealtimeRegisterSsl\eServices\ScriptService;
-use MGModule\RealtimeRegisterSsl\eServices\TemplateService;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
-use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
-use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Domains;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
+use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
+use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
+use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
+use AddonModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
@@ -53,7 +53,7 @@ class ClientReissueCertificate
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @var \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     private $sslService;
 
@@ -89,7 +89,7 @@ class ClientReissueCertificate
         try {
             $this->validateService();
         } catch (Exception $ex) {
-            return '- ' . \MGModule\RealtimeRegisterSsl\eHelpers\Exception::e($ex);
+            return '- ' . \AddonModule\RealtimeRegisterSsl\eHelpers\Exception::e($ex);
         }
         if (isset($this->post['stepOneForm'])) {
             try {
@@ -100,7 +100,7 @@ class ClientReissueCertificate
                 $this->vars['countries'] = Countries::getInstance()->getCountriesForMgAddonDropdown();
                 return $this->build(self::STEP_TWO);
             } catch (Exception $ex) {
-                $this->vars['errors'][] = \MGModule\RealtimeRegisterSsl\eHelpers\Exception::e($ex);
+                $this->vars['errors'][] = \AddonModule\RealtimeRegisterSsl\eHelpers\Exception::e($ex);
             }
         }
 
@@ -112,7 +112,7 @@ class ClientReissueCertificate
                     . $_GET['id'];
                 return $this->build(self::SUCCESS);
             } catch (Exception $ex) {
-                $this->vars['errors'][] = \MGModule\RealtimeRegisterSsl\eHelpers\Exception::e($ex);
+                $this->vars['errors'][] = \AddonModule\RealtimeRegisterSsl\eHelpers\Exception::e($ex);
             }
         }
 
@@ -183,7 +183,7 @@ class ClientReissueCertificate
         return $this->build(self::STEP_ONE);
     }
 
-    private function setApproverData(\MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL $sslData) {
+    private function setApproverData(\AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL $sslData) {
         if (!str_contains($sslData->getProductId(), "ev") && !str_contains($sslData->getProductId(), "ov")) {
             $this->vars['extraValidation'] = false;
             return;

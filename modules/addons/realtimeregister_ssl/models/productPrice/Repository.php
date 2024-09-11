@@ -1,10 +1,10 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\productPrice;
+namespace AddonModule\RealtimeRegisterSsl\models\productPrice;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public $tableName = 'mgfw_REALTIMEREGISTERSSL_api_product_prices';
 

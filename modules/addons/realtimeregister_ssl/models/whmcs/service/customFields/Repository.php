@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\service\customFields;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service\customFields;
 
-use MGModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Description of repository
@@ -76,7 +76,7 @@ class Repository
                 H.id = :account_id
         ";
 
-        $result = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query($query, [
+        $result = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query($query, [
             'account_id' => $this->serviceID
         ]);
 
@@ -105,7 +105,7 @@ class Repository
         $this->load();
 
         foreach ($this->_customFields as $field) {
-            \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::update(
+            \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::update(
                 'tblcustomfieldsvalues',
                 [
                     'value' => $field->value

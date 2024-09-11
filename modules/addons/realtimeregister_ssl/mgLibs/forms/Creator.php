@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\mgLibs\forms;
-use MGModule\RealtimeRegisterSsl as main;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System;
+namespace AddonModule\RealtimeRegisterSsl\mgLibs\forms;
+use AddonModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\System;
 
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\customFields;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\customFields;
 
 /**
  * Product Custom Fields Colletion
@@ -27,7 +27,7 @@ class Repository
     {
         $this->type = $type;
         $this->relationID = $relationID;
-        $result = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
+        $result = \AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
             customField::fieldDeclaration(),
             customField::tableName(),
             [

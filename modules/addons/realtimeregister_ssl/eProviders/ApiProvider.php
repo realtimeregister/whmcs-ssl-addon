@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eProviders;
+namespace AddonModule\RealtimeRegisterSsl\eProviders;
 
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;

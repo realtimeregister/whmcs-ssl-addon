@@ -1,12 +1,12 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\customWHMCS\product;
+namespace AddonModule\RealtimeRegisterSsl\models\customWHMCS\product;
 
 /**
  * Description of repository
  *
  */
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public function getModelClass()
     {

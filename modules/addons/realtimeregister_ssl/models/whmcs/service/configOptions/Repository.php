@@ -1,9 +1,9 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\service\configOptions;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions;
 
-use MGModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
+use AddonModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
 
 /**
  * Description of repository

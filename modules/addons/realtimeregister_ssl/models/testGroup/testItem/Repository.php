@@ -1,14 +1,14 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\testGroup\TestItem;
-use MGModule\RealtimeRegisterSsl\mgLibs;
-use MGModule\RealtimeRegisterSsl\models\testGroup\simpleItem;
+namespace AddonModule\RealtimeRegisterSsl\models\testGroup\TestItem;
+use AddonModule\RealtimeRegisterSsl\mgLibs;
+use AddonModule\RealtimeRegisterSsl\models\testGroup\simpleItem;
 
 /**
  * Description of repository
  *
  */
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {
     public function getModelClass()
     {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\Platforms;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\Platforms;
 
 use GuzzleHttp\Exception\GuzzleException;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
+use AddonModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
 use function GuzzleHttp\Psr7\build_query;
 
 class Cpanel extends Client implements PlatformInterface
