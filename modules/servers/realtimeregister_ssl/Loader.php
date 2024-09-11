@@ -9,7 +9,6 @@ if (!defined('DS')){
 /**
  * Module Class Loader
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 
@@ -55,8 +54,7 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
 
         /**
          * Load Class File
-         * 
-         * @author Michal Czech <michael@modulesgarden.com>
+         *
          * @param string $className
          * @return bool
          * @throws \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\base

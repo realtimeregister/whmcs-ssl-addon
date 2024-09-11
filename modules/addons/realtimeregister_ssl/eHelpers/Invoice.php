@@ -30,7 +30,6 @@ use WHMCS\Product\Product;
 /**
  * Description of Invoice
  *
- * @author Rafal Sereda <rafal.se at modulesgarden.com>
  */
 class Invoice
 {

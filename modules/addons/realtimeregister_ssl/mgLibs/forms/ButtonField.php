@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs\forms;
 /**
  * Button Form Field
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class ButtonField extends AbstractField
 {

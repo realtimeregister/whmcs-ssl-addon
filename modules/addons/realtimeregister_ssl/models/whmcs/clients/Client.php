@@ -10,7 +10,6 @@ use MGModule\RealtimeRegisterSsl\models\whmcs\currencies\Currency;
  * Client Model
  *
  * @Table(name=tblclients,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Client extends Orm
@@ -139,7 +138,6 @@ class Client extends Orm
      * Get Custom Fields
      *
      * @return customFields
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function customFields()
     {

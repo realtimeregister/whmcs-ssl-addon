@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs\forms;
 /**
  * Password Form Field
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class PasswordField extends AbstractField
 {

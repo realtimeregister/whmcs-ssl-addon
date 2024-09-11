@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * SSLCENTERWHMCS product developed. (2015-12-08)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -23,7 +18,6 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\pricing;
 /**
  * Description of BillingCycle
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  */
 class BillingCycle
 {

@@ -6,12 +6,6 @@ use Exception;
 use MGModule\RealtimeRegisterSsl\mgLibs\error\Register;
 use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDriver;
 
-/**
- * Description of Addon
- *
- * @author Michal Czech <michael@modulesgarden.com>
- * @SuppressWarnings(PHPMD)
- */
 class Addon extends AbstractMainDriver
 {
     /**

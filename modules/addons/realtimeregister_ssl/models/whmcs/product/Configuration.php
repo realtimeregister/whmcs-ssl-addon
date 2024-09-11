@@ -9,7 +9,6 @@ use MGModule\RealtimeRegisterSsl\mgLibs\process\MainInstance;
 /**
  * Description of configuration
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Configuration

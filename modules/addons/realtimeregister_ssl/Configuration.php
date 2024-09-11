@@ -12,12 +12,7 @@ use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
 use MGModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPriceRepo;
 use MGModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
 
-/**
- * Module Configuration
- *
- * @author Michal Czech <michael@modulesgarden.com>
- * @SuppressWarnings("unused")
- */
+
 class Configuration extends AbstractConfiguration
 {
     /**
@@ -138,8 +133,7 @@ class Configuration extends AbstractConfiguration
 
     /**
      * Run When Module Install
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @return array
      */
     function activate()

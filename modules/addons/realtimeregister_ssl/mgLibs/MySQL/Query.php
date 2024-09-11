@@ -8,7 +8,6 @@ use PDO;
 /**
  * MySQL Query Class
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Query
@@ -54,7 +53,6 @@ class Query
      * @param string $connectionName
      * @return \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query
      * @throws \MGModule\RealtimeRegisterSsl\exception\System
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function I()
     {
@@ -67,7 +65,6 @@ class Query
     /**
      * Use Current Default MySQL Connection for queries
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function useCurrentConnection()
     {
@@ -88,7 +85,6 @@ class Query
      * @param string $file
      * @return boolean
      * @throws \MGModule\RealtimeRegisterSsl\exception\System
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function connectFromFile($file)
     {
@@ -132,7 +128,6 @@ class Query
     /**
      * Disconnect all mysql connection
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function dropAllConnection()
     {
@@ -204,7 +199,6 @@ class Query
      * @param string $connectionName
      * @return int id of new record
      * @throws \exception\System
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function insert($table, array $data, $connectionName = 'default')
     {
@@ -239,7 +233,6 @@ class Query
      * @param string $connectionName
      * @return int id of new record
      * @throws \exception\System
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function insertOnDuplicateUpdate($table, array $data, array $update, $connectionName = 'default')
     {
@@ -291,7 +284,6 @@ class Query
      * @param array $conditionValues
      * @return result
      * @throws \exception\System
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function update($table, array $data, array $condition)
     {
@@ -327,7 +319,6 @@ class Query
      * @param array $conditionValues
      * @return result
      * @throws \exception\System
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function delete($table, array $condition)
     {
@@ -348,7 +339,6 @@ class Query
      * @param type $condition
      * @param type $values
      * @return type
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function parseConditions($condition, &$values, $prefix = null, &$i = 0)
     {
@@ -457,7 +447,6 @@ class Query
      * @param int $offset
      * @return result
      * @throws \exception\System
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function select(
         array $cols,
@@ -497,7 +486,6 @@ class Query
      * @param int $offset
      * @return result
      * @throws \exception\System
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function count(
         $colsName,

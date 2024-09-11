@@ -6,15 +6,13 @@ use MGModule\RealtimeRegisterSsl as main;
 /**
  * Description of abstractModel
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 abstract class Base
 {
     /**
      * Normalized Time Stamp
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $strTime
      * @return string
      */
@@ -25,8 +23,7 @@ abstract class Base
     
     /**
      * Disable Get Function
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $property
      * @throws main\mgLibs\exceptions\System
      */
@@ -40,8 +37,7 @@ abstract class Base
     
     /**
      * Disable Set Function
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $property
      * @param string $value
      * @throws main\mgLibs\exceptions\System
@@ -56,8 +52,7 @@ abstract class Base
     
     /**
      * Disable Call Function
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $function
      * @param string $params
      * @throws main\mgLibs\exceptions\System
@@ -107,8 +102,7 @@ abstract class Base
     
     /**
      * Encrypt String using Hash from configration
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $input
      * @return string
      */
@@ -129,8 +123,7 @@ abstract class Base
     
     /**
      * Decrypt String using Hash from configration
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $input
      * @return string
      */

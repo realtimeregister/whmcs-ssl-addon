@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs\exceptions;
 /**
  * Use for general module errors
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class System extends Base
 {

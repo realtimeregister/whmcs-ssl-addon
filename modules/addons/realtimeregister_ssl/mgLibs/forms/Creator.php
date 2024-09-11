@@ -8,7 +8,6 @@ use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System;
 /**
  * Form Creator
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Creator

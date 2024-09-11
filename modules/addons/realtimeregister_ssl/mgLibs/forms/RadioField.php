@@ -6,7 +6,6 @@ use MGModule\RealtimeRegisterSsl as main;
 /**
  * Select Form Field
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class RadioField extends AbstractField

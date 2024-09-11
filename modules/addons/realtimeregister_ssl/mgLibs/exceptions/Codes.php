@@ -6,7 +6,6 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs\exceptions;
  * Exception Codes 
  * 
  * @todo extends number of supported codes
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Codes
 {

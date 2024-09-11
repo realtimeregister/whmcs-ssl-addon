@@ -31,7 +31,6 @@ use WHMCS\Database\Capsule;
 /**
  * Description of home
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class home extends AbstractController
 {

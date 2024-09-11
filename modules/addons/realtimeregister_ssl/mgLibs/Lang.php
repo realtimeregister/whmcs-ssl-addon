@@ -4,8 +4,7 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs;
 
 /**
  * Simple class to translating languages
- * 
- * @author Michal Czech <michael@modulesgarden.com>
+ *
  * @SuppressWarnings(PHPMD)
  */
 class Lang
@@ -42,7 +41,6 @@ class Lang
      * @param type $dir
      * @param type $lang
      * @return \MGModule\RealtimeRegisterSsl\Lang
-     *@author Michal Czech <michael@modulesgarden.com>
      */
     public static function getInstance($dir = null, $lang = null)
     {
@@ -71,8 +69,7 @@ class Lang
 
     /**
      * Get Current Lang Name
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @return string
      */
     public static function getLang()
@@ -103,8 +100,7 @@ class Lang
 
     /**
      * Get Avaiable Translations
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @return type
      */
     public static function getAvaiable()
@@ -124,8 +120,7 @@ class Lang
 
     /**
      * Load Lang File
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $lang Lang Name
      */
     public static function loadLang($lang)
@@ -151,8 +146,7 @@ class Lang
      * Set Lang Context
      * 
      * Given parameters are lang levels
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      */
     public static function setContext()
     {
@@ -166,8 +160,6 @@ class Lang
      * Add levels at stack upwards 
      * 
      * Given parameters are lang levels
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public static function addToContext()
     {
@@ -178,8 +170,7 @@ class Lang
 
     /**
      * Stag Current levels stack
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $stagName
      */
     public static function stagCurrentContext($stagName)
@@ -189,8 +180,7 @@ class Lang
 
     /**
      * Restore Lang levels from stag
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $stagName
      */
     public static function unstagContext($stagName)
@@ -203,8 +193,7 @@ class Lang
 
     /**
      * Get Translated Lang
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @return string
      */
     public static function T()
@@ -260,8 +249,7 @@ class Lang
 
     /**
      * Get Translated Absolute Lang 
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @return string
      */
     public static function absoluteT()

@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * SSLCENTERWHMCS product developed. (2015-11-17)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -25,7 +20,6 @@ use MGModule\RealtimeRegisterSsl as main;
 /**
  * Description of Addon
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tbladdons,preventUpdate,prefixed=false)
  */
 class Addon extends main\mgLibs\models\Orm

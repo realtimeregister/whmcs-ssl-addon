@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs;
 /**
  * Smarty Wrapper
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Smarty
@@ -26,8 +25,7 @@ class Smarty
     
     /**
      * Get Single-top Instance
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @return smarty
      */
     static function I()
@@ -51,8 +49,7 @@ class Smarty
     
     /**
      * Set Tempalte Dir
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $dir
      */
     function setTemplateDir($dir)
@@ -65,8 +62,7 @@ class Smarty
     
     /**
      * Parse Template File
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @global string $templates_compiledir
      * @param string $template
      * @param array $vars

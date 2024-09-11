@@ -6,7 +6,6 @@ use MGModule\RealtimeRegisterSsl as main;
 /**
  * Description of abstractController
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 abstract class AbstractController
@@ -23,8 +22,7 @@ abstract class AbstractController
     
     /**
      * Generate Token For Form
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @return string
      */
     function genToken()
@@ -34,8 +32,7 @@ abstract class AbstractController
     
     /**
      * Validate Token With previous checked
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $token
      * @return boolean
      */

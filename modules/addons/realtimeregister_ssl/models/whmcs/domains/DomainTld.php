@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * SSLCENTERWHMCS product developed. (2015-11-23)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -23,7 +18,6 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\domains;
 /**
  * Description of DomainPrice
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tbldomainpricing,preventUpdate,prefixed=false)
  */
 class DomainTld extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm

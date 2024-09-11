@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs\exceptions;
 /**
  * Used in Error Handler
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class syntaxError extends System
 {

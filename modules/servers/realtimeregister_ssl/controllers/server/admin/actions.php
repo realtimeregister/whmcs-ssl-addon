@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl\controllers\server\admin;
 /**
  * Description of actions
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class actions extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController
 {

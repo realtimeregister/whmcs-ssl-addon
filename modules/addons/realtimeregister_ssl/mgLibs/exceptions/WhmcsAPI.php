@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs\exceptions;
 /**
  * Description of whmcsAPI
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class WhmcsAPI extends System
 {

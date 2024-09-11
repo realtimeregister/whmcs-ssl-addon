@@ -7,8 +7,7 @@ use MGModule\RealtimeRegisterSsl as main;
  * Error Handler 
  *
  * @todo DON'T USE IN PRODUCTION MODULES
- * 
- * @author Michal Czech <michael@modulesgarden.com>
+ *
  */
 class Handler
 {
@@ -23,8 +22,7 @@ class Handler
     
     /**
      * Register Error Functions 
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      */
     public function register()
     {

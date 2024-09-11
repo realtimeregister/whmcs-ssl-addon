@@ -6,7 +6,6 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs\MySQL;
 /**
  * MySQL Results Class
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Result
 {
@@ -25,8 +24,7 @@ class Result
     
     /**
      * Constructor 
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param PDOStatement $result
      * @param int $id
      */
@@ -42,8 +40,7 @@ class Result
     
     /**
      * Fetch one record
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @return array
      */
     function fetch()
@@ -53,8 +50,7 @@ class Result
     
     /**
      * Fetch All Records
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @return array
      */
     function fetchAll()
@@ -64,8 +60,7 @@ class Result
         
     /**
      * Fetch One Column From First Record
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param string $name
      * @return array
      */
@@ -82,8 +77,7 @@ class Result
     
     /**
      * Get ID Last Inserted Record 
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @return int
      */
     function getID()

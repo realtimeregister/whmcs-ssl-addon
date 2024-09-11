@@ -9,8 +9,6 @@ if (!defined('DS')) {
 /**
  * Module Class Loader
  *
- * @author Michal Czech <michael@modulesgarden.com>
- * @SuppressWarnings(PHPMD)
  */
 
 if (!class_exists(__NAMESPACE__ . '\Loader')) {
@@ -69,7 +67,6 @@ if (!class_exists(__NAMESPACE__ . '\Loader')) {
          * @return bool
          * @throws \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\base
          * @throws \Exception
-         * @author Michal Czech <michael@modulesgarden.com>
          */
         static function loader($className)
         {

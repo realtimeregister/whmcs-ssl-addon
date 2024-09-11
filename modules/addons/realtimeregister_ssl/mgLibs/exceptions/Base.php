@@ -7,7 +7,6 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs\exceptions;
  * 
  * Use as base for other exceptions
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Base extends \Exception
 {

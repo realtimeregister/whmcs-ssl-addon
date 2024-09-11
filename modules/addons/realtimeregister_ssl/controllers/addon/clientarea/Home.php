@@ -7,7 +7,6 @@ use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
 /**
  * Description of home
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Home extends AbstractController
 {

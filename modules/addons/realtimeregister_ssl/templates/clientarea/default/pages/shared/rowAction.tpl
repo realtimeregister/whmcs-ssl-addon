@@ -1,9 +1,4 @@
 {**********************************************************************
-* QuickBooksDesktop product developed. (2016-01-13)
-* *
-*
-*  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
-*  CONTACT                        ->       contact@modulesgarden.com
 *
 *
 * This software is furnished under a license and may be used and copied
@@ -16,9 +11,6 @@
 *
 **********************************************************************}
 
-{**
-* @author Paweł Kopeć <pawelk@modulesgarden.com>
-*}
 {if $category.loginUrl}
 <a href="{$category.loginUrl}" target="blank" data-toggle="tooltip"   data-toggle="tooltip" class="btn btn-sm btn-success buttonInGroup"
     title="{$MGLANG->T('actionButtons','Login In')}"> <i class="glyphicon glyphicon-upload"></i>     

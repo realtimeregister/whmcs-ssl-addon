@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs\MySQL;
 /**
  * MySQL Exception
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Exception extends \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System
 {

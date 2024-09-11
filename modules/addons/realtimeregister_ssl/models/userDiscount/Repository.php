@@ -7,7 +7,6 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 /**
  * Description of repository
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
 {

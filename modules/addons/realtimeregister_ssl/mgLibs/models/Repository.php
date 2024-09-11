@@ -7,7 +7,6 @@ use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\PdoWrapper;
 /**
  * Description of abstractModel
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 abstract class Repository

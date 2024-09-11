@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * MGMF product developed. (2016-02-09)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -23,7 +18,6 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\emails;
 /**
  * Description of Template
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tblemailtemplates,preventUpdate,prefixed=false)
  */
 class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm

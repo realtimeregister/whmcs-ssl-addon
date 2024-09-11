@@ -6,7 +6,6 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\product\configOptions;
  * Config Options Model
  *
  * @Table(name=tblproductconfigoptions,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class ConfigOption extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {

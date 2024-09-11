@@ -9,7 +9,6 @@ use MGModule\RealtimeRegisterSsl\models\testGroup\simpleItem\simpleItem;
  * Example Item Class
  *
  * @Table(name=test_item)
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class TestItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {

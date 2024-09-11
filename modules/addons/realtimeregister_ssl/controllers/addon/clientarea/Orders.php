@@ -7,7 +7,6 @@ use MGModule\RealtimeRegisterSsl as main;
 /**
  * Description of home
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Orders extends main\mgLibs\process\AbstractController
 {

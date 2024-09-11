@@ -85,12 +85,6 @@
                         <button type="submit" class="btn btn-default"><i style="font-size:20px" class="glyphicon glyphicon-search"></i></button>
                       </form>
                     {/if}
-                    <div>
-                        <a alt="ModulesGarden Custom Development" target="_blank" href="http://www.modulesgarden.com" class="slogan nblue-box">
-                            <span class="mg-logo"></span>
-                            <small>We are here to help you, just click!</small>
-                        </a>
-                    </div>
                 </div><!-- /.navbar-collapse -->
               </div><!-- /.container-fluid -->
             </nav>

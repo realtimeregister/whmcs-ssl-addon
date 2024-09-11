@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * DiscountCenter product developed. (2016-02-09)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -23,7 +18,6 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\product;
 /**
  * Description of ProductGroup
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tblproductgroups,preventUpdate,prefixed=false)
  */
 class ProductGroup extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm

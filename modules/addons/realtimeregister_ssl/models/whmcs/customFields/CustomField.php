@@ -8,7 +8,6 @@ use MGModule\RealtimeRegisterSsl as main;
  * Product Custom Fields depends on WHMCS
  *
  * @Table(name=tblcustomfields,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class CustomField extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
@@ -109,7 +108,6 @@ class CustomField extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
      * @param int $productID
      * @param int $id
      * @param array $data
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     function __construct($id = null, $parentType = null, $parentID = null, $data = [])
     {
@@ -156,9 +154,8 @@ class CustomField extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      * Save Field
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
-    public function save()
+    public function save($data = [])
     {
         $data = [
             'type' => $this->parentType,

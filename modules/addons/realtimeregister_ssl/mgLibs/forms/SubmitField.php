@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl\mgLibs\forms;
 /**
  * Submit Form Button  
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class SubmitField extends AbstractField
 {

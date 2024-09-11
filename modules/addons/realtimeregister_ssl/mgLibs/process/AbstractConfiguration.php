@@ -18,7 +18,7 @@ abstract class AbstractConfiguration
         
     public $version = false;
     
-    public $author = '<a href="http://www.modulesgarden.com" targer="_blank">ModulesGarden</a>';
+    public $author = '<a href="http://www.whcms.com" target="_blank">WHMCS</a>';
 
     public $tablePrefix = false;
             

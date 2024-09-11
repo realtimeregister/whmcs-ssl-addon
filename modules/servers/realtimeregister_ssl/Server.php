@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl;
 /**
  * Description of Addon
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDriver
@@ -73,7 +72,6 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
     /**
      * Get HTML Client Ara Page
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      * @param array $params
      * @param array $input
      * @return string
@@ -133,7 +131,6 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
     /**
      * Get Json Client Ara Page
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      * @param array $params
      * @param array $input
      * @return string
@@ -197,7 +194,6 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
     /**
      * Run WHMCS Action
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      * @param string $action
      * @param array $input
      * @return string
@@ -235,7 +231,6 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
     /**
      * Get HTML Product Config Page
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      * @param array $input
      * @return string
      */
@@ -323,7 +318,6 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
     /**
      * Get JSON Product Config Page
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      * @param array $input
      * @return string
      */
@@ -386,7 +380,6 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDr
      * Get Config Product Array
      * Useless if you inject own product configuration
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     static function configArray(): array
     {

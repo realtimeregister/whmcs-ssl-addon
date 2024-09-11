@@ -20,7 +20,6 @@ use stdClass;
 /**
  * Description of account
  * @Table(name=tblhosting,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Service extends Orm
@@ -168,7 +167,6 @@ class Service extends Orm
      * @param int $id
      * @param array $data
      * @throws \Exception
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function __construct($id = null, $data = [])
     {
@@ -183,7 +181,6 @@ class Service extends Orm
      * @param int $id
      * @param array $data
      * @return server
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     protected function loadServer($id, $data = [])
     {
@@ -196,7 +193,6 @@ class Service extends Orm
      *
      * @param array $data
      * @return product
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     protected function loadProduct($data = [])
     {
@@ -209,7 +205,6 @@ class Service extends Orm
      *
      * @param array $data
      * @return order
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     protected function loadOrder($data = [])
     {
@@ -221,7 +216,6 @@ class Service extends Orm
      * Function allows to easy overwrite product object
      *
      * @return Client
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     protected function loadClient($data = [])
     {
@@ -232,7 +226,6 @@ class Service extends Orm
      * Get Server Connected With Service
      *
      * @return server
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function server()
     {
@@ -246,7 +239,6 @@ class Service extends Orm
      * Get Client Connected with Service
      *
      * @return client
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function client()
     {
@@ -261,7 +253,6 @@ class Service extends Orm
      * Get Product Service
      *
      * @return product
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function product()
     {
@@ -275,7 +266,6 @@ class Service extends Orm
      * Get Order Service
      *
      * @return order
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function order()
     {
@@ -289,7 +279,6 @@ class Service extends Orm
      * Get Custom Fields
      *
      * @return customFields\repository
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function customFields()
     {
@@ -305,7 +294,6 @@ class Service extends Orm
      * Get Config Options
      *
      * @return configOptions
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function configOptions()
     {
@@ -321,7 +309,6 @@ class Service extends Orm
      * Get Merged Configs from product configuration & custom fields & confi optins
      *
      * @return stdClass
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function mergedConfig()
     {
@@ -351,7 +338,6 @@ class Service extends Orm
     /**
      * Save Account Settings
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function save($cols = [])
     {
@@ -371,7 +357,6 @@ class Service extends Orm
      *
      * @param array $data
      * @throws system
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function load(array $data = [])
     {

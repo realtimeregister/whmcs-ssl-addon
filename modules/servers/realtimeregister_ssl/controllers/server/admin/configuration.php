@@ -15,7 +15,6 @@ use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 /**
  * Description of configuration
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class configuration extends AbstractController
 {

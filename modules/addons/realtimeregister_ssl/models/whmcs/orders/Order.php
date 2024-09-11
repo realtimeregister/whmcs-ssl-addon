@@ -6,7 +6,6 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\orders;
  * Description of order
  *
  * @Table(name=tblorders,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Order extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {

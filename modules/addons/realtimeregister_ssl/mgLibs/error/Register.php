@@ -6,7 +6,6 @@ use MGModule\RealtimeRegisterSsl as main;
 /**
  * Description of error\register
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Register

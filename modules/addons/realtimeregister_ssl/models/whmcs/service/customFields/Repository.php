@@ -7,7 +7,6 @@ use MGModule\RealtimeRegisterSsl as main;
 /**
  * Description of repository
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Repository
 {
@@ -18,7 +17,6 @@ class Repository
      * Mozna by bylo dodac wersje z wczytywanie po samym productid
      *
      * @param type $accountID
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function __construct($serviceID, array $data = [])
     {
@@ -101,7 +99,6 @@ class Repository
     /**
      * Update Custom Fields
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function update()
     {

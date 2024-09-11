@@ -5,7 +5,6 @@ namespace MGModule\RealtimeRegisterSsl\models\whmcs\servers;
 /**
  * Server Model
  * @Table(name=tblservers,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {
@@ -65,7 +64,6 @@ class Server extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
      *
      * @param int $id
      * @param array $data
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function __construct($id = false, $data = [])
     {

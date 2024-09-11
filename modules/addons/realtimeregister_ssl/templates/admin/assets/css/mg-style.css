@@ -483,10 +483,7 @@
     clear: both;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px
-        /* main Module Navigation Bar */
-        /* Notification */
-        /* modulesgarden logo wrapper */
-        /* Header logo */ }
+}
 .mg-wrapper .page-header .top-menu .nav-menu {
     margin: 0 0 0 -17px;
     margin: 0;
@@ -497,8 +494,7 @@
         /* Top Links */
         /* Separator */
         /* Extended Dropdowns */
-        /* Notification */
-        /* modulesgarden module name */ }
+        /* Notification */}
 .mg-wrapper .page-header .top-menu .nav-menu .navbar-nav.navbar-right .dropdown-menu {
     left: auto;
     right: 0; }

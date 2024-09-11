@@ -6,7 +6,6 @@ use MGModule\RealtimeRegisterSsl as main;
 /**
  * Description of ORMHelper
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Orm extends Base
@@ -246,8 +245,7 @@ class Orm extends Base
     
     /**
      * Fill Current Model Properties 
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @param array $data
      */
     function fillProperties($data)

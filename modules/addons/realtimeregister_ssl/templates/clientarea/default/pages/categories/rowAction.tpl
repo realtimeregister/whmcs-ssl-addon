@@ -1,9 +1,4 @@
 {**********************************************************************
-* QuickBooksDesktop product developed. (2016-01-13)
-* *
-*
-*  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
-*  CONTACT                        ->       contact@modulesgarden.com
 *
 *
 * This software is furnished under a license and may be used and copied
@@ -16,9 +11,7 @@
 *
 **********************************************************************}
 
-{**
-* @author Paweł Kopeć <pawelk@modulesgarden.com>
-*}
+
 <button  data-toggle="tooltip" type="button"  data-modal-id="mg-modal-edit-entity" data-modal-target="{$id}"  data-toggle="tooltip" class="btn btn-sm btn-warning buttonInGroup"
     title="{$MGLANG->T('actionButtons','edit')}"> <i class="glyphicon glyphicon-pencil"></i>     
 </button>

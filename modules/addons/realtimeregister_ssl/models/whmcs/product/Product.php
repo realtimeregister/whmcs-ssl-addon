@@ -11,7 +11,6 @@ use MGModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
  * Description of product
  *
  * @Table(name=tblproducts,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Product extends Orm
 {
@@ -89,7 +88,6 @@ class Product extends Orm
      *
      * @param int $id
      * @param array $params
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function __construct($id = null, $params = [])
     {
@@ -101,7 +99,6 @@ class Product extends Orm
      * Load Product
      *
      * @param array $params
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function load($params = [])
     {
@@ -168,7 +165,6 @@ class Product extends Orm
      * Get Server
      *
      * @return server
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function getServer()
     {
@@ -184,7 +180,6 @@ class Product extends Orm
      *
      * @param array $params
      * @return \MGModule\RealtimeRegisterSsl\models\product\Configuration
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function loadConfiguration($params = [])
     {
@@ -195,7 +190,6 @@ class Product extends Orm
      * Get Configuration
      *
      * @return configuration
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function configuration()
     {
@@ -210,7 +204,6 @@ class Product extends Orm
      * Get Custom Fields
      *
      * @return Repository
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function customFields()
     {

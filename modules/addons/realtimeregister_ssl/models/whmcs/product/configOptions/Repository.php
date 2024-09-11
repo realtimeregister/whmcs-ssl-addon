@@ -8,7 +8,6 @@ use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
 /**
  * Product Custom Fields Colletion
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Repository
 {
@@ -45,7 +44,6 @@ class Repository
      * Load Product Custom Fields
      *
      * @param int $productID
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function get()
     {
@@ -92,7 +90,6 @@ class Repository
      *
      * @param bool $onlyRequired
      * @return array
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function checkFields(array $configuration = [])
     {
@@ -124,7 +121,6 @@ class Repository
     /**
      * Generate Custom Fields Depends on declaration in Module Configuration
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function generateFromConfiguration(array $configuration = [])
     {

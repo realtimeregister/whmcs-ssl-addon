@@ -7,7 +7,6 @@ use MGModule\RealtimeRegisterSsl as main;
 /**
  * Description of group
  * @Table(name=tblproductconfiggroups,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Group extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 {

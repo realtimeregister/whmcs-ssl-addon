@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * SSLCENTERWHMCS product developed. (2015-11-23)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -26,7 +21,6 @@ use MGModule\RealtimeRegisterSsl\models\whmcs\currencies\Currency;
 /**
  * Description of Pricing
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tblpricing,preventUpdate,prefixed=false)
  * @SuppressWarnings(PHPMD)
  */
