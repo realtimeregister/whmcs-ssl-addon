@@ -308,20 +308,6 @@ class ApiConfiguration extends AbstractController
         $form->addField($field);
 
         $field = new LegendField();
-        $field->name = 'validation_settings';
-        $form->addField($field);
-
-        $field = new CheckboxField();
-        $field->name = 'disable_email_validation';
-        $field->options = ['disableEmailValidation'];
-        $field->value = $input['disable_email_validation'] ? ['disableEmailValidation'] : [''];
-        $field->inline = false;
-        $field->colWidth = 2;
-        $field->continue = false;
-        $field->enableDescription = false;
-        $form->addField($field);
-
-        $field = new LegendField();
         $field->name = 'tech_legend';
         $form->addField($field);
 
