@@ -1,0 +1,99 @@
+#contentarea > div > h1{
+    display: none;
+}
+
+#tab_content div.addon-wrapper{
+    margin:0 5px!important;
+}
+
+#tab_content{
+    text-align: inherit;
+}
+
+.addon-wrapper {
+  padding: 10px;
+}
+
+.addon-wrapper .navbar-default{
+    padding:10px 0;
+}
+
+.addon-wrapper .slogan {
+    display: block;
+    height: auto;
+    padding: 3px;
+    position: absolute;
+    right: 8px;
+    text-align: center;
+    top: 8px;
+    width: 200px;
+    background-color: #1c4b8c;
+    border-radius:2px;
+}
+
+.addon-wrapper .slogan *{
+    color: #fff;
+    display: inline-block;
+}
+
+.addon-wrapper .navbar-nav{
+    padding:10px 0;
+}
+
+.addon-wrapper .navbar-nav > li > a{
+    padding:5px 10px;
+}
+
+.addon-wrapper .modal-loader{
+    width:100%;
+    height:100px;
+    background: url("../images/ajax-loader.gif") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    background-position: center; 
+}
+
+.addon-wrapper .modal-content{
+    overflow-y:scroll;
+    max-height: 95vh;
+}
+
+.addon-wrapper .datatable-loader{
+          width:100%;
+    height:100px;
+    background: url("../images/ajax-loader.gif") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    background-position: center; 
+}
+.addon-wrapper .mini-loader{
+          width:100%;
+    height:20px;
+    background: url("../images/ajax-loader.gif") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+}
+
+#AddonLoader{
+    background-color: rgba(0,0,0,0.5);
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index: 60000;
+}
+
+#AddonLoader img{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:300px;
+    margin-left: -150px;
+}
+
+.addon-wrapper .alert .close{
+    margin-top: -6px;
+}
+
+.addon-wrapper .navbar-brand{
+    padding:10px;
+}
+
+.normal-form {
+    max-width: 900px;
+}

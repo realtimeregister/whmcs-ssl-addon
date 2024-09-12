@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * MGMF product developed. (2016-02-09)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -18,15 +13,14 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\emails;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\emails;
 
 /**
  * Description of Template
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tblemailtemplates,preventUpdate,prefixed=false)
  */
-class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Template extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      *
@@ -186,7 +180,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
     /**
      * @param int $id
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setId($id)
     {
@@ -197,7 +191,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $type
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setType($type)
     {
@@ -208,7 +202,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $name
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setName($name)
     {
@@ -219,7 +213,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $subject
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setSubject($subject)
     {
@@ -230,7 +224,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $message
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setMessage($message)
     {
@@ -241,7 +235,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $attachments
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setAttachments($attachments)
     {
@@ -252,7 +246,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $fromName
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setFromName($fromName)
     {
@@ -263,7 +257,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $fromEmail
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setFromEmail($fromEmail)
     {
@@ -274,7 +268,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $disabled
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setDisabled($disabled)
     {
@@ -285,7 +279,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $custom
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setCustom($custom)
     {
@@ -296,7 +290,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $language
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setLanguage($language)
     {
@@ -307,7 +301,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $copyTo
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setCopyTo($copyTo)
     {
@@ -318,7 +312,7 @@ class Template extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      *
      * @param string $plainText
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\admins\Template
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\admins\Template
      */
     public function setPlainText($plainText)
     {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client;
 
 use GuzzleHttp\Exception\GuzzleException;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Client\Debug;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Client\Debug;
 
 /**
  * Class Client

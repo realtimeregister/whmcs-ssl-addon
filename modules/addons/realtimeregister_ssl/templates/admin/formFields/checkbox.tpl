@@ -1,5 +1,5 @@
 {if $enableLabel}
-    <label {if $id} for="{$id}" {elseif $addIDs}for="{$addIDs}_{$name}"{/if} class="col-sm-{$labelcolWidth} control-label">{$MGLANG->T('label')}</label>
+    <label {if $id} for="{$id}" {elseif $addIDs}for="{$addIDs}_{$name}"{/if} class="col-sm-{$labelcolWidth} control-label">{$ADDONLANG->T('label')}</label>
 {/if}
 <div class="col-sm-{$colWidth}" {if $id} id="{$id}" {elseif $addIDs}id="{$addIDs}_{$name}"{/if}>
     {foreach from=$options item=option key=opValue}
@@ -11,7 +11,7 @@
         {if !$inline}</div>{/if}
     {/foreach}
     {if $enableDescription }
-      <span class="help-block">{$MGLANG->T('description')}</span>
+      <span class="help-block">{$ADDONLANG->T('description')}</span>
     {/if}
     <span class="help-block error-block"{if !$error}style="display:none;"{/if}>{$error}</span>
 </div>

@@ -17,7 +17,7 @@ var JSONParser = {
             this.requestCounter--;
             if(this.requestCounter == 0)
             {
-                jQuery('#MGLoader').loader('hide');
+                jQuery('#AddonLoader').loader('hide');
             }
             
             var start = json.indexOf(this.startString);            
@@ -27,7 +27,7 @@ var JSONParser = {
                 return jQuery.parseJSON(json);
             }catch(e)
             {
-                jQuery('#MGAlerts').alerts('error',"Somethings Goes Wrong, check logs, contact admin");
+                jQuery('#AddonAlerts').alerts('error',"Somethings Goes Wrong, check logs, contact admin");
                 jQuery('.modal.in').modal('hide');
                 return false;
             }
@@ -41,19 +41,19 @@ var JSONParser = {
         }
         
         if(typeof data === "object"){
-            data['mg-action'] = action;
+            data['addon-action'] = action;
             if(this.currentPage){
-                data['mg-page']    = this.currentPage;
+                data['addon-page']    = this.currentPage;
             }
         }else if(typeof data ===  "string"){
-            data += "&mg-action="+action;
+            data += "&addon-action="+action;
             if(this.currentPage)
-              data +="&mg-page=" +this.currentPage;
+              data +="&addon-page=" +this.currentPage;
         }
         
         if(loader === undefined)
         {
-            jQuery('#MGLoader').loader();
+            jQuery('#AddonLoader').loader();
         }else if(loader!="off"){
             jQuery(loader).loader();  
       }
@@ -69,12 +69,12 @@ var JSONParser = {
                     {
                         if(parsed.success)
                         {
-                            jQuery('#MGAlerts').alerts('success',parsed.success);
+                            jQuery('#AddonAlerts').alerts('success',parsed.success);
                         }
 
                         if(parsed.error)
                         {
-                            jQuery('#MGAlerts').alerts('error',parsed.error);
+                            jQuery('#AddonAlerts').alerts('error',parsed.error);
                             jQuery('.modal.in').modal('hide');
                         }
                         
@@ -85,14 +85,14 @@ var JSONParser = {
                     }
                     else
                     {
-                        jQuery('#MGAlerts').alerts('error',"Somethings Goes Wrong, check logs, contact admin");
+                        jQuery('#AddonAlerts').alerts('error',"Somethings Goes Wrong, check logs, contact admin");
                         jQuery('.modal.in').modal('hide');
                     }
                 }).fail(function(response) {
                     if(response.responseText)
                     {
-                        jQuery('#MGAlerts').alerts('error',response.responseText);
-                        jQuery('#MGLoader').loader('hide');
+                        jQuery('#AddonAlerts').alerts('error',response.responseText);
+                        jQuery('#AddonLoader').loader('hide');
                     }
                 });
         }
@@ -200,7 +200,7 @@ jQuery.fn.loader = function(action)
     }
 }
 
-jQuery.fn.MGGetForms = function(action)
+jQuery.fn.AddonGetForms = function(action)
 {
     var that = this;
     var data = {};
@@ -261,7 +261,7 @@ jQuery.fn.MGGetForms = function(action)
     return data;
 }
 
-jQuery.fn.MGModalActions = function(){    
+jQuery.fn.AddonModalActions = function(){    
                 var that = this;
                 var rowUpdateFunction;
 
@@ -418,7 +418,7 @@ jQuery.fn.MGModalActions = function(){
 
                                 if(data.error)
                                 {
-                                    jQuery('#MGAlerts').alerts('success',data.error);
+                                    jQuery('#AddonAlerts').alerts('success',data.error);
                                     jQuery('#'+modal).find('*[data-modal-action]').attr('disabled','disabled');
                                 }
                                 else
@@ -583,7 +583,7 @@ jQuery.fn.MGModalActions = function(){
 
                     var target = jQuery(this).attr('data-modal-target');
 
-                    var data = jQuery(this).closest('.modal').MGGetForms();
+                    var data = jQuery(this).closest('.modal').AddonGetForms();
                     
                     that.modalAction(action,target,data);
                 });

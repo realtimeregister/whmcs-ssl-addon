@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
 
 class Manage
 {
@@ -100,7 +100,7 @@ class Manage
      */
     private static function makeInstance($panel, $options)
     {
-        $api = 'MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform\\' . ucfirst($panel['platform']);
+        $api = 'AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform\\' . ucfirst($panel['platform']);
 
         if (!class_exists($api)) {
             throw new DNSException(sprintf("Platform `%s` not supported.", $panel['platform']));

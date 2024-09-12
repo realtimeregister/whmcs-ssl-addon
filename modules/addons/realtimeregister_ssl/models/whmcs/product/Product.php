@@ -1,17 +1,16 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\product;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\models\Orm;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
-use MGModule\RealtimeRegisterSsl\models\whmcs\customFields\Repository;
-use MGModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\customFields\Repository;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
 
 /**
  * Description of product
  *
  * @Table(name=tblproducts,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Product extends Orm
 {
@@ -89,7 +88,6 @@ class Product extends Orm
      *
      * @param int $id
      * @param array $params
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function __construct($id = null, $params = [])
     {
@@ -101,7 +99,6 @@ class Product extends Orm
      * Load Product
      *
      * @param array $params
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function load($params = [])
     {
@@ -161,14 +158,13 @@ class Product extends Orm
             ]
         )->fetchColumn();
 
-        return new \MGModule\RealtimeRegisterSsl\models\whmcs\servers\Server($server);
+        return new \AddonModule\RealtimeRegisterSsl\models\whmcs\servers\Server($server);
     }
 
     /**
      * Get Server
      *
      * @return server
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function getServer()
     {
@@ -183,8 +179,7 @@ class Product extends Orm
      * Load Configuration
      *
      * @param array $params
-     * @return \MGModule\RealtimeRegisterSsl\models\product\Configuration
-     * @author Michal Czech <michael@modulesgarden.com>
+     * @return \AddonModule\RealtimeRegisterSsl\models\product\Configuration
      */
     public function loadConfiguration($params = [])
     {
@@ -195,7 +190,6 @@ class Product extends Orm
      * Get Configuration
      *
      * @return configuration
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function configuration()
     {
@@ -210,7 +204,6 @@ class Product extends Orm
      * Get Custom Fields
      *
      * @return Repository
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function customFields()
     {

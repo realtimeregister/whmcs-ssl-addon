@@ -1,11 +1,11 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eHelpers;
+namespace AddonModule\RealtimeRegisterSsl\eHelpers;
 
 use DateTime;
-use MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\models\whmcs\service\Repository;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 class SSLSummary
@@ -18,7 +18,7 @@ class SSLSummary
     public function __construct($clientID)
     {
         $this->clientID = $clientID;
-        $this->sslRepo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $this->sslRepo = new \AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $this->loadClientsSSLServices();
     }
 
@@ -44,7 +44,7 @@ class SSLSummary
         foreach ($this->services as $service) {
             $invoiceID = $service->order()->invoiceid;
             try {
-                $invoice = new \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice($invoiceID);
+                $invoice = new \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\Invoice($invoiceID);
             } catch (\Exception $ex) {
                 continue;
             }
@@ -85,7 +85,7 @@ class SSLSummary
         $services = [];
 
         $daysBefore = 30;
-        $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+        $apiConf = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
         $expiresSoonSelectedDays = $apiConf->summary_expires_soon_days;
         if ($expiresSoonSelectedDays != null && trim($expiresSoonSelectedDays) != '') {
             $daysBefore = $expiresSoonSelectedDays;

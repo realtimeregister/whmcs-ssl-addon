@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * SSLCENTERWHMCS product developed. (2015-11-19)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -18,15 +13,14 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\currencies;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\currencies;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\models\Orm;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 
 /**
  * Description of Currency
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tblcurrencies,preventUpdate,prefixed=false)
  */
 class Currency extends Orm

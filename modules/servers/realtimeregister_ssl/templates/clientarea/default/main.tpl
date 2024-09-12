@@ -1,6 +1,6 @@
-<div class="mg-module">
-    <div id="mg-wrapper" class="module-container">
-        <div class="row" id="MGAlerts">
+<div class="addon-module">
+    <div id="addon-wrapper" class="module-container">
+        <div class="row" id="AddonAlerts">
             {if $error}
                 <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
@@ -27,14 +27,14 @@
                 </div>
             </div>
         </div>
-        <div id="mg-container">
+        <div id="addon-containerainer">
             {$content|unescape: "html" nofilter}
         </div>
         {literal}
             <script type="text/javascript">
                 $(window).on('resize', function () {
                     var height = $('.module-sidebar').height();
-                    $('#mg-wrapper').css('min-height', height);
+                    $('#addon-wrapper').css('min-height', height);
                 });
             </script>
         {/literal}

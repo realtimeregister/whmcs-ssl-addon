@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
 class DcvMethod
 {

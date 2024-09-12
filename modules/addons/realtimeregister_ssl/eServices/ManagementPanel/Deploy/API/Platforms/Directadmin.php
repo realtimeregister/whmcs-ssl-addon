@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\API\Platforms;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\API\Platforms;
 
 use GuzzleHttp\Exception\GuzzleException;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DeployException;
 
 class Directadmin extends Client implements PlatformInterface
 {

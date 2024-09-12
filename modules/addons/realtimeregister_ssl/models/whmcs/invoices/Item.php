@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * SSLCENTERWHMCS product developed. (2015-12-09)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -18,16 +13,15 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\invoices;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\invoices;
 
 /**
  * Description of Item
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tblinvoiceitems,preventUpdate,prefixed=false)
  *
  */
-class Item extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Item extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * @Column()

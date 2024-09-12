@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * SSLCENTERWHMCS product developed. (2015-11-23)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -18,15 +13,14 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\domains;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\domains;
 
 /**
  * Description of DomainPrice
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tbldomainpricing,preventUpdate,prefixed=false)
  */
-class DomainTld extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class DomainTld extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * @Column()
@@ -109,7 +103,7 @@ class DomainTld extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
     /**
      * Get Pricing
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\Price[]
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\Price[]
      */
     public function getDomainRegisterPricing()
     {
@@ -117,7 +111,7 @@ class DomainTld extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
             return $this->_domainRegisterPricing;
         }
 
-        $repositor = new \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\Repository();
+        $repositor = new \AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\Repository();
         $repositor->onlyDomainRegister();
         $repositor->withRelation($this->id);
         $repositor->withDomainCycle();
@@ -132,7 +126,7 @@ class DomainTld extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
     public function getPrice($currencyId, $billingCycle)
     {
-        $repositor = new \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\Repository();
+        $repositor = new \AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\Repository();
         $repositor->onlyDomainRegister();
         $repositor->withRelation($this->id);
         $repositor->withDomainCycle();

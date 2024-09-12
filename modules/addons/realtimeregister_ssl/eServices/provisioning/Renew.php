@@ -1,22 +1,22 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
-use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use Exception;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use SandwaveIo\RealtimeRegister\Domain\DomainControlValidation;
 use WHMCS\Database\Capsule;
-use Exception;
 
 class Renew
 {
@@ -24,7 +24,7 @@ class Renew
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @var \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     private $sslService;
 
@@ -94,9 +94,9 @@ class Renew
 
     private function createRenewTable()
     {
-        $checkTable = Capsule::schema()->hasTable('mgfw_REALTIMEREGISTERSSL_renew');
+        $checkTable = Capsule::schema()->hasTable('REALTIMEREGISTERSSL_renew');
         if ($checkTable === false) {
-            Capsule::schema()->create('mgfw_REALTIMEREGISTERSSL_renew', function ($table) {
+            Capsule::schema()->create('REALTIMEREGISTERSSL_renew', function ($table) {
                 $table->increments('id');
                 $table->integer('serviceid');
                 $table->dateTime('date');
@@ -108,7 +108,7 @@ class Renew
     {
         $this->createRenewTable();
 
-        $renew = Capsule::table('mgfw_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->where(
+        $renew = Capsule::table('REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->where(
             'date',
             'like',
             date('Y-m-d H') . '%'
@@ -123,14 +123,14 @@ class Renew
     {
         $this->createRenewTable();
 
-        $renew = Capsule::table('mgfw_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->first();
+        $renew = Capsule::table('REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->first();
 
         if (isset($renew->id) && !empty($renew->id)) {
-            Capsule::table('mgfw_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->update([
+            Capsule::table('REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->update([
                 'date' => date('Y-m-d H:i:s')
             ]);
         } else {
-            Capsule::table('mgfw_REALTIMEREGISTERSSL_renew')->insert([
+            Capsule::table('REALTIMEREGISTERSSL_renew')->insert([
                 'serviceid' => $serviceid,
                 'date' => date('Y-m-d H:i:s')
             ]);

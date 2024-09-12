@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eProviders;
+namespace AddonModule\RealtimeRegisterSsl\eProviders;
 
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -47,7 +47,7 @@ class ApiProvider
      */
     private function initApi(string $className): void
     {
-        $apiKeyRecord = Capsule::table('mgfw_REALTIMEREGISTERSSL_api_configuration')->first();
+        $apiKeyRecord = Capsule::table('REALTIMEREGISTERSSL_api_configuration')->first();
 
         $apiUrl = $this->apiUrl;
         if ($apiKeyRecord->api_test === 1) {

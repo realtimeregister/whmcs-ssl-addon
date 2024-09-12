@@ -31,7 +31,7 @@
                                             <span aria-hidden="true">&times;</span>\n\
                                             <span class="sr-only">Close</span>\n\
                                         </button>\n\
-                                        <h4 class="pull-left modal-title">'+'{$MGLANG->T('generateCsrModalTitle')}'+'</h4>\n\
+                                        <h4 class="pull-left modal-title">'+'{$ADDONLANG->T('generateCsrModalTitle')}'+'</h4>\n\
                                     </div>\n\
                                     <form>\n\
                                     <div class="modal-body panel-body" id="modalgenerateCsrBody">\n\
@@ -42,44 +42,44 @@
                                             <div class="col-md-1"></div>\n\
                                             <div class="col-md-10" style="width:80%;">\n\
                                                   <div class="form-group">\n\
-                                                    <label class="control-label" for="C">'+'{$MGLANG->T('countryLabel')}'+'</label>\n\
+                                                    <label class="control-label" for="C">'+'{$ADDONLANG->T('countryLabel')}'+'</label>\n\
                                                     <select class="form-control  generateCsrInput" id="countryName" name="C" required="">\n\
 \n\                                                 ' + countryOptions + '\n\
 \n\                                                 </select>\n\
                                                   </div>\n\
                                                   <div class="form-group">\n\
-                                                    <label class="control-label" for="ST">'+'{$MGLANG->T('stateLabel')}'+'</label>\n\
-                                                    <input class="form-control generateCsrInput"  id="stateOrProvinceName" placeholder="'+'{$MGLANG->T('statePlaceholder')}'+'" value="{$csrData['state']}" name="ST" required="" type="text">\n\
+                                                    <label class="control-label" for="ST">'+'{$ADDONLANG->T('stateLabel')}'+'</label>\n\
+                                                    <input class="form-control generateCsrInput"  id="stateOrProvinceName" placeholder="'+'{$ADDONLANG->T('statePlaceholder')}'+'" value="{$csrData['state']}" name="ST" required="" type="text">\n\
                                                   </div>\n\
                                                   <div class="form-group">\n\
-                                                    <label class="control-label" for="L">'+'{$MGLANG->T('localityLabel')}'+'</label>\n\
-                                                    <input class="form-control generateCsrInput" id="localityName" placeholder="'+'{$MGLANG->T('localityPlaceholder')}'+'" name="L" value="{$csrData['locality']}" required="" type="text">\n\
+                                                    <label class="control-label" for="L">'+'{$ADDONLANG->T('localityLabel')}'+'</label>\n\
+                                                    <input class="form-control generateCsrInput" id="localityName" placeholder="'+'{$ADDONLANG->T('localityPlaceholder')}'+'" name="L" value="{$csrData['locality']}" required="" type="text">\n\
                                                   </div>\n\
                                                   <div class="form-group">\n\
-                                                    <label class="control-label" for="O">'+'{$MGLANG->T('organizationLabel')}'+'</label>\n\
-                                                    <input class="form-control generateCsrInput" id="organizationName" placeholder="'+'{$MGLANG->T('organizationPlaceholder')}'+'" name="O" required="" value="{$csrData['organization']}" type="text">\n\
+                                                    <label class="control-label" for="O">'+'{$ADDONLANG->T('organizationLabel')}'+'</label>\n\
+                                                    <input class="form-control generateCsrInput" id="organizationName" placeholder="'+'{$ADDONLANG->T('organizationPlaceholder')}'+'" name="O" required="" value="{$csrData['organization']}" type="text">\n\
                                                   </div>\n\
                                                   <div class="form-group">\n\
-                                                    <label class="control-label" for="OU">'+'{$MGLANG->T('organizationanUnitLabel')}'+'</label>\n\
-                                                    <input class="form-control generateCsrInput" id="organizationalUnitName" placeholder="'+'{$MGLANG->T('organizationanUnitPlaceholder')}'+'" name="OU" value="{$csrData['org_unit']}" type="text">\n\
+                                                    <label class="control-label" for="OU">'+'{$ADDONLANG->T('organizationanUnitLabel')}'+'</label>\n\
+                                                    <input class="form-control generateCsrInput" id="organizationalUnitName" placeholder="'+'{$ADDONLANG->T('organizationanUnitPlaceholder')}'+'" name="OU" value="{$csrData['org_unit']}" type="text">\n\
                                                   </div>\n\
                                                   <div class="form-group">\n\
-                                                    <label class="control-label" for="CN">'+'{$MGLANG->T('commonNameLabel')}'+'</label>\n\
-                                                    <input class="form-control generateCsrInput" autocomplete="off" id="commonName" placeholder="'+'{if $vars.wildcard}{$MGLANG->T('commonNamePlaceholderWildCard')}{else}{$MGLANG->T('commonNamePlaceholder')}{/if}'+'" name="CN" value="{$csrData['common_name']}" required="" type="text">\n\
+                                                    <label class="control-label" for="CN">'+'{$ADDONLANG->T('commonNameLabel')}'+'</label>\n\
+                                                    <input class="form-control generateCsrInput" autocomplete="off" id="commonName" placeholder="'+'{if $vars.wildcard}{$ADDONLANG->T('commonNamePlaceholderWildCard')}{else}{$ADDONLANG->T('commonNamePlaceholder')}{/if}'+'" name="CN" value="{$csrData['common_name']}" required="" type="text">\n\
                                                   </div>\n\
                                                   <div class="form-group">\n\
-                                                    <label class="control-label" for="EA">'+'{$MGLANG->T('emailAddressLabel')}'+'</label>\n\
-                                                    <input class="form-control generateCsrInput" id="emailAddress" placeholder="'+'{$MGLANG->T('emailAddressPlaceholder')}'+'" name="EA" value="{$csrData['email']}" required="" type="text">\n\
+                                                    <label class="control-label" for="EA">'+'{$ADDONLANG->T('emailAddressLabel')}'+'</label>\n\
+                                                    <input class="form-control generateCsrInput" id="emailAddress" placeholder="'+'{$ADDONLANG->T('emailAddressPlaceholder')}'+'" name="EA" value="{$csrData['email']}" required="" type="text">\n\
                                                   </div>\n\
                                               </div>\n\
                                             <div class="col-md-1"></div>\n\
                                     </div>\n\
                                     <div class="modal-footer panel-footer">\n\
                                         <button type="button" id="modalgenerateCsrSubmit" class="btn btn-primary">\n\
-                                            '+'{$MGLANG->T('Submit')}'+'\n\
+                                            '+'{$ADDONLANG->T('Submit')}'+'\n\
                                         </button>\n\
                                         <button type="button" class="btn btn-default" data-dismiss="modal">\n\
-                                            '+'{$MGLANG->T('Close')}'+'\n\
+                                            '+'{$ADDONLANG->T('Close')}'+'\n\
                                         </button>\n\
                                     </div>\n\
                                     </form>\n\
@@ -101,7 +101,7 @@
             }
         }
         var cert = $.urlParam('cert');
-        $('textarea[name="csr"]').after('<div align="middle"><button type="button" id="generateCsrBtn" class="btn btn-default" style="margin:5px">{$MGLANG->T('Generate CSR')}</button></div>');
+        $('textarea[name="csr"]').after('<div align="middle"><button type="button" id="generateCsrBtn" class="btn btn-default" style="margin:5px">{$ADDONLANG->T('Generate CSR')}</button></div>');
         var token = $('input[name="token"]').val();
         var serviceUrl = 'configuressl.php?cert=' + cert + '&action=generateCsr&json=1&token=' + token,
         generateCsrBtn = $('#generateCsrBtn'),

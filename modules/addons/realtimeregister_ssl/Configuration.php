@@ -1,23 +1,18 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl;
 
-use MGModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractConfiguration;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
-use MGModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
-use MGModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPriceRepo;
-use MGModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractConfiguration;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
+use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPriceRepo;
+use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
 
-/**
- * Module Configuration
- *
- * @author Michal Czech <michael@modulesgarden.com>
- * @SuppressWarnings("unused")
- */
+
 class Configuration extends AbstractConfiguration
 {
     /**
@@ -62,17 +57,13 @@ class Configuration extends AbstractConfiguration
      */
     public $version = '1.0';
 
-    /**
-     * Module author
-     * @var string
-     */
-    public $author = 'Realtime Register';
+
 
     /**
      * Table prefix. This prefix is used in database models. You have to change it! 
      * @var type 
      */
-    public $tablePrefix   = 'mgfw_';
+    public $tablePrefix   = '';
     public $modelRegister = [];
 
     /**
@@ -138,8 +129,7 @@ class Configuration extends AbstractConfiguration
 
     /**
      * Run When Module Install
-     * 
-     * @author Michal Czech <michael@modulesgarden.com>
+     *
      * @return array
      */
     function activate()
@@ -194,5 +184,10 @@ class Configuration extends AbstractConfiguration
         (new UserDiscountRepo())->updateUserDiscountTable();
         (new LogsRepo())->updateLogsTable();
         (new OrdersRepo())->updateOrdersTable();
+    }
+
+    public function getAuthor()
+    {
+        return 'Realtime Register';
     }
 }

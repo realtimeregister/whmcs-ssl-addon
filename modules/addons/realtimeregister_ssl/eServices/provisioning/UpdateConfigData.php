@@ -1,12 +1,12 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 use WHMCS\Database\Capsule;
 
@@ -55,7 +55,7 @@ class UpdateConfigData
             if (
                 !isset($this->sslService->configdata->product_brand) || empty($this->sslService->configdata->product_brand)
             ) {
-                $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+                $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
 
                 $brandName = null;
                 if ($checkTable !== false) {
@@ -64,7 +64,7 @@ class UpdateConfigData
                     } else {
                         $id = KeyToIdMapping::getIdByKey($order['command']['product']);
                     }
-                    $productData = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where([
+                    $productData = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->where([
                             'pid' => $id
                         ]
                     )->first();

@@ -1,4 +1,4 @@
-<div class="mg-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true">
+<div class="addon-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=all" rel="stylesheet" type="text/css"/> 
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/font-awesome.css" />
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/simple-line-icons.css" rel="stylesheet">
@@ -11,8 +11,8 @@
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/onoffswitch.css" />
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/jquery-ui.min.css" />
 
-    <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/mg-style.css" rel="stylesheet">    
-    <script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
+    <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/addon-style.css" rel="stylesheet">
+    <script type="text/javascript" src="{$assetsURL}/js/addonLibs.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/bootstrap.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/dataTables.bootstrap.js"></script>
@@ -36,9 +36,8 @@
                 var navbar_in_two_lines    = false;                
                 var navbar_width_hide_names    = 0;
                 var resized_logo    = false;
-                var mg_logo         = jQuery('.logo-default').attr( "src" );
-                //var mg_logo_cog     = mg_logo.replace("mg-logo.png","mg-logo-cog.png");
-                
+                var addon_logo         = jQuery('.logo-default').attr( "src" );
+
                 function NavigationSet() {
                     var navbar_height = jQuery('.page-header').height();
                     
@@ -52,12 +51,8 @@
                     }
                     
                     //check if short logo should be shown
-                    if(jQuery('.line-separator').width()<=(jQuery('.nav-menu').width()+jQuery('.modulename-logo').width())&&!resized_logo && !navbar_width_hide_names ){
-                        jQuery('.logo-default').attr( "src", mg_logo_cog );
-                        resized_logo=true;
-                    //switch back logo to its full form
-                    }else if(jQuery('.line-separator').width()>(jQuery('.nav-menu').width()+159)&&resized_logo && !navbar_width_hide_names  ){
-                        jQuery('.logo-default').attr( "src", mg_logo ) ;
+                    if(jQuery('.line-separator').width()>(jQuery('.nav-menu').width()+159)&&resized_logo && !navbar_width_hide_names  ){
+                        jQuery('.logo-default').attr( "src", addon_logo ) ;
                         resized_logo=false;
                     }  
                     
@@ -75,10 +70,6 @@
                   $(document).ready(NavigationSet);
                   $(window).resize(NavigationSet);
             });
-
-
-
-
         {/literal}
     </script>
 
@@ -101,7 +92,7 @@
                                             {if $category.label}
                                                 {$subpage.label} 
                                             {else}
-                                                <span class="mg-pages-label">{$MGLANG->T('pagesLabels','label' , $catName)}</span>
+                                                <span class="addon-pages-label">{$ADDONLANG->T('pagesLabels','label' , $catName)}</span>
                                             {/if}
                                             <i class="fa fa-angle-down dropdown-angle"></i>
                                             </a>
@@ -111,7 +102,7 @@
                                             {if $category.label}
                                                 {$subpage.label}
                                             {else}
-                                                <span class="mg-pages-label">{$MGLANG->T('pagesLabels','label', $catName)}</span>
+                                                <span class="addon-pages-label">{$ADDONLANG->T('pagesLabels','label', $catName)}</span>
                                             {/if}
                                             <i class="fa fa-angle-down dropdown-angle"></i>
                                             </a>
@@ -125,7 +116,7 @@
                                                         {if $subCategory.label}
                                                             {$subCategory.label}
                                                         {else}
-                                                            {$MGLANG->T('pagesLabels',$catName,$subCatName)}
+                                                            {$ADDONLANG->T('pagesLabels',$catName,$subCatName)}
                                                         {/if}
                                                         </a>
                                                     {else}
@@ -134,7 +125,7 @@
                                                         {if $subCategory.label}
                                                             {$subCategory.label}
                                                         {else}
-                                                            {$MGLANG->T('pagesLabels',$catName,$subCatName)}
+                                                            {$ADDONLANG->T('pagesLabels',$catName,$subCatName)}
                                                         {/if}
                                                     </a>
                                                     {/if}
@@ -149,7 +140,7 @@
                                             {if $category.label}
                                                 <span>{$subpage.label}</span>
                                             {else}
-                                                <span>{$MGLANG->T('pagesLabels', 'label', $catName)}</span>
+                                                <span>{$ADDONLANG->T('pagesLabels', 'label', $catName)}</span>
                                             {/if}
                                         </a>
                                     </li>
@@ -169,7 +160,7 @@
         </div>
         <div class="clearfix"></div>              
         <div class="page-container">
-            <div class="row-fluid" id="MGAlerts">
+            <div class="row-fluid" id="AddonAlerts">
                 {if $error}
                     <div class="note note-danger">
                         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
@@ -196,18 +187,18 @@
                     </div>
                 </div>
             </div>
-            <div class="page-content" id="MGPage{$currentPageName}">
+            <div class="page-content" id="AddonPage{$currentPageName}">
                 <div class="container-fluid">
                     <ul class="breadcrumb">
                             <li>
                                 <a href="{$mainURL}"><i class="fa fa-home"></i></a>
                             </li>
                             {if $breadcrumbs[0]}
-                                <li><a href="{$breadcrumbs[0].url}">{$MGLANG->T('pagesLabels','label', $breadcrumbs[0].name)}</a></li>
+                                <li><a href="{$breadcrumbs[0].url}">{$ADDONLANG->T('pagesLabels','label', $breadcrumbs[0].name)}</a></li>
                             {/if}
                             {if $breadcrumbs[1]}
                             
-                                <li><a href="{$breadcrumbs[1].url}">{$MGLANG->T('pagesLabels',$breadcrumbs[0].name,$breadcrumbs[1].name)}</a></li> 
+                                <li><a href="{$breadcrumbs[1].url}">{$ADDONLANG->T('pagesLabels',$breadcrumbs[0].name,$breadcrumbs[1].name)}</a></li>
                             {/if}
                     </ul>
                     
@@ -216,7 +207,7 @@
             </div>
         </div>
     </div>
-    <div id="MGLoader" style="display:none;" >
+    <div id="AddonLoader" style="display:none;" >
         <div>
             <img src="{$assetsURL}/img/ajax-loader.gif" alt="Loading ..." />
         </div>

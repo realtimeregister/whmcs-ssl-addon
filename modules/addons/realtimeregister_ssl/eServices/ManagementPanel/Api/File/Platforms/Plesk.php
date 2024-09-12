@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Platforms;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Platforms;
 
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Client;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Client;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 

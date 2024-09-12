@@ -1,13 +1,12 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\service\customFields;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service\customFields;
 
-use MGModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Description of repository
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Repository
 {
@@ -18,7 +17,6 @@ class Repository
      * Mozna by bylo dodac wersje z wczytywanie po samym productid
      *
      * @param type $accountID
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function __construct($serviceID, array $data = [])
     {
@@ -78,7 +76,7 @@ class Repository
                 H.id = :account_id
         ";
 
-        $result = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::query($query, [
+        $result = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::query($query, [
             'account_id' => $this->serviceID
         ]);
 
@@ -101,14 +99,13 @@ class Repository
     /**
      * Update Custom Fields
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function update()
     {
         $this->load();
 
         foreach ($this->_customFields as $field) {
-            \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::update(
+            \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::update(
                 'tblcustomfieldsvalues',
                 [
                     'value' => $field->value

@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eHelpers;
+namespace AddonModule\RealtimeRegisterSsl\eHelpers;
 
 use WHMCS\View\Formatter\Price;
 
@@ -8,7 +8,7 @@ class Whmcs
 {
     public static function savelogActivityRealtimeRegisterSsl($msg)
     {
-        $apiConf = (new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+        $apiConf = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
         if (isset($apiConf->save_activity_logs) && !empty($apiConf->save_activity_logs)) {
             logActivity($msg);
         }

@@ -1,16 +1,15 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\customFields;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\customFields;
 
-use MGModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Product Custom Fields depends on WHMCS
  *
  * @Table(name=tblcustomfields,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  */
-class CustomField extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class CustomField extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * @Column()
@@ -109,7 +108,6 @@ class CustomField extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
      * @param int $productID
      * @param int $id
      * @param array $data
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     function __construct($id = null, $parentType = null, $parentID = null, $data = [])
     {
@@ -124,14 +122,14 @@ class CustomField extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
                 'type' => $this->parentType
             ];
 
-            $data = MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
+            $data = AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::select(
                 self::$fieldDeclaration,
                 self::tableName(),
                 $conditions
             )->fetch();
 
             if (empty($data)) {
-                throw new main\mgLibs\exceptions\System('Unable to find custom field:' . http_build_query($conditions));
+                throw new main\addonLibs\exceptions\System('Unable to find custom field:' . http_build_query($conditions));
             }
         }
 
@@ -156,9 +154,8 @@ class CustomField extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     /**
      * Save Field
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
-    public function save()
+    public function save($data = [])
     {
         $data = [
             'type' => $this->parentType,
@@ -181,7 +178,7 @@ class CustomField extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
         }
 
         if ($this->id) {
-            main\mgLibs\MySQL\Query::update(
+            main\addonLibs\MySQL\Query::update(
                 self::tableName(),
                 $data,
                 [
@@ -189,7 +186,7 @@ class CustomField extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
                 ]
             );
         } else {
-            $this->id = main\mgLibs\MySQL\Query::insert(
+            $this->id = main\addonLibs\MySQL\Query::insert(
                 self::tableName(),
                 $data
             );

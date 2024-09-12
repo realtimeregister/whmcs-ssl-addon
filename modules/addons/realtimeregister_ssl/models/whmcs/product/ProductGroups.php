@@ -1,10 +1,5 @@
 <?php
 /* * ********************************************************************
- * DiscountCenter product developed. (2016-02-09)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -17,14 +12,13 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\product;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product;
 
 /**
  * Description of repository
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
-class ProductGroups extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class ProductGroups extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {

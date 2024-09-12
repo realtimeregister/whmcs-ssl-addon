@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Client;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Client;
 
 use GuzzleHttp\Exception\GuzzleException;
 

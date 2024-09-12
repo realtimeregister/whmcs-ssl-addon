@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 
 class AdminResendCertificate
 {

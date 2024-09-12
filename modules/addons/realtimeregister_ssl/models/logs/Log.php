@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\logs;
+namespace AddonModule\RealtimeRegisterSsl\models\logs;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm;
 
 /**
  * @Table(name=REALTIMEREGISTERSSL_logs,prefixed=true)

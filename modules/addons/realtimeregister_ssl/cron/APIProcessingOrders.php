@@ -7,7 +7,7 @@ define('ADDON_DIR', substr(dirname(__FILE__), 0, strpos(dirname(__FILE__), DS.'c
 require_once WHMCS_MAIN_DIR.DS.'init.php';
 
 require_once ADDON_DIR.DS.'Loader.php';
-$loader = new \MGModule\RealtimeRegisterSsl\Loader();
+$loader = new \AddonModule\RealtimeRegisterSsl\Loader();
 $input = [];
 $input['argv'] = $argv ? $argv : $_SERVER['argv']; 
-\MGModule\RealtimeRegisterSsl\Addon::cron($input, 'processingOrdersCheck');
+\AddonModule\RealtimeRegisterSsl\Addon::cron($input, 'processingOrdersCheck');

@@ -1,11 +1,10 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\customFields;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\customFields;
 
 /**
  * Product Custom Fields Colletion
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class Repository
 {
@@ -23,13 +22,12 @@ class Repository
      * Load Product Custom Fields
      *
      * @param int $productID
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function __construct($type, $relationID)
     {
         $this->type = $type;
         $this->relationID = $relationID;
-        $result = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
+        $result = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::select(
             customField::fieldDeclaration(),
             customField::tableName(),
             [
@@ -49,7 +47,6 @@ class Repository
      *
      * @param bool $onlyRequired
      * @return array
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function checkFields(array $configuration = [])
     {
@@ -80,7 +77,6 @@ class Repository
     /**
      * Generate Custom Fields Depends on declaration in Module Configuration
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function generateFromConfiguration(array $configuration = [])
     {

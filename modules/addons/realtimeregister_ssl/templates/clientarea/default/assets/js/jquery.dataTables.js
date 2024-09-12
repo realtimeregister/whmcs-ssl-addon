@@ -1688,7 +1688,7 @@
 					.removeClass( row.__rowc.join(' ') )
 					.addClass( data.DT_RowClass );
 			}
-	//MG changed
+	// changed
 			if ( data.DT_RowData ) {
                             for(var x in data.DT_RowData)
                             {

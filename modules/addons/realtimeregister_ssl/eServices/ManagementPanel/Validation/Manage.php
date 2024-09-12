@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Validation;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Validation;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Exceptions\SSLValidationException;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Exceptions\SSLValidationException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use SandwaveIo\RealtimeRegister\Domain\Certificate;
 
 class Manage
@@ -27,7 +27,7 @@ class Manage
         $error = null;
         $info = $certificate->info();
 
-        $panel = new \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage($domain);
+        $panel = new \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage($domain);
 
         try {
             $panelData = $panel->getPanelData();
@@ -76,7 +76,7 @@ class Manage
             throw new SSLValidationException("Records Already Created", 11);
         }
 
-        $panel = new \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage($domain);
+        $panel = new \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage($domain);
 
         if ($status['dvc'] == "DNS") {
             return DnsControl::generateRecord($certificate, $panel);
@@ -156,7 +156,7 @@ class Manage
 
     /**
      * @param Certificate $certificate
-     * @param \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage $panel
+     * @param \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage $panel
      * @return array
      * @throws \Exception
      */
@@ -209,7 +209,7 @@ class Manage
      */
     private static function getCertificate($domain)
     {
-        $manage = new \MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage(['domain' => $domain]);
+        $manage = new \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage(['domain' => $domain]);
 
         /** @var Certificate $certificate */
         return $manage->service('certificate');

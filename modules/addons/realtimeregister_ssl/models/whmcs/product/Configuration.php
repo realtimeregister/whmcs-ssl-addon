@@ -1,15 +1,14 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\product;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\MainInstance;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\MainInstance;
 
 /**
  * Description of configuration
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Configuration

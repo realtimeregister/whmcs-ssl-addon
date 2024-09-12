@@ -1,13 +1,12 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\testGroup\simpleItem;
+namespace AddonModule\RealtimeRegisterSsl\models\testGroup\simpleItem;
 
 /**
  * Description of repository
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {

@@ -1,16 +1,16 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
+use AddonModule\RealtimeRegisterSsl\eHelpers\Fill;
+use AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\RealtimeRegisterSsl\eHelpers\Fill;
-use MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 
 class Products
 {
-    public const MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND = 'mgfw_REALTIMEREGISTERSSL_product_brand';
+    public const REALTIMEREGISTERSSL_PRODUCT_BRAND = 'REALTIMEREGISTERSSL_product_brand';
 
     /**
      *
@@ -65,9 +65,9 @@ class Products
             return $this->products;
         }
 
-        $checkTable = Capsule::schema()->hasTable(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(self::REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable === false) {
-            Capsule::schema()->create(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, function ($table) {
+            Capsule::schema()->create(self::REALTIMEREGISTERSSL_PRODUCT_BRAND, function ($table) {
                 $table->increments('id');
                 $table->integer('pid');
                 $table->string('pid_identifier');
@@ -75,9 +75,9 @@ class Products
                 $table->text('data');
             });
         }
-        $checkTable = Capsule::schema()->hasTable(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(self::REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            $products = Capsule::table(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->get();
+            $products = Capsule::table(self::REALTIMEREGISTERSSL_PRODUCT_BRAND)->get();
             if (isset($products[0]->id)) {
                 $this->products = [];
                 foreach ($products as $i => $apiProduct) {
@@ -91,7 +91,7 @@ class Products
             }
         }
 
-        Capsule::table(self::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
+        Capsule::table(self::REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
         $this->products = [];
 
         $i = 0;
@@ -101,7 +101,7 @@ class Products
         while ($apiProducts = $certificatedApi->listProducts(10, $i)) {
             /** @var \SandwaveIo\RealtimeRegister\Domain\Product $apiProduct */
             foreach ($apiProducts->toArray() as $apiProduct) {
-                Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
+                Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
                     'pid' => KeyToIdMapping::getIdByKey($apiProduct['product']),
                     'pid_identifier' => $apiProduct['product'],
                     'brand' => $apiProduct['brand'],

@@ -1,14 +1,14 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl;
 
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 
 class ProductPrice
 {
     public function saveToDatabase()
     {
-        $productPriceRepo = new \MGModule\RealtimeRegisterSsl\models\productPrice\Repository();
+        $productPriceRepo = new \AddonModule\RealtimeRegisterSsl\models\productPrice\Repository();
 
         $period = $this->getPeriodFromName($this->product);
 
@@ -17,7 +17,7 @@ class ProductPrice
             ->onlyAction($this->action);
 
         if (!$productPriceRepo->count()) {
-            $productPrice = new \MGModule\RealtimeRegisterSsl\models\productPrice\ProductPrice();
+            $productPrice = new \AddonModule\RealtimeRegisterSsl\models\productPrice\ProductPrice();
 
             $productPrice->setApiProductID(KeyToIdMapping::getIdByKey($this->getCleanProductName($this->product)));
             $productPrice->setPeriod($period);
@@ -28,7 +28,7 @@ class ProductPrice
         } else {
             $priceRow = $productPriceRepo->fetchOne();
 
-            $productPrice = new \MGModule\RealtimeRegisterSsl\models\productPrice\ProductPrice($priceRow->getID());
+            $productPrice = new \AddonModule\RealtimeRegisterSsl\models\productPrice\ProductPrice($priceRow->getID());
             $productPrice->setPrice($this->price);
             $productPrice->setCurrency($this->currency);
         }
@@ -37,7 +37,7 @@ class ProductPrice
     
     public function loadSavedPriceData($productID = null)
     {
-        $productPriceRepo = new \MGModule\RealtimeRegisterSsl\models\productPrice\Repository();
+        $productPriceRepo = new \AddonModule\RealtimeRegisterSsl\models\productPrice\Repository();
        
         if ($productID !== null) {
             $productPriceRepo->onlyApiProductID($productID);

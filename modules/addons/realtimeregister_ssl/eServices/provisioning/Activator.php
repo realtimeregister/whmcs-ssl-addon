@@ -1,9 +1,9 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eServices\FlashService;
+use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use WHMCS\Service\Service;
 
 class Activator

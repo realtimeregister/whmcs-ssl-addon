@@ -1,24 +1,24 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
+namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
+use AddonModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\CheckboxField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\Creator;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\LegendField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\SelectField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextareaField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Migration;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Products;
 use Exception;
-use MGModule\RealtimeRegisterSsl as main;
-use MGModule\RealtimeRegisterSsl\eHelpers\Migration;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\CheckboxField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\Creator;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\LegendField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\SelectField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\TextareaField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
-use MGModule\RealtimeRegisterSsl\models\whmcs\product\Products;
 use SandwaveIo\RealtimeRegister\Api\CustomersApi;
 use SandwaveIo\RealtimeRegister\Domain\PriceCollection;
 use WHMCS\Database\Capsule;
@@ -228,7 +228,7 @@ class ApiConfiguration extends AbstractController
         $field->colWidth = 5;
         $field->continue = false;
         $field->enableDescription = true;
-        $field->options = Countries::getInstance()->getCountriesForMgAddonDropdown();
+        $field->options = Countries::getInstance()->getCountriesForAddonDropdown();
         $field->error = $this->getFieldError('default_csr_generator_country');
         $form->addField($field);
 
@@ -411,7 +411,7 @@ class ApiConfiguration extends AbstractController
         $field->required = true;
         $field->value = $input['tech_country'];
         $field->translateOptions = false;
-        $field->options = Countries::getInstance()->getCountriesForMgAddonDropdown();
+        $field->options = Countries::getInstance()->getCountriesForAddonDropdown();
         $field->error = $this->getFieldError('tech_country');
         $form->addField($field);
 
@@ -431,7 +431,7 @@ class ApiConfiguration extends AbstractController
         $field->error = $this->getFieldError('tech_region');
         $form->addField($field);
 
-        $form->addField('submit', 'mg-action', [
+        $form->addField('submit', 'addon-action', [
             'value' => 'saveItem'
         ]);
 
@@ -646,7 +646,7 @@ class ApiConfiguration extends AbstractController
     {
         return
             [
-                'html' => main\mgLibs\Smarty::I()->view('ajaxContentJSON')
+                'html' => main\addonLibs\Smarty::I()->view('ajaxContentJSON')
             ];
     }
 
@@ -656,7 +656,7 @@ class ApiConfiguration extends AbstractController
 
     public function getCreatorJSON()
     {
-        $creator = new main\mgLibs\forms\Popup('mymodal');
+        $creator = new main\addonLibs\forms\Popup('mymodal');
         $creator->addField(
             new TextField([
                 'name' => 'customTextField',

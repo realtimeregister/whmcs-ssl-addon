@@ -1,4 +1,4 @@
-<div data-ng-app="appCRM" class="mg-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true">
+<div data-ng-app="appCRM" class="addon-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=all" rel="stylesheet" type="text/css"/> 
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/font-awesome.css" />
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/simple-line-icons.css" rel="stylesheet">
@@ -10,8 +10,8 @@
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/select2.css" />
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/onoffswitch.css" />
     
-    <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/mg-style.css" rel="stylesheet">    
-    <script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
+    <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/addon-style.css" rel="stylesheet">
+    <script type="text/javascript" src="{$assetsURL}/js/addonLibs.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/bootstrap.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/dataTables.bootstrap.js"></script>

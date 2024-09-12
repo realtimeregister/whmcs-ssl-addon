@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * SSLCENTERWHMCS product developed. (2015-11-23)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -18,19 +13,18 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\pricing;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\pricing;
 
-use MGModule\RealtimeRegisterSsl as main;
-use MGModule\RealtimeRegisterSsl\models\whmcs\currencies\Currency;
+use AddonModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\currencies\Currency;
 
 /**
  * Description of Pricing
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tblpricing,preventUpdate,prefixed=false)
  * @SuppressWarnings(PHPMD)
  */
-class Price extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Price extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * @Column()
@@ -272,7 +266,7 @@ class Price extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
             case BillingCycle::YEARS_10:
                 return $this->getBiennially();
             default:
-                throw new main\mgLibs\exceptions\System('Invalid billing cycle: ' . $billingCycle);
+                throw new main\addonLibs\exceptions\System('Invalid billing cycle: ' . $billingCycle);
         }
     }
 }

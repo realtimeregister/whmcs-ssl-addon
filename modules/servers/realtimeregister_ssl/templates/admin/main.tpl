@@ -1,4 +1,4 @@
-<div class="mg-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true" id="MGNextIsWHMCSConfig">
+<div class="addon-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true" id="AddonNextIsWHMCSConfig">
     <!--
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=all" rel="stylesheet" type="text/css"/>
      
@@ -11,9 +11,9 @@
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/jquery.dataTables.css" />
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/select2.css" />
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/onoffswitch.css" />
-    <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/mg-style.css" rel="stylesheet">  
+    <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/addon-style.css" rel="stylesheet">
     <script type="text/javascript" src="{$assetsURL}/js/whmcsProdConfSupp.js"></script>
-    <script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
+    <script type="text/javascript" src="{$assetsURL}/js/addonLibs.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/bootstrap.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/dataTables.bootstrap.js"></script>
@@ -43,7 +43,7 @@
                                             {if $category.label}
                                                 {$subpage.label}
                                             {else}
-                                                {$MGLANG->T('pagesLabels',$catName,'label')}
+                                                {$ADDONLANG->T('pagesLabels',$catName,'label')}
                                             {/if}
                                             <i class="fa fa-angle-down dropdown-angle"></i>
                                         </a>
@@ -55,7 +55,7 @@
                                                         {if $subCategory.label}
                                                             {$subCategory.label}
                                                         {else}
-                                                            {$MGLANG->T('pagesLabels',$catName,$subCatName)}
+                                                            {$ADDONLANG->T('pagesLabels',$catName,$subCatName)}
                                                         {/if}
                                                     </a>
                                                 </li>
@@ -69,7 +69,7 @@
                                             {if $category.label}
                                                 {$subpage.label}
                                             {else}
-                                                {$MGLANG->T('pagesLabels',$catName,'label')}
+                                                {$ADDONLANG->T('pagesLabels',$catName,'label')}
                                             {/if}
                                         </a>
                                     </li>
@@ -80,22 +80,16 @@
                     {if $searchAction}
                       <form class="navbar-form navbar-left" role="search" method="post" action="{$searchAction}">
                         <div class="form-group">
-                          <input name="searchMigration" type="text" class="form-control" placeholder="{$MGLANG->T('searchMigration')}" value="{$smarty.post.searchMigration}">
+                          <input name="searchMigration" type="text" class="form-control" placeholder="{$ADDONLANG->T('searchMigration')}" value="{$smarty.post.searchMigration}">
                         </div>
                         <button type="submit" class="btn btn-default"><i style="font-size:20px" class="glyphicon glyphicon-search"></i></button>
                       </form>
                     {/if}
-                    <div>
-                        <a alt="ModulesGarden Custom Development" target="_blank" href="http://www.modulesgarden.com" class="slogan nblue-box">
-                            <span class="mg-logo"></span>
-                            <small>We are here to help you, just click!</small>
-                        </a>
-                    </div>
                 </div><!-- /.navbar-collapse -->
               </div><!-- /.container-fluid -->
             </nav>
         </div>      
-        <div class="row" id="MGAlerts">
+        <div class="row" id="AddonAlerts">
                 {if $error}
                     <div class="alert alert-danger">
                         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
@@ -125,7 +119,7 @@
         <div class="row">
             {$content}
         </div>
-        <div id="MGLoader" style="display:none;" >
+        <div id="AddonLoader" style="display:none;" >
             <div>
                 <img src="{$assetsURL}/img/ajax-loader.gif" alt="Loading ..." />
             </div>

@@ -1,11 +1,11 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eHelpers\Domains;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Domains;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 
 class GenerateCSR
 {

@@ -9,13 +9,13 @@
 {/if}  
 
 <div class="panel panel-default">
-    <div class="panel-heading">{$MGLANG->T('singleProductCreator')}</div>
+    <div class="panel-heading">{$ADDONLANG->T('singleProductCreator')}</div>
     <div class="panel-body">
 
         <form action="" method="post" class="form-horizontal">
 
             <div class="form-group">
-                <label class="control-label col-sm-2">{$MGLANG->T('realtimeRegisterSSLProduct')}</label>
+                <label class="control-label col-sm-2">{$ADDONLANG->T('realtimeRegisterSSLProduct')}</label>
                 <div class="col-sm-10">
                     <select name="configoption1" class="form-control" id="api_product">
                         {foreach from=$apiProducts item=product}
@@ -26,28 +26,28 @@
             </div>
             
             <div class="form-group">
-                <label class="control-label col-sm-2">{$MGLANG->T('productName')}</label>
+                <label class="control-label col-sm-2">{$ADDONLANG->T('productName')}</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" name="name" value="" required/>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label col-sm-2">{$MGLANG->T('issued_ssl_message')}</label>
+                <label class="control-label col-sm-2">{$ADDONLANG->T('issued_ssl_message')}</label>
                 <div class="col-sm-10">
                     <textarea class="form-control" name="issued_ssl_message"></textarea>
                 </div>
             </div>
                 
             <div class="form-group">
-                <label class="control-label col-sm-2">{$MGLANG->T('customguide')}</label>
+                <label class="control-label col-sm-2">{$ADDONLANG->T('customguide')}</label>
                 <div class="col-sm-10">
                     <textarea class="form-control" name="custom_guide"></textarea>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label col-sm-2">{$MGLANG->T('productGroup')}</label>
+                <label class="control-label col-sm-2">{$ADDONLANG->T('productGroup')}</label>
                 <div class="col-sm-10">
                     <select name="gid" class="form-control">
                         {foreach from=$productGroups item=productGroup}
@@ -58,18 +58,18 @@
             </div>
                     
             <div class="form-group">
-                <label class="control-label col-sm-2">{$MGLANG->T('autoSetup')}</label>
+                <label class="control-label col-sm-2">{$ADDONLANG->T('autoSetup')}</label>
                 <div class="col-sm-10">
                     <select name="autosetup" class="form-control">
-                        <option value="order">{$MGLANG->T('autoSetupOrder')}</option>  
-                        <option value="payment">{$MGLANG->T('autoSetupPayment')}</option> 
-                        <option value="on">{$MGLANG->T('autoSetupOn')}</option> 
-                        <option value="" selected="" >{$MGLANG->T('autoSetupOff')}</option> 
+                        <option value="order">{$ADDONLANG->T('autoSetupOrder')}</option>
+                        <option value="payment">{$ADDONLANG->T('autoSetupPayment')}</option>
+                        <option value="on">{$ADDONLANG->T('autoSetupOn')}</option>
+                        <option value="" selected="" >{$ADDONLANG->T('autoSetupOff')}</option>
                     </select>
                 </div>
             </div>
 
-            <input type="submit" name="createSingle" class="btn btn-success" value="{$MGLANG->T('saveSingle')}" />
+            <input type="submit" name="createSingle" class="btn btn-success" value="{$ADDONLANG->T('saveSingle')}" />
 
         </form>
 
@@ -77,11 +77,11 @@
 </div>
 
 <div class="panel panel-default">
-    <div class="panel-heading">{$MGLANG->T('multipleProductCreator')}</div>
+    <div class="panel-heading">{$ADDONLANG->T('multipleProductCreator')}</div>
     <div class="panel-body">
         <form action="" method="post" class="form-horizontal">
             <div class="form-group">
-                <label class="control-label col-sm-2">{$MGLANG->T('productGroup')}</label>
+                <label class="control-label col-sm-2">{$ADDONLANG->T('productGroup')}</label>
                 <div class="col-sm-10">
                     <select name="gid" class="form-control">
                         {foreach from=$productGroups item=productGroup}
@@ -90,7 +90,7 @@
                     </select>
                 </div>
             </div>
-            <input type="submit" name="createMass" class="btn btn-success" value="{$MGLANG->T('saveMultiple')}" />  
+            <input type="submit" name="createMass" class="btn btn-success" value="{$ADDONLANG->T('saveMultiple')}" />
         </form>
     </div>
 </div>
@@ -128,10 +128,6 @@
             $(".pricingtgl").click(function () {
                 var cycle = $(this).attr("cycle");
                 var currency = $(this).attr("currency");
-                var pricingId = $(this).data('pricing-id');
-
-                console.log($(this).is(":checked"));
-                console.log("#pricing_" + currency + "_" + cycle + "_" + pricingId);
 
                 if ($(this).is(":checked")) {
                     $("#pricing_" + currency + "_" + cycle).val("0.00").show();

@@ -5,7 +5,7 @@
   src: url("../fonts/Simple-Line-Icons.eot?#iefix") format("embedded-opentype"), url("../fonts/Simple-Line-Icons.woff") format("woff"), url("../fonts/Simple-Line-Icons.ttf") format("truetype"), url("../fonts/Simple-Line-Icons.svg#Simple-Line-Icons") format("svg");
   font-weight: normal;
   font-style: normal; }
-.mg-wrapper {
+.addon-wrapper {
   /* Use the following CSS code if you want to use data attributes for inserting your icons */
   /* Use the following CSS code if you want to have a class per icon */
   /*
@@ -15,10 +15,10 @@
   */ }
   @media screen and (-webkit-min-device-pixel-ratio: 0) {
     @font-face {
-      .mg-wrapper {
+      .addon-wrapper {
         font-family: 'Simple-Line-Icons';
         src: url("fonts/Simple-Line-Icons.svg#Simple-Line-Icons") format("svg"); } } }
-  .mg-wrapper [data-icon]:before {
+  .addon-wrapper [data-icon]:before {
     font-family: 'Simple-Line-Icons' !important;
     content: attr(data-icon);
     speak: none;
@@ -28,7 +28,7 @@
     line-height: 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale; }
-  .mg-wrapper .icon-user-female, .mg-wrapper .icon-user-follow, .mg-wrapper .icon-user-following, .mg-wrapper .icon-user-unfollow, .mg-wrapper .icon-trophy, .mg-wrapper .icon-screen-smartphone, .mg-wrapper .icon-screen-desktop, .mg-wrapper .icon-plane, .mg-wrapper .icon-notebook, .mg-wrapper .icon-moustache, .mg-wrapper .icon-mouse, .mg-wrapper .icon-magnet, .mg-wrapper .icon-energy, .mg-wrapper .icon-emoticon-smile, .mg-wrapper .icon-disc, .mg-wrapper .icon-cursor-move, .mg-wrapper .icon-crop, .mg-wrapper .icon-credit-card, .mg-wrapper .icon-chemistry, .mg-wrapper .icon-user, .mg-wrapper .icon-speedometer, .mg-wrapper .icon-social-youtube, .mg-wrapper .icon-social-twitter, .mg-wrapper .icon-social-tumblr, .mg-wrapper .icon-social-facebook, .mg-wrapper .icon-social-dropbox, .mg-wrapper .icon-social-dribbble, .mg-wrapper .icon-shield, .mg-wrapper .icon-screen-tablet, .mg-wrapper .icon-magic-wand, .mg-wrapper .icon-hourglass, .mg-wrapper .icon-graduation, .mg-wrapper .icon-ghost, .mg-wrapper .icon-game-controller, .mg-wrapper .icon-fire, .mg-wrapper .icon-eyeglasses, .mg-wrapper .icon-envelope-open, .mg-wrapper .icon-envelope-letter, .mg-wrapper .icon-bell, .mg-wrapper .icon-badge, .mg-wrapper .icon-anchor, .mg-wrapper .icon-wallet, .mg-wrapper .icon-vector, .mg-wrapper .icon-speech, .mg-wrapper .icon-puzzle, .mg-wrapper .icon-printer, .mg-wrapper .icon-present, .mg-wrapper .icon-playlist, .mg-wrapper .icon-pin, .mg-wrapper .icon-picture, .mg-wrapper .icon-map, .mg-wrapper .icon-layers, .mg-wrapper .icon-handbag, .mg-wrapper .icon-globe-alt, .mg-wrapper .icon-globe, .mg-wrapper .icon-frame, .mg-wrapper .icon-folder-alt, .mg-wrapper .icon-film, .mg-wrapper .icon-feed, .mg-wrapper .icon-earphones-alt, .mg-wrapper .icon-earphones, .mg-wrapper .icon-drop, .mg-wrapper .icon-drawer, .mg-wrapper .icon-docs, .mg-wrapper .icon-directions, .mg-wrapper .icon-direction, .mg-wrapper .icon-diamond, .mg-wrapper .icon-cup, .mg-wrapper .icon-compass, .mg-wrapper .icon-call-out, .mg-wrapper .icon-call-in, .mg-wrapper .icon-call-end, .mg-wrapper .icon-calculator, .mg-wrapper .icon-bubbles, .mg-wrapper .icon-briefcase, .mg-wrapper .icon-book-open, .mg-wrapper .icon-basket-loaded, .mg-wrapper .icon-basket, .mg-wrapper .icon-bag, .mg-wrapper .icon-action-undo, .mg-wrapper .icon-action-redo, .mg-wrapper .icon-wrench, .mg-wrapper .icon-umbrella, .mg-wrapper .icon-trash, .mg-wrapper .icon-tag, .mg-wrapper .icon-support, .mg-wrapper .icon-size-fullscreen, .mg-wrapper .icon-size-actual, .mg-wrapper .icon-shuffle, .mg-wrapper .icon-share-alt, .mg-wrapper .icon-share, .mg-wrapper .icon-rocket, .mg-wrapper .icon-question, .mg-wrapper .icon-pie-chart, .mg-wrapper .icon-pencil, .mg-wrapper .icon-note, .mg-wrapper .icon-music-tone-alt, .mg-wrapper .icon-music-tone, .mg-wrapper .icon-microphone, .mg-wrapper .icon-loop, .mg-wrapper .icon-logout, .mg-wrapper .icon-login, .mg-wrapper .icon-list, .mg-wrapper .icon-like, .mg-wrapper .icon-home, .mg-wrapper .icon-grid, .mg-wrapper .icon-graph, .mg-wrapper .icon-equalizer, .mg-wrapper .icon-dislike, .mg-wrapper .icon-cursor, .mg-wrapper .icon-control-start, .mg-wrapper .icon-control-rewind, .mg-wrapper .icon-control-play, .mg-wrapper .icon-control-pause, .mg-wrapper .icon-control-forward, .mg-wrapper .icon-control-end, .mg-wrapper .icon-calendar, .mg-wrapper .icon-bulb, .mg-wrapper .icon-bar-chart, .mg-wrapper .icon-arrow-up, .mg-wrapper .icon-arrow-right, .mg-wrapper .icon-arrow-left, .mg-wrapper .icon-arrow-down, .mg-wrapper .icon-ban, .mg-wrapper .icon-bubble, .mg-wrapper .icon-camcorder, .mg-wrapper .icon-camera, .mg-wrapper .icon-check, .mg-wrapper .icon-clock, .mg-wrapper .icon-close, .mg-wrapper .icon-cloud-download, .mg-wrapper .icon-cloud-upload, .mg-wrapper .icon-doc, .mg-wrapper .icon-envelope, .mg-wrapper .icon-eye, .mg-wrapper .icon-flag, .mg-wrapper .icon-folder, .mg-wrapper .icon-heart, .mg-wrapper .icon-info, .mg-wrapper .icon-key, .mg-wrapper .icon-link, .mg-wrapper .icon-lock, .mg-wrapper .icon-lock-open, .mg-wrapper .icon-magnifier, .mg-wrapper .icon-magnifier-add, .mg-wrapper .icon-magnifier-remove, .mg-wrapper .icon-paper-clip, .mg-wrapper .icon-paper-plane, .mg-wrapper .icon-plus, .mg-wrapper .icon-pointer, .mg-wrapper .icon-power, .mg-wrapper .icon-refresh, .mg-wrapper .icon-reload, .mg-wrapper .icon-settings, .mg-wrapper .icon-star, .mg-wrapper .icon-symbol-female, .mg-wrapper .icon-symbol-male, .mg-wrapper .icon-target, .mg-wrapper .icon-volume-1, .mg-wrapper .icon-volume-2, .mg-wrapper .icon-volume-off, .mg-wrapper .icon-users {
+  .addon-wrapper .icon-user-female, .addon-wrapper .icon-user-follow, .addon-wrapper .icon-user-following, .addon-wrapper .icon-user-unfollow, .addon-wrapper .icon-trophy, .addon-wrapper .icon-screen-smartphone, .addon-wrapper .icon-screen-desktop, .addon-wrapper .icon-plane, .addon-wrapper .icon-notebook, .addon-wrapper .icon-moustache, .addon-wrapper .icon-mouse, .addon-wrapper .icon-magnet, .addon-wrapper .icon-energy, .addon-wrapper .icon-emoticon-smile, .addon-wrapper .icon-disc, .addon-wrapper .icon-cursor-move, .addon-wrapper .icon-crop, .addon-wrapper .icon-credit-card, .addon-wrapper .icon-chemistry, .addon-wrapper .icon-user, .addon-wrapper .icon-speedometer, .addon-wrapper .icon-social-youtube, .addon-wrapper .icon-social-twitter, .addon-wrapper .icon-social-tumblr, .addon-wrapper .icon-social-facebook, .addon-wrapper .icon-social-dropbox, .addon-wrapper .icon-social-dribbble, .addon-wrapper .icon-shield, .addon-wrapper .icon-screen-tablet, .addon-wrapper .icon-magic-wand, .addon-wrapper .icon-hourglass, .addon-wrapper .icon-graduation, .addon-wrapper .icon-ghost, .addon-wrapper .icon-game-controller, .addon-wrapper .icon-fire, .addon-wrapper .icon-eyeglasses, .addon-wrapper .icon-envelope-open, .addon-wrapper .icon-envelope-letter, .addon-wrapper .icon-bell, .addon-wrapper .icon-badge, .addon-wrapper .icon-anchor, .addon-wrapper .icon-wallet, .addon-wrapper .icon-vector, .addon-wrapper .icon-speech, .addon-wrapper .icon-puzzle, .addon-wrapper .icon-printer, .addon-wrapper .icon-present, .addon-wrapper .icon-playlist, .addon-wrapper .icon-pin, .addon-wrapper .icon-picture, .addon-wrapper .icon-map, .addon-wrapper .icon-layers, .addon-wrapper .icon-handbag, .addon-wrapper .icon-globe-alt, .addon-wrapper .icon-globe, .addon-wrapper .icon-frame, .addon-wrapper .icon-folder-alt, .addon-wrapper .icon-film, .addon-wrapper .icon-feed, .addon-wrapper .icon-earphones-alt, .addon-wrapper .icon-earphones, .addon-wrapper .icon-drop, .addon-wrapper .icon-drawer, .addon-wrapper .icon-docs, .addon-wrapper .icon-directions, .addon-wrapper .icon-direction, .addon-wrapper .icon-diamond, .addon-wrapper .icon-cup, .addon-wrapper .icon-compass, .addon-wrapper .icon-call-out, .addon-wrapper .icon-call-in, .addon-wrapper .icon-call-end, .addon-wrapper .icon-calculator, .addon-wrapper .icon-bubbles, .addon-wrapper .icon-briefcase, .addon-wrapper .icon-book-open, .addon-wrapper .icon-basket-loaded, .addon-wrapper .icon-basket, .addon-wrapper .icon-bag, .addon-wrapper .icon-action-undo, .addon-wrapper .icon-action-redo, .addon-wrapper .icon-wrench, .addon-wrapper .icon-umbrella, .addon-wrapper .icon-trash, .addon-wrapper .icon-tag, .addon-wrapper .icon-support, .addon-wrapper .icon-size-fullscreen, .addon-wrapper .icon-size-actual, .addon-wrapper .icon-shuffle, .addon-wrapper .icon-share-alt, .addon-wrapper .icon-share, .addon-wrapper .icon-rocket, .addon-wrapper .icon-question, .addon-wrapper .icon-pie-chart, .addon-wrapper .icon-pencil, .addon-wrapper .icon-note, .addon-wrapper .icon-music-tone-alt, .addon-wrapper .icon-music-tone, .addon-wrapper .icon-microphone, .addon-wrapper .icon-loop, .addon-wrapper .icon-logout, .addon-wrapper .icon-login, .addon-wrapper .icon-list, .addon-wrapper .icon-like, .addon-wrapper .icon-home, .addon-wrapper .icon-grid, .addon-wrapper .icon-graph, .addon-wrapper .icon-equalizer, .addon-wrapper .icon-dislike, .addon-wrapper .icon-cursor, .addon-wrapper .icon-control-start, .addon-wrapper .icon-control-rewind, .addon-wrapper .icon-control-play, .addon-wrapper .icon-control-pause, .addon-wrapper .icon-control-forward, .addon-wrapper .icon-control-end, .addon-wrapper .icon-calendar, .addon-wrapper .icon-bulb, .addon-wrapper .icon-bar-chart, .addon-wrapper .icon-arrow-up, .addon-wrapper .icon-arrow-right, .addon-wrapper .icon-arrow-left, .addon-wrapper .icon-arrow-down, .addon-wrapper .icon-ban, .addon-wrapper .icon-bubble, .addon-wrapper .icon-camcorder, .addon-wrapper .icon-camera, .addon-wrapper .icon-check, .addon-wrapper .icon-clock, .addon-wrapper .icon-close, .addon-wrapper .icon-cloud-download, .addon-wrapper .icon-cloud-upload, .addon-wrapper .icon-doc, .addon-wrapper .icon-envelope, .addon-wrapper .icon-eye, .addon-wrapper .icon-flag, .addon-wrapper .icon-folder, .addon-wrapper .icon-heart, .addon-wrapper .icon-info, .addon-wrapper .icon-key, .addon-wrapper .icon-link, .addon-wrapper .icon-lock, .addon-wrapper .icon-lock-open, .addon-wrapper .icon-magnifier, .addon-wrapper .icon-magnifier-add, .addon-wrapper .icon-magnifier-remove, .addon-wrapper .icon-paper-clip, .addon-wrapper .icon-paper-plane, .addon-wrapper .icon-plus, .addon-wrapper .icon-pointer, .addon-wrapper .icon-power, .addon-wrapper .icon-refresh, .addon-wrapper .icon-reload, .addon-wrapper .icon-settings, .addon-wrapper .icon-star, .addon-wrapper .icon-symbol-female, .addon-wrapper .icon-symbol-male, .addon-wrapper .icon-target, .addon-wrapper .icon-volume-1, .addon-wrapper .icon-volume-2, .addon-wrapper .icon-volume-off, .addon-wrapper .icon-users {
     font-family: 'Simple-Line-Icons' !important;
     speak: none;
     font-style: normal;
@@ -37,327 +37,327 @@
     text-transform: none;
     line-height: 1;
     -webkit-font-smoothing: antialiased; }
-  .mg-wrapper .icon-user-female:before {
+  .addon-wrapper .icon-user-female:before {
     content: "\e000"; }
-  .mg-wrapper .icon-user-follow:before {
+  .addon-wrapper .icon-user-follow:before {
     content: "\e002"; }
-  .mg-wrapper .icon-user-following:before {
+  .addon-wrapper .icon-user-following:before {
     content: "\e003"; }
-  .mg-wrapper .icon-user-unfollow:before {
+  .addon-wrapper .icon-user-unfollow:before {
     content: "\e004"; }
-  .mg-wrapper .icon-trophy:before {
+  .addon-wrapper .icon-trophy:before {
     content: "\e006"; }
-  .mg-wrapper .icon-screen-smartphone:before {
+  .addon-wrapper .icon-screen-smartphone:before {
     content: "\e010"; }
-  .mg-wrapper .icon-screen-desktop:before {
+  .addon-wrapper .icon-screen-desktop:before {
     content: "\e011"; }
-  .mg-wrapper .icon-plane:before {
+  .addon-wrapper .icon-plane:before {
     content: "\e012"; }
-  .mg-wrapper .icon-notebook:before {
+  .addon-wrapper .icon-notebook:before {
     content: "\e013"; }
-  .mg-wrapper .icon-moustache:before {
+  .addon-wrapper .icon-moustache:before {
     content: "\e014"; }
-  .mg-wrapper .icon-mouse:before {
+  .addon-wrapper .icon-mouse:before {
     content: "\e015"; }
-  .mg-wrapper .icon-magnet:before {
+  .addon-wrapper .icon-magnet:before {
     content: "\e016"; }
-  .mg-wrapper .icon-energy:before {
+  .addon-wrapper .icon-energy:before {
     content: "\e020"; }
-  .mg-wrapper .icon-emoticon-smile:before {
+  .addon-wrapper .icon-emoticon-smile:before {
     content: "\e021"; }
-  .mg-wrapper .icon-disc:before {
+  .addon-wrapper .icon-disc:before {
     content: "\e022"; }
-  .mg-wrapper .icon-cursor-move:before {
+  .addon-wrapper .icon-cursor-move:before {
     content: "\e023"; }
-  .mg-wrapper .icon-crop:before {
+  .addon-wrapper .icon-crop:before {
     content: "\e024"; }
-  .mg-wrapper .icon-credit-card:before {
+  .addon-wrapper .icon-credit-card:before {
     content: "\e025"; }
-  .mg-wrapper .icon-chemistry:before {
+  .addon-wrapper .icon-chemistry:before {
     content: "\e026"; }
-  .mg-wrapper .icon-user:before {
+  .addon-wrapper .icon-user:before {
     content: "\e005"; }
-  .mg-wrapper .icon-speedometer:before {
+  .addon-wrapper .icon-speedometer:before {
     content: "\e007"; }
-  .mg-wrapper .icon-social-youtube:before {
+  .addon-wrapper .icon-social-youtube:before {
     content: "\e008"; }
-  .mg-wrapper .icon-social-twitter:before {
+  .addon-wrapper .icon-social-twitter:before {
     content: "\e009"; }
-  .mg-wrapper .icon-social-tumblr:before {
+  .addon-wrapper .icon-social-tumblr:before {
     content: "\e00a"; }
-  .mg-wrapper .icon-social-facebook:before {
+  .addon-wrapper .icon-social-facebook:before {
     content: "\e00b"; }
-  .mg-wrapper .icon-social-dropbox:before {
+  .addon-wrapper .icon-social-dropbox:before {
     content: "\e00c"; }
-  .mg-wrapper .icon-social-dribbble:before {
+  .addon-wrapper .icon-social-dribbble:before {
     content: "\e00d"; }
-  .mg-wrapper .icon-shield:before {
+  .addon-wrapper .icon-shield:before {
     content: "\e00e"; }
-  .mg-wrapper .icon-screen-tablet:before {
+  .addon-wrapper .icon-screen-tablet:before {
     content: "\e00f"; }
-  .mg-wrapper .icon-magic-wand:before {
+  .addon-wrapper .icon-magic-wand:before {
     content: "\e017"; }
-  .mg-wrapper .icon-hourglass:before {
+  .addon-wrapper .icon-hourglass:before {
     content: "\e018"; }
-  .mg-wrapper .icon-graduation:before {
+  .addon-wrapper .icon-graduation:before {
     content: "\e019"; }
-  .mg-wrapper .icon-ghost:before {
+  .addon-wrapper .icon-ghost:before {
     content: "\e01a"; }
-  .mg-wrapper .icon-game-controller:before {
+  .addon-wrapper .icon-game-controller:before {
     content: "\e01b"; }
-  .mg-wrapper .icon-fire:before {
+  .addon-wrapper .icon-fire:before {
     content: "\e01c"; }
-  .mg-wrapper .icon-eyeglasses:before {
+  .addon-wrapper .icon-eyeglasses:before {
     content: "\e01d"; }
-  .mg-wrapper .icon-envelope-open:before {
+  .addon-wrapper .icon-envelope-open:before {
     content: "\e01e"; }
-  .mg-wrapper .icon-envelope-letter:before {
+  .addon-wrapper .icon-envelope-letter:before {
     content: "\e01f"; }
-  .mg-wrapper .icon-bell:before {
+  .addon-wrapper .icon-bell:before {
     content: "\e027"; }
-  .mg-wrapper .icon-badge:before {
+  .addon-wrapper .icon-badge:before {
     content: "\e028"; }
-  .mg-wrapper .icon-anchor:before {
+  .addon-wrapper .icon-anchor:before {
     content: "\e029"; }
-  .mg-wrapper .icon-wallet:before {
+  .addon-wrapper .icon-wallet:before {
     content: "\e02a"; }
-  .mg-wrapper .icon-vector:before {
+  .addon-wrapper .icon-vector:before {
     content: "\e02b"; }
-  .mg-wrapper .icon-speech:before {
+  .addon-wrapper .icon-speech:before {
     content: "\e02c"; }
-  .mg-wrapper .icon-puzzle:before {
+  .addon-wrapper .icon-puzzle:before {
     content: "\e02d"; }
-  .mg-wrapper .icon-printer:before {
+  .addon-wrapper .icon-printer:before {
     content: "\e02e"; }
-  .mg-wrapper .icon-present:before {
+  .addon-wrapper .icon-present:before {
     content: "\e02f"; }
-  .mg-wrapper .icon-playlist:before {
+  .addon-wrapper .icon-playlist:before {
     content: "\e030"; }
-  .mg-wrapper .icon-pin:before {
+  .addon-wrapper .icon-pin:before {
     content: "\e031"; }
-  .mg-wrapper .icon-picture:before {
+  .addon-wrapper .icon-picture:before {
     content: "\e032"; }
-  .mg-wrapper .icon-map:before {
+  .addon-wrapper .icon-map:before {
     content: "\e033"; }
-  .mg-wrapper .icon-layers:before {
+  .addon-wrapper .icon-layers:before {
     content: "\e034"; }
-  .mg-wrapper .icon-handbag:before {
+  .addon-wrapper .icon-handbag:before {
     content: "\e035"; }
-  .mg-wrapper .icon-globe-alt:before {
+  .addon-wrapper .icon-globe-alt:before {
     content: "\e036"; }
-  .mg-wrapper .icon-globe:before {
+  .addon-wrapper .icon-globe:before {
     content: "\e037"; }
-  .mg-wrapper .icon-frame:before {
+  .addon-wrapper .icon-frame:before {
     content: "\e038"; }
-  .mg-wrapper .icon-folder-alt:before {
+  .addon-wrapper .icon-folder-alt:before {
     content: "\e039"; }
-  .mg-wrapper .icon-film:before {
+  .addon-wrapper .icon-film:before {
     content: "\e03a"; }
-  .mg-wrapper .icon-feed:before {
+  .addon-wrapper .icon-feed:before {
     content: "\e03b"; }
-  .mg-wrapper .icon-earphones-alt:before {
+  .addon-wrapper .icon-earphones-alt:before {
     content: "\e03c"; }
-  .mg-wrapper .icon-earphones:before {
+  .addon-wrapper .icon-earphones:before {
     content: "\e03d"; }
-  .mg-wrapper .icon-drop:before {
+  .addon-wrapper .icon-drop:before {
     content: "\e03e"; }
-  .mg-wrapper .icon-drawer:before {
+  .addon-wrapper .icon-drawer:before {
     content: "\e03f"; }
-  .mg-wrapper .icon-docs:before {
+  .addon-wrapper .icon-docs:before {
     content: "\e040"; }
-  .mg-wrapper .icon-directions:before {
+  .addon-wrapper .icon-directions:before {
     content: "\e041"; }
-  .mg-wrapper .icon-direction:before {
+  .addon-wrapper .icon-direction:before {
     content: "\e042"; }
-  .mg-wrapper .icon-diamond:before {
+  .addon-wrapper .icon-diamond:before {
     content: "\e043"; }
-  .mg-wrapper .icon-cup:before {
+  .addon-wrapper .icon-cup:before {
     content: "\e044"; }
-  .mg-wrapper .icon-compass:before {
+  .addon-wrapper .icon-compass:before {
     content: "\e045"; }
-  .mg-wrapper .icon-call-out:before {
+  .addon-wrapper .icon-call-out:before {
     content: "\e046"; }
-  .mg-wrapper .icon-call-in:before {
+  .addon-wrapper .icon-call-in:before {
     content: "\e047"; }
-  .mg-wrapper .icon-call-end:before {
+  .addon-wrapper .icon-call-end:before {
     content: "\e048"; }
-  .mg-wrapper .icon-calculator:before {
+  .addon-wrapper .icon-calculator:before {
     content: "\e049"; }
-  .mg-wrapper .icon-bubbles:before {
+  .addon-wrapper .icon-bubbles:before {
     content: "\e04a"; }
-  .mg-wrapper .icon-briefcase:before {
+  .addon-wrapper .icon-briefcase:before {
     content: "\e04b"; }
-  .mg-wrapper .icon-book-open:before {
+  .addon-wrapper .icon-book-open:before {
     content: "\e04c"; }
-  .mg-wrapper .icon-basket-loaded:before {
+  .addon-wrapper .icon-basket-loaded:before {
     content: "\e04d"; }
-  .mg-wrapper .icon-basket:before {
+  .addon-wrapper .icon-basket:before {
     content: "\e04e"; }
-  .mg-wrapper .icon-bag:before {
+  .addon-wrapper .icon-bag:before {
     content: "\e04f"; }
-  .mg-wrapper .icon-action-undo:before {
+  .addon-wrapper .icon-action-undo:before {
     content: "\e050"; }
-  .mg-wrapper .icon-action-redo:before {
+  .addon-wrapper .icon-action-redo:before {
     content: "\e051"; }
-  .mg-wrapper .icon-wrench:before {
+  .addon-wrapper .icon-wrench:before {
     content: "\e052"; }
-  .mg-wrapper .icon-umbrella:before {
+  .addon-wrapper .icon-umbrella:before {
     content: "\e053"; }
-  .mg-wrapper .icon-trash:before {
+  .addon-wrapper .icon-trash:before {
     content: "\e054"; }
-  .mg-wrapper .icon-tag:before {
+  .addon-wrapper .icon-tag:before {
     content: "\e055"; }
-  .mg-wrapper .icon-support:before {
+  .addon-wrapper .icon-support:before {
     content: "\e056"; }
-  .mg-wrapper .icon-size-fullscreen:before {
+  .addon-wrapper .icon-size-fullscreen:before {
     content: "\e057"; }
-  .mg-wrapper .icon-size-actual:before {
+  .addon-wrapper .icon-size-actual:before {
     content: "\e058"; }
-  .mg-wrapper .icon-shuffle:before {
+  .addon-wrapper .icon-shuffle:before {
     content: "\e059"; }
-  .mg-wrapper .icon-share-alt:before {
+  .addon-wrapper .icon-share-alt:before {
     content: "\e05a"; }
-  .mg-wrapper .icon-share:before {
+  .addon-wrapper .icon-share:before {
     content: "\e05b"; }
-  .mg-wrapper .icon-rocket:before {
+  .addon-wrapper .icon-rocket:before {
     content: "\e05c"; }
-  .mg-wrapper .icon-question:before {
+  .addon-wrapper .icon-question:before {
     content: "\e05d"; }
-  .mg-wrapper .icon-pie-chart:before {
+  .addon-wrapper .icon-pie-chart:before {
     content: "\e05e"; }
-  .mg-wrapper .icon-pencil:before {
+  .addon-wrapper .icon-pencil:before {
     content: "\e05f"; }
-  .mg-wrapper .icon-note:before {
+  .addon-wrapper .icon-note:before {
     content: "\e060"; }
-  .mg-wrapper .icon-music-tone-alt:before {
+  .addon-wrapper .icon-music-tone-alt:before {
     content: "\e061"; }
-  .mg-wrapper .icon-music-tone:before {
+  .addon-wrapper .icon-music-tone:before {
     content: "\e062"; }
-  .mg-wrapper .icon-microphone:before {
+  .addon-wrapper .icon-microphone:before {
     content: "\e063"; }
-  .mg-wrapper .icon-loop:before {
+  .addon-wrapper .icon-loop:before {
     content: "\e064"; }
-  .mg-wrapper .icon-logout:before {
+  .addon-wrapper .icon-logout:before {
     content: "\e065"; }
-  .mg-wrapper .icon-login:before {
+  .addon-wrapper .icon-login:before {
     content: "\e066"; }
-  .mg-wrapper .icon-list:before {
+  .addon-wrapper .icon-list:before {
     content: "\e067"; }
-  .mg-wrapper .icon-like:before {
+  .addon-wrapper .icon-like:before {
     content: "\e068"; }
-  .mg-wrapper .icon-home:before {
+  .addon-wrapper .icon-home:before {
     content: "\e069"; }
-  .mg-wrapper .icon-grid:before {
+  .addon-wrapper .icon-grid:before {
     content: "\e06a"; }
-  .mg-wrapper .icon-graph:before {
+  .addon-wrapper .icon-graph:before {
     content: "\e06b"; }
-  .mg-wrapper .icon-equalizer:before {
+  .addon-wrapper .icon-equalizer:before {
     content: "\e06c"; }
-  .mg-wrapper .icon-dislike:before {
+  .addon-wrapper .icon-dislike:before {
     content: "\e06d"; }
-  .mg-wrapper .icon-cursor:before {
+  .addon-wrapper .icon-cursor:before {
     content: "\e06e"; }
-  .mg-wrapper .icon-control-start:before {
+  .addon-wrapper .icon-control-start:before {
     content: "\e06f"; }
-  .mg-wrapper .icon-control-rewind:before {
+  .addon-wrapper .icon-control-rewind:before {
     content: "\e070"; }
-  .mg-wrapper .icon-control-play:before {
+  .addon-wrapper .icon-control-play:before {
     content: "\e071"; }
-  .mg-wrapper .icon-control-pause:before {
+  .addon-wrapper .icon-control-pause:before {
     content: "\e072"; }
-  .mg-wrapper .icon-control-forward:before {
+  .addon-wrapper .icon-control-forward:before {
     content: "\e073"; }
-  .mg-wrapper .icon-control-end:before {
+  .addon-wrapper .icon-control-end:before {
     content: "\e074"; }
-  .mg-wrapper .icon-calendar:before {
+  .addon-wrapper .icon-calendar:before {
     content: "\e075"; }
-  .mg-wrapper .icon-bulb:before {
+  .addon-wrapper .icon-bulb:before {
     content: "\e076"; }
-  .mg-wrapper .icon-bar-chart:before {
+  .addon-wrapper .icon-bar-chart:before {
     content: "\e077"; }
-  .mg-wrapper .icon-arrow-up:before {
+  .addon-wrapper .icon-arrow-up:before {
     content: "\e078"; }
-  .mg-wrapper .icon-arrow-right:before {
+  .addon-wrapper .icon-arrow-right:before {
     content: "\e079"; }
-  .mg-wrapper .icon-arrow-left:before {
+  .addon-wrapper .icon-arrow-left:before {
     content: "\e07a"; }
-  .mg-wrapper .icon-arrow-down:before {
+  .addon-wrapper .icon-arrow-down:before {
     content: "\e07b"; }
-  .mg-wrapper .icon-ban:before {
+  .addon-wrapper .icon-ban:before {
     content: "\e07c"; }
-  .mg-wrapper .icon-bubble:before {
+  .addon-wrapper .icon-bubble:before {
     content: "\e07d"; }
-  .mg-wrapper .icon-camcorder:before {
+  .addon-wrapper .icon-camcorder:before {
     content: "\e07e"; }
-  .mg-wrapper .icon-camera:before {
+  .addon-wrapper .icon-camera:before {
     content: "\e07f"; }
-  .mg-wrapper .icon-check:before {
+  .addon-wrapper .icon-check:before {
     content: "\e080"; }
-  .mg-wrapper .icon-clock:before {
+  .addon-wrapper .icon-clock:before {
     content: "\e081"; }
-  .mg-wrapper .icon-close:before {
+  .addon-wrapper .icon-close:before {
     content: "\e082"; }
-  .mg-wrapper .icon-cloud-download:before {
+  .addon-wrapper .icon-cloud-download:before {
     content: "\e083"; }
-  .mg-wrapper .icon-cloud-upload:before {
+  .addon-wrapper .icon-cloud-upload:before {
     content: "\e084"; }
-  .mg-wrapper .icon-doc:before {
+  .addon-wrapper .icon-doc:before {
     content: "\e085"; }
-  .mg-wrapper .icon-envelope:before {
+  .addon-wrapper .icon-envelope:before {
     content: "\e086"; }
-  .mg-wrapper .icon-eye:before {
+  .addon-wrapper .icon-eye:before {
     content: "\e087"; }
-  .mg-wrapper .icon-flag:before {
+  .addon-wrapper .icon-flag:before {
     content: "\e088"; }
-  .mg-wrapper .icon-folder:before {
+  .addon-wrapper .icon-folder:before {
     content: "\e089"; }
-  .mg-wrapper .icon-heart:before {
+  .addon-wrapper .icon-heart:before {
     content: "\e08a"; }
-  .mg-wrapper .icon-info:before {
+  .addon-wrapper .icon-info:before {
     content: "\e08b"; }
-  .mg-wrapper .icon-key:before {
+  .addon-wrapper .icon-key:before {
     content: "\e08c"; }
-  .mg-wrapper .icon-link:before {
+  .addon-wrapper .icon-link:before {
     content: "\e08d"; }
-  .mg-wrapper .icon-lock:before {
+  .addon-wrapper .icon-lock:before {
     content: "\e08e"; }
-  .mg-wrapper .icon-lock-open:before {
+  .addon-wrapper .icon-lock-open:before {
     content: "\e08f"; }
-  .mg-wrapper .icon-magnifier:before {
+  .addon-wrapper .icon-magnifier:before {
     content: "\e090"; }
-  .mg-wrapper .icon-magnifier-add:before {
+  .addon-wrapper .icon-magnifier-add:before {
     content: "\e091"; }
-  .mg-wrapper .icon-magnifier-remove:before {
+  .addon-wrapper .icon-magnifier-remove:before {
     content: "\e092"; }
-  .mg-wrapper .icon-paper-clip:before {
+  .addon-wrapper .icon-paper-clip:before {
     content: "\e093"; }
-  .mg-wrapper .icon-paper-plane:before {
+  .addon-wrapper .icon-paper-plane:before {
     content: "\e094"; }
-  .mg-wrapper .icon-plus:before {
+  .addon-wrapper .icon-plus:before {
     content: "\e095"; }
-  .mg-wrapper .icon-pointer:before {
+  .addon-wrapper .icon-pointer:before {
     content: "\e096"; }
-  .mg-wrapper .icon-power:before {
+  .addon-wrapper .icon-power:before {
     content: "\e097"; }
-  .mg-wrapper .icon-refresh:before {
+  .addon-wrapper .icon-refresh:before {
     content: "\e098"; }
-  .mg-wrapper .icon-reload:before {
+  .addon-wrapper .icon-reload:before {
     content: "\e099"; }
-  .mg-wrapper .icon-settings:before {
+  .addon-wrapper .icon-settings:before {
     content: "\e09a"; }
-  .mg-wrapper .icon-star:before {
+  .addon-wrapper .icon-star:before {
     content: "\e09b"; }
-  .mg-wrapper .icon-symbol-female:before {
+  .addon-wrapper .icon-symbol-female:before {
     content: "\e09c"; }
-  .mg-wrapper .icon-symbol-male:before {
+  .addon-wrapper .icon-symbol-male:before {
     content: "\e09d"; }
-  .mg-wrapper .icon-target:before {
+  .addon-wrapper .icon-target:before {
     content: "\e09e"; }
-  .mg-wrapper .icon-volume-1:before {
+  .addon-wrapper .icon-volume-1:before {
     content: "\e09f"; }
-  .mg-wrapper .icon-volume-2:before {
+  .addon-wrapper .icon-volume-2:before {
     content: "\e0a0"; }
-  .mg-wrapper .icon-volume-off:before {
+  .addon-wrapper .icon-volume-off:before {
     content: "\e0a1"; }
-  .mg-wrapper .icon-users:before {
+  .addon-wrapper .icon-users:before {
     content: "\e001"; }

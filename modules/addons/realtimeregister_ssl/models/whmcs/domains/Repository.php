@@ -4,9 +4,6 @@
  * SSLCENTERWHMCS product developed. (2015-11-17)
  * *
  *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
- *
  *
  * This software is furnished under a license and may be used and copied
  * only  in  accordance  with  the  terms  of such  license and with the
@@ -18,14 +15,13 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\domains;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\domains;
 
 /**
  * Description of Repository
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  */
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {

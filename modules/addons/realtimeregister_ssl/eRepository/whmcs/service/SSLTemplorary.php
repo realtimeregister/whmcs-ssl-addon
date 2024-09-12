@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\whmcs\service;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service;
 
 class SSLTemplorary
 {

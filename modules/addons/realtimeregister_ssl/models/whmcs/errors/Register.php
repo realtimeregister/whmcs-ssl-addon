@@ -1,24 +1,22 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\errors;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\errors;
 
 /**
  * Register Error in WHMCS Module Log
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
-class Register extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Register extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      * Register Exception in WHMCS Module Log
      *
      * @param Exception $ex
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     static function register($ex)
     {
-        $token = 'Unknow Token';
+        $token = 'Unknown Token';
 
         if (method_exists($ex, 'getToken')) {
             $token = $ex->getToken();
@@ -26,7 +24,7 @@ class Register extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
         $debug = print_r($ex, true);
 
-        \logModuleCall("MGError", __NAMESPACE__, [
+        \logModuleCall("RealtimeRegisterSsl", __NAMESPACE__, [
             'message' => $ex->getMessage(),
             'code' => $ex->getCode(),
             'token' => $token

@@ -1,12 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * MGMF product developed. (2016-02-10)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
- *
  *
  * This software is furnished under a license and may be used and copied
  * only  in  accordance  with  the  terms  of such  license and with the
@@ -18,17 +12,16 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\admins;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\admins;
 
-use MGModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Description of Admin
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tbladmins,preventUpdate,prefixed=false)
  */
-class Admin extends main\mgLibs\models\Orm
+class Admin extends main\addonLibs\models\Orm
 {
     /**
      *

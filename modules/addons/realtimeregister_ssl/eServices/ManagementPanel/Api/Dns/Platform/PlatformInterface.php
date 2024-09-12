@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform;
 
 use Exception;
 

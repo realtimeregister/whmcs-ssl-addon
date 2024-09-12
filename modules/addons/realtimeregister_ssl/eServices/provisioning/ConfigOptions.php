@@ -1,10 +1,10 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eServices\ScriptService;
-use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
+use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use WHMCS\Application;
 
 /**

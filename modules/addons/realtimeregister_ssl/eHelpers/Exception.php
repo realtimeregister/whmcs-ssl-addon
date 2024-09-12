@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eHelpers;
+namespace AddonModule\RealtimeRegisterSsl\eHelpers;
 
 class Exception {
     public static function e($ex) {
@@ -10,12 +10,12 @@ class Exception {
         
         $class = get_class($ex);
 
-        if ($class === 'MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterException') {
-            return \MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('anErrorOccurred');
+        if ($class === 'AddonModule\RealtimeRegisterSsl\addonLibs\RealtimeRegisterException') {
+            return \AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->T('anErrorOccurred');
         }
         
-        if ($class === 'MGModule\RealtimeRegisterSsl\mgLibs\RealtimeRegisterApiException') {
-            return \MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('anErrorOccurred');
+        if ($class === 'AddonModule\RealtimeRegisterSsl\addonLibs\RealtimeRegisterApiException') {
+            return \AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->T('anErrorOccurred');
         }
 
         if ($class === 'Exception') {

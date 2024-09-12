@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\models\orders\Order;
-use MGModule\RealtimeRegisterSsl\models\orders\Repository;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\models\orders\Order;
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 
 class AdminResendApproverEmail extends Ajax

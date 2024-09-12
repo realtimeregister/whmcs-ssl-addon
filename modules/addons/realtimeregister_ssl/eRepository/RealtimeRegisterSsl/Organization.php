@@ -1,9 +1,9 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 
 class Organization
 {

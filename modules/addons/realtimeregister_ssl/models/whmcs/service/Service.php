@@ -1,14 +1,14 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\service;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\System;
-use MGModule\RealtimeRegisterSsl\mgLibs\models\Orm;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
-use MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
-use MGModule\RealtimeRegisterSsl\models\whmcs\orders\Order;
-use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
-use MGModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\orders\Order;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
 use stdClass;
 
 /**
@@ -20,7 +20,6 @@ use stdClass;
 /**
  * Description of account
  * @Table(name=tblhosting,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Service extends Orm
@@ -152,13 +151,13 @@ class Service extends Orm
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\service\customFields\Repository
+     * @var \AddonModule\RealtimeRegisterSsl\models\whmcs\service\customFields\Repository
      */
     private $_customFields;
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository
+     * @var \AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository
      */
     private $_configOptions;
 
@@ -168,7 +167,6 @@ class Service extends Orm
      * @param int $id
      * @param array $data
      * @throws \Exception
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function __construct($id = null, $data = [])
     {
@@ -183,7 +181,6 @@ class Service extends Orm
      * @param int $id
      * @param array $data
      * @return server
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     protected function loadServer($id, $data = [])
     {
@@ -196,7 +193,6 @@ class Service extends Orm
      *
      * @param array $data
      * @return product
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     protected function loadProduct($data = [])
     {
@@ -209,7 +205,6 @@ class Service extends Orm
      *
      * @param array $data
      * @return order
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     protected function loadOrder($data = [])
     {
@@ -221,7 +216,6 @@ class Service extends Orm
      * Function allows to easy overwrite product object
      *
      * @return Client
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     protected function loadClient($data = [])
     {
@@ -232,7 +226,6 @@ class Service extends Orm
      * Get Server Connected With Service
      *
      * @return server
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function server()
     {
@@ -246,7 +239,6 @@ class Service extends Orm
      * Get Client Connected with Service
      *
      * @return client
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function client()
     {
@@ -261,7 +253,6 @@ class Service extends Orm
      * Get Product Service
      *
      * @return product
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function product()
     {
@@ -275,7 +266,6 @@ class Service extends Orm
      * Get Order Service
      *
      * @return order
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function order()
     {
@@ -289,13 +279,12 @@ class Service extends Orm
      * Get Custom Fields
      *
      * @return customFields\repository
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function customFields()
     {
         if (empty($this->_customFields)) {
             $this->_customFields =
-                new \MGModule\RealtimeRegisterSsl\models\whmcs\service\customFields\Repository($this->id);
+                new \AddonModule\RealtimeRegisterSsl\models\whmcs\service\customFields\Repository($this->id);
         }
 
         return $this->_customFields;
@@ -305,13 +294,12 @@ class Service extends Orm
      * Get Config Options
      *
      * @return configOptions
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function configOptions()
     {
         if (empty($this->_configOptions)) {
             $this->_configOptions =
-                new \MGModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository($this->id);
+                new \AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository($this->id);
         }
 
         return $this->_configOptions;
@@ -321,7 +309,6 @@ class Service extends Orm
      * Get Merged Configs from product configuration & custom fields & confi optins
      *
      * @return stdClass
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function mergedConfig()
     {
@@ -351,7 +338,6 @@ class Service extends Orm
     /**
      * Save Account Settings
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function save($cols = [])
     {
@@ -371,7 +357,6 @@ class Service extends Orm
      *
      * @param array $data
      * @throws system
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function load(array $data = [])
     {
@@ -439,7 +424,7 @@ class Service extends Orm
         }
 
         if (!empty($data['customfields'])) {
-            $this->_customFields = new \MGModule\RealtimeRegisterSsl\models\whmcs\service\customFields\Repository(
+            $this->_customFields = new \AddonModule\RealtimeRegisterSsl\models\whmcs\service\customFields\Repository(
                 $this->id,
                 $data['customfields']
             );

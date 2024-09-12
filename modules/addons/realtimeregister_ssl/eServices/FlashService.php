@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices;
+namespace AddonModule\RealtimeRegisterSsl\eServices;
 
 class FlashService
 {

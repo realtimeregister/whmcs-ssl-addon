@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\whmcs\config;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config;
 
 use Exception;
 
@@ -23,7 +23,7 @@ class Countries
 
     function __construct()
     {
-        $ccPath = \MGModule\RealtimeRegisterSsl\eProviders\PathProvider::getWhmcsCountriesPatch();
+        $ccPath = \AddonModule\RealtimeRegisterSsl\eProviders\PathProvider::getWhmcsCountriesPatch();
 
         if (!file_exists($ccPath)) {
             throw new Exception('Countries file not exist');
@@ -77,7 +77,7 @@ class Countries
         return implode(',', $this->countries);
     }
     
-    public function getCountriesForMgAddonDropdown()
+    public function getCountriesForAddonDropdown()
     {
         return $this->countries;
     }

@@ -15,254 +15,254 @@
     line-height: 36px;
     color: #8a8e99;
 }
-#mg-wrapper{
+#addon-wrapper{
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
     line-height: 1.42857143;
     color: #333;
 }
-#mg-wrapper .btn:hover,
-#mg-wrapper .btn:active,
-#mg-wrapper .btn:focus,
-#mg-wrapper a:focus,
-#mg-wrapper a:active,
-#mg-wrapper a:hover,
-#mg-wrapper a{
+#addon-wrapper .btn:hover,
+#addon-wrapper .btn:active,
+#addon-wrapper .btn:focus,
+#addon-wrapper a:focus,
+#addon-wrapper a:active,
+#addon-wrapper a:hover,
+#addon-wrapper a{
     text-decoration: none!important;
     outline: none!important;
 }
 @media (min-width: 768px){
-    #mg-wrapper .text-center-sm{
+    #addon-wrapper .text-center-sm{
         text-align: center;
     }
 }
-#mg-wrapper .buttons-content .big-button{
+#addon-wrapper .buttons-content .big-button{
     background: #fff;
     border: 0;
     color: #337ab7;
     cursor: pointer;
     text-align: left;
 }
-#mg-wrapper .buttons-content .big-button:hover{
+#addon-wrapper .buttons-content .big-button:hover{
     color: #000;
 }
-#mg-wrapper .form-group .fa-question-circle{
+#addon-wrapper .form-group .fa-question-circle{
     font-size: 16px;
     color: #337ab7;
     line-height: 36px;
 }
-#mg-wrapper .module-sidebar .sidebar-header h3{
+#addon-wrapper .module-sidebar .sidebar-header h3{
     font-size: 18px;
     font-weight: 400; 
     line-height: 30px;
 }
-#mg-wrapper .module-sidebar .btn.cp-sidebar-toggle {
+#addon-wrapper .module-sidebar .btn.cp-sidebar-toggle {
     background: none;
     box-shadow: none;
 }
-#mg-wrapper .module-sidebar .cp-sidebar-toggle .icon-bar {
+#addon-wrapper .module-sidebar .cp-sidebar-toggle .icon-bar {
     background-color: #8a8e99;
     border-radius: 0;
 }
-#mg-wrapper .module-sidebar .module-menu li a{
+#addon-wrapper .module-sidebar .module-menu li a{
     color: #5c5e66;
     background: #fff;
     line-height: 30px;
 }
-#mg-wrapper .module-sidebar .module-menu li a:hover{
+#addon-wrapper .module-sidebar .module-menu li a:hover{
     color: #000;
 }
 @media (min-width: 768px){
-    #mg-wrapper .module-sidebar .module-menu li a:hover{
+    #addon-wrapper .module-sidebar .module-menu li a:hover{
         box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
 }
 @media (max-width: 768px){
-    #mg-wrapper .module-sidebar .module-menu li a:hover{
+    #addon-wrapper .module-sidebar .module-menu li a:hover{
         background-color: #e6e6e6;
     }
 }
-#mg-wrapper .module-sidebar .module-menu li.active a{
+#addon-wrapper .module-sidebar .module-menu li.active a{
     font-weight: 700;
 }
-#mg-wrapper .module-content{
+#addon-wrapper .module-content{
     background-color: #fff;
 }
-#mg-wrapper .module-header .icon-header{
+#addon-wrapper .module-header .icon-header{
     background-repeat: no-repeat;
 }
 /* icons */
-#mg-wrapper .icon-installapp{
+#addon-wrapper .icon-installapp{
     background-image: url('../img/icon-installapp.png');
 }
-#mg-wrapper .icon-ftp{
+#addon-wrapper .icon-ftp{
     background-image: url('../img/icon-ftp.png');
 }
-#mg-wrapper .icon-files{
+#addon-wrapper .icon-files{
     background-image: url('../img/icon-files.png');
 }
-#mg-wrapper .icon-backups{
+#addon-wrapper .icon-backups{
     background-image: url('../img/icon-backups.png');
 }
-#mg-wrapper .icon-emails{
+#addon-wrapper .icon-emails{
     background-image: url('../img/icon-emails.png');
 }
-#mg-wrapper .icon-emailsforwarders{
+#addon-wrapper .icon-emailsforwarders{
     background-image: url('../img/icon-emailsforwarders.png');
 }
-#mg-wrapper .icon-databases{
+#addon-wrapper .icon-databases{
     background-image: url('../img/icon-databases.png');
 }
-#mg-wrapper .icon-cron{
+#addon-wrapper .icon-cron{
     background-image: url('../img/icon-cron.png');
 }
-#mg-wrapper .icon-subdomains{
+#addon-wrapper .icon-subdomains{
     background-image: url('../img/icon-subdomains.png');
 }
-#mg-wrapper .icon-addondomains{
+#addon-wrapper .icon-addondomains{
     background-image: url('../img/icon-addondomains.png');
 }
-#mg-wrapper .icon-forwarddomains{
+#addon-wrapper .icon-forwarddomains{
     background-image: url('../img/icon-forwarddomains.png');
 }
-#mg-wrapper .icon-parkeddomains{
+#addon-wrapper .icon-parkeddomains{
     background-image: url('../img/icon-parkeddomains.png');
 }
-#mg-wrapper .icon-graphsstats{
+#addon-wrapper .icon-graphsstats{
     background-image: url('../img/icon-graphsstats.png');
 }
-#mg-wrapper .icon-ssl{
+#addon-wrapper .icon-ssl{
     background-image: url('../img/icon-ssl.png');
 }
-#mg-wrapper .icon-bans{
+#addon-wrapper .icon-bans{
     background-image: url('../img/icon-bans.png');
 }
-#mg-wrapper .icon-mx{
+#addon-wrapper .icon-mx{
     background-image: url('../img/icon-mx.png');
 }
-#mg-wrapper .icon-ssh{
+#addon-wrapper .icon-ssh{
     background-image: url('../img/icon-ssh.png');
 }
-#mg-wrapper .icon-cpanel{
+#addon-wrapper .icon-cpanel{
     background-image: url('../img/icon-cpanel.png');
 }
-#mg-wrapper .icon-webmail{
+#addon-wrapper .icon-webmail{
     background-image: url('../img/icon-webmail.png');
 }
-#mg-wrapper .icon-phpmyadmin{
+#addon-wrapper .icon-phpmyadmin{
     background-image: url('../img/icon-phpmyadmin.png');
 }
-#mg-wrapper .icon-rv{
+#addon-wrapper .icon-rv{
     background-image: url('../img/icon-rv.png');
 }
-#mg-wrapper .icon-managedns{
+#addon-wrapper .icon-managedns{
     background-image: url('../img/icon-managedns.png');
 }
 
-#mg-wrapper .module-sub-header h2,
-#mg-wrapper .module-header h1{
+#addon-wrapper .module-sub-header h2,
+#addon-wrapper .module-header h1{
     font-size: 20px;
     color: #45464c;
     line-height: 34px;
 }
-#mg-wrapper .module-body h4{
+#addon-wrapper .module-body h4{
     font-size: 16px;
 }
 /* forms */
-#mg-wrapper .form-group .btn span{
+#addon-wrapper .form-group .btn span{
     line-height: 1.5;
 }
-#mg-wrapper .form-group span:not(.input-group-addon),
-#mg-wrapper .form-fluid span:not(.input-group-addon){
+#addon-wrapper .form-group span:not(.input-group-addon),
+#addon-wrapper .form-fluid span:not(.input-group-addon){
     line-height: 36px;
 }
-#mg-wrapper label:not(.control-label){
+#addon-wrapper label:not(.control-label){
     font-weight: 400;
     font-size: 12px;
     line-height: 34px;
 }
-#mg-wrapper label.control-label{
+#addon-wrapper label.control-label{
     font-size: 12px;
     font-weight: 800;
 }
-#mg-wrapper .input-group .form-control.first{
+#addon-wrapper .input-group .form-control.first{
     border-radius: 4px 0 0 4px!important;
 
 }
-#mg-wrapper .input-group .form-control.last{
+#addon-wrapper .input-group .form-control.last{
     border-radius: 0 4px 4px 0!important;
 }
 
-#mg-wrapper .input-group-addon:not(.first):not(.last), 
-#mg-wrapper .input-group-btn:not(.first):not(.last), 
-#mg-wrapper .input-group .form-control:not(.first):not(.last) {
+#addon-wrapper .input-group-addon:not(.first):not(.last),
+#addon-wrapper .input-group-btn:not(.first):not(.last),
+#addon-wrapper .input-group .form-control:not(.first):not(.last) {
     border-radius: 0;
     border-width: 1px 0;
 }
 
-#mg-wrapper .advanced-options{
+#addon-wrapper .advanced-options{
     /*background: rgba(0,0,0,0.05);
     border-radius: 4px;*/
 }
-#mg-wrapper .well .form-actions{
+#addon-wrapper .well .form-actions{
     border-top: 1px solid #e6e6e6;
 }
-#mg-wrapper p{
+#addon-wrapper p{
     line-height: 22px;
 }
 /* tables */
-#mg-wrapper .table{
+#addon-wrapper .table{
     border-bottom: 1px solid #e4e8f0;
 }
-#mg-wrapper .table > tbody > tr > td.cell-actions{
+#addon-wrapper .table > tbody > tr > td.cell-actions{
     text-align: right;
 }
-#mg-wrapper .table > tbody > tr > td.cell-actions > * {
+#addon-wrapper .table > tbody > tr > td.cell-actions > * {
     display: inline-block;
     margin: 0;
 }
-#mg-wrapper .table > tbody > tr > td .btn-icon .fa{
+#addon-wrapper .table > tbody > tr > td .btn-icon .fa{
     font-size: 16px;
     line-height: 22px;
 }
-#mg-wrapper .table > tbody > tr > td.cell-actions .btn-icon .fa,
-#mg-wrapper .table > tbody > tr > td.cell-actions .btn-icon .caret{
+#addon-wrapper .table > tbody > tr > td.cell-actions .btn-icon .fa,
+#addon-wrapper .table > tbody > tr > td.cell-actions .btn-icon .caret{
     color: #8a8e99;
 }
-#mg-wrapper .table tr th,
-#mg-wrapper .table tr td{
+#addon-wrapper .table tr th,
+#addon-wrapper .table tr td{
     border-color: #e4e8f0;
 }
-#mg-wrapper .table thead tr th{
+#addon-wrapper .table thead tr th{
     font-size: 11px;
     text-transform: uppercase;
     font-weight: 800;
     color: #a1a5b3;
 }
-#mg-wrapper .table tr td{
+#addon-wrapper .table tr td{
     font-size: 12px;
     line-height: 22px;
 }
-#mg-wrapper .table tr td a{
+#addon-wrapper .table tr td a{
     cursor: pointer;
 }
 /* buttons */
-#mg-wrapper .btn{
+#addon-wrapper .btn{
     font-size: 12px;
     line-height: 22px;
 }
-#mg-wrapper .btn.btn-icon, #mg-wrapper .btn.btn-icon:hover, #mg-wrapper .btn.btn-icon:active, #mg-wrapper .btn-group.open .btn.btn-icon {
+#addon-wrapper .btn.btn-icon, #addon-wrapper .btn.btn-icon:hover, #addon-wrapper .btn.btn-icon:active, #addon-wrapper .btn-group.open .btn.btn-icon {
     background: transparent;
     border: none;
     box-shadow: none;
     border-radius: 0;
 }
-#mg-wrapper .fa-question-circle{
+#addon-wrapper .fa-question-circle{
     cursor: pointer;
 }
-#mg-wrapper a.panel-heading h6{
+#addon-wrapper a.panel-heading h6{
     color: #5c5e66;
 }
-#mg-wrapper a.panel-heading:hover h6{
+#addon-wrapper a.panel-heading:hover h6{
     color: #000;
 }

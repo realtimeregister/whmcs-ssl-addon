@@ -1,14 +1,13 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\service\configOptions;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions;
 
-use MGModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 
 /**
  * Description of repository
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Repository
@@ -25,7 +24,6 @@ class Repository
      * Mozna by bylo dodac wersje z wczytywanie po samym productid
      *
      * @param type $accountID
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function __construct($serviceID, array $data = [])
     {
@@ -179,7 +177,6 @@ class Repository
     /**
      * Update Custom Fields
      *
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function update()
     {

@@ -1,5 +1,5 @@
 {if $enableLabel}
-    <label for="{$addIDs}_{$name}" class="col-sm-3 control-label">{$MGLANG->T('label')}</label>
+    <label for="{$addIDs}_{$name}" class="col-sm-3 control-label">{$ADDONLANG->T('label')}</label>
 {/if}
 <div class="col-sm-{$colWidth}">
     <select {if $multiple}multiple="multiple"{/if} id="{$addIDs}_{$name}" name="{$nameAttr}{if $multiple}[]{/if}" {if $readonly||$disabled}disabled="disabled"{/if} {foreach from=$dataAttr key=dataKey item=dataValue}data-{$dataKey}="{$dataValue}"{/foreach}>
@@ -13,7 +13,7 @@
         <input type="hidden" name="{$nameAttr}" value="{$value}" />
     {/if}
   {if $enableDescription }
-    <span class="help-block">{$MGLANG->T('description')}</span>
+    <span class="help-block">{$ADDONLANG->T('description')}</span>
   {/if}
     <span class="help-block error-block"{if !$error}style="display:none;"{/if}>{$error}</span>
   {literal}

@@ -14,8 +14,8 @@
             {if $pricing->monthly !== '-1.00'}
                 {assign var="atLeastOnePrice" value="1"}
                 <span><strong>{$pricing->code}</strong></span>
-                <p style="margin-bottom: 0 !important;">{$MGLANG->T('table', 'basePrice')}{$pricing->monthly}</p>
-                <p>{$MGLANG->T('table', 'priceWithDiscount')}{$pricing->discountMonthly}</p>
+                <p style="margin-bottom: 0 !important;">{$ADDONLANG->T('table', 'basePrice')}{$pricing->monthly}</p>
+                <p>{$ADDONLANG->T('table', 'priceWithDiscount')}{$pricing->discountMonthly}</p>
             {/if}           
         {/foreach}
         {if $atLeastOnePrice == "0"}
@@ -28,8 +28,8 @@
             {if $pricing->annually !== '-1.00'}
                 {assign var="atLeastOnePrice" value="1"}
                 <span><strong>{$pricing->code}</strong></span>
-                <p style="margin-bottom: 0 !important;">{$MGLANG->T('table', 'basePrice')}{$pricing->annually}</p>
-                <p>{$MGLANG->T('table', 'priceWithDiscount')}{$pricing->discountAnnually}</p>
+                <p style="margin-bottom: 0 !important;">{$ADDONLANG->T('table', 'basePrice')}{$pricing->annually}</p>
+                <p>{$ADDONLANG->T('table', 'priceWithDiscount')}{$pricing->discountAnnually}</p>
             {/if} 
         {/foreach}
         {if $atLeastOnePrice == "0"}
@@ -42,8 +42,8 @@
             {if $pricing->biennially !== '-1.00'}
                 {assign var="atLeastOnePrice" value="1"}
                 <span><strong>{$pricing->code}</strong></span>
-                <p style="margin-bottom: 0 !important;">{$MGLANG->T('table', 'basePrice')}{$pricing->biennially}</p>
-                <p>{$MGLANG->T('table', 'priceWithDiscount')}{$pricing->discountBiennially}</p>
+                <p style="margin-bottom: 0 !important;">{$ADDONLANG->T('table', 'basePrice')}{$pricing->biennially}</p>
+                <p>{$ADDONLANG->T('table', 'priceWithDiscount')}{$pricing->discountBiennially}</p>
             {/if}  
         {/foreach}
         {if $atLeastOnePrice == "0"}
@@ -56,8 +56,8 @@
             {if $pricing->triennially !== '-1.00'}
                 {assign var="atLeastOnePrice" value="1"}
                 <span><strong>{$pricing->code}</strong></span>
-                <p style="margin-bottom: 0 !important;">{$MGLANG->T('table', 'basePrice')}{$pricing->triennially}</p>
-                <p>{$MGLANG->T('table', 'priceWithDiscount')}{$pricing->discountTriennially}</p>
+                <p style="margin-bottom: 0 !important;">{$ADDONLANG->T('table', 'basePrice')}{$pricing->triennially}</p>
+                <p>{$ADDONLANG->T('table', 'priceWithDiscount')}{$pricing->discountTriennially}</p>
             {/if} 
         {/foreach}
         {if $atLeastOnePrice == "0"}
@@ -67,8 +67,8 @@
     <td>   
     <td>
         <div align="center">
-            <button data-toggle="tooltip" title="{$MGLANG->T('editItem')}" type="button"  data-id="{$rule_id}" class="btn btn-primary btn-inverse editItem"><i class="fa fa-pencil" aria-hidden="true"></i></button>
-            <button data-toggle="tooltip" title="{$MGLANG->T('deleteItem')}" type="button" data-id="{$rule_id}" class="btn btn-danger  btn-inverse deleteItem"><i class="fa fa-trash" aria-hidden="true"></i></button>
+            <button data-toggle="tooltip" title="{$ADDONLANG->T('editItem')}" type="button"  data-id="{$rule_id}" class="btn btn-primary btn-inverse editItem"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+            <button data-toggle="tooltip" title="{$ADDONLANG->T('deleteItem')}" type="button" data-id="{$rule_id}" class="btn btn-danger  btn-inverse deleteItem"><i class="fa fa-trash" aria-hidden="true"></i></button>
         </div>
     </td>
 </tr>

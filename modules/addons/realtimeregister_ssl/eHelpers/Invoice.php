@@ -5,24 +5,24 @@
  * and open the template in the editor.
  */
 
-namespace MGModule\RealtimeRegisterSsl\eHelpers;
+namespace AddonModule\RealtimeRegisterSsl\eHelpers;
 
+use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\RepositoryItem;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use DateInterval;
 use DateTime;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
-use MGModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR;
-use MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query;
-use MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
-use MGModule\RealtimeRegisterSsl\models\whmcs\invoices\RepositoryItem;
-use MGModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
-use MGModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository;
-use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Module\Server;
 use WHMCS\Product\Product;
@@ -30,14 +30,13 @@ use WHMCS\Product\Product;
 /**
  * Description of Invoice
  *
- * @author Rafal Sereda <rafal.se at modulesgarden.com>
  */
 class Invoice
 {
     protected static $adminUserName = null;
 
-    public const INVOICE_INFOS_TABLE_NAME = 'mgfw_REALTIMEREGISTERSSL_invoices_info';
-    public const INVOICE_PENDINGPAYMENT_TABLE_NAME = 'mgfw_REALTIMEREGISTERSSL_invoices_pendingpayment';
+    public const INVOICE_INFOS_TABLE_NAME = 'REALTIMEREGISTERSSL_invoices_info';
+    public const INVOICE_PENDINGPAYMENT_TABLE_NAME = 'REALTIMEREGISTERSSL_invoices_pendingpayment';
 
     public static function createInfosTable()
     {
@@ -135,7 +134,7 @@ class Invoice
 
     protected function getProductPricing($id)
     {
-        $productRepo = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $productRepo = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
         return $productRepo->getProductPricing($id);
     }
 
@@ -179,7 +178,7 @@ class Invoice
 
     public function createInvoice($service, $product, $returnInvoiceID = false)
     {
-        $apiConfigRepo = new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository();
+        $apiConfigRepo = new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository();
         $input = (array)$apiConfigRepo->get();
 
         $dateFormat = 'Y-m-d';
@@ -410,7 +409,7 @@ class Invoice
 
     public function CopyConfigurationAndSendRenewToGGSSL($newOrderId)
     {
-        $apiConfigRepo = new \MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository();
+        $apiConfigRepo = new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository();
         $input = (array)$apiConfigRepo->get();
         if (!$input['automatic_processing_of_renewal_orders']) {
             return false;

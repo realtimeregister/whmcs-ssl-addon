@@ -1,0 +1,38 @@
+.addon-wrapper .navbar-nav li a{
+    padding-top:  50px;
+    border-right:  2px #dcdcdc solid;
+}
+.addon-wrapper .navbar-nav li:first-child{
+    border-left:   2px #dcdcdc solid;
+}
+.addon-wrapper .nav-menu{
+    background-color: #f5f5f5;
+    height: 86px;
+}
+.addon-wrapper .nav-menu a:hover{
+    background-color: #fcfcfc !important;
+}
+.addon-wrapper .nav-menu .active{
+    background-color: #fcfcfc !important;
+}
+
+.addon-wrapper #AddonAlerts{
+    margin: 15px;
+}
+#AddonLoader{
+    background-color:  rgba(0, 0, 0, 0.1);
+    position:absolute;
+    top:0;
+    left: -30%;
+    top: -30%;
+    width:160%;
+    height:130%;
+    z-index: 60000;
+}
+#AddonLoader img{
+    position: fixed;
+    top:50%;
+    left:50%;
+    width:300px;
+    margin-left: -150px;
+}

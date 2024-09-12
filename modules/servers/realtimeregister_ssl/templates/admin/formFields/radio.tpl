@@ -1,5 +1,5 @@
 {if $enableLabel}
-    <label for="{$formName}_{$name}" class="col-sm-3 control-label">{$MGLANG->T('label')}</label>
+    <label for="{$formName}_{$name}" class="col-sm-3 control-label">{$ADDONLANG->T('label')}</label>
 {/if}
 <div class="col-sm-{$colWidth}" {if $addIDs}id="{$addIDs}_{$name}"{/if}>
     {foreach from=$options item=option key=opValue}

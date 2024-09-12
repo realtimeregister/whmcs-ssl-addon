@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl;
 
 if (!defined('DS')){
     define('DS',DIRECTORY_SEPARATOR);
@@ -9,7 +9,6 @@ if (!defined('DS')){
 /**
  * Module Class Loader
  *
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 
@@ -55,11 +54,10 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
 
         /**
          * Load Class File
-         * 
-         * @author Michal Czech <michael@modulesgarden.com>
+         *
          * @param string $className
          * @return bool
-         * @throws \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\base
+         * @throws \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\base
          * @throws \Exception
          */
         static function loader($className){
@@ -102,13 +100,13 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
                 
                 if (!class_exists(__NAMESPACE__.$originClassName) && !interface_exists(__NAMESPACE__.$originClassName)) {
                     $error['message'] = 'Unable to find class:'.$originClassName.' in file:'.$foundFile;
-                    $error['code']    = \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\Codes::MISSING_FILE_CLASS;
+                    $error['code']    = \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Codes::MISSING_FILE_CLASS;
                 }
             } 
             
             if ($error) {
-                if (class_exists(__NAMESPACE__.'\mgLibs\exceptions\Base',false)) {
-                    throw new \MGModule\RealtimeRegisterSsl\mgLibs\exceptions\Base($error['message'], $error['code']);
+                if (class_exists(__NAMESPACE__.'\addonLibs\exceptions\Base',false)) {
+                    throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Base($error['message'], $error['code']);
                 } else {
                     throw new \Exception($error['message'], $error['code']);
                 }

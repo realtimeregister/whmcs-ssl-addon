@@ -1,11 +1,6 @@
 <?php
 
 /* * ********************************************************************
- * SSLCENTERWHMCS product developed. (2015-11-23)
- * *
- *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
  *
  *
  * This software is furnished under a license and may be used and copied
@@ -18,14 +13,13 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\invoices;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\invoices;
 
 /**
  * Description of Repository
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  */
-class RepositoryItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class RepositoryItem extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {
@@ -44,7 +38,7 @@ class RepositoryItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Reposit
     /**
      *
      * @param int $id
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\RepositoryItem
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\RepositoryItem
      */
     public function onlyInvoiceId($id)
     {
@@ -55,7 +49,7 @@ class RepositoryItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Reposit
     /**
      *
      * @param int $id
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\RepositoryItem
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\RepositoryItem
      */
     public function onlyServiceId($id)
     {
@@ -65,7 +59,7 @@ class RepositoryItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Reposit
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\RepositoryItem
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\RepositoryItem
      */
     public function onlyAddon()
     {
@@ -75,7 +69,7 @@ class RepositoryItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Reposit
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\RepositoryItem
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\RepositoryItem
      */
     public function onlyHosting()
     {
@@ -85,7 +79,7 @@ class RepositoryItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Reposit
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\pricing\RepositoryItem
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\RepositoryItem
      */
     public function onlyDomainRegister()
     {
@@ -95,7 +89,7 @@ class RepositoryItem extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Reposit
 
     /**
      *
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\invoices\RepositoryItem
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\RepositoryItem
      */
     public function onlyHostingAndAddonAndDomainRegister()
     {

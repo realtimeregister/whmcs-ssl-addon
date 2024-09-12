@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\API;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\API;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DeployException;
 
 class Client
 {

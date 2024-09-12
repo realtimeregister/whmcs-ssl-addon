@@ -1,17 +1,11 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl;
 
+use AddonModule\RealtimeRegisterSsl\addonLibs\error\Register;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractMainDriver;
 use Exception;
-use MGModule\RealtimeRegisterSsl\mgLibs\error\Register;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractMainDriver;
 
-/**
- * Description of Addon
- *
- * @author Michal Czech <michael@modulesgarden.com>
- * @SuppressWarnings(PHPMD)
- */
 class Addon extends AbstractMainDriver
 {
     /**
@@ -19,7 +13,7 @@ class Addon extends AbstractMainDriver
      */
     public function loadAddonConfiguration()
     {
-        $result = mgLibs\MySQL\Query::select(
+        $result = addonLibs\MySQL\Query::select(
             [
                 'setting',
                 'value'
@@ -89,9 +83,9 @@ class Addon extends AbstractMainDriver
         }
 
         if ($page) {
-            $url .= '&mg-page=' . $page;
+            $url .= '&addon-page=' . $page;
             if ($action) {
-                $url .= '&mg-action=' . $action;
+                $url .= '&addon-action=' . $action;
             }
 
             if ($params) {
@@ -111,11 +105,11 @@ class Addon extends AbstractMainDriver
         }
 
         if ($page) {
-            $url .= '&mg-page=' . $page;
+            $url .= '&addon-page=' . $page;
         }
 
         if ($action) {
-            $url .= '&mg-action=' . $action;
+            $url .= '&addon-action=' . $action;
         }
 
         if ($params) {
@@ -128,9 +122,9 @@ class Addon extends AbstractMainDriver
     public static function genJSONUrl($page)
     {
         if (self::I()->isAdmin()) {
-            return 'addonmodules.php?module=' . self::I()->configuration()->systemName . '&json=1&mg-page=' . $page;
+            return 'addonmodules.php?module=' . self::I()->configuration()->systemName . '&json=1&addon-page=' . $page;
         } else {
-            return 'index.php?m=' . self::I()->configuration()->systemName . '&json=1&mg-page=' . $page;
+            return 'index.php?m=' . self::I()->configuration()->systemName . '&json=1&addon-page=' . $page;
         }
     }
 
@@ -141,7 +135,7 @@ class Addon extends AbstractMainDriver
             'name' => self::I()->configuration()->name,
             'description' => self::I()->configuration()->description,
             'version' => self::I()->configuration()->version,
-            'author' => self::I()->configuration()->author,
+            'author' => self::I()->configuration()->getAuthor(),
             'fields' => self::I()->configuration()->getAddonWHMCSConfig()
         );
     }
@@ -195,22 +189,22 @@ class Addon extends AbstractMainDriver
             self::I()->isAdmin(true);
             self::I()->setMainLangContext();
 
-            $page = empty($input['mg-page']) ? 'Home' : $input['mg-page'];
+            $page = empty($input['addon-page']) ? 'Home' : $input['addon-page'];
             $page = ucfirst($page);
-            $action = empty($input['mg-action']) ? 'index' : $input['mg-action'];
+            $action = empty($input['addon-action']) ? 'index' : $input['addon-action'];
 
             list($content) = self::I()->runControler($page, $action, $input, 'CustomHTML');
             return $content;
         } catch (Exception $ex) {
             self::dump($ex);
-            mgLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
+            addonLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
 
             $message = $ex->getMessage();
             if (method_exists($ex, 'getToken')) {
-                $message .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                $message .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
             }
 
-            return mgLibs\Smarty::I()->view('fatal', [
+            return addonLibs\Smarty::I()->view('fatal', [
                 'message' => $message
             ]);
         }
@@ -255,28 +249,28 @@ class Addon extends AbstractMainDriver
             }
 
 
-            if (empty($input['mg-page'])) {
-                $input['mg-page'] = key($menu);
+            if (empty($input['addon-page'])) {
+                $input['addon-page'] = key($menu);
             }
 
-            if ($input['mg-page']) {
+            if ($input['addon-page']) {
                 $breadcrumb[0] = [
-                    'name' => $input['mg-page'],
-                    'url' => $menu[$input['mg-page']]['url'],
-                    'icon' => $menu[$input['mg-page']]['icon']
+                    'name' => $input['addon-page'],
+                    'url' => $menu[$input['addon-page']]['url'],
+                    'icon' => $menu[$input['addon-page']]['icon']
                 ];
-                if ($input['mg-action']) {
+                if ($input['addon-action']) {
                     $breadcrumb[1] = [
-                        'name' => $input['mg-action'],
-                        'url' => $menu[$input['mg-page']]['submenu'][$input['mg-action']]['url'],
-                        'icon' => $menu[$input['mg-page']]['submenu'][$input['mg-action']]['icon']
+                        'name' => $input['addon-action'],
+                        'url' => $menu[$input['addon-page']]['submenu'][$input['addon-action']]['url'],
+                        'icon' => $menu[$input['addon-page']]['submenu'][$input['addon-action']]['icon']
                     ];
                 }
             }
 
 
-            $page = $input['mg-page'];
-            $action = empty($input['mg-action']) ? 'index' : $input['mg-action'];
+            $page = $input['addon-page'];
+            $action = empty($input['addon-action']) ? 'index' : $input['addon-action'];
             $page = ucfirst($page);
             $vars = [
                 'assetsURL' => self::I()->getAssetsURL(),
@@ -299,18 +293,18 @@ class Addon extends AbstractMainDriver
                 Register::register($ex);
                 $vars['error'] = $ex->getMessage();
                 if (method_exists($ex, 'getToken')) {
-                    $vars['error'] .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                    $vars['error'] .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
                 }
             }
 
-            mgLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
+            addonLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
 
-            $html = mgLibs\Smarty::I()->view('main', $vars);
+            $html = addonLibs\Smarty::I()->view('main', $vars);
 
             if (self::I()->isDebug()) {
                 $tmp = '<div style="color: #a94442;background-color: #f2dede;border-color: #dca7a7;font-size:20px;padding:10px;"><strong>Module is under development Mode!!!!!!!!!!!!!!!</strong></div>';
 
-                if ($langs = mgLibs\Lang::getMissingLangs()) {
+                if ($langs = addonLibs\Lang::getMissingLangs()) {
                     $tmp .= '<pre>';
                     foreach ($langs as $lk => $lang) {
                         $tmp .= $lk . " = '" . $lang . "';\n";
@@ -325,14 +319,14 @@ class Addon extends AbstractMainDriver
             self::dump($ex);
 
             Register::register($ex);
-            mgLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
+            addonLibs\Smarty::I()->setTemplateDir(self::I()->getModuleTemplatesDir());
 
             $message = $ex->getMessage();
             if (method_exists($ex, 'getToken')) {
-                $message .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                $message .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
             }
 
-            return mgLibs\Smarty::I()->view('fatal', [
+            return addonLibs\Smarty::I()->view('fatal', [
                 'message' => $message,
                 'assetsURL' => self::I()->getAssetsURL()
 
@@ -366,8 +360,8 @@ class Addon extends AbstractMainDriver
             $menu[$catName] = $category;
         }
 
-        if (empty($input['mg-page'])) {
-            $input['mg-page'] = key($menu);
+        if (empty($input['addon-page'])) {
+            $input['addon-page'] = key($menu);
         }
 
         $output = [
@@ -381,12 +375,12 @@ class Addon extends AbstractMainDriver
         try {
             self::I()->setMainLangContext();
 
-            $page = ucfirst($input['mg-page']);
-            if (!empty($input['mg-page'])) {
-                $url = self::I()->getUrl($input['mg-page']);
-                $breadcrumb[$url] = $input['mg-page'];
+            $page = ucfirst($input['addon-page']);
+            if (!empty($input['addon-page'])) {
+                $url = self::I()->getUrl($input['addon-page']);
+                $breadcrumb[$url] = $input['addon-page'];
             }
-            $action = empty($input['mg-action']) ? 'index' : $input['mg-action'];
+            $action = empty($input['addon-action']) ? 'index' : $input['addon-action'];
             $vars = [
                 'assetsURL' => self::I()->getAssetsURL(),
                 'mainURL' => self::I()->getUrl(),
@@ -398,13 +392,13 @@ class Addon extends AbstractMainDriver
             ];
 
             try {
-                $vars['MGLANG'] = mgLibs\Lang::getInstance();
+                $vars['ADDONLANG'] = addonLibs\Lang::getInstance();
                 list($content, $success, $error) = self::I()->runControler($page, $action, $input, 'HTML');
 
                 if (self::I()->isDebug()) {
                     $html = '<div style="color: #a94442;background-color: #f2dede;border-color: #dca7a7;font-size:20px;padding:10px;"><strong>Module is under development Mode!!!!!!!!!!!!!!!</strong></div>';
 
-                    if ($langs = mgLibs\Lang::getMissingLangs()) {
+                    if ($langs = addonLibs\Lang::getMissingLangs()) {
                         $html .= '<pre>';
                         foreach ($langs as $lk => $lang) {
                             $html .= $lk . " = '" . $lang . "';\n";
@@ -422,17 +416,17 @@ class Addon extends AbstractMainDriver
             } catch (Exception $ex) {
                 self::dump($ex);
                 Register::register($ex);
-                $vars['error'] = mgLibs\Lang::absoluteT($ex->getMessage());
+                $vars['error'] = addonLibs\Lang::absoluteT($ex->getMessage());
                 if (method_exists($ex, 'getToken')) {
-                    $vars['error'] .= mgLibs\Lang::absoluteT($ex->getMessage());
+                    $vars['error'] .= addonLibs\Lang::absoluteT($ex->getMessage());
                 }
             }
         } catch (Exception $ex) {
             self::dump($ex);
             Register::register($ex);
-            $vars['error'] = mgLibs\Lang::absoluteT('generalError');
+            $vars['error'] = addonLibs\Lang::absoluteT('generalError');
             if (method_exists($ex, 'getToken')) {
-                $vars['error'] .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                $vars['error'] .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
             }
         }
 
@@ -447,11 +441,11 @@ class Addon extends AbstractMainDriver
         $content = [];
 
         $page = 'home';
-        if (!empty($input['mg-page'])) {
-            $page = $input['mg-page'];
+        if (!empty($input['addon-page'])) {
+            $page = $input['addon-page'];
         }
         $page = ucfirst($page);
-        $action = empty($input['mg-action']) ? 'index' : $input['mg-action'];
+        $action = empty($input['addon-action']) ? 'index' : $input['addon-action'];
         try {
             self::I()->isAdmin(true);
             self::I()->setMainLangContext();
@@ -466,7 +460,7 @@ class Addon extends AbstractMainDriver
                 $content['result'] = 'success';
             }
 
-            if ($langs = mgLibs\Lang::getMissingLangs()) {
+            if ($langs = addonLibs\Lang::getMissingLangs()) {
                 $html = '<pre>';
                 foreach ($langs as $lk => $lang) {
                     $html .= $lk . " = '" . $lang . "';\n";
@@ -484,7 +478,7 @@ class Addon extends AbstractMainDriver
             $content['result'] = 'error';
             $content['error'] = $ex->getMessage();
             if (method_exists($ex, 'getToken')) {
-                $content['error'] .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                $content['error'] .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
             }
         }
 
@@ -496,11 +490,11 @@ class Addon extends AbstractMainDriver
         $content = [];
 
         $page = 'home';
-        if (!empty($input['mg-page'])) {
-            $page = $input['mg-page'];
+        if (!empty($input['addon-page'])) {
+            $page = $input['addon-page'];
         }
         $page = ucfirst($page);
-        $action = empty($input['mg-action']) ? 'index' : $input['mg-action'];
+        $action = empty($input['addon-action']) ? 'index' : $input['addon-action'];
 
         try {
             self::I()->setMainLangContext();
@@ -515,7 +509,7 @@ class Addon extends AbstractMainDriver
                 $content['result'] = 'success';
             }
 
-            if ($langs = mgLibs\Lang::getMissingLangs()) {
+            if ($langs = addonLibs\Lang::getMissingLangs()) {
                 $html = '<pre>';
                 foreach ($langs as $lk => $lang) {
                     $html .= $lk . " = '" . $lang . "';\n";
@@ -531,9 +525,9 @@ class Addon extends AbstractMainDriver
             self::dump($ex);
             $content['result'] = 'error';
             Register::register($ex);
-            $content['error'] = mgLibs\Lang::absoluteT('generalError');
+            $content['error'] = addonLibs\Lang::absoluteT('generalError');
             if (method_exists($ex, 'getToken')) {
-                $content['error'] .= mgLibs\Lang::absoluteT('token') . $ex->getToken();
+                $content['error'] .= addonLibs\Lang::absoluteT('token') . $ex->getToken();
             }
         }
 

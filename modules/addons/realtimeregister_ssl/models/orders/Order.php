@@ -1,8 +1,8 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\orders;
+namespace AddonModule\RealtimeRegisterSsl\models\orders;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm;
 
 /**
  * @Table(name=REALTIMEREGISTERSSL_orders,prefixed=true)

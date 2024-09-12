@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eModels\whmcs;
+namespace AddonModule\RealtimeRegisterSsl\eModels\whmcs;
 
 class EmailTemplate extends \Illuminate\Database\Eloquent\Model
 {

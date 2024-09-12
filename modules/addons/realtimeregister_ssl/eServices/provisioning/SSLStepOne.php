@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Organization;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\San;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
+use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
+use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use Exception;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Organization;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\San;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
-use MGModule\RealtimeRegisterSsl\eServices\FlashService;
-use MGModule\RealtimeRegisterSsl\eServices\ScriptService;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 
 class SSLStepOne
 {
@@ -70,7 +70,7 @@ class SSLStepOne
         if ($apiProduct->isOrganizationRequired()) {
             $fields['additionalfields'][Organization::getTitle()] = Organization::getFields();
         }
-        $countriesForGenerateCsrForm = Countries::getInstance()->getCountriesForMgAddonDropdown();
+        $countriesForGenerateCsrForm = Countries::getInstance()->getCountriesForAddonDropdown();
 
         //get selected default country for CSR Generator
         $defaultCsrGeneratorCountry = ($displayCsrGenerator) ? $apiConf->default_csr_generator_country : '';

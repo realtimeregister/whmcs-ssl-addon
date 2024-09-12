@@ -1,11 +1,11 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
-use MGModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
+use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 
 class CreateAccount
 {
@@ -28,7 +28,7 @@ class CreateAccount
 
     public function CreateAccount()
     {
-        $repo = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $repo = new \AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
         $serviceSSL = $repo->getByServiceId($this->p['serviceid']);
 
         if (!is_null($serviceSSL)) {

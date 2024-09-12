@@ -1,12 +1,12 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use MGModule\RealtimeRegisterSsl\eServices\TemplateService;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 class ClientContactDetails
@@ -37,7 +37,7 @@ class ClientContactDetails
 
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @var \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     private $sslService;
 
@@ -67,7 +67,7 @@ class ClientContactDetails
             $this->validate();
             $this->loadOrder();
         } catch (Exception $ex) {
-            return '- ' . \MGModule\RealtimeRegisterSsl\eHelpers\Exception::e($ex);
+            return '- ' . \AddonModule\RealtimeRegisterSsl\eHelpers\Exception::e($ex);
         }
 
         return $this->build();

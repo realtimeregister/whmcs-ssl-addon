@@ -1,11 +1,11 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\customWHMCS\product;
+namespace AddonModule\RealtimeRegisterSsl\models\customWHMCS\product;
 
 /**
  * @SuppressWarnings(PHPMD)
  */
-class Product extends \MGModule\RealtimeRegisterSsl\models\whmcs\product\Product
+class Product extends \AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product
 {
     function loadConfiguration($params  = [])
     {

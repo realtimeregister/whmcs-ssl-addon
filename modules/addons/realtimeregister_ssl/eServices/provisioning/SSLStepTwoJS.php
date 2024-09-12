@@ -1,18 +1,18 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary;
+use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
+use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use MGModule\RealtimeRegisterSsl\eHelpers\SansDomains;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary;
-use MGModule\RealtimeRegisterSsl\eServices\FlashService;
-use MGModule\RealtimeRegisterSsl\eServices\ScriptService;
-use MGModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
-use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
-use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
 
 class SSLStepTwoJS
@@ -102,10 +102,10 @@ class SSLStepTwoJS
         $product = new Product($service->productID);
         
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                $productsslDB = Capsule::table(Products::MGFW_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
+            if (Capsule::schema()->hasColumn(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+                $productsslDB = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
                     'pid',
                     $product->configuration()->text_name
                 )->first();

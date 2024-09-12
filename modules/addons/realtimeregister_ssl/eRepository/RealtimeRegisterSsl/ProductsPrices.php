@@ -1,10 +1,10 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
-use MGModule\RealtimeRegisterSsl\eHelpers\Fill;
-use MGModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\ProductPrice;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Fill;
+use AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\ProductPrice;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use SandwaveIo\RealtimeRegister\Api\CustomersApi;
 use SandwaveIo\RealtimeRegister\Domain\PriceCollection;
 

@@ -4,10 +4,6 @@
  * DiscountCenter product developed. (2015-11-24)
  * *
  *
- *  CREATED BY MODULESGARDEN       ->       http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
- *
- *
  * This software is furnished under a license and may be used and copied
  * only  in  accordance  with  the  terms  of such  license and with the
  * inclusion of the above copyright notice.  This software  or any other
@@ -18,16 +14,15 @@
  *
  * ******************************************************************** */
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\clients;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\clients;
 
 /**
  * Description of Group
  *
- * @author Pawel Kopec <pawelk@modulesgarden.com>
  * @Table(name=tblclientgroups,preventUpdate,prefixed=false)
  * @SuppressWarnings(PHPMD)
  */
-class Group extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Group extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     /**
      *

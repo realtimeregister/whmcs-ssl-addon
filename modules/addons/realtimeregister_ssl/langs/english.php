@@ -248,13 +248,13 @@ $_LANG['addonAA']['userDiscounts']['title']                             = 'Disco
 $_LANG['addonAA']['userDiscounts']['addNewDiscountRule']              = 'Add New Rule';
 $_LANG['addonAA']['userDiscounts']['editItem']                          = 'Edit';
 $_LANG['addonAA']['userDiscounts']['deleteItem']                        = 'Remove';
-$_LANG['addonAA']['userDiscounts']['messages']['addSuccess']            = 'Commission rule added successfully.';
-$_LANG['addonAA']['userDiscounts']['messages']['removeSuccess']         = 'Commission rule removed successfully.';
-$_LANG['addonAA']['userDiscounts']['messages']['updateSuccess']         = 'Commission rule updated successfully.';
+$_LANG['addonAA']['userDiscounts']['messages']['addSuccess']            = 'Discount rule added successfully.';
+$_LANG['addonAA']['userDiscounts']['messages']['removeSuccess']         = 'Discount rule removed successfully.';
+$_LANG['addonAA']['userDiscounts']['messages']['updateSuccess']         = 'Discount rule updated successfully.';
 $_LANG['addonAA']['userDiscounts']['messages']['clientIDNotProvided']   = 'Client ID has been not provided.';
 $_LANG['addonAA']['userDiscounts']['messages']['ruleIDNotProvided']     = 'Rule ID has been not provided.';
 $_LANG['addonAA']['userDiscounts']['messages']['productIDNotProvided']  = 'Product ID has been not provided.';
-$_LANG['addonAA']['userDiscounts']['messages']['commissionNotProvided'] = 'Commission has been not provided.';
+$_LANG['addonAA']['userDiscounts']['messages']['discountNotProvided'] = 'Discount has been not provided.';
 
 $_LANG['addonAA']['userDiscounts']['table']['client']                       = 'Client';
 $_LANG['addonAA']['userDiscounts']['table']['product']                      = 'Product';

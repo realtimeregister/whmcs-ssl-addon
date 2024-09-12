@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\Platforms;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\Platforms;
 
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DeployException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DeployException;
 use SimpleXMLElement;
 
 class Plesk extends Client implements PlatformInterface

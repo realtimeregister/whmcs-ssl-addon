@@ -1,16 +1,15 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\clients;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\clients;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\models\Orm;
-use MGModule\RealtimeRegisterSsl\models\whmcs\clients\customFields\Repository;
-use MGModule\RealtimeRegisterSsl\models\whmcs\currencies\Currency;
+use AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\customFields\Repository;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\currencies\Currency;
 
 /**
  * Client Model
  *
  * @Table(name=tblclients,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  * @SuppressWarnings(PHPMD)
  */
 class Client extends Orm
@@ -139,7 +138,6 @@ class Client extends Orm
      * Get Custom Fields
      *
      * @return customFields
-     * @author Michal Czech <michael@modulesgarden.com>
      */
     public function customFields()
     {
@@ -206,7 +204,7 @@ class Client extends Orm
     /**
      *
      * @param int $currencyId
-     * @return \MGModule\QuickBooksDesktop\models\whmcs\clients\Client
+     * @return \AddonModule\QuickBooksDesktop\models\whmcs\clients\Client
      */
     public function setCurrencyId($currencyId)
     {
@@ -217,7 +215,7 @@ class Client extends Orm
     /**
      *
      * @param string $address1
-     * @return \MGModule\QuickBooksDesktop\models\whmcs\clients\Client
+     * @return \AddonModule\QuickBooksDesktop\models\whmcs\clients\Client
      */
     public function setAddress1($address1)
     {
@@ -228,7 +226,7 @@ class Client extends Orm
     /**
      *
      * @param string $address2
-     * @return \MGModule\QuickBooksDesktop\models\whmcs\clients\Client
+     * @return \AddonModule\QuickBooksDesktop\models\whmcs\clients\Client
      */
     public function setAddress2($address2)
     {
@@ -239,7 +237,7 @@ class Client extends Orm
     /**
      *
      * @param string $city
-     * @return \MGModule\QuickBooksDesktop\models\whmcs\clients\Client
+     * @return \AddonModule\QuickBooksDesktop\models\whmcs\clients\Client
      */
     public function setCity($city)
     {
@@ -250,7 +248,7 @@ class Client extends Orm
     /**
      *
      * @param string $state
-     * @return \MGModule\QuickBooksDesktop\models\whmcs\clients\Client
+     * @return \AddonModule\QuickBooksDesktop\models\whmcs\clients\Client
      */
     public function setState($state)
     {
@@ -261,7 +259,7 @@ class Client extends Orm
     /**
      *
      * @param string $postcode
-     * @return \MGModule\QuickBooksDesktop\models\whmcs\clients\Client
+     * @return \AddonModule\QuickBooksDesktop\models\whmcs\clients\Client
      */
     public function setPostcode($postcode)
     {
@@ -272,7 +270,7 @@ class Client extends Orm
     /**
      *
      * @param string $country
-     * @return \MGModule\QuickBooksDesktop\models\whmcs\clients\Client
+     * @return \AddonModule\QuickBooksDesktop\models\whmcs\clients\Client
      */
     public function setCountry($country)
     {
@@ -283,7 +281,7 @@ class Client extends Orm
     /**
      *
      * @param string $phonenumber
-     * @return \MGModule\QuickBooksDesktop\models\whmcs\clients\Client
+     * @return \AddonModule\QuickBooksDesktop\models\whmcs\clients\Client
      */
     public function setPhonenumber($phonenumber)
     {

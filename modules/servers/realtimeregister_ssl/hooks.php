@@ -21,7 +21,7 @@ add_hook('ClientAreaPage', 1, function ($params)
     }
     
     require_once $loaderdir;
-    $activator = new \MGModule\RealtimeRegisterSsl\eServices\provisioning\Activator();
+    $activator = new \AddonModule\RealtimeRegisterSsl\eServices\provisioning\Activator();
     $activator->run();
 
     if (isset($params['templatefile'])) {
@@ -35,11 +35,11 @@ add_hook('ClientAreaPage', 1, function ($params)
                 $txtincluded = '';
                 
                 if ($includedsan > 0) {
-                    $txt = sprintf (\MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('additionalSingleDomainInfo'), $includedsan);
+                    $txt = sprintf (\AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->T('additionalSingleDomainInfo'), $includedsan);
                     $txtincluded .= '<p>'.$txt.'</p>';
                 }
                 if ($includedsanwildcard > 0) {
-                    $txt = sprintf (\MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->T('additionalSingleDomainWildcardInfo'), $includedsanwildcard);
+                    $txt = sprintf (\AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->T('additionalSingleDomainWildcardInfo'), $includedsanwildcard);
                     $txtincluded .= '<p>'.$txt.'</p>';
                 }
                 $smarty->assign('txtincluded', $txtincluded);
@@ -52,23 +52,23 @@ add_hook('ClientAreaPage', 1, function ($params)
                 $txtincluded = '';
                 
                 if ($includedsan > 0) {
-                    $txt = sprintf (\MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->absoluteT('additionalSingleDomainInfo'), $includedsan);
+                    $txt = sprintf (\AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->absoluteT('additionalSingleDomainInfo'), $includedsan);
                     $txtincluded .= '<p>'.$txt.'</p>';
                 }
                 if ($includedsanwildcard > 0) {
-                    $txt = sprintf (\MGModule\RealtimeRegisterSsl\mgLibs\Lang::getInstance()->absoluteT('additionalSingleDomainWildcardInfo'), $includedsanwildcard);
+                    $txt = sprintf (\AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->absoluteT('additionalSingleDomainWildcardInfo'), $includedsanwildcard);
                     $txtincluded .= '<p>'.$txt.'</p>';
                 }                
                 $smarty->assign('txtincluded', $txtincluded);
-                $smarty->assign('customRealtimeRegisterSslAssetsURL', \MGModule\RealtimeRegisterSsl\Server::I()->getAssetsURL());
+                $smarty->assign('customRealtimeRegisterSslAssetsURL', \AddonModule\RealtimeRegisterSsl\Server::I()->getAssetsURL());
                 $smarty->assign('customProductDetailsIcon', true);
                 break;
             case 'configuressl-stepone':
                 if (isset($_GET['cert'])) {
                     $r = DB::table('tblsslorders')->where(DB::raw('md5(id)'), '=', $_GET['cert'])->first();
-                    if ($r AND $r->module == \MGModule\RealtimeRegisterSsl\Server::I()->configuration()->systemName) {
+                    if ($r AND $r->module == \AddonModule\RealtimeRegisterSsl\Server::I()->configuration()->systemName) {
                         $smarty->assign('customBackToServiceButton', true);
-                        $smarty->assign('customBackToServiceButtonLang', \MGModule\RealtimeRegisterSsl\mgLibs\Lang::T('addonCA', 'customBackToServiceButtonLang'));
+                        $smarty->assign('customBackToServiceButtonLang', \AddonModule\RealtimeRegisterSsl\addonLibs\Lang::T('addonCA', 'customBackToServiceButtonLang'));
                     }
                 }
                 break;

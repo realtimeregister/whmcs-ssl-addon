@@ -15,7 +15,7 @@
     <td>{$date}</td>
     <td>
         <div>
-            <button data-toggle="tooltip" title="{$MGLANG->T('deleteItem')}" type="button" data-id="{$id}" class="btn btn-danger  btn-inverse deleteItem"><i class="fa fa-trash" aria-hidden="true"></i></button>
+            <button data-toggle="tooltip" title="{$ADDONLANG->T('deleteItem')}" type="button" data-id="{$id}" class="btn btn-danger  btn-inverse deleteItem"><i class="fa fa-trash" aria-hidden="true"></i></button>
         </div>
     </td>
 </tr>

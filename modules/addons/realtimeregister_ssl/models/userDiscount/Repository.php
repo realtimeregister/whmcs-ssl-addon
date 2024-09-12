@@ -1,17 +1,16 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\userDiscount;
+namespace AddonModule\RealtimeRegisterSsl\models\userDiscount;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 /**
  * Description of repository
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
-    public $tableName = 'mgfw_REALTIMEREGISTERSSL_user_discount';
+    public $tableName = 'REALTIMEREGISTERSSL_user_discount';
 
     public function getModelClass()
     {

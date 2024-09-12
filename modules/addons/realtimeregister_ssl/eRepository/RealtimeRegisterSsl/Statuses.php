@@ -1,12 +1,12 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
 class WebServers
 {
     public static function getAll($id)
     {
-        $webServers = \MGModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getWebServers($id);
+        $webServers = \AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider::getInstance()->getApi()->getWebServers($id);
         return $webServers = $webServers['webservers'];
     }
 }

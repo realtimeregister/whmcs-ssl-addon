@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform;
 
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Client;
-use MGModule\RealtimeRegisterSsl\mgLibs\exceptions\DNSException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Client;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
 
 class Directadmin extends Client implements PlatformInterface
 {

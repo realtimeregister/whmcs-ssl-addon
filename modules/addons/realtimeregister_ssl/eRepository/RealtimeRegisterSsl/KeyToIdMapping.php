@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class KeyToIdMapping
 {
-    const REALTIMEREGISTERSSL_KEY_ID_MAPPING = 'mgfw_REALTIMEREGISTERSSL_key_id_mapping';
+    const REALTIMEREGISTERSSL_KEY_ID_MAPPING = 'REALTIMEREGISTERSSL_key_id_mapping';
 
     public function createTable(): void
     {

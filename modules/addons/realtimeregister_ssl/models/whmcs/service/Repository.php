@@ -1,13 +1,12 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\service;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service;
 
 /**
  * Description of repository
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
-class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
+class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
     public function getModelClass()
     {
@@ -26,7 +25,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
     /**
      *
      * @param int $clientId
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\service\Repository
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository
      */
     public function onlyClient($clientId)
     {
@@ -37,7 +36,7 @@ class Repository extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Repository
     /**
      *
      * @param array $status
-     * @return \MGModule\RealtimeRegisterSsl\models\whmcs\service\Repository
+     * @return \AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository
      */
     public function onlyStatus(array $status)
     {

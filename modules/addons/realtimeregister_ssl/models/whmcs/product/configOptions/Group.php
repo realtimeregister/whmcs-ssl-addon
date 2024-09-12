@@ -1,15 +1,14 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\models\whmcs\product\configOptions;
+namespace AddonModule\RealtimeRegisterSsl\models\whmcs\product\configOptions;
 
-use MGModule\RealtimeRegisterSsl as main;
+use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Description of group
  * @Table(name=tblproductconfiggroups,preventUpdate,prefixed=false)
- * @author Michal Czech <michael@modulesgarden.com>
  */
-class Group extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
+class Group extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 {
     private $_relatedPID = [];
     private $_configOptions = [];
@@ -42,7 +41,7 @@ class Group extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     function getRelatedPIDs()
     {
         if (empty($this->_relatedPID)) {
-            $result = \MGModule\RealtimeRegisterSsl\mgLibs\MySQL\Query::select(
+            $result = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::select(
                 [
                     'pid'
                 ],
@@ -64,7 +63,7 @@ class Group extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
         parent::save();
 
         if ($this->_relatedPID) {
-            $result = main\mgLibs\MySQL\Query::select([
+            $result = main\addonLibs\MySQL\Query::select([
                     'pid'
             ],
                 'tblproductconfiglinks',
@@ -79,7 +78,7 @@ class Group extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
 
             foreach ($this->_relatedPID as $pid) {
                 if (!isset($exists[$pid])) {
-                    main\mgLibs\MySQL\Query::insert('tblproductconfiglinks', [
+                    main\addonLibs\MySQL\Query::insert('tblproductconfiglinks', [
                         'pid' => $pid,
                         'gid' => $this->id
                     ]);
@@ -92,7 +91,7 @@ class Group extends \MGModule\RealtimeRegisterSsl\mgLibs\models\Orm
     {
         if (empty($this->_configOptions)) {
             $this->_configOptions = [];
-            $result = main\mgLibs\MySQL\Query::select(
+            $result = main\addonLibs\MySQL\Query::select(
                 configOption::fieldDeclaration(),
                 configOption::tableName(),
                 [

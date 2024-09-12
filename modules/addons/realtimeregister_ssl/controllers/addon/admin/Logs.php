@@ -1,13 +1,13 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\addon\admin;
+namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
-use MGModule\RealtimeRegisterSsl\models\logs\Repository;
-use MGModule\RealtimeRegisterSsl\mgLibs\Smarty;
-use MGModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
-use MGModule\RealtimeRegisterSsl\models\whmcs\service\Service;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Smarty;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use WHMCS\Database\Capsule as DB;
 
 class Logs extends AbstractController

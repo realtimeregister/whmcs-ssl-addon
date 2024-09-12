@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File;
 
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
 
 class Client
 {

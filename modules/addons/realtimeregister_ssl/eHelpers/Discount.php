@@ -1,15 +1,15 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eHelpers;
+namespace AddonModule\RealtimeRegisterSsl\eHelpers;
 
-use MGModule\RealtimeRegisterSsl\models\userDiscount\Repository;
+use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository;
 
 class Discount
 {
 
     public static function getDiscountValue($vars)
     {
-        $productModel = new \MGModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
         
         $client = NULL;
         if(isset($_SESSION['uid']))

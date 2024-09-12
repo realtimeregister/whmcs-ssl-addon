@@ -1,11 +1,11 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Manage;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Manage as DNSManage;
-use MGModule\RealtimeRegisterSsl\eServices\ManagementPanel\Validation\Manage as ValidationManage;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Manage;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Manage as DNSManage;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Validation\Manage as ValidationManage;
 
 class DnsControl
 {

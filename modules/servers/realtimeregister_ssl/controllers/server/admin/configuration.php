@@ -1,21 +1,20 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\controllers\server\admin;
+namespace AddonModule\RealtimeRegisterSsl\controllers\server\admin;
 
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\ButtonField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\CheckboxField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\Creator;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\SelectField;
-use MGModule\RealtimeRegisterSsl\mgLibs\forms\TextField;
-use MGModule\RealtimeRegisterSsl\mgLibs\Lang;
-use MGModule\RealtimeRegisterSsl\mgLibs\process\AbstractController;
-use MGModule\RealtimeRegisterSsl\models\testGroup\testItem\TestItem;
-use MGModule\RealtimeRegisterSsl\models\whmcs\product\Product;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\ButtonField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\CheckboxField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\Creator;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\SelectField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\models\testGroup\testItem\TestItem;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 
 /**
  * Description of configuration
  *
- * @author Michal Czech <michael@modulesgarden.com>
  */
 class configuration extends AbstractController
 {
@@ -171,7 +170,7 @@ class configuration extends AbstractController
         $form->addField($field);
 
         //pole button submit
-        $form->addField('submit','mg-action', [
+        $form->addField('submit','addon-action', [
             'value'     => 'saveItem'
         ]);
         

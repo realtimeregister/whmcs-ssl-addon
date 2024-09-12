@@ -1,6 +1,6 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eRepository\whmcs\config;
+namespace AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config;
 
 class Config
 {
@@ -27,7 +27,7 @@ class Config
 
     public function getConfigureSSLUrl($id, $serviceID = null)
     {
-        $WHMCSUrl = \MGModule\RealtimeRegisterSsl\eHelpers\Multibrand::getBrandData($serviceID)['systemURL'];
+        $WHMCSUrl = \AddonModule\RealtimeRegisterSsl\eHelpers\Multibrand::getBrandData($serviceID)['systemURL'];
        
         return $WHMCSUrl . '/configuressl.php?cert=' . md5($id);
     }

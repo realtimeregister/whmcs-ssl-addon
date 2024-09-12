@@ -1,24 +1,24 @@
 <?php
 
-namespace MGModule\RealtimeRegisterSsl\eServices\provisioning;
+namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use MGModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
 
 class GetCertificate
 {
     /**
      *
-     * @var \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @var \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     private $ssl;
 
     /**
      * 
-     * @param \MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL $ssl
+     * @param \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL $ssl
      */
-    function __construct(\MGModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL $ssl) {
+    function __construct(\AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL $ssl) {
         $this->ssl = $ssl;
     }
 
@@ -50,7 +50,7 @@ class GetCertificate
     
     public static function runBySslId($id) {
         try {
-            $ssl        = new \MGModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+            $ssl        = new \AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
             $sslService = $ssl->getByServiceId($id);
             if (is_null($sslService)) {
                 throw new Exception('Create has not been initialized');
