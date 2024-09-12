@@ -76,15 +76,6 @@ class ApiConfiguration extends AbstractController
             'value' => 'testConnection',
         ]);
 
-        $tblcurrencies = Capsule::table('tblcurrencies')->where('default', '1')->first();
-        $whmcsDefaultCurrency = $tblcurrencies->code;
-        $realtimeRegisterSslCurrency = '';
-
-        $vars['whmcsCurrency'] = $whmcsDefaultCurrency;
-        $vars['realtimeregistersslCurrency'] = $realtimeRegisterSslCurrency;
-
-        $form->addField($field);
-
         $field = new LegendField();
         $field->name = 'logs_settings_legend';
         $form->addField($field);
