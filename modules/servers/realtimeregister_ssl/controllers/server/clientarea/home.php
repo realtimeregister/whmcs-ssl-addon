@@ -221,10 +221,10 @@ class home extends AbstractController
 
                     $product = new Product($input['params']['pid']);
                     $productssl = false;
-                    $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+                    $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
                     if ($checkTable) {
-                        if (Capsule::schema()->hasColumn(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                            $productsslDB = Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)
+                        if (Capsule::schema()->hasColumn(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+                            $productsslDB = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)
                                 ->where('pid', KeyToIdMapping::getIdByKey($product->configuration()->text_name))
                                 ->first();
                             if (isset($productsslDB->data)) {

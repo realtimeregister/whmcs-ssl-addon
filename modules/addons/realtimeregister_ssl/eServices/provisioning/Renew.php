@@ -94,9 +94,9 @@ class Renew
 
     private function createRenewTable()
     {
-        $checkTable = Capsule::schema()->hasTable('mod_REALTIMEREGISTERSSL_renew');
+        $checkTable = Capsule::schema()->hasTable('REALTIMEREGISTERSSL_renew');
         if ($checkTable === false) {
-            Capsule::schema()->create('mod_REALTIMEREGISTERSSL_renew', function ($table) {
+            Capsule::schema()->create('REALTIMEREGISTERSSL_renew', function ($table) {
                 $table->increments('id');
                 $table->integer('serviceid');
                 $table->dateTime('date');
@@ -108,7 +108,7 @@ class Renew
     {
         $this->createRenewTable();
 
-        $renew = Capsule::table('mod_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->where(
+        $renew = Capsule::table('REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->where(
             'date',
             'like',
             date('Y-m-d H') . '%'
@@ -123,14 +123,14 @@ class Renew
     {
         $this->createRenewTable();
 
-        $renew = Capsule::table('mod_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->first();
+        $renew = Capsule::table('REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->first();
 
         if (isset($renew->id) && !empty($renew->id)) {
-            Capsule::table('mod_REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->update([
+            Capsule::table('REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->update([
                 'date' => date('Y-m-d H:i:s')
             ]);
         } else {
-            Capsule::table('mod_REALTIMEREGISTERSSL_renew')->insert([
+            Capsule::table('REALTIMEREGISTERSSL_renew')->insert([
                 'serviceid' => $serviceid,
                 'date' => date('Y-m-d H:i:s')
             ]);

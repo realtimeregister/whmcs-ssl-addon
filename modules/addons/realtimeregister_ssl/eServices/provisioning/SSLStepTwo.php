@@ -25,11 +25,11 @@ class SSLStepTwo
     public function __construct(&$params)
     {
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+            if (Capsule::schema()->hasColumn(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
                 $productsslDB = Capsule::table(
-                    Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND
+                    Products::REALTIMEREGISTERSSL_PRODUCT_BRAND
                 )->where('pid', KeyToIdMapping::getIdByKey($params['configoption1']))->first();
                 if (isset($productsslDB->data)) {
                     $productssl['product'] = json_decode($productsslDB->data, true);
@@ -60,10 +60,10 @@ class SSLStepTwo
         $product = new Product($service->productID);
 
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                $productsslDB = Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)
+            if (Capsule::schema()->hasColumn(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+                $productsslDB = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)
                     ->where('pid', $product->id)->first();
                 if (isset($productsslDB->data)) {
                     $productssl['product'] = json_decode($productsslDB->data, true);
@@ -227,10 +227,10 @@ class SSLStepTwo
         $decodedCSR = $this->csrDecode;
         $_SESSION['csrDecode'] = $decodedCSR;
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                $productsslDB = Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)
+            if (Capsule::schema()->hasColumn(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+                $productsslDB = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)
                     ->where('pid', KeyToIdMapping::getIdByKey($this->p['configoption1']))->first();
                 if (isset($productsslDB->data)) {
                     $productssl['product'] = json_decode($productsslDB->data, true);

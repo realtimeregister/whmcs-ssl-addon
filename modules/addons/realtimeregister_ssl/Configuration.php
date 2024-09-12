@@ -57,17 +57,13 @@ class Configuration extends AbstractConfiguration
      */
     public $version = '1.0';
 
-    /**
-     * Module author
-     * @var string
-     */
-    public $author = 'Realtime Register';
+
 
     /**
      * Table prefix. This prefix is used in database models. You have to change it! 
      * @var type 
      */
-    public $tablePrefix   = 'mod_';
+    public $tablePrefix   = '';
     public $modelRegister = [];
 
     /**
@@ -188,5 +184,10 @@ class Configuration extends AbstractConfiguration
         (new UserDiscountRepo())->updateUserDiscountTable();
         (new LogsRepo())->updateLogsTable();
         (new OrdersRepo())->updateOrdersTable();
+    }
+
+    public function getAuthor()
+    {
+        return 'Realtime Register';
     }
 }

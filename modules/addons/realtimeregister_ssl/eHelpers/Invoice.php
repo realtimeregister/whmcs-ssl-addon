@@ -35,8 +35,8 @@ class Invoice
 {
     protected static $adminUserName = null;
 
-    public const INVOICE_INFOS_TABLE_NAME = 'mod_REALTIMEREGISTERSSL_invoices_info';
-    public const INVOICE_PENDINGPAYMENT_TABLE_NAME = 'mod_REALTIMEREGISTERSSL_invoices_pendingpayment';
+    public const INVOICE_INFOS_TABLE_NAME = 'REALTIMEREGISTERSSL_invoices_info';
+    public const INVOICE_PENDINGPAYMENT_TABLE_NAME = 'REALTIMEREGISTERSSL_invoices_pendingpayment';
 
     public static function createInfosTable()
     {

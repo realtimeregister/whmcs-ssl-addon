@@ -102,10 +102,10 @@ class SSLStepTwoJS
         $product = new Product($service->productID);
         
         $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                $productsslDB = Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
+            if (Capsule::schema()->hasColumn(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
+                $productsslDB = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
                     'pid',
                     $product->configuration()->text_name
                 )->first();

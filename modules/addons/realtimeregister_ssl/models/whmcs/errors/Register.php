@@ -16,7 +16,7 @@ class Register extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
      */
     static function register($ex)
     {
-        $token = 'Unknow Token';
+        $token = 'Unknown Token';
 
         if (method_exists($ex, 'getToken')) {
             $token = $ex->getToken();
@@ -24,7 +24,7 @@ class Register extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
 
         $debug = print_r($ex, true);
 
-        \logModuleCall("AddonError", __NAMESPACE__, [
+        \logModuleCall("RealtimeRegisterSsl", __NAMESPACE__, [
             'message' => $ex->getMessage(),
             'code' => $ex->getCode(),
             'token' => $token

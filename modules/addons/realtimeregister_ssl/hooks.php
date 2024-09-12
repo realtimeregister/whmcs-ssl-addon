@@ -100,7 +100,7 @@ add_hook('ClientAreaPage', 1, function($params) {
 
         Invoice::createPendingPaymentInvoice();
         $check = Capsule::table(
-            'mod_REALTIMEREGISTERSSL_invoices_pendingpayment'
+            'REALTIMEREGISTERSSL_invoices_pendingpayment'
         )->where('user_id', $_SESSION['uid'])->where('invoice_id', $params['invoiceid'])->first();
         if (!isset($check->id))
         {

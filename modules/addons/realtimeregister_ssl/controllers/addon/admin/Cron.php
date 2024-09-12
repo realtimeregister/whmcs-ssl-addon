@@ -333,9 +333,9 @@ class Cron extends AbstractController
 
         $this->sslRepo = new SSL();
 
-        $checkTable = Capsule::schema()->hasTable(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND);
+        $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable === false) {
-            Capsule::schema()->create(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND, function ($table) {
+            Capsule::schema()->create(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, function ($table) {
                 $table->increments('id');
                 $table->integer('pid');
                 $table->string('pid_identifier');
@@ -344,7 +344,7 @@ class Cron extends AbstractController
             });
         }
 
-        Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
+        Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
 
         $certificatedApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
         $i = 0;
@@ -352,7 +352,7 @@ class Cron extends AbstractController
         while ($apiProducts = $certificatedApi->listProducts(10, $i)) {
             /** @var Product $apiProduct */
             foreach ($apiProducts->toArray() as $apiProduct) {
-                Capsule::table(Products::MOD_REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
+                Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
                     'pid' => KeyToIdMapping::getIdByKey($apiProduct['product']),
                     'pid_identifier' => $apiProduct['product'],
                     'brand' => $apiProduct['brand'],

@@ -18,7 +18,7 @@ abstract class AbstractConfiguration
         
     public $version = false;
     
-    public $author = '<a href="http://www.whcms.com" target="_blank">WHMCS</a>';
+    public $author = '';
 
     public $tablePrefix = false;
             
@@ -77,4 +77,6 @@ abstract class AbstractConfiguration
     {
         return 'home';
     }
+
+    public abstract function getAuthor();
 }
