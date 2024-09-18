@@ -159,7 +159,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
         }
     }
 
-    public function updateApiConfigurationTable(string $version, string $prefix = '')
+    public function updateApiConfigurationTable(string $prefix = '')
     {
         if ($prefix && Capsule::schema()->hasTable($prefix . $this->tableName)) {
             Capsule::schema()->rename($prefix . $this->tableName,
