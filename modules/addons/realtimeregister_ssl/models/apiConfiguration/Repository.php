@@ -284,19 +284,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->string('tech_phone_country');
                 });
-
-            }
-
-            if (!Capsule::schema()->hasColumn($this->tableName, 'version')) {
-                Capsule::schema()->table($this->tableName, function($table) {
-                    $table->string('version');
-                });
-                Capsule::table($this->tableName)->update(['version' => '1.0.0']);
-            }
-
-            $oldVersion = Capsule::table($this->tableName)->select('version')->first()->version;
-            if ($oldVersion !== $version) {
-                Capsule::table($this->tableName)->update(['version' => $version]);
             }
         }
     }
