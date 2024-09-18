@@ -274,12 +274,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 });
             }
 
-            if (!Capsule::schema()->hasColumn($this->tableName, 'api_test')) {
-                Capsule::schema()->table($this->tableName, function($table) {
-                    $table->boolean('api_test');
-                });
-            }
-
             if (!Capsule::schema()->hasColumn($this->tableName, 'tech_phone_country')) {
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->string('tech_phone_country');
