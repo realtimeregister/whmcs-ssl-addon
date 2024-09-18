@@ -5,6 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractConfiguration;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
@@ -55,8 +56,9 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '1.0';
+    public $version = '0.3.2';
 
+    private static string $LEGACY_TABLE_PREFIX = 'mgfw_';
 
 
     /**
@@ -140,13 +142,14 @@ class Configuration extends AbstractConfiguration
         (new LogsRepo())->createLogsTable();
         (new OrdersRepo())->createOrdersTable();
         (new KeyToIdMapping())->createTable();
+        InvoiceHelper::createInfosTable();
+        InvoiceHelper::createPendingPaymentInvoice();
         EmailTemplateService::createConfigurationTemplate();
         EmailTemplateService::createCertificateTemplate();
         EmailTemplateService::createExpireNotificationTemplate();
         EmailTemplateService::createRenewalTemplate();
         EmailTemplateService::createReissueTemplate();
-        InvoiceHelper::createInfosTable();
-        InvoiceHelper::createPendingPaymentInvoice();
+
     }
 
     /**
@@ -171,17 +174,18 @@ class Configuration extends AbstractConfiguration
     /**
      * Do something after module upgrade
      */
-    function upgrade(array $vars)
+    function upgrade(array $vars = [])
     {
-        EmailTemplateService::createExpireNotificationTemplate();
         EmailTemplateService::updateConfigurationTemplate();
         EmailTemplateService::updateRenewalTemplate();
         EmailTemplateService::updateReissueTemplate();
-        InvoiceHelper::createInfosTable();
-        InvoiceHelper::createPendingPaymentInvoice();
-        (new APIConfigurationRepo())->updateApiConfigurationTable();
-        (new ProductPriceRepo())->updateApiProductsPricesTable();
-        (new UserDiscountRepo())->updateUserDiscountTable();
+        InvoiceHelper::updateInfosTable(self::$LEGACY_TABLE_PREFIX);
+        InvoiceHelper::updateInfosTable(self::$LEGACY_TABLE_PREFIX);
+        Products::updateTable(self::$LEGACY_TABLE_PREFIX);
+        (new APIConfigurationRepo())->updateApiConfigurationTable(self::$LEGACY_TABLE_PREFIX);
+        (new ProductPriceRepo())->updateApiProductsPricesTable(self::$LEGACY_TABLE_PREFIX);
+        (new UserDiscountRepo())->updateUserDiscountTable(self::$LEGACY_TABLE_PREFIX);
+        (new KeyToIdMapping())->updateTable(self::$LEGACY_TABLE_PREFIX);
         (new LogsRepo())->updateLogsTable();
         (new OrdersRepo())->updateOrdersTable();
     }
