@@ -63,8 +63,12 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
         }
     }
 
-    public function updateApiProductsPricesTable()
+    public function updateApiProductsPricesTable(string $prefix = '') : void
     {
+        if ($prefix && Capsule::schema()->hasTable($prefix . $this->tableName)) {
+            Capsule::schema()->rename($prefix . $this->tableName, $this->tableName);
+        }
+
         if (!Capsule::schema()->hasTable($this->tableName)) {
             Capsule::schema()->create($this->tableName, function($table) {
                 $table->increments('id');

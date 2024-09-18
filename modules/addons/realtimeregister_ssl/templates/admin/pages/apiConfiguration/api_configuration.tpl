@@ -144,12 +144,12 @@ Proin malesuada eros in risus accumsan euismod. Vivamus lacinia pellentesque nun
             $(modal).find('#successModal').find('strong').text(info);
         }
         $(document).ready(function () {
-            
-            
-            $("#item_default_rate").next('div').next('span').html('Your WHMCS default currency is: <b>{/literal}{$whmcsCurrency}{literal}</b><br>Your Realtime Register SSL default currency is: <b>{/literal}{$realtimeRegisterSslCurrency}{literal}</b><br>Please set the rate through which the automatic product prices will be set.<br><br>For example, if in WHMCS you have EUR currency and in RealtimeRegisterSsl it is USD, then if the rate is 1.2 and the product price in USD is $1, then in WHMCS the price will be set at 1.20 EUR<br><br>If the currency in WHMCS and RealtimeRegisterSsl are the same, the field can be left blank.');
-            
+
+            $('.intl-tel-input .country-list .country').click(function () {
+                $('input[name="tech_phone_country"]').val($(this).attr('data-country-code'));
+            })
+
             $('input[name="use_admin_contact[]"]').on('click', function () {
-                //$('input[name="use_admin_contact[]"]').prop('checked', true);
                 if (!$(this).is(":checked")) {
                     $('input[id^="item_default_tech_"]').prop('readonly', false).prop('required', true);
                     $('#item_default_tech_country').prop('disabled', false).prop('required', true);

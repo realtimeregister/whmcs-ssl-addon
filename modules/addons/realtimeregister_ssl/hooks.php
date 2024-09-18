@@ -2,6 +2,7 @@
 
 use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\Configuration;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Discount;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
@@ -1078,4 +1079,12 @@ $(document).ready(function (){
 HTML;
 
     }
+});
+
+// Check for upgrades
+add_hook('AdminHomepage', 1, function($vars) {
+    require_once __DIR__ . DS . 'Loader.php';
+    new Loader();
+
+    (new Configuration())->upgrade();
 });

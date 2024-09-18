@@ -39,7 +39,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'tech_lastname'                          => $params['tech_lastname'],
                         'tech_organization'                      => $params['tech_organization'],
                         'tech_addressline1'                      => $params['tech_addressline1'],
-                        'tech_phone'                             => $params['tech_phone'],
+                        'tech_phone'                             => '+' . $params['country-calling-code-tech_phone'] . $params['tech_phone'],
                         'tech_title'                             => $params['tech_title'],
                         'tech_email'                             => $params['tech_email'],
                         'tech_city'                              => $params['tech_city'],
@@ -64,6 +64,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'sidebar_templates'                      => $params['sidebar_templates'],
                         'custom_guide'                           => $params['custom_guide'],
                         'disable_email_validation'               => $params['disable_email_validation'],
+                        'tech_phone_country'                => $params['tech_phone_country'],
             ]);
         } else {
             if (!isset($params['tech_fax']) || empty($params['tech_fax'])) {
@@ -83,7 +84,8 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'tech_lastname'                          => $params['tech_lastname'],
                         'tech_organization'                      => $params['tech_organization'],
                         'tech_addressline1'                      => $params['tech_addressline1'],
-                        'tech_phone'                             => $params['tech_phone'],
+                        'tech_phone'                             => '+' . $params['country-calling-code-tech_phone'] . $params['tech_phone'],
+                        'tech_phone_country'                => $params['tech_phone_country'],
                         'tech_title'                             => $params['tech_title'],
                         'tech_email'                             => $params['tech_email'],
                         'tech_city'                              => $params['tech_city'],
@@ -157,8 +159,13 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
         }
     }
 
-    public function updateApiConfigurationTable()
+    public function updateApiConfigurationTable(string $version, string $prefix = '')
     {
+        if ($prefix && Capsule::schema()->hasTable($prefix . $this->tableName)) {
+            Capsule::schema()->rename($prefix . $this->tableName,
+                $this->tableName);
+        }
+
         if (Capsule::schema()->hasTable($this->tableName)) {
             if (!Capsule::schema()->hasColumn($this->tableName, 'auto_renew_invoice_one_time')) {
                 Capsule::schema()->table($this->tableName, function($table) {
@@ -265,6 +272,31 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->boolean('api_test');
                 });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'api_test')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->boolean('api_test');
+                });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'tech_phone_country')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->string('tech_phone_country');
+                });
+
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'version')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->string('version');
+                });
+                Capsule::table($this->tableName)->update(['version' => '1.0.0']);
+            }
+
+            $oldVersion = Capsule::table($this->tableName)->select('version')->first()->version;
+            if ($oldVersion !== $version) {
+                Capsule::table($this->tableName)->update(['version' => $version]);
             }
         }
     }

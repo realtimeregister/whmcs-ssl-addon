@@ -69,6 +69,22 @@ class Invoice
         }
     }
 
+    public static function updateInfosTable(string $prefix = ''): void
+    {
+        if ($prefix && Capsule::schema()->hasTable($prefix . self::INVOICE_INFOS_TABLE_NAME)) {
+            Capsule::schema()->rename($prefix . self::INVOICE_INFOS_TABLE_NAME,
+                self::INVOICE_INFOS_TABLE_NAME);
+        }
+    }
+
+    public static function updatePendingPaymentTable(string $prefix= '') : void
+    {
+        if ($prefix && Capsule::schema()->hasTable($prefix . self::INVOICE_PENDINGPAYMENT_TABLE_NAME)) {
+            Capsule::schema()->rename($prefix . self::INVOICE_PENDINGPAYMENT_TABLE_NAME,
+                self::INVOICE_PENDINGPAYMENT_TABLE_NAME);
+        }
+    }
+
     public function checkInvoiceAlreadyCreated($serviceIDs)
     {
         $services = Query::select(

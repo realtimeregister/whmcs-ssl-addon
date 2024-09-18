@@ -5,6 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 use AddonModule\RealtimeRegisterSsl as main;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\CheckboxField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\Creator;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\HiddenField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\LegendField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\SelectField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextareaField;
@@ -55,6 +56,11 @@ class ApiConfiguration extends AbstractController
         }
 
         $form = new Creator('item');
+
+        $field = new HiddenField();
+        $field->name = 'tech_phone_country';
+        $field->value = $input['tech_phone_country'] ?: 'us';
+        $form->addField($field);
 
         $field = new TextField();
         $field->name = 'api_login';
@@ -435,7 +441,6 @@ class ApiConfiguration extends AbstractController
             . DS . 'realtimeregister_ssl' . DS . 'cron' . DS . 'installCertificates.php';
 
         return [
-            //You have to create tpl file  /modules/addons/RealtimeRegisterSsl/templates/admin/pages/example1/example.1tpl
             'tpl' => 'api_configuration',
             'vars' => $vars
         ];
@@ -460,7 +465,7 @@ class ApiConfiguration extends AbstractController
                     'disable_email_validation',
                     'api_test',
                     'visible_renew_button',
-                    'save_activity_logs'
+                    'save_activity_logs',
                 ];
                 foreach ($checkFieldsArray as $field) {
                     if (isset($input[$field])) {
