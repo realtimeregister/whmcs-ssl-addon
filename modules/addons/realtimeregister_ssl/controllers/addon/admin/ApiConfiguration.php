@@ -465,7 +465,7 @@ class ApiConfiguration extends AbstractController
                     'disable_email_validation',
                     'api_test',
                     'visible_renew_button',
-                    'save_activity_logs',
+                    'save_activity_logs'
                 ];
                 foreach ($checkFieldsArray as $field) {
                     if (isset($input[$field])) {
