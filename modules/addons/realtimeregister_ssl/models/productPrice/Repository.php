@@ -12,7 +12,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
     {
         return __NAMESPACE__ . '\ProductPrice';
     }
-    
+
     /**
      *
      * @return ProductPrices[]
@@ -36,7 +36,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
         $this->_filters['api_product_id'] = $id;
         return $this;
     }
-    
+
     public function onlyPeriod($period)
     {
         $this->_filters['period'] = $period;
@@ -48,11 +48,11 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
         $this->_filters['action'] = $action;
         return $this;
     }
-    
+
     public function createApiProductsPricesTable()
     {
         if (!Capsule::schema()->hasTable($this->tableName)) {
-            Capsule::schema()->create($this->tableName, function($table) {
+            Capsule::schema()->create($this->tableName, function ($table) {
                 $table->increments('id');
                 $table->integer('api_product_id');
                 $table->string('price');
@@ -63,19 +63,23 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
         }
     }
 
-    public function updateApiProductsPricesTable(string $prefix = '') : void
+    public function updateApiProductsPricesTable(string $prefix = ''): void
     {
         if ($prefix && Capsule::schema()->hasTable($prefix . $this->tableName)) {
             Capsule::schema()->rename($prefix . $this->tableName, $this->tableName);
         }
 
         if (!Capsule::schema()->hasTable($this->tableName)) {
-            Capsule::schema()->create($this->tableName, function($table) {
+            Capsule::schema()->create($this->tableName, function ($table) {
                 $table->increments('id');
                 $table->integer('api_product_id');
                 $table->string('price');
                 $table->string('period');
                 $table->string("action");
+                $table->string("currency");
+            });
+        } else {
+            Capsule::schema()->table($this->tableName, function ($table) {
                 $table->string("currency");
             });
         }
