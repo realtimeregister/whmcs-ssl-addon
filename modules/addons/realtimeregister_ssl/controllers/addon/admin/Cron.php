@@ -19,10 +19,10 @@ use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
 use DateTime;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
-use SandwaveIo\RealtimeRegister\Domain\Product;
-use SandwaveIo\RealtimeRegister\Domain\ProductCollection;
+use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Domain\Product;
+use RealtimeRegister\Domain\ProductCollection;
 use WHMCS\Service\Service;
 
 class Cron extends AbstractController

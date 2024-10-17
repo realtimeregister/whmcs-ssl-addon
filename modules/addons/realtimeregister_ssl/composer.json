@@ -11,16 +11,10 @@
       "homepage": "https://realtimeregister.com"
     }
   ],
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/realtimeregister/realtimeregister-php"
-    }
-  ],
   "homepage": "https://realtimeregister.com/integration/platform/modules/whmcs/",
   "require": {
     "php": "^8.1",
-    "sandwave-io/realtimeregister-php": "dev-ssl",
+    "realtimeregister/realtimeregister-php": "dev-master",
     "ext-curl": "*"
   },
   "require-dev": {

@@ -15,10 +15,10 @@ use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
-use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
-use SandwaveIo\RealtimeRegister\Domain\CertificateInfoProcess;
-use SandwaveIo\RealtimeRegister\Domain\Product;
+use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Domain\CertificateInfoProcess;
+use RealtimeRegister\Domain\Product;
 use WHMCS\Database\Capsule;
 
 class SSLStepThree
@@ -251,7 +251,7 @@ class SSLStepThree
                     );
                     break;
             }
-        } catch (\SandwaveIo\RealtimeRegister\Exceptions\BadRequestException $exception) {
+        } catch (\RealtimeRegister\Exceptions\BadRequestException $exception) {
             $logs->addLog(
                 $this->p['userid'], $this->p['serviceid'],
                 'error',

@@ -7,9 +7,9 @@ use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
-use SandwaveIo\RealtimeRegister\Domain\Certificate;
-use SandwaveIo\RealtimeRegister\Domain\Enum\DownloadFormatEnum;
+use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Domain\Certificate;
+use RealtimeRegister\Domain\Enum\DownloadFormatEnum;
 
 class UpdateConfigs
 {

@@ -7,7 +7,7 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Api\ProcessesApi;
 
 class ClientContactDetails
 {

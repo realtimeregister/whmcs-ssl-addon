@@ -23,7 +23,7 @@ use DateInterval;
 use DateTime;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Module\Server;
 use WHMCS\Product\Product;
 

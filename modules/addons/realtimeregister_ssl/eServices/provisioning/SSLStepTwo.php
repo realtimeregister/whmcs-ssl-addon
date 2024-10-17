@@ -14,7 +14,7 @@ use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Api\CertificatesApi;
 
 class SSLStepTwo
 {

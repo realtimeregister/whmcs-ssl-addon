@@ -16,7 +16,7 @@ use AddonModule\RealtimeRegisterSsl\Loader;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\Server;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Service\Service;
 use WHMCS\View\Formatter\Price;
 use WHMCS\View\Menu\Item;
