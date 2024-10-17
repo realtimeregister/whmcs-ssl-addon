@@ -23,9 +23,9 @@ use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\Server;
 use Exception;
-use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
-use SandwaveIo\RealtimeRegister\Domain\ResendDcvCollection;
+use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Domain\ResendDcvCollection;
 use WHMCS\Database\Capsule;
 
 /**

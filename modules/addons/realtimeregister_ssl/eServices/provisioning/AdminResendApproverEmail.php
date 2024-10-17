@@ -10,7 +10,7 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\models\orders\Order;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository;
-use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Api\CertificatesApi;
 
 class AdminResendApproverEmail extends Ajax
 {

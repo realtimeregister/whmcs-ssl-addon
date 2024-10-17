@@ -4,7 +4,7 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Api\CertificatesApi;
 
 class TerminateAccount
 {

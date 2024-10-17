@@ -8,7 +8,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Exceptions\SSLValidationException;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
-use SandwaveIo\RealtimeRegister\Domain\Certificate;
+use RealtimeRegister\Domain\Certificate;
 
 class Manage
 {

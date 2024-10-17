@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
-use SandwaveIo\RealtimeRegister\Domain\Certificate;
+use RealtimeRegister\Domain\Certificate;
 
 class AdminRecheckCertificateDetails extends Ajax
 {

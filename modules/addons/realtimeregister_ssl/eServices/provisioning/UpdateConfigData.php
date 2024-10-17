@@ -7,7 +7,7 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
-use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Api\CertificatesApi;
 use WHMCS\Database\Capsule;
 
 class UpdateConfigData

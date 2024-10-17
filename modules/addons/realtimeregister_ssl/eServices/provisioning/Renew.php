@@ -13,9 +13,9 @@ use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use Exception;
-use SandwaveIo\RealtimeRegister\Api\CertificatesApi;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
-use SandwaveIo\RealtimeRegister\Domain\DomainControlValidation;
+use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Domain\DomainControlValidation;
 use WHMCS\Database\Capsule;
 
 class Renew

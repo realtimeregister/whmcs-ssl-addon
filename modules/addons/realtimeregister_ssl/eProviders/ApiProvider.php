@@ -6,8 +6,8 @@ namespace AddonModule\RealtimeRegisterSsl\eProviders;
 
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use SandwaveIo\RealtimeRegister\Api\AbstractApi;
-use SandwaveIo\RealtimeRegister\Support\AuthorizedClient;
+use RealtimeRegister\Api\AbstractApi;
+use RealtimeRegister\Support\AuthorizedClient;
 
 class ApiProvider
 {

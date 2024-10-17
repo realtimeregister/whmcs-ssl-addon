@@ -20,8 +20,8 @@ use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Products;
 use Exception;
-use SandwaveIo\RealtimeRegister\Api\CustomersApi;
-use SandwaveIo\RealtimeRegister\Domain\PriceCollection;
+use RealtimeRegister\Api\CustomersApi;
+use RealtimeRegister\Domain\PriceCollection;
 use WHMCS\Database\Capsule;
 
 /*

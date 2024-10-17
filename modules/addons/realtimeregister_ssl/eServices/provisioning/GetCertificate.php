@@ -4,7 +4,7 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use Exception;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Api\ProcessesApi;
 
 class GetCertificate
 {

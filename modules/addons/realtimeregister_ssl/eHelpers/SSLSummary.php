@@ -6,7 +6,7 @@ use DateTime;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository;
-use SandwaveIo\RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Api\ProcessesApi;
 
 class SSLSummary
 {

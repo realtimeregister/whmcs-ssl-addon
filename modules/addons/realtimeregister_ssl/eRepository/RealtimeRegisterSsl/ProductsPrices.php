@@ -5,8 +5,8 @@ namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Fill;
 use AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\ProductPrice;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use SandwaveIo\RealtimeRegister\Api\CustomersApi;
-use SandwaveIo\RealtimeRegister\Domain\PriceCollection;
+use RealtimeRegister\Api\CustomersApi;
+use RealtimeRegister\Domain\PriceCollection;
 
 class ProductsPrices
 {
