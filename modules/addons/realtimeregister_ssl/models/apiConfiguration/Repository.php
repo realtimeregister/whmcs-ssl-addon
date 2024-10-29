@@ -64,7 +64,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'sidebar_templates'                      => $params['sidebar_templates'],
                         'custom_guide'                           => $params['custom_guide'],
                         'disable_email_validation'               => $params['disable_email_validation'],
-                        'tech_phone_country'                => $params['tech_phone_country'],
+                        'tech_phone_country'                     => $params['tech_phone_country'],
             ]);
         } else {
             if (!isset($params['tech_fax']) || empty($params['tech_fax'])) {
@@ -139,6 +139,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->string('tech_addressline1');
                 $table->string('tech_phone');
                 $table->string('tech_title');
+                $table->string('tech_phone_country');
                 $table->string('tech_email');
                 $table->string('tech_city');
                 $table->string('tech_country');

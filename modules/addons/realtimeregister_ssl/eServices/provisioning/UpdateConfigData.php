@@ -134,8 +134,10 @@ class UpdateConfigData
 
     private function handleDcvMethod() : void {
         $sslOrder = $this->sslService;
-        $dcv = array_filter($this->orderdata['dcv'],
-            function ($dcv) {return $dcv['commonName'] == $this->sslService->getDomain();})[0];
+        $dcv = array_values(
+            array_filter($this->orderdata['dcv'],
+            function ($dcv) {return $dcv['commonName'] == $this->sslService->getDomain();}
+            ))[0];
         switch ($dcv['type']) {
             case 'FILE':
                 $sslOrder->setDcvMethod('http');
@@ -178,9 +180,9 @@ class UpdateConfigData
                 case "DNS":
                     $sanEntry['validation_method'] = 'dns';
                     $sanEntry['validation'] = [
-                        ['dns' => [
+                        'dns' => [
                             'record' => $dcv['dnsRecord'] . ' ' . $dcv['dnsType']  . ' ' . $dcv['dnsContents']
-                        ]]];
+                        ]];
                     break;
                 default:
                     $sanEntry['validation_method'] = 'email';

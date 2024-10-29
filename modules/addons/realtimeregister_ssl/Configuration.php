@@ -56,7 +56,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '0.3.2';
+    public $version = '0.3.3';
 
     private static string $LEGACY_TABLE_PREFIX = 'mgfw_';
 
