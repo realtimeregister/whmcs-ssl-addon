@@ -2,7 +2,6 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use Exception;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -10,11 +9,13 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMappi
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
+use Exception;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
 use RealtimeRegister\Domain\CertificateInfoProcess;
@@ -334,7 +335,10 @@ class SSLStepThree
 
         foreach ($orderDetails['validations']['dcv'] as $data) {
             try {
-                $panel = \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel::getPanelData($data['commonName']);
+                $panel = Panel::getPanelData($data['commonName']);
+                if (!$panel) {
+                    continue;
+                }
 
                 if ($data['type'] == 'FILE') {
                     $result = FileControl::create(

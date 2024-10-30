@@ -172,7 +172,7 @@
                                     <td colspan="2" class="text-center">{$ADDONLANG->T({$san.san_name})}</td>
                                 </tr>
                                 {if $san.method == 'http'}
-                                    {if $activationStatus === 'processing'}
+                                    {if $activationStatus === 'processing' || $activationStatus === 'SUSPENDED'}
                                         <tr>
                                             <td style="width: 15%" class="text-left">{$ADDONLANG->T('hashFile')}</td>
                                             <td class="text-left" style="max-width:200px; word-wrap: break-word;">{$san.san_validation.link}</td>
@@ -184,15 +184,15 @@
                                     {/if}
                                {else}
                                     {if $san.method == 'dns'}
-                                        {if $activationStatus === 'processing'}
+                                        {if $activationStatus === 'processing' || $activationStatus === 'SUSPENDED'}
                                             <tr>
                                                 <td style="width: 15%" class="text-left">{$ADDONLANG->T('dnsCnameRecord')}</td>
-                                                <td class="text-left" style="max-width:200px; word-wrap: break-word;">{$san.san_validation|strtolower|replace:'cname':'CNAME'}</td>
+                                                <td class="text-left" style="max-width:200px; word-wrap: break-word;">{$san.san_validation}</td>
                                             </tr>
                                         {/if}
                                     {else}
                                         {if $san.san_validation != ''}
-                                            {if $activationStatus === 'processing'}
+                                            {if $activationStatus === 'processing' || $activationStatus === 'SUSPENDED'}
                                                 <tr>
                                                     <td style="width: 15%" class="text-left">{$ADDONLANG->T('validationEmail')}</td>
                                                     <td class="text-left" style="word-wrap: break-word;">{$san.san_validation}</td>
@@ -206,10 +206,6 @@
                         </table>
                     </td>
                 </tr>
-               <!--<tr>
-                    <td class="text-left">{$ADDONLANG->T('sans')}</td>
-                    <td class="text-left">{$sans}</td>
-                </tr>-->
             {/if}
             {if $crt}
                 <tr>
@@ -264,7 +260,6 @@
                             {if $downloadcsr}<a href="{$downloadcsr}"><button type="button" id="download-csr" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadcsr')}</button></a>{/if}
                             {if $downloadpem}<a href="{$downloadpem}"><button type="button" id="download-ca" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadpem')}</button></a>{/if}
                         {/if}
-                        <!--<button type="button" id="{if $dcv_method == 'email'}btnChange_Approver_Email{else}btnRevalidate{/if}" class="btn btn-default" style="margin:2px">{if $dcv_method == 'email'}{$ADDONLANG->T('changeValidationEmail')}{else}{$ADDONLANG->T('revalidate')}{/if}</button>-->
                         {if $privateKey}
                         <button type="button" id="getPrivateKey" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('getPrivateKeyBtn')}</button>
                         {/if}
