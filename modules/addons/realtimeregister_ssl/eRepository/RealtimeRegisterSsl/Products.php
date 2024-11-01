@@ -126,4 +126,8 @@ class Products
 
         return $this->products;
     }
+
+    public static function dropTable() {
+        Capsule::schema()->dropIfExists(self::REALTIMEREGISTERSSL_PRODUCT_BRAND);
+    }
 }
