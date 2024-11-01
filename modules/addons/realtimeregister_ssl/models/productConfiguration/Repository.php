@@ -2,8 +2,8 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\productConfiguration;
 
-use Illuminate\Database\Capsule\Manager as Capsule;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository
 {
@@ -167,5 +167,12 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
 
     public function parseProductsForTable($products)
     {
+    }
+
+    public function dropProducts()
+    {
+        return Capsule::table('tblproducts')
+            ->where('servertype', 'realtimeregister_ssl')
+            ->delete();
     }
 }

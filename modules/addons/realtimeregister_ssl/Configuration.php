@@ -10,6 +10,7 @@ use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
+use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository as WhmcsProducts;
 use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPriceRepo;
 use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
 
@@ -56,7 +57,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '0.3.3';
+    public $version = '0.3.5';
 
     private static string $LEGACY_TABLE_PREFIX = 'mgfw_';
 
@@ -164,6 +165,8 @@ class Configuration extends AbstractConfiguration
         (new LogsRepo())->dropLogsTable();
         (new OrdersRepo())->dropOrdersTable();
         (new KeyToIdMapping())->dropTable();
+        (new WhmcsProducts())->dropProducts();
+        Products::getInstance()::dropTable();
         EmailTemplateService::deleteConfigurationTemplate();
         EmailTemplateService::deleteCertyficateTemplate();
         EmailTemplateService::deleteExpireNotificationTemplate();
