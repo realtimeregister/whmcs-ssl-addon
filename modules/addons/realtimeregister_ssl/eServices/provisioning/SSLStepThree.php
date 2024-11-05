@@ -20,6 +20,7 @@ use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
 use RealtimeRegister\Domain\CertificateInfoProcess;
 use RealtimeRegister\Domain\Product;
+use RealtimeRegister\Exceptions\BadRequestException;
 use WHMCS\Database\Capsule;
 
 class SSLStepThree
@@ -252,7 +253,7 @@ class SSLStepThree
                     );
                     break;
             }
-        } catch (\RealtimeRegister\Exceptions\BadRequestException $exception) {
+        } catch (BadRequestException $exception) {
             $logs->addLog(
                 $this->p['userid'], $this->p['serviceid'],
                 'error',
@@ -264,10 +265,7 @@ class SSLStepThree
                     $reason = 'The request already exists';
                     break;
                 case 'ValidationError':
-                    $reason = 'Validation error';
-                    if (strpos($decodedMessage['message'], 'try a reissue instead')) {
-                        $reason = 'Certificate already exists, try a reissue instead';
-                    }
+                    $reason = 'Validation error: ' . $decodedMessage['message'];
                     break;
                 default:
                     $reason = 'Unknown';
