@@ -1,9 +1,9 @@
 # Realtime Register SSL WHMCS SSL Addon
 Free of charge SSL Addon for WHMCS to automate SSL certificate sales/distribution via realtimeregister.com platform
 
-:construction: This module has alpha status at the moment :construction:
+:construction: This module has beta status at the moment :construction:
 ***
-**Note:** This version is fully compatible with al current versions of WHMCS which are still supported. Please consult [this page](https://docs.whmcs.com/releases/) for the latest information.
+**Note:** This version is fully compatible with all current versions of WHMCS which are still supported. Please consult [this page](https://docs.whmcs.com/releases/) for the latest information.
 ***
 
 ### Prerequisites
