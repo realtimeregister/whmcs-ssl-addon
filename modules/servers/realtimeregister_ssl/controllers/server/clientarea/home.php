@@ -200,7 +200,7 @@ class home extends AbstractController
 
                     $vars['displayRenewButton'] = false;
 
-                    if ($certificateDetails['ssl_status'] == 'active' || $certificateDetails['ssl_status'] == "COMPLETED") {
+                    if ($certificateDetails['ssl_status'] == 'Active' || $certificateDetails['ssl_status'] == "COMPLETED") {
                         if ((int)$datediff < 30) {
                             $vars['displayRenewButton'] = true;
                         }
@@ -449,7 +449,7 @@ class home extends AbstractController
         foreach ($serviceSSL->configdata->validations->dcv as $dcv) {
             if ($dcv->type == "EMAIL") {
                 $resendDcv[] = [
-                    "commonName"=> $dcv->commonName,
+                    "commonName" => $dcv->commonName,
                     "type" => "EMAIL",
                     "email" => $dcv->email,
                 ];
@@ -475,7 +475,7 @@ class home extends AbstractController
         }
 
         $apiConf = (new Repository())->get();
-        $sendCertyficateTermplate = $apiConf->send_certificate_template;
+        $sendCertificateTemplate = $apiConf->send_certificate_template;
 
         $pathAttachemts = false;
         $checkSettings = Capsule::schema()->hasTable('tblfileassetsettings');
@@ -569,12 +569,12 @@ class home extends AbstractController
             }
         }
 
-        if ($sendCertyficateTermplate == null) {
+        if ($sendCertificateTemplate == null) {
             $result = sendMessage(EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID, $input['id'], [
                 'domain' => $orderStatus['domain']
             ], false, $attachments);
         } else {
-            $templateName = EmailTemplateService::getTemplateName($sendCertyficateTermplate);
+            $templateName = EmailTemplateService::getTemplateName($sendCertificateTemplate);
             $result = sendMessage($templateName, $input['id'], [
                 'domain' => $orderStatus['domain']
             ], false, $attachments);
@@ -615,7 +615,7 @@ class home extends AbstractController
             $newDcvMethodArray[$domain] = $method;
         }
 
-        $data=[];
+        $data = [];
 
         foreach ($newDcvMethodArray as $domain => $newMethod) {
             $newdomains = [];
@@ -630,9 +630,9 @@ class home extends AbstractController
             $email = $validationType == 'EMAIL' ? $newMethod : null;
 
             $data[] = [
-                'commonName'=> $domain,
-                'type'=> $validationType,
-                'email'=> $email
+                'commonName' => $domain,
+                'type' => $validationType,
+                'email' => $email
             ];
         }
 
@@ -655,7 +655,7 @@ class home extends AbstractController
             ];
         }
 
-        $sslorder = (array) Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
+        $sslorder = (array)Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
 
         $sslorderconfigdata = json_decode($sslorder['configdata'], true);
 
@@ -675,7 +675,8 @@ class home extends AbstractController
         ];
     }
 
-    private static function getValidationType(string $type) : string {
+    private static function getValidationType(string $type): string
+    {
         if ($type == 'dns') {
             return 'DNS';
         }
