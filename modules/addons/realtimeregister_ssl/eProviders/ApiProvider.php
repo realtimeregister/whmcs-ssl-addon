@@ -14,7 +14,7 @@ class ApiProvider
     private static $instance;
 
     private string $apiUrl = 'https://api.yoursrs.com';
-    private string $apiTestUrl = 'https://api.yoursrs-ote.com';
+    private string $apiTestUrl = 'host.docker.internal:8003';
 
     /**
      * @var AbstractApi[]
