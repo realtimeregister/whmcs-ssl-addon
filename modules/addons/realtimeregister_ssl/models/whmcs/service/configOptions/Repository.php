@@ -38,52 +38,19 @@ class Repository
         }
     }
 
-    public function __isset($name)
-    {
-        return $this->_configOptions[$name];
-    }
-
-    public function __get($name)
-    {
-        if (isset($this->_configOptions[$name])) {
-            return $this->_configOptions[$name]->value;
-        }
-    }
-
-    public function __set($name, $value)
-    {
-        if (isset($this->_configOptions[$name])) {
-            $this->_configOptions[$name]->value = $value;
-        }
-    }
-
     public function getID(string $name, int $period)
     {
-        $configOption = $this->getConfigOption($name, $period);
-        return $configOption?->id;
+        return $this->getConfigOption($name, $period)?->id;
     }
 
     public function getConfigID(string $name, int $period)
     {
-        $configOption = $this->getConfigOption($name, $period);
-        return $configOption?->configid;
+        return $this->getConfigOption($name, $period)?->configid;
     }
 
     public function getOptionID(string $name, int $period): ?int
     {
-        $configOption = $this->_configOptions[$name] ?? $this->_configOptions[$name . $period];
-        if (!$configOption) {
-            return null;
-        }
-        if (count($configOption->options) == 1) {
-            return array_key_first($configOption->options);
-        }
-        foreach ($configOption->options as $optionId => $optionName) {
-            if (str_contains($optionName, strval($period))) {
-                return $optionId;
-            }
-        }
-        return null;
+        return $this->getConfigOption($name, $period)?->optionid;
     }
 
     public function getFriendlyName(string $name, int $period): ?string
@@ -95,30 +62,12 @@ class Repository
     public function load()
     {
         $query = "
-            SELECT
-                V.id
-                ,V.optionid
-                ,V.qty
-                ,V.configid
-                ,O.optionname
-                ,O.optiontype
-            FROM
-                tblhostingconfigoptions V
-            JOIN
-                tblproductconfigoptions O
-                ON
-                    V.configid = O.id
-            JOIN
-                tblproductconfiglinks L
-                ON
-                    L.gid = O.gid
-            JOIN
-                tblhosting H
-                ON
-                    H.packageid = L.pid
-                    AND H.id = V.relid
-            WHERE
-                H.id = $this->serviceID
+            SELECT V.id, V.optionid ,V.qty ,V.configid ,O.optionname,O.optiontype
+            FROM tblhostingconfigoptions V
+            JOIN tblproductconfigoptions O ON V.configid = O.id
+            JOIN tblproductconfiglinks L ON L.gid = O.gid
+            JOIN tblhosting H ON H.packageid = L.pid AND H.id = V.relid
+            WHERE H.id = $this->serviceID
         ";
 
 
