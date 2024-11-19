@@ -8,22 +8,16 @@
 namespace AddonModule\RealtimeRegisterSsl\eHelpers;
 
 use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
-use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
-use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
-use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
-use AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\clients\Client;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\invoices\RepositoryItem;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
-use AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions\Repository as ConfigOptionsRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use DateInterval;
 use DateTime;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
-use RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Module\Server;
 use WHMCS\Product\Product;
 
@@ -77,7 +71,7 @@ class Invoice
         }
     }
 
-    public static function updatePendingPaymentTable(string $prefix= '') : void
+    public static function updatePendingPaymentTable(string $prefix = ''): void
     {
         if ($prefix && Capsule::schema()->hasTable($prefix . self::INVOICE_PENDINGPAYMENT_TABLE_NAME)) {
             Capsule::schema()->rename($prefix . self::INVOICE_PENDINGPAYMENT_TABLE_NAME,
@@ -204,107 +198,102 @@ class Invoice
         $discount = Discount::getDiscountValue(
             ['pid' => $service->packageid, 'client' => $service->userid]
         );
+        $multiplier = ((100 - $discount) / 100);
 
-        $configoptions = [];
-        $sanCountCODetails = $this->getSanCountConfigOptionServiceDetails($service);
-        $boughtSans = 0;
-        if (!empty($sanCountCODetails['single'])) {
-            $boughtSans = $sanCountCODetails['single']['boughtSans'];
-            $sanCountConfigOptionID = $sanCountCODetails['single']['configOptionID'];
-            $sanCountFrendlyName = $sanCountCODetails['single']['frendlyName'];
-            $configbillingcycle = $sanCountCODetails['single']['configBillingCycle'];
-        }
-        $boughtSansWildcard = 0;
-        if (!empty($sanCountCODetails['wildcard'])) {
-            $boughtSansWildcard = $sanCountCODetails['wildcard']['boughtSans'];
-            $sanCountConfigOptionIDWildcard = $sanCountCODetails['wildcard']['configOptionID'];
-            $sanCountFrendlyNameWildcard = $sanCountCODetails['wildcard']['frendlyName'];
-            $configbillingcycleWildcard = $sanCountCODetails['wildcard']['configBillingCycle'];
-        }
-
-        //get client currency id
+        $configOptions = $this->getConfigOptions($service);
         $clientCurrencyID = $this->getClientCurrencyID($service->userid);
-        if ($service->billingcycle != 'One Time') {
-            /*
-             * check if product support it(if is setted related pricing period)
-             * if not select the highest available
-             */
-            $availableBillingCycle = $this->getProperServiceBillingCycleBasedOnProductPricing($service);
-            if (in_array($availableBillingCycle['key'], ['free', 'Free Account', 'free account'])) {
-                $productConfiguration = Capsule::table("tblproducts")->where(
-                    "tblproducts.servertype",
-                    "=",
-                    "realtimeregister_ssl"
-                )->where("id", "=", $service->packageid)->first();
-                $timeShift = 'P' . $productConfiguration->{ConfigOptions::API_PRODUCT_MONTHS} . 'M';
-            } else {
-                $timeShift = 'P' . BillingCycle::convertStringToPeriod($availableBillingCycle['key']) . 'M';
-            }
+        $configOptionsPeriod = $configOptions[ConfigOptions::OPTION_PERIOD];
+        $billingCycle = $configOptionsPeriod['billingCycle'];
+        $pricing = get_query_val(
+            "tblpricing",
+            $billingCycle,
+            [
+                "type" => "configoptions",
+                "currency" => $clientCurrencyID,
+                "relid" => $configOptions[ConfigOptions::OPTION_PERIOD]['configOptionID']
+            ]
+        );
 
-            //get current product amount
-            $itemamount = $availableBillingCycle['price'];
+        if ($pricing == "-1.00") {
+            throw new \Exception("Pricing not available for period");
+        }
+
+        if ($service->billingcycle == 'One Time') {
+            //get product pricing
+            $invoiceItemDescription = $product->name . ($service->domain ? ' - ' . $service->domain : '')
+                . ' - Renewal';
+        } else {
+
+            $timeShift = 'P' . BillingCycle::convertStringToPeriod($billingCycle . 'M');
             $startDate = $service->nextduedate;
             $endDate = $this->getNextDueDate($service->nextduedate, $dateFormat, $timeShift);
             $invoiceItemDescription = $product->name . ($service->domain ? ' - ' . $service->domain : '')
                 . ' (' . $startDate . ' - ' . $endDate . ') - Renewal';
-        } else {
-            //get product pricing
-            $productPricing = $this->getProductPricing($service->packageid);
-            //get proper pricing related to client pricing
-            foreach ($productPricing as $pricing) {
-                if ($pricing->currency == $clientCurrencyID) {
-                    $itemamount = ($pricing->monthly == '-1.00') ? 0 : $pricing->monthly;
-                }
-            }
-
-            $invoiceItemDescription = $product->name . ($service->domain ? ' - ' . $service->domain : '')
-                . ' - Renewal';
         }
 
-        //modify item amount based on product commission / client commission       
-        $postData = [
+        //modify item amount based on client discount
+        $invoiceData = [
             'userid' => $service->userid,
             'sendinvoice' => true,
             'date' => $dateInvoice,
             'duedate' => $dateInvoice,
             'itemdescription1' => $invoiceItemDescription,
-            'itemamount1' => (float)$itemamount + (float)$itemamount * ((100 - $discount) / 100),
+            'itemamount1' => (float)$pricing * ((100 - $discount) / 100),
             'itemtaxed1' => $product->tax
         ];
+
+        $boughtSans = empty($configOptions['single'])
+            ? 0
+            : $configOptions['single']['boughtSans'];
 
         $invoiceItemNum = 2;
         if ($boughtSans > 0) {
             $qtyprice = get_query_val(
                 "tblpricing",
-                strtolower($configbillingcycle),
+                strtolower($configOptions['single']['billingCycle']),
                 [
                     "type" => "configoptions",
                     "currency" => $clientCurrencyID,
-                    "relid" => $sanCountConfigOptionID
+                    "relid" => $configOptions['single']['configOptionID']
                 ]
             );
+            if ($qtyprice == "-1.00") {
+                throw new \Exception("Pricing not available for period");
+            }
             $optionname = formatCurrency($qtyprice);
-            $postData['itemdescription2'] = $sanCountFrendlyName . ': ' . $boughtSans . ' x ' . $optionname;
-            $postData['itemamount2'] = $qtyprice * $boughtSans;
-            $postData['itemtaxed2'] = $product->tax;
+            $invoiceData['itemdescription2'] = $configOptions['single']['friendlyName'] . ': ' . $boughtSans . ' x ' . $optionname;
+            $invoiceData['itemamount2'] = $qtyprice * $boughtSans * $multiplier;
+            $invoiceData['itemtaxed2'] = $product->tax;
             $invoiceItemNum++;
         }
 
+        $boughtSansWildcard = empty($configOptions['wildcard'])
+            ? 0
+            : $configOptions['wildcard']['boughtSans'];
+
         if ($boughtSansWildcard > 0) {
             $qtyprice = get_query_val(
-                "tblpricing", strtolower($configbillingcycleWildcard),
-                ["type" => "configoptions", "currency" => $clientCurrencyID, "relid" => $sanCountConfigOptionIDWildcard]
+                "tblpricing",
+                strtolower($configOptions['wildcard']['billingCycle']),
+                ["type" => "configoptions",
+                    "currency" => $clientCurrencyID,
+                    "relid" => $configOptions['wildcard']['configOptionID']
+                ]
             );
+            if ($qtyprice == "-1.00") {
+                throw new \Exception("Pricing not available for period");
+            }
             $optionname = formatCurrency($qtyprice);
-            $postData['itemdescription' . $invoiceItemNum] = $sanCountFrendlyNameWildcard . ': ' . $boughtSansWildcard
+            $invoiceData['itemdescription' . $invoiceItemNum] = $configOptions['wildcard']['friendlyName']
+                . ': ' . $configOptions['wildcard']['boughtSans']
                 . ' x ' . $optionname;
-            $postData['itemamount' . $invoiceItemNum] = $qtyprice * $boughtSansWildcard;
-            $postData['itemtaxed' . $invoiceItemNum] = $product->tax;
+            $invoiceData['itemamount' . $invoiceItemNum] = $qtyprice * $configOptions['wildcard']['boughtSans'] * $multiplier;;
+            $invoiceData['itemtaxed' . $invoiceItemNum] = $product->tax;
         }
 
         $adminUserName = Admin::getAdminUserName();
 
-        $results = localAPI('CreateInvoice', $postData, $adminUserName);
+        $results = localAPI('CreateInvoice', $invoiceData, $adminUserName);
 
         $invoiceId = $results['invoiceid'];
 
@@ -314,7 +303,7 @@ class Invoice
             ->where('invoiceid', '=', $invoiceId)
             ->update(['type' => 'Hosting']);
         /*
-         * add relid to invoiceitem entry in the tblinvoiceitems table -> WHMCS do not fill this column
+         * add relid to invoiceitem entry in the tblinvoiceitems table -> WHMCS does not fill this column
          * via local API CreateInvoice command
          */
         Capsule::table('tblinvoiceitems')
@@ -323,29 +312,19 @@ class Invoice
 
         if ($boughtSans > 0) {
             Capsule::table('tblinvoiceitems')
-                ->where('description', 'like', '%' . $sanCountFrendlyName . '%')
+                ->where('description', 'like', '%' . $configOptions['single']['friendlyName'] . '%')
                 ->where('invoiceid', '=', $invoiceId)
-                ->update(['relid' => '0', 'type' => '']);
+                ->update(['relid' => $service->id, 'type' => '']);
         }
         if ($boughtSansWildcard > 0) {
             Capsule::table('tblinvoiceitems')
-                ->where('description', 'like', '%' . $sanCountFrendlyNameWildcard . '%')
+                ->where('description', 'like', '%' . $configOptions['wildcard']['friendlyName'] . '%')
                 ->where('invoiceid', '=', $invoiceId)
-                ->update(['relid' => '0', 'type' => '']);
+                ->update(['relid' => $service->id, 'type' => '']);
         }
 
         if (!$input['renewal_invoice_status_unpaid']) {
             Capsule::table('tblinvoices')->where('id', '=', $invoiceId)->update(['status' => 'Payment Pending']);
-        }
-
-        $invoiceData = Capsule::table('tblinvoices')->where('id', '=', $invoiceId)->first();
-
-        if ($invoiceData->total == '0.00') {
-            Capsule::table('tblinvoices')->where('id', '=', $invoiceId)->update(['status' => 'Unpaid']);
-            $postData = ['invoiceid' => $invoiceId, 'status' => 'Paid'];
-            localAPI('UpdateInvoice', $postData, $adminUserName);
-
-            run_hook("InvoicePaid", ["invoiceid" => $invoiceId]);
         }
 
         if ($returnInvoiceID) {
@@ -355,386 +334,60 @@ class Invoice
         return $results['result'] == 'success';
     }
 
-    public function invoicePaid($invoicId)
-    {
-        Query::useCurrentConnection();
-
-        $invoiceInfo = $this->getInvoiceCreatedInfo($invoicId);
-
-        if (empty($invoiceInfo)) {
-            return false;
-        }
-
-        //collect invoice info payment method
-        $invoice = \WHMCS\Billing\Invoice::find($invoicId);
-        $service = \WHMCS\Service\Service::find($invoiceInfo['service_id']);
-
-        $configoptions = [];
-        $configoptionsWildcard = [];
-        $sanCountCODetails = $this->getSanCountConfigOptionServiceDetails($service);
-        if (!empty($sanCountCODetails['single'])) {
-            $configoptions = [
-                $sanCountCODetails['single']['configID'] => [
-                    'optionid' => $sanCountCODetails['single']['configOptionID'],
-                    'qty' => $sanCountCODetails['single']['boughtSans']
-                ]
-            ];
-        }
-        if (!empty($sanCountCODetails['wildcard'])) {
-            $configoptions[$sanCountCODetails['wildcard']['configID']] = [
-                'optionid' => $sanCountCODetails['wildcard']['configOptionID'],
-                'qty' => $sanCountCODetails['wildcard']['boughtSans']
-            ];
-        }
-
-        $orderInfo = $this->createOrder(
-            $invoice->userid,
-            $invoice->paymentmethod,
-            $invoiceInfo['product_id'],
-            $service->domain,
-            $this->getNextDueDate($service->nextduedate),
-            $service->billingcycle,
-            $configoptions
-        );
-
-        if ($orderInfo['result'] != 'success') {
-            return false;
-        }
-
-        $productId = $orderInfo['productids'];
-        $newOrderId = $orderInfo['orderid'];
-
-        if ($productId <= 0) {
-            return false;
-        }
-        Query::update(
-            self::INVOICE_INFOS_TABLE_NAME,
-            ['order_id' => $newOrderId, 'new_service_id' => $productId, 'status' => 'added'],
-            ['id' => $invoiceInfo['id']]
-        );
-        //link invoice id with newly created order
-        Query::update('tblorders', ['invoiceid' => $invoicId], ['id' => $newOrderId]);
-
-
-        $moduleCreated = $this->moduleCreate($productId);
-        if ($moduleCreated) {
-            Query::update(self::INVOICE_INFOS_TABLE_NAME, ['status' => 'crated'], ['id' => $invoiceInfo['id']]);
-            $this->CopyConfigurationAndSendRenewToGGSSL($newOrderId);
-        }
-    }
-
-    public function CopyConfigurationAndSendRenewToGGSSL($newOrderId)
-    {
-        $apiConfigRepo = new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository();
-        $input = (array)$apiConfigRepo->get();
-        if (!$input['automatic_processing_of_renewal_orders']) {
-            return false;
-        }
-
-        $invoiceInfo = Capsule::table(self::INVOICE_INFOS_TABLE_NAME)->where('order_id', $newOrderId)->first();
-        if (!isset($invoiceInfo->service_id) || empty($invoiceInfo->service_id)) {
-            return false;
-        }
-
-        $serviceId = $invoiceInfo->service_id;
-
-        $sslOrderInfo = Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
-        if (!isset($sslOrderInfo->remoteid) || empty($sslOrderInfo->remoteid)) {
-            return false;
-        }
-        /** @var ProcessesApi $processesApi */
-        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $sslOrder = $processesApi->get($sslOrderInfo->remoteid);
-
-        $sslOrderResults = json_decode($sslOrderInfo->configdata, true);
-
-        $post_temp = [];
-        $params_temp = [
-            'serviceID' => $serviceId,
-            'doNotSaveToDatabase' => true,
-            'countryName' => isset($sslOrderResults['country']) && !empty($sslOrderResults['country'])
-                ? $sslOrderResults['country'] : 'US',
-            'stateOrProvinceName' => isset($sslOrderResults['state']) && !empty($sslOrderResults['state'])
-                ? $sslOrderResults['state'] : 'state',
-            'localityName' => isset($sslOrderResults['city']) && !empty($sslOrderResults['city'])
-                ? $sslOrderResults['city'] : 'city',
-            'organizationName' => isset($sslOrderResults['orgname']) && !empty($sslOrderResults['orgname'])
-                ? $sslOrderResults['orgname'] : 'orgname',
-            'organizationalUnitName' => isset($sslOrderResults['jobtitle']) && !empty($sslOrderResults['jobtitle'])
-                ? $sslOrderResults['jobtitle'] : 'jobtitle',
-            'commonName' => $sslOrderResults['domain'],
-            'emailAddress' => isset($sslOrderResults['email']) && !empty($sslOrderResults['email'])
-                ? $sslOrderResults['email'] : 'test@' . $sslOrderResults['domain']
-        ];
-
-        $GenerateSCR = new GenerateCSR($post_temp, $params_temp);
-        $csrgen = $GenerateSCR->run();
-        $csrgenres = json_decode($csrgen, true);
-
-        $order = [];
-        $order['dcv_method'] = $sslOrder['dcv_method'];
-        $order['product_id'] = $sslOrder['product_id'];
-        $order['period'] = $sslOrder['validity_period'];
-        $order['csr'] = $csrgenres['public_key'];
-        $order['server_count'] = $sslOrder['server_count'];
-
-        if ($sslOrder['dcv_method'] == 'email') {
-            $order['approver_email'] = $sslOrder['approver_email'];
-        } else {
-            $order['approver_method'] = $sslOrder['approver_method'];
-        }
-
-        $order['webserver_type'] = $sslOrder['webserver_type'];
-        $order['admin_firstname'] = $sslOrder['admin_firstname'];
-        $order['admin_lastname'] = $sslOrder['admin_lastname'];
-        $order['admin_organization'] = $sslOrder['admin_organization'];
-        $order['admin_title'] = $sslOrder['admin_title'];
-        $order['admin_addressline1'] = $sslOrder['admin_addressline1'];
-        $order['admin_phone'] = $sslOrder['admin_phone'];
-        $order['admin_email'] = $sslOrder['admin_email'];
-        $order['admin_city'] = $sslOrder['admin_city'];
-        $order['admin_country'] = $sslOrder['admin_country'];
-        $order['admin_postalcode'] = $sslOrder['admin_postalcode'];
-        $order['admin_region'] = $sslOrder['admin_region'];
-
-        $order['tech_firstname'] = $sslOrder['tech_firstname'];
-        $order['tech_lastname'] = $sslOrder['tech_lastname'];
-        $order['tech_organization'] = $sslOrder['tech_organization'];
-        $order['tech_addressline1'] = $sslOrder['tech_addressline1'];
-        $order['tech_phone'] = $sslOrder['tech_phone'];
-        $order['tech_title'] = $sslOrder['tech_title'];
-        $order['tech_email'] = $sslOrder['tech_email'];
-        $order['tech_city'] = $sslOrder['tech_city'];
-        $order['tech_country'] = $sslOrder['tech_country'];
-        $order['tech_fax'] = $sslOrder['tech_fax'];
-        $order['tech_postalcode'] = $sslOrder['tech_postalcode'];
-        $order['tech_region'] = $sslOrder['tech_region'];
-
-        if (isset($sslOrder['org_name']) && !empty($sslOrder['org_name'])) {
-            $order['org_name'] = $sslOrder['org_name'];
-        }
-        if (isset($sslOrder['org_division']) && !empty($sslOrder['org_division'])) {
-            $order['org_division'] = $sslOrder['org_division'];
-        }
-        if (isset($sslOrder['org_duns']) && !empty($sslOrder['org_duns'])) {
-            $order['org_duns'] = $sslOrder['org_duns'];
-        }
-        if (isset($sslOrder['org_addressline1']) && !empty($sslOrder['org_addressline1'])) {
-            $order['org_addressline1'] = $sslOrder['org_addressline1'];
-        }
-
-        $order['org_city'] = $sslOrder['org_city'];
-        $order['org_country'] = $sslOrder['org_country'];
-        $order['org_fax'] = $sslOrder['org_fax'];
-        $order['org_phone'] = $sslOrder['org_phone'];
-        $order['org_postalcode'] = $sslOrder['org_postalcode'];
-        $order['org_region'] = $sslOrder['org_region'];
-
-
-        if (!isset($order['org_name']) || empty($order['org_name'])) {
-            $order['org_name'] = $sslOrder['admin_organization'];
-        }
-        if (!isset($order['org_division']) || empty($order['org_division'])) {
-            $order['org_division'] = $sslOrder['admin_title'];
-        }
-        if (!isset($order['org_addressline1']) || empty($order['org_addressline1'])) {
-            $order['org_addressline1'] = $sslOrder['admin_addressline1'];
-        }
-
-        $sansmethod = [];
-        $sansdomains = [];
-
-        foreach ($sslOrder['san'] as $sansdetails) {
-            if ($sansdetails['validation_method'] == 'email') {
-                $sansmethod[] = $sansdetails['validation']['email'];
-            } else {
-                $sansmethod[] = $sansdetails['validation_method'];
-            }
-            $sansdomains[] = $sansdetails['san_name'];
-        }
-
-        if (!empty($sansmethod) && !empty($sansdomains)) {
-            $order['dns_names'] = implode(',', $sansdomains);
-            $order['approver_emails'] = implode(',', $sansmethod);
-        }
-
-        if ($sslOrder['dcv_method'] == 'email' && empty($order['approver_email'])
-            && isset($sslOrder['approver_method']['email']) && !empty($sslOrder['approver_method']['email'])) {
-            $order['approver_email'] = $sslOrder['approver_method']['email'];
-        }
-
-        $configdata = json_encode([
-            'servertype' => $sslOrder['webserver_type'],
-            'csr' => $sslOrder['csr_code'],
-            'firstname' => $sslOrder['tech_firstname'],
-            'lastname' => $sslOrder['tech_lastname'],
-            'orgname' => $sslOrder['tech_organization'],
-            'jobtitle' => $sslOrder['tech_title'],
-            'email' => $sslOrder['tech_email'],
-            'address1' => $sslOrder['tech_addressline1'],
-            'address2' => $sslOrder['tech_addressline2'],
-            'city' => $sslOrder['tech_city'],
-            'state' => $sslOrder['tech_region'],
-            'postcode' => $sslOrder['tech_postalcode'],
-            'country' => $sslOrder['tech_country'],
-            'phonenumber' => $sslOrder['tech_phone'],
-            'san_details' => $sslOrder['san'],
-            'fields' => [
-                'order_type' => 'renew',
-                'org_name' => isset($sslOrder['org_name']) && !empty($sslOrder['org_name'])
-                    ? $sslOrder['org_name'] : '',
-                'org_division' => isset($sslOrder['org_division']) && !empty($sslOrder['org_division'])
-                    ? $sslOrder['org_division'] : '',
-                'org_duns' => isset($sslOrder['org_duns']) && !empty($sslOrder['org_duns'])
-                    ? $sslOrder['org_duns'] : '',
-                'org_addressline1' => isset($sslOrder['org_addressline1']) && !empty($sslOrder['org_addressline1'])
-                    ? $sslOrder['org_addressline1'] : '',
-                'org_city' => $sslOrder['org_city'],
-                'org_country' => $sslOrder['org_country'],
-                'org_fax' => $sslOrder['org_fax'],
-                'org_phone' => $sslOrder['org_phone'],
-                'org_postalcode' => $sslOrder['org_postalcode'],
-                'org_regions' => $sslOrder['org_region'],
-                'approveremails' => implode(',', $sansmethod),
-                'sans_domains' => implode(',', $sansdomains)
-            ]
-        ]);
-
-        $addedSSLOrder = ApiProvider::getInstance()->getApi()->addSSLRenewOrder($order);
-
-        Capsule::table('tblsslorders')->where('serviceid', $invoiceInfo->new_service_id)->delete();
-        Capsule::table('tblsslorders')->insert([
-            'userid' => $invoiceInfo->user_id,
-            'serviceid' => $invoiceInfo->new_service_id,
-            'addon_id' => '0',
-            'remoteid' => $addedSSLOrder['order_id'],
-            'module' => 'realtimeregister_ssl',
-            'certtype' => '',
-            'configdata' => $configdata,
-            'completiondate' => date('Y-m-d H:i:s'),
-            'status' => 'Completed'
-        ]);
-    }
-
-    private function getSanCountConfigOptionServiceDetails($service)
+    private function getConfigOptions($service): array
     {
         $configoptionsResults = [];
         $product = Product::where('id', $service->packageid)->first();
         $isSanEnabled = $product->{ConfigOptions::PRODUCT_ENABLE_SAN} === 'on';
         $isSanEnabledWildcard = $product->{ConfigOptions::PRODUCT_ENABLE_SAN_WILDCARD} === 'on';
-        $apiProduct = Products::getInstance()->getProduct(KeyToIdMapping::getIdByKey($product->{C::API_PRODUCT_ID}));
+        $configOptions = new ConfigOptionsRepo($service->id);
 
-        if ($isSanEnabledWildcard) {
-            $server = new Server();
-            if (!$server->loadByServiceID($service->id)) {
-                Whmcs::savelogActivityRealtimeRegisterSsl(
-                    "Realtime Register SSL WHMCS: Required Product Module '" . $server->getServiceModule() . "' Missing"
-                );
-            } else {
-                $serviceParams = $server->buildParams();
-                if (!empty($serviceParams)) {
-                    $CORepo = new Repository($service->id);
-
-                    $configoptionsResults['wildcard'] = [
-                        'configOptionID' => $CORepo->getOptionID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT),
-                        'configID' => $CORepo->getConfigID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT),
-                        'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT],
-                        'frendlyName' => $CORepo->getFrendlyName(ConfigOptions::OPTION_SANS_WILDCARD_COUNT),
-                        'configBillingCycle' => (in_array($service->billingcycle, ['One Time', 'Free Account']
-                        )) ? 'monthly' : $service->billingcycle
-                    ];
-                }
-            }
+        $server = new Server();
+        if (!$server->loadByServiceID($service->id)) {
+            Whmcs::savelogActivityRealtimeRegisterSsl(
+                "Realtime Register SSL WHMCS: Required Product Module '" . $server->getServiceModule() . "' Missing"
+            );
         }
+        $serviceParams = $server->buildParams();
+        $period = intval($serviceParams['configoptions']['years']);
+
+
+        $configoptionsResults['years'] = [
+            'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_PERIOD, $period),
+            'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_PERIOD, $period),
+            'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_PERIOD],
+            'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_PERIOD, $period),
+            'billingCycle' => $service->billingcycle === 'One Time'
+                ? 'monthly'
+                : $service->billingcycle
+        ];
 
         if ($isSanEnabled) {
-            $server = new Server();
-            if (!$server->loadByServiceID($service->id)) {
-                Whmcs::savelogActivityRealtimeRegisterSsl(
-                    "Realtime Register SSL WHMCS: Required Product Module '" . $server->getServiceModule() . "' Missing"
-                );
-            } else {
-                $serviceParams = $server->buildParams();
-                if (!empty($serviceParams)) {
-                    $CORepo = new Repository($service->id);
+            $configoptionsResults['single'] = [
+                'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_SANS_COUNT, $period),
+                'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_SANS_COUNT, $period),
+                'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period],
+                'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_SANS_COUNT, $period),
+                'billingCycle' => $service->billingcycle === 'One Time'
+                    ? 'monthly'
+                    : $service->billingcycle
+            ];
+        }
 
-                    $configoptionsResults['single'] = [
-                        'configOptionID' => $CORepo->getOptionID(ConfigOptions::OPTION_SANS_COUNT),
-                        'configID' => $CORepo->getConfigID(ConfigOptions::OPTION_SANS_COUNT),
-                        'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_COUNT],
-                        'frendlyName' => $CORepo->getFrendlyName(ConfigOptions::OPTION_SANS_COUNT),
-                        'configBillingCycle' => (in_array($service->billingcycle, ['One Time', 'Free Account']
-                        )) ? 'monthly' : $service->billingcycle
-                    ];
-                }
-            }
+
+        if ($isSanEnabledWildcard) {
+            $configoptionsResults['wildcard'] = [
+                'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT, $period),
+                'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT, $period),
+                'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period],
+                'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_SANS_WILDCARD_COUNT, $period),
+                'billingCycle' => $service->billingcycle === 'One Time'
+                    ? 'monthly'
+                    : $service->billingcycle
+            ];
         }
 
         return $configoptionsResults;
-    }
-
-
-    public function createOrder(
-        $userId,
-        $paymentMethod,
-        $productID,
-        $domain,
-        $dueDateNewOrder,
-        $serviceBillingCycle,
-        $configOptions = []
-    ) {
-        $command = 'AddOrder';
-
-        $orginaldomain = $domain;
-
-        if (strpos($domain, '*.') !== false) {
-            $domain = str_replace('*.', '', $domain);
-        }
-
-        $postData = [
-            'clientid' => $userId,
-            'paymentmethod' => $paymentMethod,
-            'pid' => [$productID],
-            'domain' => [$domain],
-            'billingcycle' => [strtolower($serviceBillingCycle)],
-            'noinvoice' => true,
-            'noinvoiceemail' => true,
-            'noemail' => true,
-        ];
-
-
-        $adminUsername = Admin::getAdminUserName();
-
-        $results = localAPI($command, $postData, $adminUsername);
-
-        if ($results['result'] == 'success') {
-            $service = (array)Capsule::table('tblhosting')->where('id', $results['productids'])->first();
-            $product = (array)Capsule::table('tblproducts')->where('servertype', 'realtimeregister_ssl')->where(
-                'id',
-                $service['packageid']
-            )->first();
-
-            Capsule::table('tblhosting')->where('id', $results['productids'])->update([
-                'domain' => $orginaldomain
-            ]);
-
-            if (isset($product['configoption7']) && !empty($product['configoption7']) && $service['billingcycle'] == 'One Time') {
-                $dueDateNewOrder = '0000-00-00';
-            }
-
-            $postData = [
-                'serviceid' => $results['productids'],
-                'nextduedate' => $dueDateNewOrder,
-                'status' => 'Active',
-            ];
-            if (!empty($configOptions)) {
-                $postData['configoptions'] = base64_encode(serialize($configOptions));
-            }
-            $result = localAPI('UpdateClientProduct', $postData, $adminUsername);
-        }
-        Whmcs::savelogActivityRealtimeRegisterSsl(print_r($postData, true));
-        Whmcs::savelogActivityRealtimeRegisterSsl(print_r($result, true));
-        return $results;
     }
 
     public function moduleCreate($serviceId)
@@ -810,8 +463,7 @@ class Invoice
                     $item->save();
 
                     Whmcs::savelogActivityRealtimeRegisterSsl(
-                        "Realtime Register SSL WHMCS: Description of the invoice item for Invoice ID: " . $invoice->getId(
-                        ) . ' has been changed from "' . $oldDescription . '" to "' . $newDescription . '"'
+                        "Realtime Register SSL WHMCS: Description of the invoice item for Invoice ID: " . $invoice->getId() . ' has been changed from "' . $oldDescription . '" to "' . $newDescription . '"'
                     );
                 }
             }

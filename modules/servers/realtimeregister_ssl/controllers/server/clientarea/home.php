@@ -195,24 +195,27 @@ class home extends AbstractController
                     }
                     $vars['validFrom'] = $certificateDetails['valid_from']->date;
                     $vars['validTill'] = $certificateDetails['valid_till']->date;
-                    $datediff = $now->diff(new \DateTime($certificateDetails['valid_till']->date))->format('%a');
+                    $datediff = $now->diff(new \DateTime(($certificateDetails['valid_till'])->date))
+                        ->format('%a');
                     $vars['nextReissue'] = $datediff;
 
                     $vars['displayRenewButton'] = false;
 
-                    if ($certificateDetails['ssl_status'] == 'Active' || $certificateDetails['ssl_status'] == "COMPLETED") {
-                        if ((int)$datediff < 30) {
-                            $vars['displayRenewButton'] = true;
-                        }
+                    if (!empty($certificateDetails['end_date'])) {
+                        $vars['subscriptionEnds'] = $certificateDetails['end_date']->date;
+                        $datediff = $now->diff(new \DateTime($certificateDetails['end_date']->date))
+                            ->format('%a');
+                    }
+
+                    if (($certificateDetails['ssl_status'] == 'active' || $certificateDetails['ssl_status'] == "COMPLETED")
+                        && (int)$datediff < 30) {
+                        $vars['displayRenewButton'] = true;
                     }
 
                     if (!empty($certificateDetails['begin_date'])) {
                         $vars['subscriptionStarts'] = $certificateDetails['begin_date']->date;
                     }
 
-                    if (!empty($certificateDetails['end_date'])) {
-                        $vars['subscriptionEnds'] = $certificateDetails['end_date']->date;
-                    }
 
                     //service billing cycle
                     $vars['serviceBillingCycle'] = $serviceBillingCycle;
