@@ -11,5 +11,4 @@ class ConfigOption
     public $configid;
     public $optionid;
     public $value;
-    public $options = [];
 }

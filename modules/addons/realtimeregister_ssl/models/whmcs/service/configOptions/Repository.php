@@ -55,11 +55,10 @@ class Repository
 
     public function getFriendlyName(string $name, int $period): ?string
     {
-        $configOption = $this->getConfigOption($name, $period);
-        return $configOption?->friendlyName;
+        return $this->getConfigOption($name, $period)?->friendlyName;
     }
 
-    public function load()
+    public function load() : void
     {
         $query = "
             SELECT V.id, V.optionid ,V.qty ,V.configid ,O.optionname,O.optiontype
@@ -69,7 +68,6 @@ class Repository
             JOIN tblhosting H ON H.packageid = L.pid AND H.id = V.relid
             WHERE H.id = $this->serviceID
         ";
-
 
         $result = Query::query($query);
 
@@ -89,18 +87,6 @@ class Repository
             $field->name = $name;
             $field->type = $row['optiontype'];
             $field->friendlyName = $friendlyName;
-
-            $subOptions = Query::query("SELECT s.id, s.optionname FROM 
-                              tblproductconfigoptionssub s
-                              WHERE s.configid = :configid", ["configid" => $field->configid]);
-
-            while ($subOption = $subOptions->fetch()) {
-                $field->options[$subOption['id']] = $subOption['optionname'];
-                if ($row['optiontype'] == 4) {
-                    $field->value = $row['qty'];
-                }
-            }
-
             $this->_configOptions[$field->name] = $field;
         }
     }
