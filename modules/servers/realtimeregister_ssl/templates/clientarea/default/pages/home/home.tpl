@@ -233,7 +233,7 @@
                         <button type="button" id="btnRenew" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('renew')}</button>
                     {/if}
                     {/if}
-                    {if $activationStatus != 'active' && $activationStatus != 'COMPLETED' && $dcv_method == 'email'}
+                    {if $dcv_method == 'email'}
                         <button type="button" id="resend-validation-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('resendValidationEmail')}</button>
                     {/if}
                     {if $activationStatus == 'processing' || $activationStatus == 'cancelled'}

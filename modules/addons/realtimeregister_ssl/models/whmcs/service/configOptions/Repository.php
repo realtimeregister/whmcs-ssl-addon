@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions;
 
+use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 
 /**
@@ -17,12 +18,12 @@ class Repository
      *
      * @var configOption[]
      */
-    public $_configOptions = [];
+    private $_configOptions = [];
 
     /**
-     * Construct by service id
+     * Mozna by bylo dodac wersje z wczytywanie po samym productid
      *
-     * @param type serviceID
+     * @param type $accountID
      */
     public function __construct($serviceID, array $data = [])
     {
@@ -57,39 +58,32 @@ class Repository
         }
     }
 
-    public function getID(string $name, int $period)
+    public function getID($name)
     {
-        $configOption = $this->getConfigOption($name, $period);
-        return $configOption?->id;
+        if (isset($this->_configOptions[$name])) {
+            return $this->_configOptions[$name]->id;
+        }
     }
 
-    public function getConfigID(string $name, int $period)
+    public function getConfigID($name)
     {
-        $configOption = $this->getConfigOption($name, $period);
-        return $configOption?->configid;
+        if (isset($this->_configOptions[$name])) {
+            return $this->_configOptions[$name]->configid;
+        }
     }
 
-    public function getOptionID(string $name, int $period): ?int
+    public function getOptionID($name)
     {
-        $configOption = $this->_configOptions[$name] ?? $this->_configOptions[$name . $period];
-        if (!$configOption) {
-            return null;
+        if (isset($this->_configOptions[$name])) {
+            return $this->_configOptions[$name]->optionid;
         }
-        if (count($configOption->options) == 1) {
-            return array_key_first($configOption->options);
-        }
-        foreach ($configOption->options as $optionId => $optionName) {
-            if (str_contains($optionName, strval($period))) {
-                return $optionId;
-            }
-        }
-        return null;
     }
 
-    public function getFriendlyName(string $name, int $period): ?string
+    public function getFrendlyName($name)
     {
-        $configOption = $this->getConfigOption($name, $period);
-        return $configOption?->friendlyName;
+        if (isset($this->_configOptions[$name])) {
+            return $this->_configOptions[$name]->frendlyName;
+        }
     }
 
     public function load()
@@ -102,6 +96,8 @@ class Repository
                 ,V.configid
                 ,O.optionname
                 ,O.optiontype
+                ,S.id as suboptionid
+                ,S.optionname as suboptionname
             FROM
                 tblhostingconfigoptions V
             JOIN
@@ -117,6 +113,10 @@ class Repository
                 ON
                     H.packageid = L.pid
                     AND H.id = V.relid
+            LEFT JOIN
+                tblproductconfigoptionssub S
+                ON
+                    S.configid = O.id
             WHERE
                 H.id = $this->serviceID
         ";
@@ -133,30 +133,78 @@ class Repository
                 $friendlyName = $tmp[1];
             }
 
+            if (isset($this->_configOptions[$name])) {
+                $field = $this->_configOptions[$name];
+            }
+
             $field = new ConfigOption();
             $field->id = $row['id'];
             $field->configid = $row['configid'];
             $field->optionid = $row['optionid'];
             $field->name = $name;
             $field->type = $row['optiontype'];
-            $field->friendlyName = $friendlyName;
+            $field->frendlyName = $friendlyName;
 
-            $subOptions = Query::query("SELECT s.id, s.optionname FROM 
-                              tblproductconfigoptionssub s
-                              WHERE s.configid = :configid", ["configid" => $field->configid]);
+            $tmp = explode('|', $row['suboptionname']);
 
-            while ($subOption = $subOptions->fetch()) {
-                $field->options[$subOption['id']] = $subOption['optionname'];
-                if ($row['optiontype'] == 4) {
+            $value = $valueLabel = $tmp[0];
+
+            if (isset($tmp[1])) {
+                $valueLabel = $tmp[1];
+            }
+
+            switch ($row['optiontype']) {
+                case 1:
+                case 2:
+                    $field->optionsIDs[$value] = $row['suboptionid'];
+                    $field->options[$value] = $valueLabel;
+
+                    if ($row['suboptionid'] == $row['optionid'] && empty($field->value)) {
+                        $field->value = $value;
+                    }
+                    break;
+                case 3:
+                case 4:
                     $field->value = $row['qty'];
-                }
+                    $field->value = $row['qty'];
+                    break;
             }
 
             $this->_configOptions[$field->name] = $field;
         }
     }
 
-    private function getConfigOption(string $name, int $period) {
-        return $this->_configOptions[$name] ?? $this->_configOptions[$name . $period] ?? null;
+    /**
+     * Update Custom Fields
+     *
+     */
+    public function update()
+    {
+        $pid = Query::select(['packageid'], 'tblhosting', ['id' => $this->serviceID])->fetchColumn('packageid');
+        $pname = Query::select(['name'], 'tblproducts', ['id' => $pid])->fetchColumn('name');
+        ConfigurableOptionService::createForProduct($pid, $pname);
+
+        foreach ($this->_configOptions as $field) {
+            $cols = [];
+
+            switch ($field->type) {
+                case 1:
+                case 2:
+                    $cols['optionid'] = $field->optionsIDs[$field->value];
+                    break;
+                case 3:
+                case 4:
+                    $cols['qty'] = $field->value;
+                    break;
+            }
+
+            Query::update(
+                'tblhostingconfigoptions',
+                $cols,
+                [
+                    'id' => $field->id
+                ]
+            );
+        }
     }
 }

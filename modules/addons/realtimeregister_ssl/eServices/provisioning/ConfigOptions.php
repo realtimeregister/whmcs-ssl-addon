@@ -2,9 +2,9 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use Exception;
 use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
-use Exception;
 use WHMCS\Application;
 
 /**
@@ -29,11 +29,10 @@ class ConfigOptions
     public const COMMISSION = 'configoption6';
     public const MONTH_ONE_TIME = 'configoption7';
     public const PRODUCT_INCLUDED_SANS_WILDCARD = 'configoption8';
-    public const OPTION_SANS_COUNT = 'sans_count';
+    public const OPTION_SANS_COUNT = 'sans_count'; // sans_count|SANs http://puu.sh/vXXx3/d08fdb2c2f.png
     public const OPTION_SANS_WILDCARD_COUNT = 'sans_wildcard_count';
     public const OPTION_ISSUED_SSL_MESSAGE = 'configoption23';
     public const OPTION_CUSTOM_GUIDE = 'configoption24';
-    public const OPTION_PERIOD = 'years';
 
     public function __construct(&$params = null)
     {

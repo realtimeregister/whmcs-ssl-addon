@@ -10,9 +10,11 @@ use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Api\ProcessesApi;
 use RealtimeRegister\Domain\DomainControlValidation;
 use WHMCS\Database\Capsule;
 
@@ -39,19 +41,34 @@ class Renew
 
     public function run()
     {
-        $logs = new LogsRepo();
-        try {
-            $this->renewCertificate();
-        } catch (Exception $ex) {
-            $logs->addLog(
-                $this->p['userid'],
-                $this->p['serviceid'],
-                'error',
-                '[' . $this->p['serviceid'] . '] Error:' . $ex->getMessage()
-            );
-            return $ex->getMessage();
+        $apiConf = (new Repository())->get();
+        if (
+            isset($apiConf->automatic_processing_of_renewal_orders)
+            && $apiConf->automatic_processing_of_renewal_orders == '1'
+        ) {
+            $resellerRenew = '';
+            try {
+                $this->checkRenew($this->p['serviceid']);
+                $resellerRenew = $this->renewCertificate();
+                if ($resellerRenew != 'beforeConfiguration') {
+                    $this->updateOneTime();
+                }
+            } catch (Exception $ex) {
+                return $ex->getMessage();
+            }
+            if ($resellerRenew != 'beforeConfiguration') {
+                $this->addRenew($this->p['serviceid']);
+            }
+            return 'success';
+        } else {
+            Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->update([
+                'remoteid' => '',
+                'configdata' => '',
+                'completiondate' => '0000-00-00 00:00:00',
+                'status' => 'Awaiting Configuration'
+            ]);
+            return 'success';
         }
-        return "success";
     }
 
     private function updateOneTime()
@@ -120,86 +137,60 @@ class Renew
         }
     }
 
-    private function renewCertificate() : void
+    private function renewCertificate()
     {
+        echo __METHOD__;
         $this->loadSslService();
         $this->loadApiProduct();
+
+        if (!isset($this->sslService->configdata) || empty($this->sslService->configdata)) {
+            return 'beforeConfiguration';
+        }
 
         /** @var CertificatesApi $certificateApi */
         $certificateApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
         $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();
         $sslData = Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->first();
         $configData = json_decode($sslData->configdata, true);
+
         $order = Capsule::table('REALTIMEREGISTERSSL_orders')->where('service_id', $this->p['serviceid'])->first();
         $orderDetails = json_decode($order->data, true);
 
         $dcv = [];
         foreach ($orderDetails['validations']['dcv'] as $validation) {
-            $dcvEntry = [
+            $dcvTmp = [
                 'commonName' => $validation['commonName'],
                 'type' => $validation['type'],
             ];
             if ($validation['type'] === 'EMAIL') {
-                $dcvEntry['email'] = $validation['email'];
+                $dcvTmp['email'] = $validation['email'];
             }
-            $dcv[] = $dcvEntry;
+            $dcv[] = $dcvTmp;
         }
-
-        /** @var \RealtimeRegister\Domain\Product $productDetails */
-        $productDetails = ApiProvider::getInstance()
-            ->getApi(CertificatesApi::class)
-            ->getProduct($orderDetails['product_id']);
-
-        $mapping = [
-            'organization' => 'orgname',
-            'country' => 'country',
-            'state' => 'state',
-            'address' => 'address1',
-            'postalCode' => 'postcode',
-            'city' => 'city',
-            'dcv' => 'dcv'
-        ]; // 'coc','language', 'uniqueValue','authKey' == missing
-
-        $orderFields = [];
-        foreach ($productDetails->requiredFields as $value) {
-            if ($value === 'approver') {
-                $orderFields['approver'] = [
-                    'firstName' => $this->p['firstname'],
-                    'lastName' => $this->p['lastname'],
-                    'jobTitle' => $this->p['jobtitle'],
-                    'email' => $this->p['email'],
-                    'voice' => $this->p['phonenumber']
-                ];
-            } else {
-                $orderFields[$value] = $orderDetails[$mapping[$value]];
-            }
-        }
-
         $addSSLRenewOrder = $certificateApi->renewCertificate(
             $configData['certificateId'],
-            intval($this->p['configoptions']['years']) * 12,
+            $this->p['configoption2'],
             $configData['csr'],
-            array_map(fn($san) => $san['san_name'], $configData['san_details']),
-            $orderFields['organization'],
-            null,
-            $orderFields['address'],
-            $orderFields['postalCode'],
-            $orderFields['city'],
-            null,
-            $orderFields['approver']['email'],
-            $orderFields['approver'],
             null,
             null,
-            $dcv,
-            $orderDetails['domain'],
             null,
-            $orderFields['state'],
-            $orderDetails['product_id']
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            $dcv
         );
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $orderDetails = $certificateApi->listCertificates(1, null,null, ['process:eq' => $addSSLRenewOrder->remoteId]);
 
-        $this->sslService->setRemoteId($addSSLRenewOrder->processId);
-        $this->sslService->setOrderStatusDescription("Pending");
-        $this->sslService->setSSLStatus("SUSPENDED");
+        $this->sslService->setRemoteId($orderDetails->id);
+        $this->sslService->setOrderStatusDescription($orderDetails->status);
+        $this->sslService->setSSLStatus($orderDetails->status);
         $this->sslService->save();
 
         $logs = new LogsRepo();
@@ -207,9 +198,6 @@ class Renew
         foreach ($addSSLRenewOrder->validations->dcv as $data) {
             try {
                 $panel = Panel::getPanelData($data->commonName);
-                if (!$panel) {
-                    continue;
-                }
 
                 if ($data->type == 'FILE') {
                     $result = FileControl::create(
@@ -227,6 +215,7 @@ class Renew
                             'success',
                             'The ' . $service->domain . ' domain has been verified using the file method.'
                         );
+                        $revalidate = true;
                     }
                 } elseif ($data->type == 'DNS') {
                     if ($data->dnsType == 'CNAME') {
@@ -253,8 +242,79 @@ class Renew
             }
         }
 
+//            if (isset($addSSLRenewOrder['san']) && !empty($addSSLRenewOrder['san'])) {
+//                foreach ($addSSLRenewOrder['san'] as $sanrecord) {
+//                    $records = [];
+//                    if (
+//                        isset($sanrecord['validation']['dns']['record'])
+//                        && !empty($sanrecord['validation']['dns']['record'])
+//                    ) {
+//                        if (file_exists($loaderDNS)) {
+//                            $helper = new DomainHelper(str_replace('*.', '', $sanrecord['san_name']));
+//                            $zoneDomain = $helper->getDomainWithTLD();
+//                        }
+//
+//                        if (strpos($sanrecord['validation']['dns']['record'], 'CNAME') !== false) {
+//                            $dnsrecord = explode("CNAME", $sanrecord['validation']['dns']['record']);
+//                            $records[] = [
+//                                'name' => trim(rtrim($dnsrecord[0])) . '.',
+//                                'type' => 'CNAME',
+//                                'ttl' => '3600',
+//                                'data' => trim(rtrim($dnsrecord[1]))
+//                            ];
+//                        } else {
+//                            $dnsrecord = explode("IN   TXT", $sanrecord['validation']['dns']['record']);
+//                            $length = strlen(trim(rtrim($dnsrecord[1])));
+//                            $records[] = [
+//                                'name' => trim(rtrim($dnsrecord[0])) . '.',
+//                                'type' => 'TXT',
+//                                'ttl' => '14440',
+//                                'data' => substr(trim(rtrim($dnsrecord[1])), 1, $length - 2)
+//                            ];
+//                        }
+//
+//                        $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
+//                        if (!isset($zone->id) || empty($zone->id)) {
+//                            $postfields = [
+//                                'action' => 'dnsmanager',
+//                                'dnsaction' => 'createZone',
+//                                'zone_name' => $zoneDomain,
+//                                'type' => '2',
+//                                'relid' => $this->p['serviceid'],
+//                                'zone_ip' => '',
+//                                'userid' => $this->p['userid']
+//                            ];
+//                            $createZoneResults = localAPI('dnsmanager', $postfields);
+//                            logModuleCall(
+//                                'RealtimeRegisterSsl [dns]',
+//                                'createZone',
+//                                print_r($postfields, true),
+//                                print_r($createZoneResults, true)
+//                            );
+//                        }
+//
+//                        $zone = Capsule::table('dns_manager2_zone')->where('name', $zoneDomain)->first();
+//                        if (isset($zone->id) && !empty($zone->id)) {
+//                            $postfields = [
+//                                'dnsaction' => 'createRecords',
+//                                'zone_id' => $zone->id,
+//                                'records' => $records
+//                            ];
+//                            $createRecordCnameResults = localAPI('dnsmanager', $postfields);
+//                            logModuleCall(
+//                                'RealtimeRegisterSsl [dns]',
+//                                'updateZone',
+//                                print_r($postfields, true),
+//                                print_r($createRecordCnameResults, true)
+//                            );
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
         Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->update([
-            'remoteid' => $addSSLRenewOrder->processId ?? $addSSLRenewOrder->certificateId
+            'remoteid' => $addSSLRenewOrder->certificateId
         ]);
         $this->loadSslService();
 

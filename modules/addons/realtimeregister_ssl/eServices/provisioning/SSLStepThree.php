@@ -18,6 +18,7 @@ use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Domain\CertificateInfoProcess;
 use RealtimeRegister\Domain\Product;
 use RealtimeRegister\Exceptions\BadRequestException;
 use WHMCS\Database\Capsule;
@@ -222,27 +223,36 @@ class SSLStepThree
         $logs = new LogsRepo();
 
         try {
-            $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->requestCertificate(
-                ApiProvider::getCustomer(),
-                $order['product'],
-                $order['period'],
-                $order['csr'],
-                $order['san'],
-                $order['organization'],
-                $order['department'],
-                $order['address'],
-                $order['postalCode'],
-                $order['city'],
-                null,
-                $order['approver']['email'],
-                $order['approver'],
-                $order['country'],
-                null,
-                $order['dcv'],
-                $order['domain'],
-                null,
-                $order['state'],
-            );
+            /** @var CertificateInfoProcess $addedSSLOrder */
+            switch ($orderType) {
+                case 'renew':
+                    $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->renewCertificate($order);
+                    break;
+                case 'new':
+                default:
+                    $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->requestCertificate(
+                        ApiProvider::getCustomer(),
+                        $order['product'],
+                        $order['period'],
+                        $order['csr'],
+                        $order['san'],
+                        $order['organization'],
+                        $order['department'],
+                        $order['address'],
+                        $order['postalCode'],
+                        $order['city'],
+                        null,
+                        $order['approver']['email'],
+                        $order['approver'],
+                        $order['country'],
+                        null,
+                        $order['dcv'],
+                        $order['domain'],
+                        null,
+                        $order['state'],
+                    );
+                    break;
+            }
         } catch (BadRequestException $exception) {
             $logs->addLog(
                 $this->p['userid'], $this->p['serviceid'],
