@@ -51,7 +51,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'auto_renew_invoice_reccuring'           => $params['auto_renew_invoice_reccuring'],
                         'send_expiration_notification_reccuring' => $params['send_expiration_notification_reccuring'],
                         'send_expiration_notification_one_time'  => $params['send_expiration_notification_one_time'],
-                        'automatic_processing_of_renewal_orders' => $params['automatic_processing_of_renewal_orders'],
                         'renewal_invoice_status_unpaid'          => $params['renewal_invoice_status_unpaid'],
                         'visible_renew_button'                   => $params['visible_renew_button'],
                         'save_activity_logs'                     => $params['save_activity_logs'],
@@ -97,7 +96,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'auto_renew_invoice_reccuring'           => $params['auto_renew_invoice_reccuring'],
                         'send_expiration_notification_reccuring' => $params['send_expiration_notification_reccuring'],
                         'send_expiration_notification_one_time'  => $params['send_expiration_notification_one_time'],
-                        'automatic_processing_of_renewal_orders' => $params['automatic_processing_of_renewal_orders'],
                         'renewal_invoice_status_unpaid'          => $params['renewal_invoice_status_unpaid'],
                         'visible_renew_button'                   => $params['visible_renew_button'],
                         'save_activity_logs'                     => $params['save_activity_logs'],
@@ -129,7 +127,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->boolean('auto_renew_invoice_reccuring');
                 $table->boolean('send_expiration_notification_reccuring');
                 $table->boolean('send_expiration_notification_one_time');
-                $table->boolean('automatic_processing_of_renewal_orders');
                 $table->boolean('renewal_invoice_status_unpaid');
                 $table->boolean('visible_renew_button');
                 $table->boolean('save_activity_logs');
@@ -186,11 +183,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
             if (!Capsule::schema()->hasColumn($this->tableName, 'send_expiration_notification_one_time')) {
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->boolean('send_expiration_notification_one_time');
-                });
-            }
-            if (!Capsule::schema()->hasColumn($this->tableName, 'automatic_processing_of_renewal_orders')) {
-                Capsule::schema()->table($this->tableName, function($table) {
-                    $table->boolean('automatic_processing_of_renewal_orders');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'renewal_invoice_status_unpaid')) {

@@ -236,13 +236,8 @@
                     {if $activationStatus != 'active' && $activationStatus != 'COMPLETED' && $dcv_method == 'email'}
                         <button type="button" id="resend-validation-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('resendValidationEmail')}</button>
                     {/if}
-                    {if $activationStatus == 'processing' || $activationStatus == 'cancelled'}
-                    {if $btndownload}
+                    {if ($activationStatus == 'processing' || $activationStatus == 'SUSPENDED') && $btndownload}
                         <a href="{$btndownload}"><button type="button" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('download')}</button></a>
-                    {/if}
-                    {if isset($approver_method.http) || isset($approver_method.dns) || $san_revalidate}
-                        <button type="button" id="btnRevalidateNew" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('revalidate')}</button>
-                    {/if}
                     {/if}
 
                     {if $btnInstallCrt}
@@ -770,8 +765,6 @@
                     domaintemp = domaintemp.replace("*", "___");
                     newdomains[domaintemp] = domaintemp;
                 });
-
-                console.log(newMethods);
                 
                 
                 revalidateInput.each(function(key,value){
@@ -1209,24 +1202,6 @@
                             $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
                         } else if (data.success == false) {
                             $('#installCertificate').find('.fa-spinner').remove();
-                            $('#AddonAlerts>div[data-prototype="error"]').show();
-                            $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
-                        }
-                    }, false);
-                });
-
-
-                jQuery('#btnRevalidateNew').on("click",function(){
-
-                    $('#btnRevalidateNew').append(' <i class="fa fa-spinner fa-spin"></i>');
-                    JSONParser.request('revalidateNew',{json: 1,id: serviceid}, function (data) {
-                        if (data.success == true) {
-                            $('#AddonAlerts>div').css('display', 'none');
-                            $('#btnRevalidateNew').find('.fa-spinner').remove();
-                            $('#AddonAlerts>div[data-prototype="success"]').show();
-                            $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
-                        } else if (data.success == false) {
-                            $('#btnRevalidateNew').find('.fa-spinner').remove();
                             $('#AddonAlerts>div[data-prototype="error"]').show();
                             $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
                         }
