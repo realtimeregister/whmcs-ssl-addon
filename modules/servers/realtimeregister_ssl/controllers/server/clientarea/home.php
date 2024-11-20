@@ -253,13 +253,13 @@ class home extends AbstractController
             $vars['serviceid'] = $serviceId;
             $vars['userid'] = $userid;
 
-            $filenameCsr = isset($vars['domain']) && !empty($vars['domain']) ? $vars['domain'] : 'csr_code';
-            $filenameCrt = isset($vars['domain']) && !empty($vars['domain']) ? $vars['domain'] : 'crt_code';
-            $filenameCa = isset($vars['domain']) && !empty($vars['domain']) ? $vars['domain'] : 'ca_code';
+            $filenameCsr = !empty($vars['domain']) ? $vars['domain'] : 'csr_code';
+            $filenameCrt = !empty($vars['domain']) ? $vars['domain'] : 'crt_code';
+            $filenameCa = !empty($vars['domain']) ? $vars['domain'] : 'ca_code';
 
             if ($_GET['download'] == '1') {
                 if (
-                    isset($vars['sans'][$_GET['domain']]) && !empty($vars['sans'][$_GET['domain']])
+                    !empty($vars['sans'][$_GET['domain']])
                     && ($vars['sans'][$_GET['domain']]['method'] == 'http')
                 ) {
                     header('Content-Type: application/octet-stream');
@@ -275,7 +275,7 @@ class home extends AbstractController
                     exit;
                 }
 
-                if (isset($vars['approver_method']['http']) && !empty($vars['approver_method']['http'])) {
+                if (!empty($vars['approver_method']['http'])) {
                     header('Content-Type: application/octet-stream');
                     header(
                         'Content-Disposition: attachment; filename='
@@ -365,7 +365,7 @@ class home extends AbstractController
                 $vars['downloadpem'] = $vars['actual_link'] . '&downloadpem=1';
             }
 
-            if (isset($vars['approver_method']['http']) && !empty($vars['approver_method']['http'])) {
+            if (!empty($vars['approver_method']['http'])) {
                 $vars['btndownload'] = $vars['actual_link'] . '&download=1';
             }
 
