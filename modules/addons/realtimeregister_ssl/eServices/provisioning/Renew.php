@@ -179,7 +179,9 @@ class Renew
             $configData['certificateId'],
             intval($this->p['configoptions']['years']) * 12,
             $configData['csr'],
-            array_map(fn($san) => $san['san_name'], $configData['san_details']),
+            empty($configData['san_details'])
+                ? null
+                : array_map(fn($san) => $san['san_name'], $configData['san_details']),
             $orderFields['organization'],
             null,
             $orderFields['address'],

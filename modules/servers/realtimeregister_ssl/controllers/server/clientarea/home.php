@@ -22,6 +22,7 @@ use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\Server;
+use DateTimeImmutable;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
@@ -193,8 +194,8 @@ class home extends AbstractController
                     if (!$vars['activationStatus']) {
                         $vars['activationStatus'] = $certificateDetails['ssl_status'];
                     }
-                    $vars['validFrom'] = $certificateDetails['valid_from']->date;
-                    $vars['validTill'] = $certificateDetails['valid_till']->date;
+                    $vars['validFrom'] = self::formatDate($certificateDetails['valid_from']->date);
+                    $vars['validTill'] = self::formatDate($certificateDetails['valid_till']->date);
                     $datediff = $now->diff(new \DateTime(($certificateDetails['valid_till'])->date))
                         ->format('%a');
                     $vars['nextReissue'] = $datediff;
@@ -202,7 +203,7 @@ class home extends AbstractController
                     $vars['displayRenewButton'] = false;
 
                     if (!empty($certificateDetails['end_date'])) {
-                        $vars['subscriptionEnds'] = $certificateDetails['end_date']->date;
+                        $vars['subscriptionEnds'] = self::formatDate($certificateDetails['end_date']->date);
                         $datediff = $now->diff(new \DateTime($certificateDetails['end_date']->date))
                             ->format('%a');
                     }
@@ -213,7 +214,7 @@ class home extends AbstractController
                     }
 
                     if (!empty($certificateDetails['begin_date'])) {
-                        $vars['subscriptionStarts'] = $certificateDetails['begin_date']->date;
+                        $vars['subscriptionStarts'] = self::formatDate($certificateDetails['begin_date']->date);
                     }
 
 
@@ -689,6 +690,13 @@ class home extends AbstractController
         }
 
         return 'EMAIL';
+    }
+
+    /**
+     * @throws Exception
+     */
+    private static function formatDate(string $date): string {
+        return (new DateTimeImmutable($date))->format('Y-m-d H:i:s');
     }
 
     public function getApprovalEmailsForDomainJSON($input, $vars = [])
