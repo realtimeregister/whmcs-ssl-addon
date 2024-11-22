@@ -150,7 +150,6 @@ class Configuration extends AbstractConfiguration
         EmailTemplateService::createExpireNotificationTemplate();
         EmailTemplateService::createRenewalTemplate();
         EmailTemplateService::createReissueTemplate();
-
     }
 
     /**

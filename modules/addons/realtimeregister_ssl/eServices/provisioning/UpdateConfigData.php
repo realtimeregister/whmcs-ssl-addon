@@ -68,7 +68,7 @@ class UpdateConfigData
                             'pid' => $id
                         ]
                     )->first();
-                    if (isset($productData->brand) && !empty($productData->brand)) {
+                    if (!empty($productData->brand)) {
                         $brandName = $productData->brand;
                     }
                 }

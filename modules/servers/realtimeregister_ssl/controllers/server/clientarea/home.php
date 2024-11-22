@@ -22,6 +22,7 @@ use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\Server;
+use DateTimeImmutable;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
@@ -193,26 +194,34 @@ class home extends AbstractController
                     if (!$vars['activationStatus']) {
                         $vars['activationStatus'] = $certificateDetails['ssl_status'];
                     }
-                    $vars['validFrom'] = $certificateDetails['valid_from']->date;
-                    $vars['validTill'] = $certificateDetails['valid_till']->date;
-                    $datediff = $now->diff(new \DateTime($certificateDetails['valid_till']->date))->format('%a');
-                    $vars['nextReissue'] = $datediff;
+
+                    $daysUntilExpired = null;
+
+                    if ($certificateDetails['valid_from'] && $certificateDetails['valid_till']) {
+                        $vars['validFrom'] = self::formatDate($certificateDetails['valid_from']->date);
+                        $vars['validTill'] = self::formatDate($certificateDetails['valid_till']->date);
+                        $daysUntilExpired = $now->diff(new \DateTime(($certificateDetails['valid_till'])->date))
+                            ->format('%a');
+                    }
+
+                    $vars['nextReissue'] = $daysUntilExpired;
 
                     $vars['displayRenewButton'] = false;
 
-                    if ($certificateDetails['ssl_status'] == 'Active' || $certificateDetails['ssl_status'] == "COMPLETED") {
-                        if ((int)$datediff < 30) {
-                            $vars['displayRenewButton'] = true;
-                        }
+                    if (!empty($certificateDetails['end_date'])) {
+                        $vars['subscriptionEnds'] = self::formatDate($certificateDetails['end_date']->date);
+                        $daysUntilExpired = $now->diff(new \DateTime($certificateDetails['end_date']->date))
+                            ->format('%a');
+                    }
+
+                    if ($daysUntilExpired && (int)$daysUntilExpired < 30) {
+                        $vars['displayRenewButton'] = true;
                     }
 
                     if (!empty($certificateDetails['begin_date'])) {
-                        $vars['subscriptionStarts'] = $certificateDetails['begin_date']->date;
+                        $vars['subscriptionStarts'] = self::formatDate($certificateDetails['begin_date']->date);
                     }
 
-                    if (!empty($certificateDetails['end_date'])) {
-                        $vars['subscriptionEnds'] = $certificateDetails['end_date']->date;
-                    }
 
                     //service billing cycle
                     $vars['serviceBillingCycle'] = $serviceBillingCycle;
@@ -249,13 +258,13 @@ class home extends AbstractController
             $vars['serviceid'] = $serviceId;
             $vars['userid'] = $userid;
 
-            $filenameCsr = isset($vars['domain']) && !empty($vars['domain']) ? $vars['domain'] : 'csr_code';
-            $filenameCrt = isset($vars['domain']) && !empty($vars['domain']) ? $vars['domain'] : 'crt_code';
-            $filenameCa = isset($vars['domain']) && !empty($vars['domain']) ? $vars['domain'] : 'ca_code';
+            $filenameCsr = !empty($vars['domain']) ? $vars['domain'] : 'csr_code';
+            $filenameCrt = !empty($vars['domain']) ? $vars['domain'] : 'crt_code';
+            $filenameCa = !empty($vars['domain']) ? $vars['domain'] : 'ca_code';
 
             if ($_GET['download'] == '1') {
                 if (
-                    isset($vars['sans'][$_GET['domain']]) && !empty($vars['sans'][$_GET['domain']])
+                    !empty($vars['sans'][$_GET['domain']])
                     && ($vars['sans'][$_GET['domain']]['method'] == 'http')
                 ) {
                     header('Content-Type: application/octet-stream');
@@ -271,11 +280,11 @@ class home extends AbstractController
                     exit;
                 }
 
-                if (isset($vars['approver_method']['http']) && !empty($vars['approver_method']['http'])) {
+                if (!empty($vars['approver_method']['http'])) {
                     header('Content-Type: application/octet-stream');
                     header(
                         'Content-Disposition: attachment; filename='
-                        . basename($vars['approver_method']['http']['filename'])
+                        . basename($vars['approver_method']['http']['link'])
                     );
                     header('Expires: 0');
                     header('Cache-Control: must-revalidate');
@@ -361,7 +370,7 @@ class home extends AbstractController
                 $vars['downloadpem'] = $vars['actual_link'] . '&downloadpem=1';
             }
 
-            if (isset($vars['approver_method']['http']) && !empty($vars['approver_method']['http'])) {
+            if (!empty($vars['approver_method']['http'])) {
                 $vars['btndownload'] = $vars['actual_link'] . '&download=1';
             }
 
@@ -688,6 +697,13 @@ class home extends AbstractController
         return 'EMAIL';
     }
 
+    /**
+     * @throws Exception
+     */
+    private static function formatDate(string $date): string {
+        return  (new DateTimeImmutable($date))->format('Y-m-d H:i:s');
+    }
+
     public function getApprovalEmailsForDomainJSON($input, $vars = [])
     {
         $serviceId = $input['id'];
@@ -760,20 +776,6 @@ class home extends AbstractController
             return ['success' => 0, 'message' => $e->getMessage()];
         }
         return ['success' => 1, 'message' => Lang::getInstance()->T('The certificate has been installed correctly')];
-    }
-
-    public function revalidateNewJSON($input, $vars = [])
-    {
-        $sslRepo = new SSL();
-        $sslService = $sslRepo->getByServiceId($input['id']);
-
-        $data = [
-            'domain' => $input['params']['domain']
-        ];
-
-        $response = ApiProvider::getInstance()->getApi()->revalidate($sslService->remoteid, $data);
-
-        return $response;
     }
 
     public function getCertificateDetailsJSON($input, $vars = [])

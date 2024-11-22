@@ -2,7 +2,6 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions;
 
-use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
 
 /**
@@ -21,9 +20,9 @@ class Repository
     private $_configOptions = [];
 
     /**
-     * Mozna by bylo dodac wersje z wczytywanie po samym productid
+     * Construct by service id
      *
-     * @param type $accountID
+     * @param type serviceID
      */
     public function __construct($serviceID, array $data = [])
     {
@@ -39,88 +38,36 @@ class Repository
         }
     }
 
-    public function __isset($name)
+    public function getID(string $name, int $period)
     {
-        return $this->_configOptions[$name];
+        return $this->getConfigOption($name, $period)?->id;
     }
 
-    public function __get($name)
+    public function getConfigID(string $name, int $period)
     {
-        if (isset($this->_configOptions[$name])) {
-            return $this->_configOptions[$name]->value;
-        }
+        return $this->getConfigOption($name, $period)?->configid;
     }
 
-    public function __set($name, $value)
+    public function getOptionID(string $name, int $period): ?int
     {
-        if (isset($this->_configOptions[$name])) {
-            $this->_configOptions[$name]->value = $value;
-        }
+        return $this->getConfigOption($name, $period)?->optionid;
     }
 
-    public function getID($name)
+    public function getFriendlyName(string $name, int $period): ?string
     {
-        if (isset($this->_configOptions[$name])) {
-            return $this->_configOptions[$name]->id;
-        }
+        return $this->getConfigOption($name, $period)?->friendlyName;
     }
 
-    public function getConfigID($name)
-    {
-        if (isset($this->_configOptions[$name])) {
-            return $this->_configOptions[$name]->configid;
-        }
-    }
-
-    public function getOptionID($name)
-    {
-        if (isset($this->_configOptions[$name])) {
-            return $this->_configOptions[$name]->optionid;
-        }
-    }
-
-    public function getFrendlyName($name)
-    {
-        if (isset($this->_configOptions[$name])) {
-            return $this->_configOptions[$name]->frendlyName;
-        }
-    }
-
-    public function load()
+    public function load() : void
     {
         $query = "
-            SELECT
-                V.id
-                ,V.optionid
-                ,V.qty
-                ,V.configid
-                ,O.optionname
-                ,O.optiontype
-                ,S.id as suboptionid
-                ,S.optionname as suboptionname
-            FROM
-                tblhostingconfigoptions V
-            JOIN
-                tblproductconfigoptions O
-                ON
-                    V.configid = O.id
-            JOIN
-                tblproductconfiglinks L
-                ON
-                    L.gid = O.gid
-            JOIN
-                tblhosting H
-                ON
-                    H.packageid = L.pid
-                    AND H.id = V.relid
-            LEFT JOIN
-                tblproductconfigoptionssub S
-                ON
-                    S.configid = O.id
-            WHERE
-                H.id = $this->serviceID
+            SELECT V.id, V.optionid, V.qty, V.configid, O.optionname, O.optiontype
+            FROM tblhostingconfigoptions V
+            JOIN tblproductconfigoptions O ON V.configid = O.id
+            JOIN tblproductconfiglinks L ON L.gid = O.gid
+            JOIN tblhosting H ON H.packageid = L.pid AND H.id = V.relid
+            WHERE H.id = $this->serviceID
         ";
-
 
         $result = Query::query($query);
 
@@ -133,78 +80,18 @@ class Repository
                 $friendlyName = $tmp[1];
             }
 
-            if (isset($this->_configOptions[$name])) {
-                $field = $this->_configOptions[$name];
-            }
-
             $field = new ConfigOption();
             $field->id = $row['id'];
             $field->configid = $row['configid'];
             $field->optionid = $row['optionid'];
             $field->name = $name;
             $field->type = $row['optiontype'];
-            $field->frendlyName = $friendlyName;
-
-            $tmp = explode('|', $row['suboptionname']);
-
-            $value = $valueLabel = $tmp[0];
-
-            if (isset($tmp[1])) {
-                $valueLabel = $tmp[1];
-            }
-
-            switch ($row['optiontype']) {
-                case 1:
-                case 2:
-                    $field->optionsIDs[$value] = $row['suboptionid'];
-                    $field->options[$value] = $valueLabel;
-
-                    if ($row['suboptionid'] == $row['optionid'] && empty($field->value)) {
-                        $field->value = $value;
-                    }
-                    break;
-                case 3:
-                case 4:
-                    $field->value = $row['qty'];
-                    $field->value = $row['qty'];
-                    break;
-            }
-
+            $field->friendlyName = $friendlyName;
             $this->_configOptions[$field->name] = $field;
         }
     }
 
-    /**
-     * Update Custom Fields
-     *
-     */
-    public function update()
-    {
-        $pid = Query::select(['packageid'], 'tblhosting', ['id' => $this->serviceID])->fetchColumn('packageid');
-        $pname = Query::select(['name'], 'tblproducts', ['id' => $pid])->fetchColumn('name');
-        ConfigurableOptionService::createForProduct($pid, $pname);
-
-        foreach ($this->_configOptions as $field) {
-            $cols = [];
-
-            switch ($field->type) {
-                case 1:
-                case 2:
-                    $cols['optionid'] = $field->optionsIDs[$field->value];
-                    break;
-                case 3:
-                case 4:
-                    $cols['qty'] = $field->value;
-                    break;
-            }
-
-            Query::update(
-                'tblhostingconfigoptions',
-                $cols,
-                [
-                    'id' => $field->id
-                ]
-            );
-        }
+    private function getConfigOption(string $name, int $period) {
+        return $this->_configOptions[$name] ?? $this->_configOptions[$name . $period] ?? null;
     }
 }

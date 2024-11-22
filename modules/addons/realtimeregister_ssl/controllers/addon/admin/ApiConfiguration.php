@@ -182,17 +182,6 @@ class ApiConfiguration extends AbstractController
         $form->addField($field);
 
         $field = new CheckboxField();
-        $field->name = 'automatic_processing_of_renewal_orders';
-        $field->options = ['automatic_processing_of_renewal_orders'];
-        $field->value = $input['automatic_processing_of_renewal_orders']
-            ? ['automatic_processing_of_renewal_orders'] : [''];
-        $field->inline = true;
-        $field->colWidth = 3;
-        $field->continue = true;
-        $field->enableDescription = true;
-        $form->addField($field);
-
-        $field = new CheckboxField();
         $field->name = 'renewal_invoice_status_unpaid';
         $field->options = ['renewal_invoice_status_unpaid'];
         $field->value = $input['renewal_invoice_status_unpaid'] ? ['renewal_invoice_status_unpaid'] : [''];
@@ -459,7 +448,6 @@ class ApiConfiguration extends AbstractController
                     'auto_renew_invoice_reccuring',
                     'send_expiration_notification_reccuring',
                     'send_expiration_notification_one_time',
-                    'automatic_processing_of_renewal_orders',
                     'renewal_invoice_status_unpaid',
                     'display_ca_summary',
                     'disable_email_validation',

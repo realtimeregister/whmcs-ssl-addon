@@ -7,8 +7,8 @@ class ConfigOption
     public $id;
     public $name;
     public $type;
-    public $frendlyName;
+    public $friendlyName;
+    public $configid;
+    public $optionid;
     public $value;
-    public $options = [];
-    public $optionsIDs = [];
 }
