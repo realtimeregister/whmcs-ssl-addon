@@ -17,7 +17,7 @@ class Repository
      *
      * @var configOption[]
      */
-    public $_configOptions = [];
+    private $_configOptions = [];
 
     /**
      * Construct by service id
@@ -61,7 +61,7 @@ class Repository
     public function load() : void
     {
         $query = "
-            SELECT V.id, V.optionid ,V.qty ,V.configid ,O.optionname,O.optiontype
+            SELECT V.id, V.optionid, V.qty, V.configid, O.optionname, O.optiontype
             FROM tblhostingconfigoptions V
             JOIN tblproductconfigoptions O ON V.configid = O.id
             JOIN tblproductconfiglinks L ON L.gid = O.gid
