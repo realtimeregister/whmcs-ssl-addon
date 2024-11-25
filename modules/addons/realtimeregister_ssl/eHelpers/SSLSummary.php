@@ -2,10 +2,10 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eHelpers;
 
-use DateTime;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository;
+use DateTime;
 use RealtimeRegister\Api\ProcessesApi;
 
 class SSLSummary
@@ -100,8 +100,9 @@ class SSLSummary
                 continue;
             }
             $expiry_date = $this->getSSLCertificateValidTillDate($service->id);
+            $sslStatus = $this->getSSLCertificateStatus($service->id);
 
-            if ($expiry_date != '0000-00-00' && $this->getSSLCertificateStatus($service->id) == 'active') {
+            if ($expiry_date != '0000-00-00' && $sslStatus === 'ACTIVE' || $sslStatus === 'COMPLETED') {
                 if ($this->checkOrderExpireDate($expiry_date, $daysBefore))
                     $services[] = $service;
             }

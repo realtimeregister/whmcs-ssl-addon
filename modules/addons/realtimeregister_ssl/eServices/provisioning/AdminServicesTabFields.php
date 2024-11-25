@@ -2,9 +2,9 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use Exception;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
+use Exception;
 
 class AdminServicesTabFields
 {
@@ -46,7 +46,7 @@ class AdminServicesTabFields
             }
 
             if (empty($sslService->remoteid)) {
-                throw new Exception('Order id not exist');
+                throw new Exception('Order id does not exist');
             }
 
             $return = [];
@@ -74,7 +74,7 @@ class AdminServicesTabFields
             }
             $return['Order Status Description'] = $orderDetails['order_status_description'] ?: '-';
 
-            if ($orderDetails['ssl_status'] == 'active') {
+            if ($orderDetails['ssl_status'] == 'ACTIVE' || $orderDetails == 'COMPLETED') {
                 $return['Valid From'] = $orderDetails['valid_from'];
                 $return['Expires'] = $orderDetails['valid_till'];
             }

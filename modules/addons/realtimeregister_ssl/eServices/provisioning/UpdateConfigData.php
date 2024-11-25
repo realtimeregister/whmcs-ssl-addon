@@ -8,6 +8,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMappi
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Domain\Enum\DownloadFormatEnum;
 use WHMCS\Database\Capsule;
 
 class UpdateConfigData
@@ -49,7 +50,9 @@ class UpdateConfigData
         if ($certificateResults->count() === 1) {
             /** @var CertificatesApi $certificatesApi */
             $order = $certificateResults[0];
-            $caBundle = base64_decode($certificatesApi->downloadCertificate($order->id, 'CA_BUNDLE'));
+            $caBundle = base64_decode(
+                $certificatesApi->downloadCertificate($order->id, DownloadFormatEnum::CA_BUNDLE_FORMAT)
+            );
             $apiRepo = new Products();
 
             if (
@@ -59,11 +62,7 @@ class UpdateConfigData
 
                 $brandName = null;
                 if ($checkTable !== false) {
-                    if (is_object($order)) {
-                        $id = KeyToIdMapping::getIdByKey($order->product);
-                    } else {
-                        $id = KeyToIdMapping::getIdByKey($order['command']['product']);
-                    }
+                    $id = KeyToIdMapping::getIdByKey($order->product);
                     $productData = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->where([
                             'pid' => $id
                         ]
@@ -83,7 +82,8 @@ class UpdateConfigData
             $sslOrder = $this->sslService;
 
             $sslOrder->setCrt($order->certificate);
-            $sslOrder->setSSLStatus('COMPLETED');
+            $sslOrder->setSSLStatus($order->status);
+            $sslOrder->setPartnerOrderId($order->id);
 
             $orderRepo->updateStatus($sslOrder->serviceid, 'Pending Installation');
             $sslOrder->setCertificateId($order->id);

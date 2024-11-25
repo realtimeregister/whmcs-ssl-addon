@@ -32,7 +32,7 @@
             <col style="width: 80%"/>
         </colgroup>
         <tbody>
-            {if $activationStatus === 'active' || $activationStatus == 'COMPETED'}
+            {if $activationStatus === 'ACTIVE' || $activationStatus == 'COMPETED'}
                 {if $configoption23}
                     <tr>
                         <td class="text-left">{$ADDONLANG->T('issued_ssl_message')}</td>
@@ -60,7 +60,7 @@
                 <tr>
                     <td class="text-left">{$ADDONLANG->T('activationStatus')}</td>
                     <td class="text-left">
-                        {if $activationStatus === 'active' || $activationStatus === 'COMPLETED'}
+                        {if $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
                             {$ADDONLANG->T('activationStatusActive')}
                         {elseif $activationStatus === 'new_order'}
                             {$ADDONLANG->T('activationStatusNewOrder')}
@@ -82,7 +82,7 @@
                     </td>
                 </tr>
             {/if}
-            {if $activationStatus === 'active' || $activationStatus === 'COMPLETED'}
+            {if $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
                 <tr>
                     <td class="text-left">{$ADDONLANG->T('validFrom')}</td>
                     <td class="text-left">{$validFrom}</td>
@@ -247,7 +247,7 @@
                     {if $configurationStatus != 'Awaiting Configuration'}
                         {if $activationStatus == 'processing' || $activationStatus == 'SUSPENDED'}
                             <button type="button" id="btnRevalidate" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('domainvalidationmethod')}</button>
-                        {elseif $activationStatus == 'active' || $activationStatus === 'COMPLETED'}
+                        {elseif $activationStatus == 'ACTIVE' || $activationStatus === 'COMPLETED'}
                             <a class="btn btn-default" role="button" href="" id="Action_Custom_Module_Button_Reissue_Certificate">{$ADDONLANG->T('reissueCertificate')}</a>
                             <button type="button" id="send-certificate-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('sendCertificate')}</button>
                             {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadca')}</button></a>{/if}
@@ -268,7 +268,7 @@
     </table>
     <script type="text/javascript">
         $(document).ready(function () {
-            {if $activationStatus !== 'active'}
+            {if $activationStatus !== 'ACTIVE' && $activationStatus !== 'COMPLETED'}
                 //$('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').remove();
             {else}
                 $('#resend-validation-email').remove();

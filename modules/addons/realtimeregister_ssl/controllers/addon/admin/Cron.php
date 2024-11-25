@@ -95,7 +95,7 @@ class Cron extends AbstractController
             $sslOrder = $certificateApi->listCertificates(1,null, null, ['process:eq' => $order->remoteid])[0];
 
             //if certificate is active
-            if ($order->status == 'active')
+            if ($order->status == 'ACTIVE')
             {
                 //update whmcs service next due date
                 $newNextDueDate = $sslOrder->expiryDate;
@@ -267,7 +267,7 @@ class Cron extends AbstractController
         $services->onlyStatus(['Active']);
 
         foreach ($services->get() as $service) {
-            $product   = $service->product();
+            $product = $service->product();
             //check if product is Realtime Register Ssl
             if ($product->serverType != 'realtimeregister_ssl') {
                 continue;

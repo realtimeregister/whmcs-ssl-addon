@@ -468,7 +468,6 @@
                 }
 
                 function showOneTime(element, type) {
-                    //element.find('.prod-pricing-recurring').css('display', 'none');
                     element.find("input[cycle='monthly']").removeClass('disabled');
                     element.find("input[cycle='monthly']").removeAttr('disabled');
 
@@ -482,10 +481,6 @@
                 }
 
                 function hideOneTime(element, type) {
-                    //element.find('.prod-pricing-recurring').removeAttr('style');
-                    /*if(parseFloat(element.find('.prod-pricing-monthly-onetime').find('input')[1].value) < 0) {
-                     element.find("input[cycle='monthly']").prop('checked', false);
-                     } */
                     if (element.find("input[cycle='monthly']").hasClass('onetime') || type === null) {
                         $(element).find("input[cycle='monthly']").prop('checked', false);
                         element.find("input[cycle='monthly']").removeClass('onetime');
@@ -498,8 +493,6 @@
                     var pc = select.closest('.product-container');
                     //disablePrices(pc.find("input[cycle='monthly']"));
                     showOneTime(pc, type);
-                    disablePrices(pc.find("input[cycle='quarterly']"));
-                    disablePrices(pc.find("input[cycle='semiannually']"));
                     disablePrices(pc.find("input[cycle='annually']"));
                     disablePrices(pc.find("input[cycle='biennially']"));
                     disablePrices(pc.find("input[cycle='triennially']"));
@@ -510,8 +503,6 @@
                     var pc = select.closest('.product-container');
                     //enablePrices(pc.find("input[cycle='monthly']"));
                     hideOneTime(pc, type);
-                    enablePrices(pc.find("input[cycle='quarterly']"));
-                    enablePrices(pc.find("input[cycle='semiannually']"));
                     enablePrices(pc.find("input[cycle='annually']"));
                     enablePrices(pc.find("input[cycle='biennially']"));
                     enablePrices(pc.find("input[cycle='semiannually']"));
@@ -609,19 +600,15 @@
                     }
                 }
                 function changePriceWithCommission(input) {
-                    var commissionValue = parseFloat(input.val());
-                    var productId = input.data('id');
-                    //var priceWithCommission = price + price * commissionValue/100;
-                    //var price = parseFloat($('#addon-js-pricing-group-' + productId).find('input[id^="pricing_"]').val());
-
-                    var checkboxes = input.parents('#product_configuration').find('.product_prices').find('.pricingtgl');
+                    const commissionValue = parseFloat(input.val());
+                    const checkboxes = input.parents('#product_configuration').find('.product_prices').find('.pricingtgl');
                     checkboxes.each(function (index) {
                         if ($(this).is(':checked')) {
-                            var cycle = $(this).attr("cycle");
-                            var currency = $(this).attr("currency");
-                            var pricingId = $(this).data('pricing-id');
-                            var price = parseFloat($("#pricing_" + currency + "_" + cycle + "_" + pricingId).val());
-                            var priceWithCommission = price * commissionValue / 100 + price;
+                            const cycle = $(this).attr("cycle");
+                            const currency = $(this).attr("currency");
+                            const pricingId = $(this).data('pricing-id');
+                            let price = parseFloat($("#pricing_" + currency + "_" + cycle + "_" + pricingId).val());
+                            let priceWithCommission = price * commissionValue / 100 + price;
 
                             if(isNaN(price))
                                 price = '0.00';

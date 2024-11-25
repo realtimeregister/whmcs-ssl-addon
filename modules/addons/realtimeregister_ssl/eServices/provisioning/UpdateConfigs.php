@@ -2,11 +2,11 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use Exception;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use Exception;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Domain\Certificate;
 use RealtimeRegister\Domain\Enum\DownloadFormatEnum;
@@ -28,7 +28,7 @@ class UpdateConfigs
     public function run()
     {
         try {
-            return $this->updateConfigData();
+            $this->updateConfigData();
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
@@ -45,22 +45,29 @@ class UpdateConfigs
         /** @var SSL $sslOrder */
         $sslOrder = SSL::whereRemoteId($cid)->first();
 
-        $sslOrder->setCa($certificatesApi->downloadCertificate($order->id, DownloadFormatEnum::CA_FORMAT));
+        $sslOrder->setCa(base64_decode(
+            $certificatesApi->downloadCertificate($order->id, DownloadFormatEnum::CA_BUNDLE_FORMAT)
+        ));
         $sslOrder->setCrt($order->certificate);
         $sslOrder->setPartnerOrderId($order->id);
 
-        $sslOrder->setStatus($order->status);
-        $sslOrder->setValidFrom(($order->startDate)->format('Y-m-d H:i:s'));
-        $sslOrder->setValidTill(($order->expiryDate)->format('Y-m-d H:i:s'));
+        $sslOrder->setValidFrom($order->startDate);
+        $sslOrder->setValidTill($order->expiryDate);
+
+        if ($order->subscriptionEndDate) {
+            $sslOrder->setSubscriptionStarts($order->startDate);
+            $sslOrder->setSubscriptionEnds($order->subscriptionEndDate);
+        }
+
+        if (isset($order->san)) {
+            $sslOrder->setSanDetails(array_map(function ($sanEntry) {return ["san_name" => $sanEntry];}, $order->san));
+        }
 
         $sslOrder->setDomain($order->domainName);
 
-        $sslOrder->setProductId(KeyToIdMapping::getIdByKey($order->product));
         $sslOrder->setProductId($order->product);
         $sslOrder->setSSLStatus($order->status);
         $sslOrder->setProductBrand($apiProduct->brand);
-        $sslOrder->setConfigdataKey('valid_from', ($order->startDate)->format('Y-m-d H:i:s'));
-        $sslOrder->setConfigdataKey('valid_till', ($order->expiryDate)->format('Y-m-d H:i:s'));
         $sslOrder->save();
 
         logActivity($cid.':'.$order->product);

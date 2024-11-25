@@ -175,7 +175,7 @@ $_LANG['addonAA']['productsConfiguration']['paymentTypeRecurring'] = 'Recurring'
 $_LANG['addonAA']['productsConfiguration']['paymentTypeOneTime']   = 'One Time';
 
 $_LANG['addonAA']['productsConfiguration']['pricing']             = 'Pricing:';
-$_LANG['addonAA']['productsConfiguration']['pricingMonthly']      = 'One Time';
+$_LANG['addonAA']['productsConfiguration']['pricingMonthly']      = 'One Time / Monthly';
 $_LANG['addonAA']['productsConfiguration']['pricingQuarterly']    = 'Quarterly';
 $_LANG['addonAA']['productsConfiguration']['pricingSemiAnnually'] = 'Semi-Annually';
 $_LANG['addonAA']['productsConfiguration']['pricingAnnually']     = 'Annually';
@@ -210,7 +210,7 @@ $_LANG['addonAA']['productsCreator']['enableSans']   = 'Enable SANs:';
 $_LANG['addonAA']['productsCreator']['includedSans'] = 'Included SANs:';
 
 $_LANG['addonAA']['productsCreator']['pricing']             = 'Pricing:';
-$_LANG['addonAA']['productsCreator']['pricingMonthly']      = 'One Time';
+$_LANG['addonAA']['productsCreator']['pricingMonthly']      = 'One Time / Monthly';
 $_LANG['addonAA']['productsCreator']['pricingQuarterly']    = 'Quarterly';
 $_LANG['addonAA']['productsCreator']['pricingSemiAnnually'] = 'Semi-Annually';
 $_LANG['addonAA']['productsCreator']['pricingAnnually']     = 'Annually';

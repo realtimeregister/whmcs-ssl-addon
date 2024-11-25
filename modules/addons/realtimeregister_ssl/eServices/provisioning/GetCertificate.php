@@ -2,8 +2,8 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use Exception;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use Exception;
 use RealtimeRegister\Api\ProcessesApi;
 
 class GetCertificate
@@ -40,7 +40,7 @@ class GetCertificate
         $this->ssl->setOrderStatus($orderStatus['status']);
         $this->ssl->save();
 
-        if ($orderStatus['status'] !== 'active') {
+        if ($orderStatus->status !== 'COMPLETED') {
             throw new Exception('Certificate is not ready to download');
         }
         $this->ssl->setCrt($orderStatus['crt_code']);
