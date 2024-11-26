@@ -32,7 +32,7 @@
             <col style="width: 80%"/>
         </colgroup>
         <tbody>
-            {if $activationStatus === 'active' || $activationStatus == 'COMPETED'}
+            {if $activationStatus === 'ACTIVE' || $activationStatus === 'COMPETED'}
                 {if $configoption23}
                     <tr>
                         <td class="text-left">{$ADDONLANG->T('issued_ssl_message')}</td>
@@ -60,7 +60,7 @@
                 <tr>
                     <td class="text-left">{$ADDONLANG->T('activationStatus')}</td>
                     <td class="text-left">
-                        {if $activationStatus === 'active' || $activationStatus === 'COMPLETED'}
+                        {if $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
                             {$ADDONLANG->T('activationStatusActive')}
                         {elseif $activationStatus === 'new_order'}
                             {$ADDONLANG->T('activationStatusNewOrder')}
@@ -82,7 +82,7 @@
                     </td>
                 </tr>
             {/if}
-            {if $activationStatus === 'active' || $activationStatus === 'COMPLETED'}
+            {if $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
                 <tr>
                     <td class="text-left">{$ADDONLANG->T('validFrom')}</td>
                     <td class="text-left">{$validFrom}</td>
@@ -138,7 +138,7 @@
             {/if}
 
             {if $approver_method}
-                {if $dcv_method == 'http'}
+                {if $dcv_method === 'http'}
                     <tr>
                         <td class="text-left">{$ADDONLANG->T('hashFile')}</td>
                         <td class="text-left" style="max-width:200px; word-wrap: break-word;">{$approver_method.$dcv_method.link}</td>
@@ -149,11 +149,11 @@
                     </tr>
                 {else}
                     <tr id="validationData" >
-                        {if $dcv_method == 'email'}
+                        {if $dcv_method === 'email'}
                             <td class="text-left">{$ADDONLANG->T('validationEmail')}</td>
                             <td class="text-left" >{$approver_method}</td>
                         {/if}
-                        {if $dcv_method == 'dns'}
+                        {if $dcv_method === 'dns'}
                             <td class="text-left ">{$ADDONLANG->T('dnsCnameRecord')}</td>
                             <td class="text-left" style="max-width:200px; word-wrap: break-word;">{$approver_method.dns.record|strtolower|replace:'cname':'CNAME'}</td>
                         {/if}
@@ -171,7 +171,7 @@
                                 <tr>
                                     <td colspan="2" class="text-center">{$ADDONLANG->T({$san.san_name})}</td>
                                 </tr>
-                                {if $san.method == 'http'}
+                                {if $san.method === 'http'}
                                     {if $activationStatus === 'processing' || $activationStatus === 'SUSPENDED'}
                                         <tr>
                                             <td style="width: 15%" class="text-left">{$ADDONLANG->T('hashFile')}</td>
@@ -183,7 +183,7 @@
                                         </tr>
                                     {/if}
                                {else}
-                                    {if $san.method == 'dns'}
+                                    {if $san.method === 'dns'}
                                         {if $activationStatus === 'processing' || $activationStatus === 'SUSPENDED'}
                                             <tr>
                                                 <td style="width: 15%" class="text-left">{$ADDONLANG->T('dnsCnameRecord')}</td>
@@ -233,10 +233,10 @@
                         <button type="button" id="btnRenew" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('renew')}</button>
                     {/if}
                     {/if}
-                    {if $activationStatus != 'active' && $activationStatus != 'COMPLETED' && $dcv_method == 'email'}
+                    {if $activationStatus != 'active' && $activationStatus != 'COMPLETED' && $dcv_method === 'email'}
                         <button type="button" id="resend-validation-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('resendValidationEmail')}</button>
                     {/if}
-                    {if ($activationStatus == 'processing' || $activationStatus == 'SUSPENDED') && $btndownload}
+                    {if ($activationStatus === 'processing' || $activationStatus === 'SUSPENDED') && $btndownload}
                         <a href="{$btndownload}"><button type="button" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('download')}</button></a>
                     {/if}
 
@@ -245,9 +245,9 @@
                     {/if}
 
                     {if $configurationStatus != 'Awaiting Configuration'}
-                        {if $activationStatus == 'processing' || $activationStatus == 'SUSPENDED'}
+                        {if $activationStatus === 'processing' || $activationStatus === 'SUSPENDED'}
                             <button type="button" id="btnRevalidate" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('domainvalidationmethod')}</button>
-                        {elseif $activationStatus == 'active' || $activationStatus === 'COMPLETED'}
+                        {elseif $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
                             <a class="btn btn-default" role="button" href="" id="Action_Custom_Module_Button_Reissue_Certificate">{$ADDONLANG->T('reissueCertificate')}</a>
                             <button type="button" id="send-certificate-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('sendCertificate')}</button>
                             {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadca')}</button></a>{/if}
@@ -258,7 +258,7 @@
                         {if $privateKey}
                         <button type="button" id="getPrivateKey" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('getPrivateKeyBtn')}</button>
                         {/if}
-                        {if $activationStatus == 'unpaid'}
+                        {if $activationStatus === 'unpaid'}
                             <button type="button" id="recheckDetails" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('recheckCertificateDetails')}</button>
                         {/if}
                     {/if}
@@ -268,7 +268,7 @@
     </table>
     <script type="text/javascript">
         $(document).ready(function () {
-            {if $activationStatus !== 'active'}
+            {if $activationStatus !== 'ACTIVE' && $activationStatus !== 'COMPLETED'}
                 //$('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').remove();
             {else}
                 $('#resend-validation-email').remove();
@@ -347,7 +347,6 @@
                 if (!init) {
                     renewForm = $('#modalRenewForm');
                     renewSubmitBtn = $('#modalRenewSubmit');
-                    //renewInput = $('.modalRenewInput');
                     renewBody = $('#modalRenewBody');
                     renewDangerAlert = $('#modalRenewDanger');
                     renewSuccessAlert = $('#modalRenewSuccess');
@@ -393,11 +392,11 @@
                 renewDangerAlert.children('span').html(msg);
             }
 
-            function addSpiner(element) {
+            function addSpinner(element) {
                 element.append('<i class="fa fa-spinner fa-spin"></i>');
             }
 
-            function removeSpiner(element) {
+            function removeSpinner(element) {
                 element.find('.fa-spinner').remove();
             }
 
@@ -442,7 +441,7 @@
             }
 
             function submitrenewModal() {
-                addSpiner(renewSubmitBtn);
+                addSpinner(renewSubmitBtn);
                 disable(renewSubmitBtn);
 
                 var data = {
@@ -485,7 +484,7 @@
                         anErrorOccurred();
                     },
                     complete: function () {
-                        removeSpiner(renewSubmitBtn);
+                        removeSpinner(renewSubmitBtn);
                         enable(renewSubmitBtn);
                     }
                 });

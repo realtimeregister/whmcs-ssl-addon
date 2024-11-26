@@ -19,7 +19,7 @@ class AdminCustomButtonArray
             'View Certificate'      => 'SSLAdminViewCertificate',
         ];
 
-        if ($this->p['status'] !== 'Active') {
+        if (strtolower($this->p['status']) !== 'active') {
             $buttons['Resend Approver Email'] = 'SSLAdminResendApproverEmail';
             $buttons['Reissue Certificate'] = 'SSLAdminReissueCertificate';
             $buttons['Recheck Certificate Details'] = 'SSLAdminRecheckCertificateDetails';
