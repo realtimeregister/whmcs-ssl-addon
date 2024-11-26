@@ -74,7 +74,7 @@ class AdminServicesTabFields
             }
             $return['Order Status Description'] = $orderDetails['order_status_description'] ?: '-';
 
-            if ($orderDetails['ssl_status'] == 'ACTIVE' || $orderDetails == 'COMPLETED') {
+            if ($orderDetails['ssl_status'] === 'ACTIVE' || $orderDetails['ssl_status'] === 'COMPLETED') {
                 $return['Valid From'] = $orderDetails['valid_from'];
                 $return['Expires'] = $orderDetails['valid_till'];
             }

@@ -95,7 +95,7 @@ class Cron extends AbstractController
             $sslOrder = $certificateApi->listCertificates(1,null, null, ['process:eq' => $order->remoteid])[0];
 
             //if certificate is active
-            if ($order->status == 'ACTIVE')
+            if ($order->status === 'ACTIVE')
             {
                 //update whmcs service next due date
                 $newNextDueDate = $sslOrder->expiryDate;
