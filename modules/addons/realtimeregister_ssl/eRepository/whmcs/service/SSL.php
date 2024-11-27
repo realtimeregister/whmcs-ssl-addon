@@ -9,7 +9,7 @@ class SSL
 {
     /**
      * @param int $id
-     * @return \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @return Model
      */
     public function getSingle($id)
     {
@@ -22,7 +22,7 @@ class SSL
 
     /**
      * @param int $id
-     * @return \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @return Model
      */
     public function getByServiceId($id)
     {
@@ -30,16 +30,15 @@ class SSL
     }
     /**
      * @param int $id
-     * @return \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
      */
     public function getByRemoteId($id)
     {
-        return Model::whereRemoteId($id)->first();
+        return Model::query()->where('remoteid', '=', $id)->first();
     }
 
     /**
      * @param string $status
-     * @return \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @return Model
      */
     public function getBy($where, $realtimeregisterssl = false)
     {

@@ -4,6 +4,7 @@ namespace AddonModule\RealtimeRegisterSsl;
 
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractConfiguration;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
@@ -57,7 +58,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '0.4.0';
+    public $version = '0.4.15';
 
     private static string $LEGACY_TABLE_PREFIX = 'mgfw_';
 
@@ -167,7 +168,7 @@ class Configuration extends AbstractConfiguration
         (new WhmcsProducts())->dropProducts();
         Products::getInstance()::dropTable();
         EmailTemplateService::deleteConfigurationTemplate();
-        EmailTemplateService::deleteCertyficateTemplate();
+        EmailTemplateService::deleteCertificateTemplate();
         EmailTemplateService::deleteExpireNotificationTemplate();
         EmailTemplateService::deleteRenewalTemplate();
         EmailTemplateService::deleteReissueTemplate();
@@ -190,6 +191,20 @@ class Configuration extends AbstractConfiguration
         (new KeyToIdMapping())->updateTable(self::$LEGACY_TABLE_PREFIX);
         (new LogsRepo())->updateLogsTable();
         (new OrdersRepo())->updateOrdersTable();
+        self::renameSSLOrderStatuses();
+    }
+
+    static function renameSSLOrderStatuses()
+    {
+        foreach (SSL::all() as $sslOrder) {
+            if ($sslOrder->status === 'active') {
+                $sslOrder->status = SSL::ACTIVE;
+            }
+            if ($sslOrder->getSSLStatus() === 'active' || $sslOrder->getSSLStatus() === 'Active') {
+                $sslOrder->setSSLStatus('ACTIVE');
+            }
+            $sslOrder->save();
+        }
     }
 
     public function getAuthor()

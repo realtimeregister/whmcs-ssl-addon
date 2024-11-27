@@ -9,7 +9,12 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 class SSL extends \Illuminate\Database\Eloquent\Model
 {
     public $timestamps = false;
-    protected $table   = 'tblsslorders';
+    protected $table = 'tblsslorders';
+
+    public const PENDING_INSTALLATION = 'Pending Installation';
+    public const AWAITING_CONFIGURATION = 'Awaiting Configuration';
+    public const CONFIGURATION_SUBMITTED = 'Configuration Submitted';
+    public const ACTIVE = 'Active';
 
     public function scopeWhereServiceId($query, $id)
     {
@@ -292,8 +297,8 @@ class SSL extends \Illuminate\Database\Eloquent\Model
             }
             
             $query = $query->where(function($q) {
-                $q->where('status', "Completed");
-                $q->orWhere('status', "Configuration Submitted");
+                $q->where('status', SSL::ACTIVE);
+                $q->orWhere('status', SSL::CONFIGURATION_SUBMITTED);
             });
             
             $query = $query->where(function($q) {

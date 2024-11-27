@@ -6,6 +6,7 @@ use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Domain\Certificate;
@@ -43,7 +44,10 @@ class UpdateConfigs
         $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
 
         /** @var SSL $sslOrder */
-        $sslOrder = SSL::whereRemoteId($cid)->first();
+        $sslOrder = (new SSLRepo())->getByRemoteId($cid);
+        if ($sslOrder->status === SSL::CONFIGURATION_SUBMITTED) {
+            $sslOrder->status = SSL::PENDING_INSTALLATION;
+        }
 
         $sslOrder->setCa(base64_decode(
             $certificatesApi->downloadCertificate($order->id, DownloadFormatEnum::CA_BUNDLE_FORMAT)
@@ -85,6 +89,9 @@ class UpdateConfigs
         /** @var Certificate[] $orders */
         $apiRepo = new Products();
         foreach ($this->cids as $cid) {
+            if (!$cid) {
+                continue;
+            }
             $res = $api->listCertificates(null, null, null,['process:eq' => $cid]);
             foreach($res as $result) {
                 $this->writeNewConfigdata($apiRepo, $result, $cid);

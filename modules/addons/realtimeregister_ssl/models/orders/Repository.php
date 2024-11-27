@@ -3,6 +3,7 @@
 namespace AddonModule\RealtimeRegisterSsl\models\orders;
 
 use AddonModule\RealtimeRegisterSsl\addonLibs\models\Repository as MainRepository;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Repository extends MainRepository
@@ -41,7 +42,7 @@ class Repository extends MainRepository
                 [$this->tableName.'.status', 'NOT LIKE', '%"ssl_status":"REJECTED"%'],
                 [$this->tableName.'.status', '!=', 'Success']
             ])
-            ->orWhere('tblsslorders.status', 'Configuration Submitted')
+            ->orWhere('tblsslorders.status', SSL::CONFIGURATION_SUBMITTED)
             ->get();
     }
 
@@ -55,7 +56,7 @@ class Repository extends MainRepository
             return true;
         }
 
-        if (isset($checkOrder->status) && $checkOrder->status == 'Pending Installation') {
+        if (isset($checkOrder->status) && $checkOrder->status == SSL::PENDING_INSTALLATION) {
             return true;
         }
 
@@ -118,7 +119,7 @@ class Repository extends MainRepository
         ]);
         if ($status == 'Success') {
             Capsule::table('tblsslorders')->where('serviceid', $serviceid)->update([
-                'status' => 'active'
+                'status' => SSL::ACTIVE
             ]);
         }
     }

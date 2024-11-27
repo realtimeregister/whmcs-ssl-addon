@@ -85,7 +85,7 @@ class UpdateConfigData
             $sslOrder->setSSLStatus($order->status);
             $sslOrder->setPartnerOrderId($order->id);
 
-            $orderRepo->updateStatus($sslOrder->serviceid, 'Pending Installation');
+            $sslOrder->status = SSL::PENDING_INSTALLATION;
             $sslOrder->setCertificateId($order->id);
 
             $sslOrder->setValidFrom($order->startDate);

@@ -26,7 +26,7 @@ class Orders extends AbstractController
 
             $orderID = $input['id'];
             $ordersRepo = new Repository();
-            $ordersRepo->updateStatusById($orderID, 'Pending Installation');
+            $ordersRepo->updateStatusById($orderID, SSL::PENDING_INSTALLATION);
 
         } catch (\Exception $e) {
             return [

@@ -2,18 +2,18 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service;
 
-class SSLTemplorary
+class SSLTemporary
 {
     private static $instance;
     private $ssl = [];
 
     /**
-     * @return SSLTemplorary
+     * @return SSLTemporary
      */
     public static function getInstance()
     {
         if (self::$instance === null) {
-            self::$instance = new SSLTemplorary();
+            self::$instance = new SSLTemporary();
         }
         return self::$instance;
     }

@@ -2,10 +2,10 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use Exception;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use Exception;
 
 class CreateAccount
 {
@@ -42,7 +42,7 @@ class CreateAccount
         $sslModel->module = 'realtimeregister_ssl';
         $sslModel->certtype = '';
         $sslModel->completiondate = '';
-        $sslModel->status = 'Awaiting Configuration';
+        $sslModel->status = SSL::AWAITING_CONFIGURATION;
         $sslModel->save();
 
         sendMessage(EmailTemplateService::CONFIGURATION_TEMPLATE_ID, $this->p['serviceid'], [

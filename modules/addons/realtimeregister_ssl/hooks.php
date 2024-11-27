@@ -7,6 +7,7 @@ use AddonModule\RealtimeRegisterSsl\eHelpers\Discount;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\JsInserter;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\Activator;
@@ -160,7 +161,7 @@ add_hook('ClientAreaHeadOutput', 1, function($params)
                 ->join('tblproducts', 'tblproducts.id','=', 'tblhosting.packageid')
                 ->join('tblsslorders', 'tblsslorders.serviceid','=', 'tblhosting.id')
                 ->where('tblhosting.userid', $_SESSION['uid'])
-                ->where('tblsslorders.status', 'Awaiting Configuration')
+                ->where('tblsslorders.status', SSL::AWAITING_CONFIGURATION)
                 ->where('tblproducts.servertype', 'realtimeregister_ssl')
                ->get();
 

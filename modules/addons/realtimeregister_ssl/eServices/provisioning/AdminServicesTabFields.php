@@ -2,7 +2,8 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
 use Exception;
 
@@ -22,7 +23,6 @@ class AdminServicesTabFields
         } catch (Exception $ex) {
             return [];
         }
-        return [];
     }
 
     private function adminServicesTabFields()
@@ -35,14 +35,14 @@ class AdminServicesTabFields
     private function getCertificateDetails()
     {
         try {
-            $ssl = new SSL();
+            $ssl = new SSLRepo();
             $sslService = $ssl->getByServiceId($this->p['serviceid']);
             if (is_null($sslService)) {
                 throw new Exception('Create has not been initialized');
             }
 
-            if ($sslService->status === 'Awaiting Configuration') {
-                return ['Configuration Status' => 'Awaiting Configuration'];
+            if ($sslService->status === SSL::AWAITING_CONFIGURATION) {
+                return ['Configuration Status' => SSL::AWAITING_CONFIGURATION];
             }
 
             if (empty($sslService->remoteid)) {

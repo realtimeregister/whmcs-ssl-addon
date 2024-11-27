@@ -156,7 +156,7 @@ class EmailTemplateService
         $newTemplate->save();
     }
     
-    public static function deleteCertyficateTemplate()
+    public static function deleteCertificateTemplate()
     {
         $template = self::getTemplate(self::SEND_CERTIFICATE_TEMPLATE_ID);
         if(is_null($template)) {

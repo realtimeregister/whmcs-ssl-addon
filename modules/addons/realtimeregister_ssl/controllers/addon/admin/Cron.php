@@ -6,11 +6,12 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\ProductsPrices;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
@@ -34,7 +35,7 @@ class Cron extends AbstractController
 
         $updatedServices = [];
 
-        $this->sslRepo = new SSL();
+        $this->sslRepo = new SSLRepo();
 
         //get all completed ssl orders
         $sslOrders = $this->getSSLOrders();
@@ -48,7 +49,7 @@ class Cron extends AbstractController
                 continue;
             }
 
-            if($sslService->status != 'Awaiting Configuration')
+            if($sslService->status != SSL::AWAITING_CONFIGURATION)
             {
                 $configdata = json_decode($sslService->configdata, true);
                 if(isset($configdata['domain']) && !empty($configdata['domain']))
@@ -145,7 +146,7 @@ class Cron extends AbstractController
         $send_expiration_notification_reccuring = (bool) $apiConf->send_expiration_notification_reccuring;
         $send_expiration_notification_one_time  = (bool) $apiConf->send_expiration_notification_one_time;
 
-        $this->sslRepo = new SSL();
+        $this->sslRepo = new SSLRepo();
 
         //get all completed ssl orders
         $sslOrders       = $this->getSSLOrders();
@@ -261,7 +262,7 @@ class Cron extends AbstractController
         Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Sender started.");
 
         $emailSendsCount = 0;
-        $this->sslRepo   = new SSL();
+        $this->sslRepo   = new SSLRepo();
 
         $services = new \AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
         $services->onlyStatus(['Active']);
@@ -331,7 +332,7 @@ class Cron extends AbstractController
         echo 'Certificate Details Updating.' . PHP_EOL;
         Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Details Updating started.");
 
-        $this->sslRepo = new SSL();
+        $this->sslRepo = new SSLRepo();
 
         $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable === false) {
@@ -390,7 +391,7 @@ class Cron extends AbstractController
         echo 'Certificate Stats Loader started.' . PHP_EOL;
         Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Stats Loader started.");
 
-        $this->sslRepo   = new SSL();
+        $this->sslRepo   = new SSLRepo();
 
         $services = new \AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
         $services->onlyStatus(['Active', 'Suspended']);
@@ -499,17 +500,18 @@ class Cron extends AbstractController
     public function dailyStatusCheckCRON($input, $vars = [])
     {
         echo 'Certificates (ssl status Completed) Data Updater started.' . PHP_EOL;
-        $this->sslRepo = new SSL();
+        $this->sslRepo = new SSLRepo();
         $sslorders = Capsule::table('tblhosting')
         ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
         ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
         ->where('tblhosting.domainstatus', 'Active')
-        ->whereIn('tblsslorders.status', ['Completed', 'Configuration Submitted'])
+        ->whereIn('tblsslorders.status', [SSL::PENDING_INSTALLATION, SSL::ACTIVE, SSL::CONFIGURATION_SUBMITTED])
         ->get(['tblsslorders.*']);
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
             "Realtime Register SSL WHMCS: Certificates (ssl status Completed) Data Updater started."
         );
+
 
         $this->checkOrdersStatus($sslorders);
 
@@ -524,13 +526,13 @@ class Cron extends AbstractController
     public function processingOrdersCheckCRON($input, $vars = [])
     {
         echo 'Certificates (ssl status Processing) Data Updater started.' . PHP_EOL;
-        $this->sslRepo = new SSL();
+        $this->sslRepo = new SSLRepo();
         $sslorders = Capsule::table('tblhosting')
         ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
         ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
         ->where('tblhosting.domainstatus', 'Active')
         ->where('tblsslorders.configdata', 'like', '%"ssl_status":"COMPLETED"%')
-        ->orWhere('tblsslorders.status', '=', 'Configuration Submitted')
+        ->orWhere('tblsslorders.status', '=',  SSL::CONFIGURATION_SUBMITTED)
         ->get(['tblsslorders.*']);
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
@@ -716,7 +718,7 @@ class Cron extends AbstractController
     {
         $result        = false;
         if ($this->sslRepo === null)
-            $this->sslRepo = new SSL();
+            $this->sslRepo = new SSLRepo();
 
         $sslService = $this->sslRepo->getByServiceId((int) $serviceID);
         if ($sslService->getConfigdataKey('certificateSent'))
@@ -730,7 +732,7 @@ class Cron extends AbstractController
     public function setSSLCertificateAsSent($serviceID)
     {
         if ($this->sslRepo === null) {
-            $this->sslRepo = new SSL();
+            $this->sslRepo = new SSLRepo();
         }
         $sslService    = $this->sslRepo->getByServiceId((int) $serviceID);
         $sslService->setConfigdataKey('certificateSent', true);
