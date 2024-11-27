@@ -8,7 +8,7 @@ use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemporary;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
@@ -133,7 +133,7 @@ class SSLStepTwo
 
     private function SSLStepTwo()
     {
-        SSLTemplorary::getInstance()->setByParams($this->p);
+        SSLTemporary::getInstance()->setByParams($this->p);
 
         $this->storeFieldsAutoFill();
         $this->validateSansDomains();

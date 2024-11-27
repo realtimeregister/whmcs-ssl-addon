@@ -5,7 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemplorary;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemporary;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
@@ -80,7 +80,7 @@ class SSLStepTwoJS
     
     private function isValidModule()
     {
-        return SSLTemplorary::getInstance()->get($_GET['cert']) === true;
+        return SSLTemporary::getInstance()->get($_GET['cert']) === true;
     }
 
     private function SSLStepTwoJS()

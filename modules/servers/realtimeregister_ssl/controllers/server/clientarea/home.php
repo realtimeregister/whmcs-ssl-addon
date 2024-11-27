@@ -6,11 +6,12 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\controllers\addon\admin\Cron;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
@@ -49,7 +50,7 @@ class home extends AbstractController
             $serviceId = $input['params']['serviceid'];
             $serviceBillingCycle = $input['params']['templatevars']['billingcycle'];
             $userid = $input['params']['userid'];
-            $ssl = new SSL();
+            $ssl = new SSLRepo();
             $sslService = $ssl->getByServiceId($serviceId);
 
             $sslStatus = $sslService->configdata->ssl_status;
@@ -66,7 +67,7 @@ class home extends AbstractController
                 )
                 && $sslService->remoteid != ''
             ) {
-                $sslRepo = new SSL();
+                $sslRepo = new SSLRepo();
                 $sslService = $sslRepo->getByServiceId($serviceId);
 
                 if (is_null($sslService)) {
@@ -108,7 +109,7 @@ class home extends AbstractController
             }
             $vars['san_revalidate'] = false;
 
-            if ($sslService->status !== 'Awaiting Configuration') {
+            if ($sslService->status !== SSL::AWAITING_CONFIGURATION) {
                 try {
                     $certificateDetails = (array)$sslService->configdata;
 
@@ -326,7 +327,7 @@ class home extends AbstractController
             ) {
                 $pemfile = '';
 
-                $sslRepo = new SSL();
+                $sslRepo = new SSLRepo();
                 $sslService = $sslRepo->getByServiceId($input['params']['serviceid']);
                 $privateKey = $sslService->getPrivateKey();
 
@@ -452,7 +453,7 @@ class home extends AbstractController
 
     public function resendValidationEmailJSON($input, $vars = [])
     {
-        $ssl = new SSL();
+        $ssl = new SSLRepo();
         $serviceSSL = $ssl->getByServiceId($input['id']);
         $resendDcv = [];
         foreach ($serviceSSL->configdata->validations->dcv as $dcv) {
@@ -474,10 +475,10 @@ class home extends AbstractController
 
     public function sendCertificateEmailJSON($input, $vars = [])
     {
-        $ssl = new SSL();
+        $ssl = new SSLRepo();
         $orderStatus = $ssl->getByServiceId($input['id']);
 
-        if ($orderStatus->getSSLStatus() != 'COMPLETED' && $orderStatus->getSSLStatus() != 'active') {
+        if ($orderStatus->getSSLStatus() !== 'COMPLETED' && $orderStatus->getSSLStatus() !== 'ACTIVE') {
             throw new Exception(
                 Lang::getInstance()->T('orderNotActiveError')
             ); //Can not send certificate. Order status is different than active.
@@ -613,7 +614,7 @@ class home extends AbstractController
     public function revalidateJSON($input, $vars = [])
     {
         $serviceId = $input['params']['serviceid'];
-        $ssl = new SSL();
+        $ssl = new SSLRepo();
         $sslService = $ssl->getByServiceId($serviceId);
 
         $newDcvMethodArray = [];
@@ -707,7 +708,7 @@ class home extends AbstractController
     public function getApprovalEmailsForDomainJSON($input, $vars = [])
     {
         $serviceId = $input['id'];
-        $ssl = new SSL();
+        $ssl = new SSLRepo();
         $sslService = $ssl->getByServiceId($serviceId);
 
         return [
@@ -720,7 +721,7 @@ class home extends AbstractController
 
     public function getPrivateKeyJSON($input, $vars = [])
     {
-        $sslRepo = new SSL();
+        $sslRepo = new SSLRepo();
         $sslService = $sslRepo->getByServiceId($input['params']['serviceid']);
         $privateKey = $sslService->getPrivateKey();
 
@@ -747,7 +748,7 @@ class home extends AbstractController
     {
         $logsRepo = new LogsRepo();
         $orderRepo = new OrderRepo();
-        $sslRepo = new SSL();
+        $sslRepo = new SSLRepo();
         $sslService = $sslRepo->getByServiceId($input['params']['serviceid']);
 
         $details = (array)$sslService->configdata;

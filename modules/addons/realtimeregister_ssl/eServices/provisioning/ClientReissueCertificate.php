@@ -553,7 +553,7 @@ class ClientReissueCertificate
             throw new Exception(Lang::getInstance()->T('createNotInitialized'));
         }
 
-        if (!in_array($this->sslService->configdata->ssl_status, ['active', 'COMPLETED'])) {
+        if (!in_array($this->sslService->configdata->ssl_status, ['ACTIVE', 'COMPLETED'])) {
             throw new Exception(Lang::getInstance()->T('notAllowToReissue'));
         }
     }

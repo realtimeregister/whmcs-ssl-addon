@@ -102,7 +102,7 @@ class SSLSummary
             $expiry_date = $this->getSSLCertificateValidTillDate($service->id);
             $sslStatus = $this->getSSLCertificateStatus($service->id);
 
-            if ($expiry_date != '0000-00-00' && $sslStatus === 'ACTIVE' || $sslStatus === 'COMPLETED') {
+            if ($expiry_date != '0000-00-00' && ($sslStatus === 'ACTIVE' || $sslStatus === 'COMPLETED')) {
                 if ($this->checkOrderExpireDate($expiry_date, $daysBefore))
                     $services[] = $service;
             }

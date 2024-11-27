@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Organization;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
@@ -29,7 +28,7 @@ class SSLStepOne
         try {
             return $this->SSLStepOne();
         } catch (Exception $e) {
-            FlashService::setStepOneError($this->getErrorForClient());
+            FlashService::setStepOneError($e->getMessage());
         }
     }
 
@@ -138,10 +137,5 @@ class SSLStepOne
         }
 
         return $fields;
-    }
-
-    private function getErrorForClient()
-    {
-        return Lang::getInstance()->T('canNotFetchWebServer');
     }
 }

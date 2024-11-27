@@ -233,7 +233,7 @@
                         <button type="button" id="btnRenew" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('renew')}</button>
                     {/if}
                     {/if}
-                    {if $activationStatus != 'active' && $activationStatus != 'COMPLETED' && $dcv_method === 'email'}
+                    {if $activationStatus !== 'ACTIVE' && $activationStatus !== 'COMPLETED' && $dcv_method === 'email'}
                         <button type="button" id="resend-validation-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('resendValidationEmail')}</button>
                     {/if}
                     {if ($activationStatus === 'processing' || $activationStatus === 'SUSPENDED') && $btndownload}
@@ -256,7 +256,7 @@
                             {if $downloadpem}<a href="{$downloadpem}"><button type="button" id="download-ca" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadpem')}</button></a>{/if}
                         {/if}
                         {if $privateKey}
-                        <button type="button" id="getPrivateKey" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('getPrivateKeyBtn')}</button>
+                            <button type="button" id="getPrivateKey" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('getPrivateKeyBtn')}</button>
                         {/if}
                         {if $activationStatus === 'unpaid'}
                             <button type="button" id="recheckDetails" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('recheckCertificateDetails')}</button>

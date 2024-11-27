@@ -75,13 +75,15 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->integer('api_product_id');
                 $table->string('price');
                 $table->string('period');
-                $table->string("action");
-                $table->string("currency");
+                $table->string('action');
+                $table->string('currency');
             });
         } else {
-            Capsule::schema()->table($this->tableName, function ($table) {
-                $table->string("currency");
-            });
+            if (!Capsule::schema()->hasColumn($this->tableName, 'currency')) {
+                Capsule::schema()->table($this->tableName, function ($table) {
+                    $table->string('currency');
+                });
+            }
         }
     }
 
