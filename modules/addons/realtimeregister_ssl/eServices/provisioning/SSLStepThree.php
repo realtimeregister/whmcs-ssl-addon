@@ -265,7 +265,7 @@ class SSLStepThree
 
         //update domain column in tblhostings
         $service = new Service($this->p['serviceid']);
-        $service->save(['domain' => $decodedCSR['commonName']]);
+        $service->save(['domain' => $csrDecode['commonName']]);
 
         /** @var ProcessesApi $processesApi */
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
