@@ -53,7 +53,8 @@ class UpdateConfigs
             $certificatesApi->downloadCertificate($order->id, DownloadFormatEnum::CA_BUNDLE_FORMAT)
         ));
         $sslOrder->setCrt($order->certificate);
-        $sslOrder->setPartnerOrderId($order->id);
+        $sslOrder->setPartnerOrderId($order->providerId);
+        $sslOrder->setCertificateId($order->id);
 
         $sslOrder->setValidFrom($order->startDate);
         $sslOrder->setValidTill($order->expiryDate);

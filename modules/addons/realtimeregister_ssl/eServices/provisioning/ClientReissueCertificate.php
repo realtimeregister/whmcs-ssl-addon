@@ -290,7 +290,6 @@ class ClientReissueCertificate
         $sansDomains = [];
 
         if ($this->getSansLimit()) {
-            $this->validateSanDomains();
             $sansDomains = SansDomains::parseDomains($this->post['sans_domains']);
             $sansDomainsWildcard = SansDomains::parseDomains($this->post['sans_domains_wildcard']);
             $sansDomains = array_merge($sansDomains, $sansDomainsWildcard);
@@ -303,7 +302,6 @@ class ClientReissueCertificate
                     }
                 }
             }
-            $data['dns_names'] = implode(',', $sansDomains);
 
 
             if (!empty($sanDcvMethods = $this->getSansDomainsValidationMethods())) {
@@ -376,7 +374,7 @@ class ClientReissueCertificate
                 $approver,
                 null,
                 null,
-                $dcv,
+                empty($dcv) ? null : $dcv,
                 $commonName,
             null,
                 $state);
@@ -390,6 +388,9 @@ class ClientReissueCertificate
         foreach ($orderDetails['validations']['dcv'] as $data) {
             try {
                 $panel = Panel::getPanelData($data['commonName']);
+                if (!$panel) {
+                    continue;
+                }
 
                 if ($data['type'] == 'FILE') {
                     $result = FileControl::create(
@@ -440,15 +441,8 @@ class ClientReissueCertificate
             $GenerateSCR->savePrivateKeyToDatabase($this->p['serviceid'], $privKey);
         }
 
-        //update domain column in tblhostings
-        $service = new Service($this->p['serviceid']);
-        $service->save(['domain' => $decodedCSR['commonName']]);
-
-        $this->sslService->setDomain($decodedCSR['commonName']);
-        $this->sslService->setSSLStatus('processing');
         $this->sslService->setCrt(null);
         $this->sslService->setCa(null);
-        $this->sslService->setConfigdataKey('servertype', "-1");
         $this->sslService->setConfigdataKey('csr', $csr);
         $this->sslService->setConfigdataKey('approveremail', $dcv[0]['email']);
         $this->sslService->setConfigdataKey('private_key', $_POST['privateKey']);

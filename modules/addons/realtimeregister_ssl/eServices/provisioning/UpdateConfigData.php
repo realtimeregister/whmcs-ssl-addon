@@ -8,6 +8,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMappi
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Api\ProcessesApi;
 use RealtimeRegister\Domain\Enum\DownloadFormatEnum;
 use WHMCS\Database\Capsule;
 
@@ -16,10 +17,20 @@ class UpdateConfigData
     private SSL $sslService;
     private $orderdata;
     
-    public function __construct($sslService, $orderdata = [])
+    public function __construct(SSL $sslService, $orderdata = [])
     {
         $this->sslService = $sslService;
-        $this->orderdata = $orderdata;
+        if (empty($orderdata)) {
+            $infoProcess = ApiProvider::getInstance()
+                ->getApi(ProcessesApi::class)
+                ->info($sslService->getRemoteId());
+            $this->orderdata = [
+                'status' => $infoProcess->status,
+                'dcv' => $infoProcess->validations['dcv']
+            ];
+        } else {
+            $this->orderdata = $orderdata;
+        }
     }
     
     public function run()
@@ -83,7 +94,7 @@ class UpdateConfigData
 
             $sslOrder->setCrt($order->certificate);
             $sslOrder->setSSLStatus($order->status);
-            $sslOrder->setPartnerOrderId($order->id);
+            $sslOrder->setPartnerOrderId($order->providerId);
 
             $sslOrder->status = SSL::PENDING_INSTALLATION;
             $sslOrder->setCertificateId($order->id);
@@ -122,6 +133,7 @@ class UpdateConfigData
         if (!empty($this->orderdata)) {
             if (isset($this->orderdata['status'])) {
                 $sslOrder->setSSLStatus($this->orderdata['status']);
+                $sslOrder->setOrderStatusDescription($this->orderdata['status']);
             }
             if (isset($this->orderdata['dcv'])) {
                 $this->handleDcvMethod();

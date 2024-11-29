@@ -65,7 +65,7 @@ class AdminServicesTabFields
             $return['Cron Synchronized'] =
                 isset($orderDetails['synchronized'])
                 && !empty($orderDetails['synchronized']) ? $orderDetails['synchronized'] : 'Not synchronized';
-            $return['Comodo Order ID'] = $orderDetails['partner_order_id'] ?: "-";
+            $return['Partner Order ID'] = $orderDetails['partner_order_id'] ?: "-";
             $return['Configuration Status'] = $sslService->status;
             $return['Domain'] = $orderDetails['domain'];
             $return['Order Status'] = ucfirst($orderDetails['ssl_status']);
@@ -75,8 +75,8 @@ class AdminServicesTabFields
             $return['Order Status Description'] = $orderDetails['order_status_description'] ?: '-';
 
             if ($orderDetails['ssl_status'] === 'ACTIVE' || $orderDetails['ssl_status'] === 'COMPLETED') {
-                $return['Valid From'] = $orderDetails['valid_from'];
-                $return['Expires'] = $orderDetails['valid_till'];
+                $return['Valid From'] = $orderDetails['valid_from']->date;
+                $return['Expires'] = $orderDetails['valid_till']->date;
             }
 
             foreach ($orderDetails['san_details'] as $key => $san) {
@@ -92,14 +92,14 @@ class AdminServicesTabFields
     private function getServiceVars()
     {
         global $CONFIG;
-
+        $period = intval($this->p['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
         $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS];
-        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
-        $sansLimit = $boughtSans;
+        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period];
+        $sansLimit = $boughtSans + $includedSans;
 
         $includedSansWildcard = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
-        $boughtSansWildcard = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT];
-        $sansLimitWildcard = $boughtSansWildcard;
+        $boughtSansWildcard = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period];
+        $sansLimitWildcard = $boughtSansWildcard + $includedSansWildcard;
 
         require dirname(dirname(dirname(dirname(dirname(__DIR__))))) . DIRECTORY_SEPARATOR . 'configuration.php';
 

@@ -45,7 +45,7 @@ class AdminRecheckCertificateDetails extends Ajax
         $return = [];
 
         $return['RealtimeRegisterSSL API Order ID'] = $sslService->id;
-        $return['Comodo Order ID'] = $orderStatus->providerId?:"-";
+        $return['Partner Order ID'] = $orderStatus->providerId?:"-";
         $return['Configuration Status'] = $sslService->getSSLStatus();
         $return['Domain'] = $orderStatus->domainName;
         $return['Order Status'] = ucfirst($orderStatus->status);

@@ -1,22 +1,19 @@
 <span id="spanhideme"></span>
 <script type="text/javascript">
     $(document).ready(function () {
-        var hideMe = $('#spanhideme');
-        function hideJsHtmlInjection() {
-            hideMe.closest('tr').hide();
-        }
-        hideJsHtmlInjection();
-        
+        let hideMe = $('#spanhideme');
+        hideMe.closest('tr').hide();
+
         {if $version == '8'}
-            var tokenf = $('#frm1 input[name="token"]').val();
-        
-            $('#profileContent').find('#frm1').after('<form id="loginAndRedirectForm" target="_blank" action="index.php?rp=/{$adminpath}/client/{$userid}/login" method="GET"><input type="hidden" name="token" value="'+tokenf+'" /><input type="hidden" name="goto" value="clientarea.php?action=productdetails&id=3"><input type="hidden" name="redirectToProductDetails" value="true"/><input type="hidden" name="username" value="{$email}"/><input type="hidden" name="serviceID" value="{$serviceid}"/></form>');
-            $('#loginAndRedirectForm').attr('method', 'POST');
+        let tokenf = $('#frm1 input[name="token"]').val();
+
+        $('#profileContent').find('#frm1').after('<form id="loginAndRedirectForm" target="_blank" action="index.php?rp=/{$adminpath}/client/{$userid}/login" method="GET"><input type="hidden" name="token" value="' + tokenf + '" /><input type="hidden" name="goto" value="clientarea.php?action=productdetails&id=3"><input type="hidden" name="redirectToProductDetails" value="true"/><input type="hidden" name="username" value="{$email}"/><input type="hidden" name="serviceID" value="{$serviceid}"/></form>');
+        $('#loginAndRedirectForm').attr('method', 'POST');
         {else}
-            $('#profileContent').find('#frm1').after('<form id="loginAndRedirectForm" target="_blank" action="../dologin.php?language=" action="POST"><input type="hidden" name="redirectToProductDetails" value="true"/><input type="hidden" name="username" value="{$email}"/><input type="hidden" name="serviceID" value="{$serviceid}"/></form>');
+        $('#profileContent').find('#frm1').after('<form id="loginAndRedirectForm" target="_blank" action="../dologin.php?language=" action="POST"><input type="hidden" name="redirectToProductDetails" value="true"/><input type="hidden" name="username" value="{$email}"/><input type="hidden" name="serviceID" value="{$serviceid}"/></form>');
         {/if}
         $('#btnManage_SSL').removeAttr('onclick');
-        $('#btnManage_SSL').on('click', function(e) { 
+        $('#btnManage_SSL').on('click', function (e) {
             //$('#modcmdbtns').css('opacity', '0.2');
             //$('#modcmdworking').css('display', 'block').css('text-align', 'left').css('position', 'relative').css('left', '50px').css('bottom', '60px').css('z-index', '1');    
             $('#loginAndRedirectForm').submit();
@@ -44,22 +41,16 @@
 
                 <form class="form-horizontal" role="form" id="modalReissueForm">
                     <input type="hidden" name="formStep" id="modalReissueFormStepInput">
-                    <div class="form-group addon-js-step-one">
-                        <label class="col-sm-3 control-label">Web Server</label>
-                        <div class="col-sm-9">
-                            <select type="text" name="webServer" class="form-control" id="modalReissueWebServerInput">
-                                <option>Loading...</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="clearfix addon-js-step-one"></div>
                     <br class="addon-js-step-one">
                     <div class="form-group addon-js-step-one">
-                        <label  class="col-sm-3 control-label">CSR</label>
+                        <label class="col-sm-3 control-label">CSR</label>
                         <div class="col-sm-9">
-                            <textarea rows="3" class="form-control" name="csr" id="modalReissueCsrInput">-----BEGIN CERTIFICATE REQUEST-----
+                            <textarea rows="3" class="form-control" name="csr" id="modalReissueCsrInput">
+-----BEGIN CERTIFICATE REQUEST-----
 
------END CERTIFICATE REQUEST-----</textarea>
+-----END CERTIFICATE REQUEST-----
+                            </textarea>
                         </div>
                     </div>
 
@@ -68,9 +59,10 @@
 
                     {if $sansLimit}
                         <div class="form-group addon-js-step-one">
-                            <label  class="col-sm-3 control-label">SAN Single Domains ({$sansLimit})</label>
+                            <label class="col-sm-3 control-label">SAN Single Domains ({$sansLimit})</label>
                             <div class="col-sm-9">
-                                <textarea rows="3" class="form-control" name="sanDomains" id="modalReissueSansInput"></textarea>
+                                <textarea rows="3" class="form-control" name="sanDomains"
+                                          id="modalReissueSansInput"></textarea>
                             </div>
                         </div>
                     {/if}
@@ -80,23 +72,21 @@
 
                     {if $sansLimitWildcard}
                         <div class="form-group addon-js-step-one">
-                            <label  class="col-sm-3 control-label">SAN Wildcard Domains ({$sansLimitWildcard})</label>
+                            <label class="col-sm-3 control-label">SAN Wildcard Domains ({$sansLimitWildcard})</label>
                             <div class="col-sm-9">
-                                <textarea rows="3" class="form-control" name="sanDomainsWildcard" id="modalReissueSansWildcardInput"></textarea>
+                                <textarea rows="3" class="form-control" name="sanDomainsWildcard"
+                                          id="modalReissueSansWildcardInput"></textarea>
                             </div>
                         </div>
                     {/if}
 
                     <div class="form-group addon-js-step-two">
-                        <label  class="col-sm-3 control-label">Email Approvals</label>
-                        <div class="col-sm-9">
                             <div id="modalReissueEmailApprovalsArea"></div>
-                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer panel-footer">
-                <button type="button" id="modalReissueContinue" disabled class="btn btn-primary addon-js-step-one">
+                <button type="button" id="modalReissueContinue" class="btn btn-primary addon-js-step-one">
                     Continue
                 </button>
                 <button type="button" id="modalReissueSubmit" class="btn btn-primary addon-js-step-two">
@@ -113,38 +103,36 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var serviceUrl = 'clientsservices.php?userid={$userid}&id={$serviceid}',
-                reisueBtn = $('#btnReissue_Certificate'),
-                reisueModal,
-                reisueBody,
-                reissueCsrInput,
-                reissueCsrDefault,
-                reissueSansInput,
-                reissueWebServerInput,
-                reissueFormStepInput,
-                reissueEmailApprovalsArea,
-                reissueSubmitBtn,
-                reissueSubmitContinue,
-                reissueDangerAlert,
-                reissueSuccessAlert,
-                webServersLoaded = false,
-                optionsHtml = '',
-                body = $('body');
+        let serviceUrl = 'clientsservices.php?userid={$userid}&id={$serviceid}',
+            reissueBtn = $('#btnReissue_Certificate'),
+            reissueModal,
+            reissueBody,
+            reissueCsrInput,
+            reissueCsrDefault,
+            reissueSansInput,
+            reissueWebServerInput,
+            reissueFormStepInput,
+            reissueEmailApprovalsArea,
+            reissueSubmitBtn,
+            reissueSubmitContinue,
+            reissueDangerAlert,
+            reissueSuccessAlert,
+            body = $('body');
 
         function assignModalElements(init) {
-            reisueModal = $('#modalReissue');
-            reisueBody = $('#modalReissueBody');
-            
-            if(init) {
-                reisueBody.contents()
-                .filter(function(){
-                    return this.nodeType === 8;
-                })
-                .replaceWith(function(){
-                    return this.data;
-                });
+            reissueModal = $('#modalReissue');
+            reissueBody = $('#modalReissueBody');
+
+            if (init) {
+                reissueBody.contents()
+                    .filter(function () {
+                        return this.nodeType === 8;
+                    })
+                    .replaceWith(function () {
+                        return this.data;
+                    });
             }
-            
+
             if (!init) {
                 reissueSubmitBtn = $('#modalReissueSubmit');
                 reissueSubmitContinue = $('#modalReissueContinue');
@@ -160,19 +148,18 @@
         }
 
         function moveModalToBody() {
-            body.append(reisueModal.clone());
-            reisueModal.remove();
+            body.append(reissueModal.clone());
+            reissueModal.remove();
             assignModalElements(false);
         }
 
         function unbindOnClickForChangeEmailBtn() {
-            reisueBtn.attr('onclick', '');
+            reissueBtn.attr('onclick', '');
         }
 
         function bindModalFroChangeEmailBtn() {
-            reisueBtn.off().on('click', function () {
-                reisueModal.modal('show');
-                fetchWebServers();
+            reissueBtn.off().on('click', function () {
+                reissueModal.modal('show');
                 switchToStepOne();
                 hideAlerts();
             });
@@ -217,16 +204,11 @@
             element.removeClass('disabled');
         }
 
-        function disable(element) {
-            element.attr("disabled", true);
-            element.addClass('disabled');
-        }
-
-        function addSpiner(element) {
+        function addSpinner(element) {
             element.append('<i class="fa fa-spinner fa-spin"></i>');
         }
 
-        function removeSpiner(element) {
+        function removeSpinner(element) {
             element.find('.fa-spinner').remove();
         }
 
@@ -245,7 +227,7 @@
 
         function submitReissueModal() {
 
-            var data = {
+            let data = {
                 reissueModal: 'yes',
                 serviceId: {$serviceid},
                 userID: {$userid},
@@ -257,36 +239,40 @@
                 data['action'] = 'reissueCertificate';
             }
 
-            data['webServer'] = $('select#modalReissueWebServerInput').val();
             data['csr'] = $('textarea#modalReissueCsrInput').val();
             data['sanDomains'] = $('textarea#modalReissueSansInput').val();
             data['sanDomainsWildcard'] = $('textarea#modalReissueSansWildcardInput').val();
 
             hideAlerts();
-            disable(reissueSubmitContinue);
-            addSpiner(reissueSubmitContinue);
-            disable(reissueSubmitBtn);
-            addSpiner(reissueSubmitBtn);
+            addSpinner(reissueSubmitContinue);
+            addSpinner(reissueSubmitBtn);
 
-            data['approveremails'] = [];
-            $('input[name^="approveremail"]:checked').each(function( index ) {
-                data['approveremails'].push($(this).val());
-            });
+            const dcv = []
+            {literal}
+                $('select[name^="dcvmethod"]').each( function () {
+                    const commonName = this.name.match(/\[(.+)]/)[1];
+                    const entry = {commonName, type: this.value};
+                    if (this.value === 'EMAIL') {
+                        entry.email = $('select[name="approveremails[' + commonName + ']"').val();
+                    }
+                    dcv.push(entry)
+                });
+            {/literal}
+            data.dcv = dcv;
 
             $.ajax({
                 type: "POST",
                 url: serviceUrl,
                 data: data,
                 success: function (ret) {
-                    var data;
                     if (!isJsonString(ret)) {
                         anErrorOccurred();
                         return;
                     }
-                    data = JSON.parse(ret);
+                    const data = JSON.parse(ret);
                     if (data.success === 1) {
                         if (reissueFormStepInput.val() === 'one') {
-                            replaceRadioInputs(data.data);
+                            renderDcvForm(data.data);
                             switchToStepTwo();
                         } else {
                             showSuccessAlert(data.msg);
@@ -301,55 +287,10 @@
                     anErrorOccurred();
                 },
                 complete: function () {
-                    removeSpiner(reissueSubmitContinue);
+                    removeSpinner(reissueSubmitContinue);
                     enable(reissueSubmitContinue);
-                    removeSpiner(reissueSubmitBtn);
+                    removeSpinner(reissueSubmitBtn);
                     enable(reissueSubmitBtn);
-                }
-            });
-        }
-
-        function renderWebServers(list) {
-            optionsHtml = optionsHtml + '<option value="0">'+'{$ADDONLANG->T('Please choose one...')}'+'</option>';
-            for (var i = 0; i < list.length; i++) {
-                optionsHtml = optionsHtml + '<option value="' + list[i].id + '">' + list[i].software + '</option>';
-            }
-            reissueWebServerInput.html(optionsHtml);
-            enable(reissueSubmitContinue);
-        }
-
-        function fetchWebServers() {
-
-            if (webServersLoaded) {
-                return;
-            }
-
-            var data = {
-                reissueModal: 'yes',
-                serviceId: {$serviceid},
-                userID: {$userid},
-                action: 'webServers'
-            };
-            $.ajax({
-                type: "POST",
-                url: serviceUrl,
-                data: data,
-                success: function (ret) {
-                    var data;
-                    if (!isJsonString(ret)) {
-                        anErrorOccurred();
-                        return;
-                    }
-                    data = JSON.parse(ret);
-                    if (data.success === 1) {
-                        renderWebServers(data.data);
-                        webServersLoaded = true;
-                    } else {
-                        showDangerAlert(data.msg);
-                    }
-                },
-                error: function (jqXHR, errorText, errorThrown) {
-                    anErrorOccurred();
                 }
             });
         }
@@ -360,39 +301,44 @@
         bindModalFroChangeEmailBtn();
         bindSubmitBtn();
 
-        function getRadioInputHtml(name, value, checked) {
-            if (checked) {
-                var ck = ' checked';
-            } else {
-                var ck = '';
-            }
-            return '<div class="radio"><label><input type="radio" name="' + name + '" value="' + value + '"' + ck + '>' + value + '</label></div>';
+        function getDcvRow(title, methods, emails) {
+            return '<tr><td>' + title + '</td><td>' + methods + '</td><td>' + emails + '</td></tr>';
         }
-        function getRowHtml(title, body) {
-            return '<div class="col-sm-12 margin-top-10" style="padding-top: 10px;"><p>' + title + '</p><div class="form-group">' + body + '</div>';
-        }
-        function getNameForRadioInput(x, domain) {
-            if (x === 0) {
-                return 'approveremail';
-            }
-            return 'approveremails[' + domain + ']';
-        }
-        function replaceRadioInputs(sanEmails) {
-            var fullHtml = '',
-                    partHtml = '',
-                    x = 0;
+
+        function renderDcvForm(sanEmails) {
+            let dcvForm = '',
+                tableBegin = '<div class="col-sm-10 col-sm-offset-1"><table id="selectDcvMethodsTable" class="table"><thead><tr><th>'
+                    + '{$ADDONLANG->T('stepTwoTableLabelDomain')}' + '</th><th>' + '{$ADDONLANG->T('stepTwoTableLabelDcvMethod')}'
+                    + '</th><th>' + '{$ADDONLANG->T('stepTwoTableLabelEmail')}' + '</th></tr></thead>',
+                tableEnd = '</table></div>',
+                selectBegin = '<div class="form-group"><select type="text" name="[[placeholder]]" class="form-control">',
+                selectEnd = '</select></div>';
 
             reissueEmailApprovalsArea.parent().find('*').not(reissueEmailApprovalsArea).remove();
 
             $.each(sanEmails, function (domain, emails) {
-                for (var i = 0; i < emails.length; i++) {
-                    partHtml = partHtml + getRadioInputHtml(getNameForRadioInput(x, domain), emails[i], i === 0);
+                let selectDcvMethod = '<div class="form-group"><select type="text" name="[[placeholder]]" class="form-control">';
+                selectDcvMethod += '<option value="EMAIL">' + '{$ADDONLANG->T('dropdownDcvMethodEmail')}' + '</option>';
+
+                if (!domain.includes('*.')) {
+                    selectDcvMethod += '<option value="HTTP">' + '{$ADDONLANG->T('dropdownDcvMethodHttp')}' + '</option>';
                 }
-                fullHtml = fullHtml + getRowHtml(domain, partHtml);
-                reissueEmailApprovalsArea.before(fullHtml);
-                partHtml = fullHtml = '';
-                x++;
+
+                selectDcvMethod += '<option value="DNS">' + '{$ADDONLANG->T('dropdownDcvMethodDns')}' + '</option>';
+                selectDcvMethod += '</select></div>';
+
+                let dcvPart =  selectDcvMethod.replace('[[placeholder]]', 'dcvmethod[' + domain + ']');
+                let selectEmailHtml = selectBegin.replace('[[placeholder]]', 'approveremails[' + domain + ']');
+
+                for (const email of emails) {
+                    selectEmailHtml += '<option value=' + email + '>' + email + '</option>'
+                }
+
+                selectEmailHtml = selectEmailHtml + selectEnd;
+                dcvForm = dcvForm + getDcvRow(domain, dcvPart, selectEmailHtml);
             });
+
+            reissueEmailApprovalsArea.before(tableBegin + dcvForm + tableEnd);
         }
 
         function switchToStepOne() {
@@ -415,13 +361,9 @@
             reissueFormStepInput.val('three');
             reissueWebServerInput.val('0');
         }
-
-    {literal}var sanEmails = JSON.parse('{\"friz.pl\":[\"admin@friz.pl\",\"administrator@friz.pl\"],\"kot.pl\":[\"admin@kot.pl\",\"administrator@kot.pl\"]}');{/literal}
-            replaceRadioInputs(sanEmails);
-
-        });
+    });
 </script>
- 
+
 <div class="modal fade" id="modalView" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content panel panel-primary">
@@ -448,10 +390,11 @@
                         <textarea class="form-control" onfocus="this.select();" rows="5" id="viewCRTInput"></textarea>
                     </div>
                     <div class="clearfix"></div>
-                    
+
                     <div class="form-group hidden">
                         <label class="col-sm-3 control-label">Intermediate/Chain files</label>
-                        <textarea class="form-control" onfocus="this.select();" rows="10" id="viewCertificateInput"></textarea>
+                        <textarea class="form-control" onfocus="this.select();" rows="10"
+                                  id="viewCertificateInput"></textarea>
                     </div>
                     <div class="clearfix"></div>
 
@@ -475,30 +418,30 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var serviceUrl = 'clientsservices.php?userid={$userid}&id={$serviceid}',
-                viewBtn = $('#btnView_Certificate'),
-                viewModal,
-                viewBody,
-                viewLoading,
-                viewDangerAlert,
-                viewSuccessAlert,
-                viewCertificateInput,
-                viewCRTInput,
-                viewCSRInput,
-                body = $('body');
+        let serviceUrl = 'clientsservices.php?userid={$userid}&id={$serviceid}',
+            viewBtn = $('#btnView_Certificate'),
+            viewModal,
+            viewBody,
+            viewLoading,
+            viewDangerAlert,
+            viewSuccessAlert,
+            viewCertificateInput,
+            viewCRTInput,
+            viewCSRInput,
+            body = $('body');
 
         function assignModalElements(init) {
             viewModal = $('#modalView');
             viewBody = $('#modalViewBody');
-            
+
             if (init) {
                 viewBody.contents()
-                .filter(function(){
-                    return this.nodeType === 8;
-                })
-                .replaceWith(function(){
-                    return this.data;
-                });
+                    .filter(function () {
+                        return this.nodeType === 8;
+                    })
+                    .replaceWith(function () {
+                        return this.data;
+                    });
             }
 
             if (!init) {
@@ -601,7 +544,7 @@
 
             hideAll();
 
-            var data = {
+            let data = {
                 viewModal: 'yes',
                 serviceId: {$serviceid},
                 userID: {$userid},
@@ -611,7 +554,7 @@
                 url: serviceUrl,
                 data: data,
                 success: function (ret) {
-                    var data;
+                    let data;
                     if (!isJsonString(ret)) {
                         anErrorOccurred();
                         return;
@@ -674,28 +617,28 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var serviceUrl = 'clientsservices.php?userid={$userid}&id={$serviceid}',
-                recheckBtn = $('#btnRecheck_Certificate_Details'),
-                recheckModal,
-                recheckBody,
-                recheckLoading,
-                recheckDangerAlert,
-                recheckSuccessAlert,
-                recheckDetails,
-                body = $('body');
+        let serviceUrl = 'clientsservices.php?userid={$userid}&id={$serviceid}',
+            recheckBtn = $('#btnRecheck_Certificate_Details'),
+            recheckModal,
+            recheckBody,
+            recheckLoading,
+            recheckDangerAlert,
+            recheckSuccessAlert,
+            recheckDetails,
+            body = $('body');
 
         function assignModalElements(init) {
             recheckModal = $('#modalRecheck');
             recheckBody = $('#modalRecheckBody');
-            
+
             if (init) {
                 recheckBody.contents()
-                .filter(function(){
-                    return this.nodeType === 8;
-                })
-                .replaceWith(function(){
-                    return this.data;
-                });
+                    .filter(function () {
+                        return this.nodeType === 8;
+                    })
+                    .replaceWith(function () {
+                        return this.data;
+                    });
             }
 
             if (!init) {
@@ -705,9 +648,8 @@
                 recheckDetails = $('#modalRecheckDetails');
             }
         }
-        
-        function showLoader()
-        {
+
+        function showLoader() {
             show(recheckLoading);
         }
 
@@ -772,23 +714,22 @@
         }
 
         function renderCertificates(data) {
-            
+
             $("table#details").empty();
 
             if (typeof data === 'undefined') {
                 return;
             }
-     
-            for(var key in data)
-            {
-                var tr = $("<tr />");
-                var td = $("<td />").text(key);
+
+            for (let key in data) {
+                let tr = $("<tr />");
+                let td = $("<td />").text(key);
                 tr.append(td);
-                var td = $("<td />").text(data[key]);
+                td = $("<td />").text(data[key]);
                 tr.append(td);
                 $("table#details").append(tr);
             }
-            
+
             show(recheckDetails);
         }
 
@@ -797,7 +738,7 @@
             hideAll();
             showLoader();
 
-            var data = {
+            let data = {
                 recheckModal: 'yes',
                 serviceId: {$serviceid},
                 userID: {$userid},
@@ -807,21 +748,18 @@
                 url: serviceUrl,
                 data: data,
                 success: function (ret) {
-                    var data;
+                    let data;
                     if (!isJsonString(ret)) {
                         anErrorOccurred();
                         return;
                     }
                     data = JSON.parse(ret);
-                    
+
                     hide(recheckLoading);
-                    
-                    if (data.success === 1) 
-                    {
-                       renderCertificates(data.data);
-                    } 
-                    else 
-                    {
+
+                    if (data.success === 1) {
+                        renderCertificates(data.data);
+                    } else {
                         showDangerAlert(data.msg);
                     }
                 },
