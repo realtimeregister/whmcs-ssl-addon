@@ -22,6 +22,7 @@ use function ModuleBuildParams;
 // TODO remove duplicate code also present in SSLStepTwo.php
 class AdminReissueCertificate extends Ajax
 {
+    use SSLUtils;
     private $p;
     private $serviceParams;
 
@@ -245,9 +246,9 @@ class AdminReissueCertificate extends Ajax
 
         $productBrandRepository = Products::getInstance();
         $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
-        $sanCount = SSLUtils::getSanDomainCount($sansDomains, $commonName, $productBrand);
+        $sanCount = $this->getSanDomainCount($sansDomains, $commonName, $productBrand);
 
-        $sansLimit = SSLUtils::getSansLimit($this->serviceParams);
+        $sansLimit = $this->getSansLimit($this->serviceParams);
         if ($sanCount > $sansLimit) {
             throw new Exception(Lang::getInstance()->T('exceededLimitOfSans'));
         }
@@ -272,7 +273,7 @@ class AdminReissueCertificate extends Ajax
             }
         }
 
-        $sansWildcardLimit = SSLUtils::getSansLimitWildcard($this->serviceParams);
+        $sansWildcardLimit = $this->getSansLimitWildcard($this->serviceParams);
         if (count($sansDomainsWildcard) > $sansWildcardLimit) {
             throw new Exception(Lang::getInstance()->T('exceededLimitOfSans'));
         }

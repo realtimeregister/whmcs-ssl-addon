@@ -6,11 +6,12 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Domains;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
@@ -27,6 +28,7 @@ use RealtimeRegister\Api\ProcessesApi;
 
 class ClientReissueCertificate
 {
+    use SSLUtils;
     /**
      *
      * @var array
@@ -53,7 +55,7 @@ class ClientReissueCertificate
 
     /**
      *
-     * @var \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @var SSL
      */
     private $sslService;
 
@@ -94,7 +96,7 @@ class ClientReissueCertificate
         if (isset($this->post['stepOneForm'])) {
             try {
                 $this->stepOneForm();
-                $ssl = new SSL();
+                $ssl = new SSLRepo();
                 $ssldata = $ssl->getByServiceId($this->p['serviceid']);
                 $this->setApproverData($ssldata);
                 $this->vars['countries'] = Countries::getInstance()->getCountriesForAddonDropdown();
@@ -144,10 +146,10 @@ class ClientReissueCertificate
         ) : '';
         $this->vars['serviceID'] = $this->p['serviceid'];
 
-        $this->vars['sansLimit'] = SSLUtils::getSansLimit($this->p);
-        $this->vars['sansLimitWildCard'] = SSLUtils::getSansLimitWildcard($this->p);
+        $this->vars['sansLimit'] = $this->getSansLimit($this->p);
+        $this->vars['sansLimitWildCard'] = $this->getSansLimitWildcard($this->p);
 
-        $ssl = new SSL();
+        $ssl = new SSLRepo();
         $ssldata = $ssl->getByServiceId($this->p['serviceid']);
         $this->vars['csrreissue'] = $ssldata->configdata->csr;
 
@@ -178,7 +180,7 @@ class ClientReissueCertificate
         return $this->build(self::STEP_ONE);
     }
 
-    private function setApproverData(\AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL $sslData) {
+    private function setApproverData(SSL $sslData) {
         if (!str_contains($sslData->getProductId(), "ev") && !str_contains($sslData->getProductId(), "ov")) {
             $this->vars['extraValidation'] = false;
             return;
@@ -260,7 +262,7 @@ class ClientReissueCertificate
 
         $sansDomains = [];
 
-        if (SSLUtils::getSansLimit($this->p)) {
+        if ($this->getSansLimit($this->p)) {
             $sansDomains = SansDomains::parseDomains($this->post['sans_domains']);
             $sansDomainsWildcard = SansDomains::parseDomains($this->post['sans_domains_wildcard']);
             $sansDomains = array_merge($sansDomains, $sansDomainsWildcard);
@@ -406,7 +408,7 @@ class ClientReissueCertificate
         $this->sslService->setCrt('--placeholder--');
         $this->sslService->setRemoteId($reissueData->processId);
         $this->sslService->setCa(null);
-        $this->sslService->status = 'Configuration Submitted';
+        $this->sslService->status = SSL::CONFIGURATION_SUBMITTED;
         $this->sslService->setConfigdataKey('csr', $csr);
         $this->sslService->setConfigdataKey('private_key', $_POST['privateKey']);
         $this->sslService->save();
@@ -461,8 +463,8 @@ class ClientReissueCertificate
         $productBrandRepository = Products::getInstance();
         $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
 
-        $sanCount = SSLUtils::getSanDomainCount($sansDomains, $commonName, $productBrand);
-        $sansLimit = SSLUtils::getSansLimit($this->p);
+        $sanCount = $this->getSanDomainCount($sansDomains, $commonName, $productBrand);
+        $sansLimit = $this->getSansLimit($this->p);
         if ($sanCount > $sansLimit) {
             throw new Exception(Lang::getInstance()->T('exceededLimitOfSans'));
         }
@@ -484,7 +486,7 @@ class ClientReissueCertificate
             }
         }
 
-        $sansLimit = SSLUtils::getSansLimitWildcard($this->p);
+        $sansLimit = $this->getSansLimitWildcard($this->p);
         if (count($sansDomainsWildcard) > $sansLimit) {
             throw new Exception(Lang::T('sanLimitExceededWildcard'));
         }
@@ -492,7 +494,7 @@ class ClientReissueCertificate
 
     private function validateService()
     {
-        $ssl = new SSL();
+        $ssl = new SSLRepo();
         $this->sslService = $ssl->getByServiceId($this->p['serviceid']);
         if (is_null($this->sslService)) {
             throw new Exception(Lang::getInstance()->T('createNotInitialized'));

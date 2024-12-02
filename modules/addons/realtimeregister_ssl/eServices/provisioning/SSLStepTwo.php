@@ -18,6 +18,7 @@ use RealtimeRegister\Api\CertificatesApi;
 
 class SSLStepTwo
 {
+    use SSLUtils;
     private $p;
     private $errors = [];
     private $csrDecode = [];
@@ -168,11 +169,7 @@ class SSLStepTwo
             }
         }
 
-        $period = intval($this->p['configoptions']['years'][0]);
-        $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
-        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period];
-
-        $sansLimit = $includedSans + $boughtSans;
+        $sansLimit = $this->getSansLimitWildcard($this->p);
         if (count($sansDomainsWildcard) > $sansLimit) {
             throw new Exception(Lang::T('sanLimitExceededWildcard'));
         }
@@ -196,29 +193,12 @@ class SSLStepTwo
         $productBrandRepository = Products::getInstance();
         $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
 
-        $uniqueDomains = [];
-
         $commonName = $this->csrDecode['commonName'];
-        foreach ($sansDomains as $domain) {
-            if (in_array('WWW_INCLUDED', $productBrand->features) && str_starts_with($domain, 'www.')) {
-                $normalizedDomain = preg_replace('/^www\./', '', $domain);
-            } elseif (in_array('NON_WWW_INCLUDED', $productBrand->features)
-                && !str_starts_with($domain, 'www.')) {
-                $normalizedDomain = 'www.' . $domain;
-            } else {
-                $normalizedDomain = $domain;
-            }
+        $sanCount = $this->getSanDomainCount($sansDomains, $commonName, $productBrand);
 
-            if ($normalizedDomain !== $commonName) {
-                $uniqueDomains[] = $domain;
-            }
-        }
+        $sansLimit = $this->getSansLimit($this->p);
 
-        $period = intval($this->p['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
-        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period];
-        $sansLimit = $includedSans + $boughtSans;
-
-        if (count($uniqueDomains) > $sansLimit) {
+        if ($sanCount > $sansLimit) {
             throw new Exception(Lang::T('sanLimitExceeded'));
         }
     }
