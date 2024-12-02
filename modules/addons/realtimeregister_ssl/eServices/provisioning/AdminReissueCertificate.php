@@ -200,6 +200,8 @@ class AdminReissueCertificate extends Ajax
                 'error',
                 '[' . $mainDomain . '] Error:' . $e->getMessage()
             );
+            $sslService->setSSLStatus('SUSPENDED');
+            $sslService->save();
         }
 
         $this->response(true, 'Reissue was successfully requested.');

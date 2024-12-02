@@ -24,6 +24,12 @@ class UpdateConfigData
             $processesApi = ApiProvider::getInstance()
                 ->getApi(ProcessesApi::class);
             $process = $processesApi->get($sslService->getRemoteId());
+
+            if ($process->status === 'COMPLETED') {
+                $this->orderdata = [];
+                return;
+            }
+
             $infoProcess = $processesApi->info($process->id)
                 ->toArray();
 
