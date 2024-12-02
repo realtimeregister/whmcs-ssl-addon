@@ -423,6 +423,8 @@ class ClientReissueCertificate
                 'error',
                 '[' . $commonName . '] Error:' . $e->getMessage()
             );
+            $this->sslService->setSSLStatus('SUSPENDED');
+            $this->sslService->save();
         }
 
         try {
