@@ -98,8 +98,10 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
             if ($foundFile) {
                 require_once $foundFile;            
                 
-                if (!class_exists(__NAMESPACE__.$originClassName) && !interface_exists(__NAMESPACE__.$originClassName)) {
-                    $error['message'] = 'Unable to find class:'.$originClassName.' in file:'.$foundFile;
+                if (!class_exists(__NAMESPACE__.$originClassName)
+                    && !interface_exists(__NAMESPACE__.$originClassName)
+                    && !trait_exists(__NAMESPACE__.$originClassName)) {
+                $error['message'] = 'Unable to find class:'.$originClassName.' in file:'.$foundFile;
                     $error['code']    = \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Codes::MISSING_FILE_CLASS;
                 }
             } 
