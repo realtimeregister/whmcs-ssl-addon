@@ -21,12 +21,15 @@ class UpdateConfigData
     {
         $this->sslService = $sslService;
         if (empty($orderdata)) {
-            $infoProcess = ApiProvider::getInstance()
-                ->getApi(ProcessesApi::class)
-                ->info($sslService->getRemoteId());
+            $processesApi = ApiProvider::getInstance()
+                ->getApi(ProcessesApi::class);
+            $process = $processesApi->get($sslService->getRemoteId());
+            $infoProcess = $processesApi->info($process->id)
+                ->toArray();
+
             $this->orderdata = [
-                'status' => $infoProcess->status,
-                'dcv' => $infoProcess->validations['dcv']
+                'status' => $process->status,
+                'dcv' => $infoProcess['validations']['dcv']
             ];
         } else {
             $this->orderdata = $orderdata;
@@ -130,14 +133,13 @@ class UpdateConfigData
         $currentOrder = $orderRepo->getByServiceId($this->sslService->serviceid);
         $sslOrder = $this->sslService;
         $sslOrder->configdata = array_merge((array) json_decode($currentOrder->data), (array) $sslOrder->configdata);
-        if (!empty($this->orderdata)) {
-            if (isset($this->orderdata['status'])) {
-                $sslOrder->setSSLStatus($this->orderdata['status']);
-                $sslOrder->setOrderStatusDescription($this->orderdata['status']);
-            }
-            if (isset($this->orderdata['dcv'])) {
-                $this->handleDcvMethod();
-            }
+
+        if (isset($this->orderdata['status'])) {
+            $sslOrder->setSSLStatus($this->orderdata['status']);
+            $sslOrder->setOrderStatusDescription($this->orderdata['status']);
+        }
+        if (isset($this->orderdata['dcv'])) {
+            $this->handleDcvMethod();
         }
 
         $sslOrder->save();

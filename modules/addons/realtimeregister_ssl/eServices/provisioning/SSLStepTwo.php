@@ -136,13 +136,15 @@ class SSLStepTwo
         SSLTemporary::getInstance()->setByParams($this->p);
 
         $this->storeFieldsAutoFill();
-        $this->validateSansDomains();
-        $this->validateSansDomainsWildcard();
         $this->validateFields();
 
         if ($this->p['producttype'] != 'hostingaccount') {
             $this->validateCSR();
         }
+
+        $this->validateSansDomains();
+        $this->validateSansDomainsWildcard();
+
         if (isset($this->p['privateKey']) && $this->p['privateKey'] != null) {
             $privKey = decrypt($this->p['privateKey']);
             $generateSCR = new GenerateCSR($this->p, $_POST);
@@ -195,22 +197,24 @@ class SSLStepTwo
         $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
 
         $uniqueDomains = [];
-        if ($sansDomains !== null && count($sansDomains) > 0) {
-            if (in_array('WWW_INCLUDED', $productBrand->features)) {
-                foreach ($sansDomains as $domain) {
-                    // Remove 'www.' prefix if it exists
-                    $normalizedDomain = preg_replace('/^www\./', '', $domain);
-                    // Add the normalized domain to the array
-                    $normalizedDomains[] = $normalizedDomain;
-                }
 
-                $uniqueDomains = array_unique($normalizedDomains);
+        $commonName = $this->csrDecode['commonName'];
+        foreach ($sansDomains as $domain) {
+            if (in_array('WWW_INCLUDED', $productBrand->features) && str_starts_with($domain, 'www.')) {
+                $normalizedDomain = preg_replace('/^www\./', '', $domain);
+            } elseif (in_array('NON_WWW_INCLUDED', $productBrand->features)
+                && !str_starts_with($domain, 'www.')) {
+                $normalizedDomain = 'www.' . $domain;
             } else {
-                $uniqueDomains = $sansDomains;
+                $normalizedDomain = $domain;
+            }
+
+            if ($normalizedDomain !== $commonName) {
+                $uniqueDomains[] = $domain;
             }
         }
 
-        $period = intval($this->p['configoptions']['years'][0]);
+        $period = intval($this->p['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
         $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period];
         $sansLimit = $includedSans + $boughtSans;
 

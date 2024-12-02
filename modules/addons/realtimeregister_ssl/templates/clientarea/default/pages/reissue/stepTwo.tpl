@@ -98,8 +98,6 @@
 </div>
  <script type="text/javascript">
     $(document).ready(function () {
-        var disabledValidationMethods = JSON.parse('{$disabledValidationMethods}');
-
         function getSelectHtml(value, checked) {
             if (checked) {
                 var ck = ' selected';
@@ -160,22 +158,14 @@
 
 
                 selectDcvMethod = '<div class="form-group"><select style="width:65%;" type="text" name="selectName" class="form-control">';
-
-                if(jQuery.inArray('email', disabledValidationMethods) < 0)  {
-                    selectDcvMethod +='<option value="EMAIL">'+'{$ADDONLANG->T('dropdownDcvMethodEmail')}'+'</option>';
-                }
-
+                selectDcvMethod +='<option value="EMAIL">'+'{$ADDONLANG->T('dropdownDcvMethodEmail')}'+'</option>';
 
                 if(!checkwildcard)
                 {
-                    if(jQuery.inArray('http', disabledValidationMethods) < 0)  {
-                        selectDcvMethod += '<option value="HTTP">'+'{$ADDONLANG->T('dropdownDcvMethodHttp')}'+'</option>';
-                    }
+                    selectDcvMethod += '<option value="HTTP">'+'{$ADDONLANG->T('dropdownDcvMethodHttp')}'+'</option>';
                 }
-                if(jQuery.inArray('dns', disabledValidationMethods) < 0)
-                {
-                    selectDcvMethod += '<option value="DNS">'+'{$ADDONLANG->T('dropdownDcvMethodDns')}'+'</option>';
-                }
+
+                selectDcvMethod += '<option value="DNS">'+'{$ADDONLANG->T('dropdownDcvMethodDns')}'+'</option>';
                 selectDcvMethod += '</select></div>';
 
                 partHtml = partHtml + selectDcvMethod.replace('name="selectName"', getNameForSelectMethod(x, domain));

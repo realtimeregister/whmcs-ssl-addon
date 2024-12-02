@@ -5,10 +5,11 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Domains;
 use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
@@ -18,6 +19,7 @@ use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Domain\CertificateInfoProcess;
 use function ModuleBuildParams;
 
+// TODO remove duplicate code also present in SSLStepTwo.php
 class AdminReissueCertificate extends Ajax
 {
     private $p;
@@ -53,7 +55,7 @@ class AdminReissueCertificate extends Ajax
 
     private function reissueCertificate()
     {
-        $sslRepo = new SSL();
+        $sslRepo = new SSLRepo();
         $sslService = $sslRepo->getByServiceId($this->p['serviceId']);
         $decodeCSR = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->p['csr']);
         $mainDomain = $decodeCSR['commonName'];
@@ -87,8 +89,7 @@ class AdminReissueCertificate extends Ajax
             'state' => 'state',
             'address' => 'address1',
             'postalCode' => 'postcode',
-            'city' => 'city',
-            'dcv' => 'dcv'
+            'city' => 'city'
         ];
 
         $orderFields = [];
@@ -109,7 +110,6 @@ class AdminReissueCertificate extends Ajax
         $dcv = array_map(fn($dcvEntry) => [...$dcvEntry,
             'type' => $dcvEntry['type'] === 'HTTP' ? 'FILE' : $dcvEntry['type']],
             $this->p['dcv']);
-
         /**
          * @var $responseData CertificateInfoProcess
          */
@@ -139,6 +139,9 @@ class AdminReissueCertificate extends Ajax
         foreach ($responseData->validations?->dcv->toArray() ?? [] as $dcvEntry) {
             try {
                 $panel = Panel::getPanelData($dcvEntry['commonName']);
+                if (!$panel) {
+                    continue;
+                }
                 if ($dcvEntry['type'] == 'FILE') {
                     $result = FileControl::create(
                         [
@@ -155,7 +158,6 @@ class AdminReissueCertificate extends Ajax
                             'success',
                             'The ' . $dcvEntry['commonName'] . ' domain has been verified using the file method.'
                         );
-                        $revalidate = true;
                     }
                 } elseif ($data['type'] == 'DNS') {
                     $result = DnsControl::generateRecord($data, $panel);
@@ -166,7 +168,6 @@ class AdminReissueCertificate extends Ajax
                             'success',
                             'The ' . $dcvEntry['commonName'] . ' domain has been verified using the dns method.'
                         );
-                        $revalidate = true;
                     }
                 }
             } catch (Exception $e) {
@@ -182,6 +183,10 @@ class AdminReissueCertificate extends Ajax
 
         $sslService->setRemoteId($responseData->processId);
         $sslService->setConfigdataKey('private_key', null);
+        $sslService->setConfigdataKey('csr', $this->p['csr']);
+        $sslService->setCrt('--placeholder--');
+        $sslService->setCa(null);
+        $sslService->status = SSL::CONFIGURATION_SUBMITTED;
         $sslService->save();
 
         try {
@@ -209,24 +214,26 @@ class AdminReissueCertificate extends Ajax
 
     private function getApprovals()
     {
-        $this->validateSanDomains();
-        $this->validateSansDomainsWildcard();
-
         $mainDomain = ApiProvider::getInstance()
             ->getApi(CertificatesApi::class)
             ->decodeCsr($this->p['csr'])['commonName'];
+
+        $this->validateSanDomains($mainDomain);
+        $this->validateSansDomainsWildcard();
+
         $domains = $mainDomain . PHP_EOL . $this->p['sanDomains'] . PHP_EOL . $this->p['sanDomainsWildcard'];
         $parseDomains = SansDomains::parseDomains($domains);
         $SSLStepTwoJS = new SSLStepTwoJS($this->p);
         $this->response(true, 'Approve Emails', $SSLStepTwoJS->fetchApprovalEmailsForSansDomains($parseDomains));
     }
 
-    private function validateSanDomains()
+    /**
+     * @throws Exception
+     */
+    private function validateSanDomains(string $commonName): void
     {
         $this->moduleBuildParams();
-        $sansDomains = $this->p['sanDomains'];
-
-        $sansDomains = SansDomains::parseDomains($sansDomains);
+        $sansDomains = SansDomains::parseDomains($this->p['sanDomains']);
 
         $apiProductId = $this->serviceParams[ConfigOptions::API_PRODUCT_ID];
 
@@ -238,24 +245,10 @@ class AdminReissueCertificate extends Ajax
 
         $productBrandRepository = Products::getInstance();
         $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
-        $uniqueDomains = [];
-        if ($sansDomains !== null && count($sansDomains) > 0) {
-            if (in_array('WWW_INCLUDED', $productBrand->features)) {
-                foreach ($sansDomains as $domain) {
-                    // Remove 'www.' prefix if it exists
-                    $normalizedDomain = preg_replace('/^www\./', '', $domain);
-                    // Add the normalized domain to the array
-                    $normalizedDomains[] = $normalizedDomain;
-                }
+        $sanCount = SSLUtils::getSanDomainCount($sansDomains, $commonName, $productBrand);
 
-                $uniqueDomains = array_unique($normalizedDomains);
-            } else {
-                $uniqueDomains = $sansDomains;
-            }
-        }
-
-        $sansLimit = $this->getSansLimit();
-        if (count($uniqueDomains) > $sansLimit) {
+        $sansLimit = SSLUtils::getSansLimit($this->serviceParams);
+        if ($sanCount > $sansLimit) {
             throw new Exception(Lang::getInstance()->T('exceededLimitOfSans'));
         }
     }
@@ -279,33 +272,9 @@ class AdminReissueCertificate extends Ajax
             }
         }
 
-        $sansWildcardLimit = $this->getSansWildcardLimit();
+        $sansWildcardLimit = SSLUtils::getSansLimitWildcard($this->serviceParams);
         if (count($sansDomainsWildcard) > $sansWildcardLimit) {
             throw new Exception(Lang::getInstance()->T('exceededLimitOfSans'));
         }
-    }
-
-    private function getSansLimit()
-    {
-        $sanEnabledForWHMCSProduct = $this->serviceParams[ConfigOptions::PRODUCT_ENABLE_SAN] === 'on';
-        if (!$sanEnabledForWHMCSProduct) {
-            return 0;
-        }
-        $period = intval($this->serviceParams['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
-        $includedSans = (int)$this->serviceParams[ConfigOptions::PRODUCT_INCLUDED_SANS];
-        $boughtSans = (int)$this->serviceParams['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period];
-        return $includedSans + $boughtSans;
-    }
-
-    private function getSansWildcardLimit()
-    {
-        $sanEnabledForWHMCSProduct = $this->serviceParams[ConfigOptions::PRODUCT_ENABLE_SAN_WILDCARD] === 'on';
-        if (!$sanEnabledForWHMCSProduct) {
-            return 0;
-        }
-        $period = intval($this->serviceParams['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
-        $includedSans = (int)$this->serviceParams[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
-        $boughtSans = (int)$this->serviceParams['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period];
-        return $includedSans + $boughtSans;
     }
 }

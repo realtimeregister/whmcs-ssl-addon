@@ -144,15 +144,12 @@ class ClientReissueCertificate
         ) : '';
         $this->vars['serviceID'] = $this->p['serviceid'];
 
-        $this->vars['sansLimit'] = $this->getSansLimit();
-        $this->vars['sansLimitWildCard'] = $this->getSansLimitWildcard();
+        $this->vars['sansLimit'] = SSLUtils::getSansLimit($this->p);
+        $this->vars['sansLimitWildCard'] = SSLUtils::getSansLimitWildcard($this->p);
 
         $ssl = new SSL();
         $ssldata = $ssl->getByServiceId($this->p['serviceid']);
         $this->vars['csrreissue'] = $ssldata->configdata->csr;
-        $sandetails = (array)$ssl->getByServiceId($this->p['serviceid'])->getSanDomains();
-        $this->vars['sandetails'] = $sandetails;
-        $this->vars['sans_domains'] = $sandetails['sans_domains'];
 
         $sanSingle = [];
         $sanWildcard = [];
@@ -162,7 +159,7 @@ class ClientReissueCertificate
             $this->vars['privKey'] = $ssldata->configdata->private_key;
         }
 
-        $allSans = $ssldata->configdata->san_details;
+        $allSans = $ssldata->getSanDetails();
 
         foreach ($allSans as $san) {
             if (strpos($san->san_name, '*.') !== false) {
@@ -175,10 +172,8 @@ class ClientReissueCertificate
         $sanSingle = implode(PHP_EOL, $sanSingle);
         $sanWildcard = implode(PHP_EOL, $sanWildcard);
 
-        if (!isset($this->vars['sandetails']['wildcard_san']) || empty($this->vars['sandetails']['wildcard_san'])) {
-            $this->vars['sandetails']['sans_domains'] = $sanSingle;
-            $this->vars['sandetails']['wildcard_san'] = $sanWildcard;
-        }
+        $this->vars['sandetails']['sans_domains'] = $sanSingle;
+        $this->vars['sandetails']['wildcard_san'] = $sanWildcard;
 
         return $this->build(self::STEP_ONE);
     }
@@ -206,7 +201,6 @@ class ClientReissueCertificate
         $this->vars['country'] = $cert->country;
         $this->vars['address'] = implode("\n", $cert->addressLine);
         $this->vars['postcode'] = $cert->postalCode;
-      //  $this->vars[]
     }
 
 
@@ -222,16 +216,17 @@ class ClientReissueCertificate
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function stepOneForm()
     {
-        $this->validateSanDomains();
-        $this->validateSansDomainsWildcard();
         $decodeCSR = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->post['csr']);
+        $this->validateSanDomains($decodeCSR['commonName']);
+        $this->validateSansDomainsWildcard();
+
 
         $_SESSION['decodeCSR'] = $decodeCSR;
-
-        $service = new Service($this->p['serviceid']);
-        $product = new Product($service->productID);
 
         $mainDomain = $decodeCSR['commonName'];
         $domains = $mainDomain . PHP_EOL . $this->post['sans_domains'];
@@ -245,35 +240,11 @@ class ClientReissueCertificate
         if (isset($this->post['privateKey'])) {
             $this->vars['privateKey'] = $this->post['privateKey'];
         }
-
-        $disabledValidationMethods = [];
-
-        $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
-        if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                $productsslDB = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
-                    'pid',
-                    $product->configuration()->text_name
-                )->first();
-                if (isset($productsslDB->data)) {
-                    $productssl['product'] = json_decode($productsslDB->data, true);
-                }
-            }
-        }
-
-        if (!$productssl) {
-            /** @var CertificatesApi $certificatesApi */
-            $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-            $productssl = $certificatesApi->getProduct($product->configuration()->text_name)->toArray();
-        }
-
-        $this->vars['disabledValidationMethods'] = json_encode($disabledValidationMethods);
     }
 
     private function stepTwoForm()
     {
-        if (isset($_SESSION['decodeCSR']) && !empty($_SESSION['decodeCSR'])) {
+        if (!empty($_SESSION['decodeCSR'])) {
             $decodedCSR = $_SESSION['decodeCSR'];
         } else {
             $decodedCSR = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($this->post['csr']);
@@ -289,19 +260,10 @@ class ClientReissueCertificate
 
         $sansDomains = [];
 
-        if ($this->getSansLimit()) {
+        if (SSLUtils::getSansLimit($this->p)) {
             $sansDomains = SansDomains::parseDomains($this->post['sans_domains']);
             $sansDomainsWildcard = SansDomains::parseDomains($this->post['sans_domains_wildcard']);
             $sansDomains = array_merge($sansDomains, $sansDomainsWildcard);
-
-            //if entered san is the same as main domain
-            if (count($sansDomains) != count($_POST['approveremails'])) {
-                foreach ($sansDomains as $key => $domain) {
-                    if ($decodedCSR['commonName'] == $domain) {
-                        unset($sansDomains[$key]);
-                    }
-                }
-            }
 
 
             if (!empty($sanDcvMethods = $this->getSansDomainsValidationMethods())) {
@@ -441,18 +403,25 @@ class ClientReissueCertificate
             $GenerateSCR->savePrivateKeyToDatabase($this->p['serviceid'], $privKey);
         }
 
-        $this->sslService->setCrt(null);
+        $this->sslService->setCrt('--placeholder--');
+        $this->sslService->setRemoteId($reissueData->processId);
         $this->sslService->setCa(null);
+        $this->sslService->status = 'Configuration Submitted';
         $this->sslService->setConfigdataKey('csr', $csr);
-        $this->sslService->setConfigdataKey('approveremail', $dcv[0]['email']);
         $this->sslService->setConfigdataKey('private_key', $_POST['privateKey']);
-        $this->sslService->setApproverEmails(
-            array_filter(array_map(function ($entry) {return $entry['email'];},  $orderDetails['validations'] ?? [])));
-        $this->sslService->setSanDetails(
-            array_filter(array_map(function ($entry) {return $entry['commonName'];},  $orderDetails['validations'] ?? []),
-                function ($entry) {return $entry['commonName'] != $this->sslService->getDomain();}
-            ));
         $this->sslService->save();
+
+        try {
+            $configDataUpdate = new UpdateConfigData($this->sslService);
+            $configDataUpdate->run();
+        } catch (Exception $e) {
+            $logs->addLog(
+                $this->p['userid'],
+                $this->p['serviceid'],
+                'error',
+                '[' . $commonName . '] Error:' . $e->getMessage()
+            );
+        }
 
         try {
             Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $decodedCSR['commonName'], true);
@@ -482,7 +451,7 @@ class ClientReissueCertificate
         }
     }
 
-    private function validateSanDomains()
+    private function validateSanDomains(string $commonName)
     {
         $sansDomains = $this->post['sans_domains'];
         $sansDomains = SansDomains::parseDomains($sansDomains);
@@ -492,24 +461,9 @@ class ClientReissueCertificate
         $productBrandRepository = Products::getInstance();
         $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
 
-        $uniqueDomains = [];
-        if ($sansDomains !== null && count($sansDomains) > 0) {
-            if (in_array('WWW_INCLUDED', $productBrand->features)) {
-                foreach ($sansDomains as $domain) {
-                    // Remove 'www.' prefix if it exists
-                    $normalizedDomain = preg_replace('/^www\./', '', $domain);
-                    // Add the normalized domain to the array
-                    $normalizedDomains[] = $normalizedDomain;
-                }
-
-                $uniqueDomains = array_unique($normalizedDomains);
-            } else {
-                $uniqueDomains = $sansDomains;
-            }
-        }
-
-        $sansLimit = $this->getSansLimit();
-        if (count($uniqueDomains) > $sansLimit) {
+        $sanCount = SSLUtils::getSanDomainCount($sansDomains, $commonName, $productBrand);
+        $sansLimit = SSLUtils::getSansLimit($this->p);
+        if ($sanCount > $sansLimit) {
             throw new Exception(Lang::getInstance()->T('exceededLimitOfSans'));
         }
     }
@@ -530,10 +484,7 @@ class ClientReissueCertificate
             }
         }
 
-        $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
-        $boughtSans = (int)$this->p['configoptions']['sans_wildcard_count'];
-
-        $sansLimit = $includedSans + $boughtSans;
+        $sansLimit = SSLUtils::getSansLimitWildcard($this->p);
         if (count($sansDomainsWildcard) > $sansLimit) {
             throw new Exception(Lang::T('sanLimitExceededWildcard'));
         }
@@ -561,27 +512,5 @@ class ClientReissueCertificate
             'templatefile' => 'main',
             'vars' => ['content' => $content],
         ];
-    }
-
-    private function getSansLimit()
-    {
-        $sanEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN] === 'on';
-        if (!$sanEnabledForWHMCSProduct) {
-            return 0;
-        }
-        $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS];
-        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
-        return $includedSans + $boughtSans;
-    }
-
-    private function getSansLimitWildcard()
-    {
-        $sanEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN_WILDCARD] === 'on';
-        if (!$sanEnabledForWHMCSProduct) {
-            return 0;
-        }
-        $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
-        $boughtSans = (int)$this->p['configoptions']['sans_wildcard_count'];
-        return $includedSans + $boughtSans;
     }
 }
