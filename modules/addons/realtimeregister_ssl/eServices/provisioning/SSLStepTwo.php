@@ -18,6 +18,7 @@ use RealtimeRegister\Api\CertificatesApi;
 
 class SSLStepTwo
 {
+    use SSLUtils;
     private $p;
     private $errors = [];
     private $csrDecode = [];
@@ -136,13 +137,15 @@ class SSLStepTwo
         SSLTemporary::getInstance()->setByParams($this->p);
 
         $this->storeFieldsAutoFill();
-        $this->validateSansDomains();
-        $this->validateSansDomainsWildcard();
         $this->validateFields();
 
         if ($this->p['producttype'] != 'hostingaccount') {
             $this->validateCSR();
         }
+
+        $this->validateSansDomains();
+        $this->validateSansDomainsWildcard();
+
         if (isset($this->p['privateKey']) && $this->p['privateKey'] != null) {
             $privKey = decrypt($this->p['privateKey']);
             $generateSCR = new GenerateCSR($this->p, $_POST);
@@ -166,11 +169,7 @@ class SSLStepTwo
             }
         }
 
-        $period = intval($this->p['configoptions']['years'][0]);
-        $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
-        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period];
-
-        $sansLimit = $includedSans + $boughtSans;
+        $sansLimit = $this->getSansLimitWildcard($this->p);
         if (count($sansDomainsWildcard) > $sansLimit) {
             throw new Exception(Lang::T('sanLimitExceededWildcard'));
         }
@@ -194,27 +193,12 @@ class SSLStepTwo
         $productBrandRepository = Products::getInstance();
         $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
 
-        $uniqueDomains = [];
-        if ($sansDomains !== null && count($sansDomains) > 0) {
-            if (in_array('WWW_INCLUDED', $productBrand->features)) {
-                foreach ($sansDomains as $domain) {
-                    // Remove 'www.' prefix if it exists
-                    $normalizedDomain = preg_replace('/^www\./', '', $domain);
-                    // Add the normalized domain to the array
-                    $normalizedDomains[] = $normalizedDomain;
-                }
+        $commonName = $this->csrDecode['commonName'];
+        $sanCount = $this->getSanDomainCount($sansDomains, $commonName, $productBrand);
 
-                $uniqueDomains = array_unique($normalizedDomains);
-            } else {
-                $uniqueDomains = $sansDomains;
-            }
-        }
+        $sansLimit = $this->getSansLimit($this->p);
 
-        $period = intval($this->p['configoptions']['years'][0]);
-        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period];
-        $sansLimit = $includedSans + $boughtSans;
-
-        if (count($uniqueDomains) > $sansLimit) {
+        if ($sanCount > $sansLimit) {
             throw new Exception(Lang::T('sanLimitExceeded'));
         }
     }

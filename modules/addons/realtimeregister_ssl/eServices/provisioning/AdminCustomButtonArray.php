@@ -17,11 +17,11 @@ class AdminCustomButtonArray
             'Manage SSL'            => 'SSLAdminManageSSL',
             'Resend Certificate'    => 'SSLAdminResendCertificate',
             'View Certificate'      => 'SSLAdminViewCertificate',
+            'Reissue Certificate'   => 'SSLAdminReissueCertificate'
         ];
 
         if (strtolower($this->p['status']) !== 'active') {
             $buttons['Resend Approver Email'] = 'SSLAdminResendApproverEmail';
-            $buttons['Reissue Certificate'] = 'SSLAdminReissueCertificate';
             $buttons['Recheck Certificate Details'] = 'SSLAdminRecheckCertificateDetails';
         }
 

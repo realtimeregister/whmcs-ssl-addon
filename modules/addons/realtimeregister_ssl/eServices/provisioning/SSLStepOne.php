@@ -43,7 +43,7 @@ class SSLStepOne
         $sanEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN] === 'on';
         $sanWildcardEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN_WILDCARD] === 'on';
 
-        $period = intval($this->p['configoptions']['years'][0]);
+        $period = intval($this->p['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
         $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS];
         $includedSansWildcard = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
 

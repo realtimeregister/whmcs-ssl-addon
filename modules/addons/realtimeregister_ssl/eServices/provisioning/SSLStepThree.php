@@ -130,8 +130,7 @@ class SSLStepThree
             'address' => 'address1',
             'postalCode' => 'postcode',
             'city' => 'city',
-            'saEmail' => 'email',
-            'dcv' => 'dcv'
+            'saEmail' => 'email'
         ]; // 'coc','language', 'uniqueValue','authKey' == missing
 
         foreach ($productDetails->requiredFields as $value) {
