@@ -193,7 +193,7 @@ class Addon extends AbstractMainDriver
             $page = ucfirst($page);
             $action = empty($input['addon-action']) ? 'index' : $input['addon-action'];
 
-            list($content) = self::I()->runControler($page, $action, $input, 'CustomHTML');
+            list($content) = self::I()->runController($page, $action, $input, 'CustomHTML');
             return $content;
         } catch (Exception $ex) {
             self::dump($ex);
@@ -284,7 +284,7 @@ class Addon extends AbstractMainDriver
             ];
 
             try {
-                list($content, $success, $error) = self::I()->runControler($page, $action, $input, 'HTML');
+                list($content, $success, $error) = self::I()->runController($page, $action, $input, 'HTML');
                 $vars['content'] = $content;
                 $vars['success'] = $success;
                 $vars['error'] = $error;
@@ -393,7 +393,7 @@ class Addon extends AbstractMainDriver
 
             try {
                 $vars['ADDONLANG'] = addonLibs\Lang::getInstance();
-                list($content, $success, $error) = self::I()->runControler($page, $action, $input, 'HTML');
+                list($content, $success, $error) = self::I()->runController($page, $action, $input, 'HTML');
 
                 if (self::I()->isDebug()) {
                     $html = '<div style="color: #a94442;background-color: #f2dede;border-color: #dca7a7;font-size:20px;padding:10px;"><strong>Module is under development Mode!!!!!!!!!!!!!!!</strong></div>';
@@ -450,7 +450,7 @@ class Addon extends AbstractMainDriver
             self::I()->isAdmin(true);
             self::I()->setMainLangContext();
 
-            list($result, $success, $error) = self::I()->runControler($page, $action, $input, 'JSON');
+            list($result, $success, $error) = self::I()->runController($page, $action, $input, 'JSON');
 
             if ($error) {
                 $content['error'] = $error;
@@ -499,7 +499,7 @@ class Addon extends AbstractMainDriver
         try {
             self::I()->setMainLangContext();
 
-            list($result, $success, $error) = self::I()->runControler($page, $action, $input, 'JSON');
+            list($result, $success, $error) = self::I()->runController($page, $action, $input, 'JSON');
 
             if ($error) {
                 $content['error'] = $error;
@@ -540,7 +540,7 @@ class Addon extends AbstractMainDriver
             self::I()->isAdmin(true);
             self::I()->setMainLangContext();
 
-            self::I()->runControler('Cron', $action, $input, 'CRON');
+            self::I()->runController('Cron', $action, $input, 'CRON');
         } catch (Exception $ex) {
             self::dump($ex);
             Register::register($ex);
@@ -557,7 +557,7 @@ class Addon extends AbstractMainDriver
             self::I()->isAdmin(true);
             self::I()->setMainLangContext();
 
-            list($result) = self::I()->runControler('localAPI', $action, $arguments, 'API');
+            list($result) = self::I()->runController('localAPI', $action, $arguments, 'API');
             $output['success'] = $result;
         } catch (Exception $ex) {
             self::dump($ex);

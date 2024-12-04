@@ -170,7 +170,7 @@ abstract class AbstractMainDriver
      * @throws main\addonLibs\exceptions\System
      * @throws main\addonLibs\exceptions\System
      */
-    function runControler($controller,$action = 'index',$input = [], $type = 'HTML')
+    function runController($controller,$action = 'index',$input = [], $type = 'HTML')
     {
         try {
             $className = $this->getMainNamespace() . "\\controllers\\" . $this->getType(

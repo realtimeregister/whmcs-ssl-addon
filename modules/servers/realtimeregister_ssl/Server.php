@@ -94,7 +94,7 @@ class Server extends \AddonModule\RealtimeRegisterSsl\addonLibs\process\Abstract
                 $vars['assetsURL'] = self::I()->getAssetsURL();
                 $vars['mainJSONURL'] = 'clientarea.php?action=productdetails&id='.$params['serviceid'].'&json=true';
 
-                list($content,$success,$error) = self::I()->runControler($page,$action,$input,'HTML');
+                list($content,$success,$error) = self::I()->runController($page,$action,$input,'HTML');
 
                 if (self::I()->isDebug()) {
                     $html = '<div style="color: #a94442;background-color: #f2dede;border-color: #dca7a7;font-size:20px;padding:10px;"><strong>Module is under development Mode!!!!!!!!!!!!!!!</strong></div>';
@@ -148,7 +148,7 @@ class Server extends \AddonModule\RealtimeRegisterSsl\addonLibs\process\Abstract
             $input['params'] = $params;
 
             try {
-                list($result,$success,$error) = self::I()->runControler($page,$action,$input,'JSON');
+                list($result,$success,$error) = self::I()->runController($page,$action,$input,'JSON');
 
                 if ($error) {
                     $content['error']  = $error;
@@ -205,7 +205,7 @@ class Server extends \AddonModule\RealtimeRegisterSsl\addonLibs\process\Abstract
             self::I()->setMainLangContext();
 
             try {
-                self::I()->runControler('actions',$action, [
+                self::I()->runController('actions',$action, [
                     'params'    => $input
                 ],'Action');
                 return 'success';
@@ -277,7 +277,7 @@ class Server extends \AddonModule\RealtimeRegisterSsl\addonLibs\process\Abstract
                     self::I()->configuration()->activate();
                 }
 
-                list($content,$success,$error) = self::I()->runControler($page,$action,$input);
+                list($content,$success,$error) = self::I()->runController($page,$action,$input);
 
                 $vars['content'] = $content;
                 $vars['success'] = $success;
@@ -337,7 +337,7 @@ class Server extends \AddonModule\RealtimeRegisterSsl\addonLibs\process\Abstract
             ];
 
             try {
-                list($result,$success,$error) = self::I()->runControler($page,$action,$input,'JSON');
+                list($result,$success,$error) = self::I()->runController($page,$action,$input,'JSON');
 
                 if ($error) {
                     $content['error']  = $error;
