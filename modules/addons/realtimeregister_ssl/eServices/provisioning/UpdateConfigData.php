@@ -35,7 +35,8 @@ class UpdateConfigData
 
             $this->orderdata = [
                 'status' => $process->status,
-                'dcv' => $infoProcess['validations']['dcv']
+                'dcv' => $infoProcess['validations']['dcv'],
+                'domain' => $process->identifier
             ];
         } else {
             $this->orderdata = $orderdata;
@@ -47,7 +48,7 @@ class UpdateConfigData
         try {
             return $this->updateConfigData();
         } catch (\Exception $ex) {
-            return $ex->getMessage();
+            return ['error' => $ex->getMessage()];
         }
     }
     
@@ -103,6 +104,7 @@ class UpdateConfigData
 
             $sslOrder->setCrt($order->certificate);
             $sslOrder->setSSLStatus($order->status);
+            $sslOrder->setOrderStatusDescription($order->status);
             $sslOrder->setPartnerOrderId($order->providerId);
 
             $sslOrder->status = SSL::PENDING_INSTALLATION;
@@ -129,16 +131,17 @@ class UpdateConfigData
             }
 
             if (isset($order->san)) {
-                $sslOrder->setSanDetails(array_map(function ($sanEntry) {return ["san_name" => $sanEntry];}, $order->san));
+                $sslOrder->setSanDetails(array_map(fn($sanEntry) => ["san_name" => $sanEntry], $order->san));
             }
 
             $sslOrder->save();
-            return $order;
+            return $sslOrder;
         }
 
         $currentOrder = $orderRepo->getByServiceId($this->sslService->serviceid);
         $sslOrder = $this->sslService;
         $sslOrder->configdata = array_merge((array) json_decode($currentOrder->data), (array) $sslOrder->configdata);
+        $sslOrder->setDomain($sslOrder->getDomain() ?? $this->orderdata['domain']);
 
         if (isset($this->orderdata['status'])) {
             $sslOrder->setSSLStatus($this->orderdata['status']);
@@ -149,7 +152,7 @@ class UpdateConfigData
         }
 
         $sslOrder->save();
-        return $this->orderdata;
+        return $sslOrder;
     }
 
     private function handleDcvMethod() : void {
@@ -206,6 +209,7 @@ class UpdateConfigData
                     break;
                 default:
                     $sanEntry['validation_method'] = 'email';
+                    $sanEntry['email'] = $dcv['email'];
                     break;
             }
             $san_details[] = $sanEntry;

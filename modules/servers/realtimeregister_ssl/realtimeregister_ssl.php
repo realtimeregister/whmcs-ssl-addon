@@ -1,11 +1,12 @@
 <?php
 
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminCustomButtonArray;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminRecheckCertificateDetails;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminReissueCertificate;
-use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminResendApproverEmail;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminResendCertificate;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminResendDCV;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminServicesTabFields;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminViewCertificate;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ClientContactDetails;
@@ -17,7 +18,6 @@ use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwo;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwoJS;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\TerminateAccount;
 use AddonModule\RealtimeRegisterSsl\Loader;
-use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\Server;
 
 if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
@@ -96,8 +96,8 @@ function realtimeregister_ssl_AdminCustomButtonArray($params) {
     return $adminCustomButtonArray->run();
 }
 
-function realtimeregister_ssl_SSLAdminResendApproverEmail($params) {
-    $resendApproverEmail = new AdminResendApproverEmail($params);
+function realtimeregister_ssl_SSLAdminResendDCV($params) {
+    $resendApproverEmail = new AdminResendDCV($params);
     return $resendApproverEmail->run();
 }
 
@@ -149,11 +149,6 @@ function realtimeregister_ssl_FlashErrorStepOne() {
 if (isset($_POST['reissueModal'], $_SESSION['adminid']) && $_POST['reissueModal'] === 'yes' && $_SESSION['adminid'] ) {
     $adminReissueCertificate = new AdminReissueCertificate($_POST);
     $adminReissueCertificate->run();   
-}
-
-if (isset($_POST['recheckModal'], $_SESSION['adminid']) && $_POST['recheckModal'] === 'yes' && $_SESSION['adminid']) {
-    $adminCheckCertificateDetails = new AdminRecheckCertificateDetails($_POST);
-    $adminCheckCertificateDetails->run();
 }
 
 if (isset($_POST['viewModal'], $_SESSION['adminid']) && $_POST['viewModal'] === 'yes' && $_SESSION['adminid']) {
