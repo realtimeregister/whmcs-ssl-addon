@@ -859,3 +859,43 @@ HTML;
 
     }
 });
+
+add_hook('DailyCronJob', 10, function () {
+    global $CONFIG;
+
+    require_once __DIR__ . DS . 'Loader.php';
+    new Loader();
+
+    $apiConfiguration = (new AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+
+    $config = AddonModule\RealtimeRegisterSsl\Addon::config();
+
+    $information =  [
+        'servername' => preg_replace('#^http(s)?://#', '', rtrim($CONFIG['SystemURL'], '/')),
+        'php' => phpversion(),
+        'whmcsversion' => $CONFIG['Version'],
+        'module_version' => $config['version'],
+        'default_country' => $CONFIG['DefaultCountry'],
+        'default_language' => $CONFIG['Language'],
+        'ote' => $apiConfiguration->api_test ? 'true' : 'false'
+    ];
+
+    if (strlen($apiConfiguration->api_login) > 0) {
+        $information['handle'] = explode('/', base64_decode($apiConfiguration->api_login))[0];
+    }
+
+    $url = 'https://realtimeregister.com/whmcs-update/realtimeregister_ssl/version';
+
+    if (!empty($information['handle'])) {
+        $url .= '?' . http_build_query($information);
+    }
+
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_exec($ch);
+    curl_close($ch);
+});
