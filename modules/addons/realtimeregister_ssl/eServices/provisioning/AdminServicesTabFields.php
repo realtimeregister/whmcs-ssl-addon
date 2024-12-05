@@ -61,7 +61,7 @@ class AdminServicesTabFields
             $return['Approver email'] = $orderDetails->getApproverEmail() ?? 'N/A';
             $return['Order Status Description'] = $orderDetails->getOrderStatusDescription();
 
-            if ($orderDetails->getSSLStatus() === 'ACTIVE' || $orderDetails->getSanDetails() === 'COMPLETED') {
+            if ($orderDetails->getSSLStatus() === 'ACTIVE' || $orderDetails->getSSLStatus() === 'COMPLETED') {
                 $return['Valid From'] = $orderDetails['valid_from']->date;
                 $return['Expires'] = $orderDetails['valid_till']->date;
             }
