@@ -62,8 +62,10 @@ class AdminServicesTabFields
             $return['Order Status Description'] = $orderDetails->getOrderStatusDescription();
 
             if ($orderDetails->getSSLStatus() === 'ACTIVE' || $orderDetails->getSSLStatus() === 'COMPLETED') {
-                $return['Valid From'] = $orderDetails['valid_from']->date;
-                $return['Expires'] = $orderDetails['valid_till']->date;
+                $return['Valid From'] = (new \DateTimeImmutable($orderDetails->getValidFrom()->date))
+                    ->format('Y-m-d H:i:s');;
+                $return['Expires'] = (new \DateTimeImmutable($orderDetails->getValidTill()->date))
+                    ->format('Y-m-d H:i:s');;
             }
 
             foreach ($orderDetails->getSanDetails() as $key => $san) {

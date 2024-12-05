@@ -140,7 +140,7 @@ class UpdateConfigData
 
         $currentOrder = $orderRepo->getByServiceId($this->sslService->serviceid);
         $sslOrder = $this->sslService;
-        $sslOrder->configdata = array_merge((array) json_decode($currentOrder->data), (array) $sslOrder->configdata);
+        $sslOrder->configdata = array_merge(json_decode($currentOrder->data, true), (array) $sslOrder->configdata);
         $sslOrder->setDomain($sslOrder->getDomain() ?? $this->orderdata['domain']);
 
         if (isset($this->orderdata['status'])) {
