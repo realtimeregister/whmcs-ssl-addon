@@ -24,6 +24,7 @@ use WHMCS\Database\Capsule;
 
 class SSLStepThree
 {
+    use SSLUtils;
     /**
      *
      * @var array
@@ -122,39 +123,13 @@ class SSLStepThree
         /** @var Product $productDetails */
         $productDetails = ApiProvider::getInstance()->getApi(CertificatesApi::class)
             ->getProduct($apiProduct->product);
-
-        $mapping = [
-            'organization' => 'orgname',
-            'country' => 'country',
-            'state' => 'state',
-            'address' => 'address1',
-            'postalCode' => 'postcode',
-            'city' => 'city',
-            'saEmail' => 'email'
-        ]; // 'coc','language', 'uniqueValue','authKey' == missing
-
-        foreach ($productDetails->requiredFields as $value) {
-            if ($value === 'approver') {
-                $order['approver'] = [
-                    'firstName' => $this->p['firstname'],
-                    'lastName' => $this->p['lastname'],
-                    'jobTitle' => $this->p['jobtitle'],
-                    'email' => $this->p['email'],
-                    'voice' => $this->p['phonenumber']
-                ];
-            } else {
-                $order[$value] = $this->p[$mapping[$value]];
-            }
-        }
+        $order = array_merge($order, $this->mapRequestFields($this->p, $productDetails));
 
         $sanEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN] === 'on';
 
         $san_domains = explode(PHP_EOL, $this->p['configdata']['fields']['sans_domains']);
         $wildcard_domains = explode(PHP_EOL, $this->p['configdata']['fields']['wildcard_san']);
         $all_san = array_merge($san_domains, $wildcard_domains);
-
-        $decodedCSR = [];
-        $decodedCSR['csrResult']['CN'] = $this->p['domain'];
 
         $csrDecode = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($order['csr']);
 
@@ -174,7 +149,7 @@ class SSLStepThree
             if (is_array($_POST['approveremails'])) {
                 if (count($sansDomains) != count($_POST['approveremails'])) {
                     foreach ($sansDomains as $key => $domain) {
-                        if ($decodedCSR['csrResult']['CN'] == $domain) {
+                        if ($csrDecode['commonName'] == $domain) {
                             unset($sansDomains[$key]);
                         }
                     }
@@ -213,8 +188,6 @@ class SSLStepThree
             ];
         }
 
-        $orderType = $this->p['fields']['order_type'];
-
         if ($this->p['fields']['org_division'] !== '') {
             $order['department'] = $this->p['fields']['org_division'];
         }
@@ -232,7 +205,7 @@ class SSLStepThree
                 $order['address'],
                 $order['postalCode'],
                 $order['city'],
-                null,
+                $order['coc'],
                 $order['approver']['email'],
                 $order['approver'],
                 $order['country'],
@@ -256,8 +229,15 @@ class SSLStepThree
                 case 'ValidationError':
                     $reason = 'Validation error: ' . $decodedMessage['message'];
                     break;
+                case 'ConstraintViolationException':
+                    $violations = array_map(
+                        fn($violation) => 'field: '. $violation['field'] . ', message: '. $violation['message'],
+                        $decodedMessage['violations']
+                    );
+                    $reason = "Constraint Violation: <br/>" . implode("<br/>", $violations);
+                    break;
                 default:
-                    $reason = 'Unknown';
+                    $reason = $exception->getMessage();
             }
             $this->redirectToStepOne($reason);
         }
@@ -301,7 +281,7 @@ class SSLStepThree
         $this->invoiceGenerator->markPreviousOrderAsCompleted($this->p['serviceid']);
 
         FlashService::set('REALTIMEREGISTERSSL_WHMCS_SERVICE_TO_ACTIVE', $this->p['serviceid']);
-        Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $decodedCSR['csrResult']['CN']);
+        Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $csrDecode['commonName']);
 
         $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->first();
         $orderRepo = new OrderRepo();

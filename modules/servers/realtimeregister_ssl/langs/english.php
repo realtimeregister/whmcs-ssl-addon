@@ -125,7 +125,7 @@ $_LANG['reissueTwoCity'] = 'City';
 $_LANG['reissueTwoLastName']                         = 'Last Name';
 $_LANG['reissueTwoEmail']                            = 'Email';
 $_LANG['reissueTwoVoice']                            = 'Voice';
-$_LANG['reissueTwoJobTitle']                         = 'Job Title';
+$_LANG['reissueCoC'] = 'CoC';
 
 $_LANG['reissueThreeSuccess'] = 'Certificate successfully reissued';
 $_LANG['mustSelectServer']    = 'You must select your server type';

@@ -53,6 +53,13 @@
                     <input type="text" class="form-control" name="postcode" id="inputPostcode" value="{$postcode}" />
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="inputJobTitle">{$ADDONLANG->T('reissueCoC')}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="coc" id="inputCoC" value="{$coc}"/>
+                </div>
+            </div>
             <h3>{$ADDONLANG->T('reissueTwoTitle')}</h3>
             <p>{$ADDONLANG->T('reissueTwoSubTitle')}</p>
             <div class="form-group">
@@ -99,12 +106,7 @@
  <script type="text/javascript">
     $(document).ready(function () {
         function getSelectHtml(value, checked) {
-            if (checked) {
-                var ck = ' selected';
-            } else {
-                var ck = '';
-            }
-            return '<option value="' + value + '"' + ck + '>' + value + '</option>'
+            return '<option value="' + value + '"' + (checked ? ' selected ' : '') + '>' + value + '</option>'
         }
         function getRowHtml(title, methods, emails) {
             return '<tr><td>' + title + '</td><td>' + methods + '</td><td>' + emails + '</td></tr>';

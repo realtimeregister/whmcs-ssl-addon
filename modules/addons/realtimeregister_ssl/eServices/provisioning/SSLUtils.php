@@ -2,6 +2,9 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
+use RealtimeRegister\Domain\Product;
+
 trait SSLUtils
 {
     public function getSansLimit(array $params)
@@ -45,5 +48,54 @@ trait SSLUtils
             }
         }
         return $count;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function mapRequestFields(array $params, Product $product) : array {
+        $mapping = [
+            'organization' => 'orgname',
+            'country' => 'country',
+            'state' => 'state',
+            'address' => 'address1',
+            'postalCode' => 'postcode',
+            'city' => 'city',
+            'saEmail' => 'email'
+        ];
+
+        $orgMapping = [
+            'organization' => 'org_name',
+            'country' => 'org_country',
+            'state' => 'org_regions',
+            'address' => 'org_addressline1',
+            'postalCode' => 'org_postalcode',
+            'city' => 'org_city',
+            'coc' => 'org_coc'
+        ];
+
+        $orgFields = ((array) $params['fields']) ?? [];
+        $order = [];
+
+        foreach (array_merge($product->requiredFields, $product->optionalFields) as $value) {
+            if ($value === 'approver') {
+                $order['approver'] = [
+                    'firstName' => $params['firstname'],
+                    'lastName' => $params['lastname'],
+                    'jobTitle' => $params['jobtitle'] ?: null,
+                    'email' => $params['email'],
+                    'voice' => $params['phonenumber']
+                ];
+            } else {
+                $order[$value] = $orgFields[$orgMapping[$value]] ?: $params[$mapping[$value]];
+            }
+        }
+
+        if (strlen($order['country'] > 2)) {
+            $order['country'] = Countries::getInstance()
+                ->getCountryCodeByName($order['country']);
+        }
+
+        return $order;
     }
 }

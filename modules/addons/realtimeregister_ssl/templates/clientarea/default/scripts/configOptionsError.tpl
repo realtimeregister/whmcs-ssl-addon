@@ -1,7 +1,7 @@
-<span id="ukryjmniehehe"></span>
+<span id="getparent"></span>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#ukryjmniehehe').parent().css('background-color', 'white').children('input').hide();
+        $('#getparent').parent().css('background-color', 'white').children('input').hide();
     });
 </script>
 <span class="text-danger">{$error}</span>

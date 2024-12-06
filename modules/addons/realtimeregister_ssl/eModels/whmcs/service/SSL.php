@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace AddonModule\RealtimeRegisterSsl\eModels\whmcs\service;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
+use stdClass;
 
+/**
+ * @property stdClass configdata
+ */
 class SSL extends \Illuminate\Database\Eloquent\Model
 {
     public $timestamps = false;
@@ -52,6 +56,11 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     {
         $c = (array) $this->configdata;
         return $c[$key];
+    }
+
+    public function getConfigData()
+    {
+        return (array) $this->configdata;
     }
 
     public function getCsr()
@@ -194,17 +203,17 @@ class SSL extends \Illuminate\Database\Eloquent\Model
         $this->setConfigdataKey('begin_date', $date);
     }
     
-    public function getSubscriptionStarts($date)
+    public function getSubscriptionStarts()
     {
         return $this->getConfigdataKey('begin_date');
     }
-    
+
     public function setSubscriptionEnds($date)
     {
         $this->setConfigdataKey('end_date', $date);
     }
     
-    public function getSubscriptionEnd($date)
+    public function getSubscriptionEnd()
     {
         return $this->getConfigdataKey('end_date');
     }
