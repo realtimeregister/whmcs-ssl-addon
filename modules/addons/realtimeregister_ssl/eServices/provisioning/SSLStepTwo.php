@@ -77,16 +77,12 @@ class SSLStepTwo
             $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
             $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
         }
-        $ValidationMethods = ['email', 'dns', 'file'];
+        $validationMethods = ['email', 'dns', 'file'];
 
         if (empty($this->csrDecode)) {
             // Use server to generate csr..
-            try {
-                $this->csrDecode = ApiProvider::getInstance()->getApi(CertificatesApi::class)
-                    ->decodeCsr(trim(rtrim($_POST['csr'])));
-            } catch (Exception $e) {
-                throw new Exception($e->getMessage());
-            }
+            $this->csrDecode = ApiProvider::getInstance()->getApi(CertificatesApi::class)
+                ->decodeCsr(trim(rtrim($_POST['csr'])));
         }
         $decodedCSR = $this->csrDecode;
 
@@ -95,7 +91,7 @@ class SSLStepTwo
         $mainDomain = $decodedCSR['commonName'];
 
         if (empty($mainDomain)) {
-            $mainDomain = $decodedCSR['altNames'][0];
+            $mainDomain = $decodedCSR['san'][0];
         }
 
         $domains = $mainDomain
@@ -111,7 +107,7 @@ class SSLStepTwo
         return [
             'approveremails' => 'loading...',
             'approveremails2' => $approveremails,
-            'approvalmethods' => $ValidationMethods,
+            'approvalmethods' => $validationMethods,
             'brand' => $productssl->brand
         ];
     }
@@ -121,23 +117,11 @@ class SSLStepTwo
         $this->p['privateKey'] = $privKey;
     }
 
-    private function redirectToStepThree()
-    {
-        $tokenInput = generate_token();
-        preg_match("/value=\"(.*)\\\"/", $tokenInput, $match);
-        $token = $match[1];
-
-        ob_clean();
-        header('Location: configuressl.php?cert=' . $_GET['cert'] . '&step=3&token=' . $token);
-        die();
-    }
-
     private function SSLStepTwo()
     {
         SSLTemporary::getInstance()->setByParams($this->p);
 
         $this->storeFieldsAutoFill();
-        $this->validateFields();
 
         if ($this->p['producttype'] != 'hostingaccount') {
             $this->validateCSR();
@@ -187,8 +171,6 @@ class SSLStepTwo
         if (count($invalidDomains)) {
             throw new Exception(Lang::getInstance()->T('incorrectSans') . implode(', ', $invalidDomains));
         }
-
-        $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS];
 
         $productBrandRepository = Products::getInstance();
         $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
@@ -253,21 +235,11 @@ class SSLStepTwo
         }
     }
 
-    private function validateFields()
-    {
-        if (empty(trim($this->p['jobtitle']))) {
-            $this->errors[] = Lang::T('adminJobTitleMissing');
-        }
-        if (empty(trim($this->p['orgname']))) {
-            $this->errors[] = Lang::T('organizationNameMissing');
-        }
-    }
-
     private function storeFieldsAutoFill()
     {
         $fields = [];
 
-        $a = [
+        $baseFields = [
             'servertype',
             'csr',
             'firstname',
@@ -285,30 +257,25 @@ class SSLStepTwo
             'privateKey'
         ];
 
-        $b = [
-            'order_type',
+        $additional = [
             'sans_domains',
             'org_name',
-            'org_division',
-            'org_lei',
-            'org_duns',
+            'org_coc',
             'org_addressline1',
             'org_city',
             'org_country',
-            'org_fax',
-            'org_phone',
             'org_postalcode',
             'org_regions'
         ];
 
-        foreach ($a as $value) {
+        foreach ($baseFields as $value) {
             $fields[] = [
                 'name' => $value,
                 'value' => $this->p[$value]
             ];
         }
 
-        foreach ($b as $value) {
+        foreach ($additional as $value) {
             if ($value == 'fields[order_type]') {
                 $fields[] = [
                     'name' => sprintf('%s', $value),

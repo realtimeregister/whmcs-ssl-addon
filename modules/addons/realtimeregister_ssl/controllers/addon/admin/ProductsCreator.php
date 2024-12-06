@@ -169,7 +169,7 @@ class ProductsCreator extends AbstractController
 
         foreach ($apiProducts as $apiProduct) {
             $input = [];
-            $input['name'] = self::displayName($apiProduct);
+            $input['name'] = $post['name'] ?: self::displayName($apiProduct);
             $input['gid'] = $post['gid'];
             $input[C::PRICE_AUTO_DOWNLOAD] = "true";
             $input[C::API_PRODUCT_ID] = $apiProduct->product;

@@ -40,7 +40,7 @@ class Countries
         }
     }
     /**
-     * 
+     *
      * @throws Exception
      */
     public function getCountryCodeByName(string $name): string
@@ -48,28 +48,13 @@ class Countries
         if (strlen($name) <= 2) {
             return $name;
         }
-        
+
         foreach ($this->countries as $countryCode => $countryName) {
             if (strtolower($countryName) === strtolower($name)) {
                 return $countryCode;
             }
         }
         throw new Exception('Can not match country name to country code');
-    }
-
-    /**
-     * 
-     * @throws Exception
-     */
-    public function getCountryNameByCode(string $code): string
-    {
-        $code = strtoupper($code);
-        
-        if (isset($this->countries[$code])) {
-            return $this->countries[$code];
-        }
-
-        throw new Exception('Can not match country code to country name');
     }
     
     public function getCountriesForWhmcsDropdownOptions()

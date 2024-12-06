@@ -1,8 +1,7 @@
 <span id="spanhideme"></span>
 <script type="text/javascript">
     $(document).ready(function () {
-        let hideMe = $('#spanhideme');
-        hideMe.closest('tr').hide();
+        $('#spanhideme').closest('tr').hide();
 
         {if $version == '8'}
         let tokenf = $('#frm1 input[name="token"]').val();
@@ -227,11 +226,11 @@
 
         function submitReissueModal() {
 
-            let data = {
+            const data = {
                 reissueModal: 'yes',
                 serviceId: {$serviceid},
                 userID: {$userid},
-            }, formData = $('#modalReissueForm').serializeArray();
+            };
 
             if (reissueFormStepInput.val() === 'one') {
                 data['action'] = 'getApprovals';
@@ -327,7 +326,7 @@
                 selectDcvMethod += '<option value="DNS">' + '{$ADDONLANG->T('dropdownDcvMethodDns')}' + '</option>';
                 selectDcvMethod += '</select></div>';
 
-                let dcvPart =  selectDcvMethod.replace('[[placeholder]]', 'dcvmethod[' + domain + ']');
+                const dcvPart =  selectDcvMethod.replace('[[placeholder]]', 'dcvmethod[' + domain + ']');
                 let selectEmailHtml = selectBegin.replace('[[placeholder]]', 'approveremails[' + domain + ']');
 
                 for (const email of emails) {
@@ -339,6 +338,15 @@
             });
 
             reissueEmailApprovalsArea.before(tableBegin + dcvForm + tableEnd);
+
+            $('select[name^="dcvmethod"]').on('change', function() {
+                const commonName = this.name.match(/\[(.+)]/)[1];
+                if (this.value === 'EMAIL') {
+                    $('select[name="approveremails[' + commonName + ']"').show();
+                } else {
+                    $('select[name="approveremails[' + commonName + ']"').hide();
+                }
+            });
         }
 
         function switchToStepOne() {
@@ -460,21 +468,12 @@
             assignModalElements(false);
         }
 
-        function unbindOnClickForViewCertificateBtn() {
-            viewBtn.attr('onclick', '');
-        }
-
         function bindModalToViewCertificateBtn() {
+            viewBtn.attr('onclick', '');
             viewBtn.off().on('click', function () {
                 viewModal.modal('show');
                 fetchCertificate();
             });
-        }
-
-        function showSuccessAlert(msg) {
-            show(viewSuccessAlert);
-            hide(viewDangerAlert);
-            viewSuccessAlert.children('span').html(msg);
         }
 
         function showDangerAlert(msg) {
@@ -489,10 +488,6 @@
 
         function hide(element) {
             element.addClass('hidden');
-        }
-
-        function enable(element) {
-            element.removeClass('disabled');
         }
 
         function anErrorOccurred() {
@@ -514,7 +509,7 @@
             hide(viewCertificateInput.parent('.form-group'));
             hide(viewCRTInput.parent('.form-group'));
             hide(viewCSRInput.parent('.form-group'));
-            show(viewLoading); // xD
+            show(viewLoading);
         }
 
         function renderCertificates(data) {
@@ -575,7 +570,6 @@
 
         assignModalElements(true);
         moveModalToBody();
-        unbindOnClickForViewCertificateBtn();
         bindModalToViewCertificateBtn();
     });
 </script>

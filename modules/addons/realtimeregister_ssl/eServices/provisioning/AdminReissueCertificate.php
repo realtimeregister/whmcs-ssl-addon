@@ -82,31 +82,9 @@ class AdminReissueCertificate extends Ajax
         $productDetails = ApiProvider::getInstance()
             ->getApi(CertificatesApi::class)
             ->getProduct($sslService->getProductId());
-        $orderDetails = (array) $sslService->configdata;
+        $orderDetails = $sslService->getConfigData();
 
-        $mapping = [
-            'organization' => 'orgname',
-            'country' => 'country',
-            'state' => 'state',
-            'address' => 'address1',
-            'postalCode' => 'postcode',
-            'city' => 'city'
-        ];
-
-        $orderFields = [];
-        foreach ($productDetails->requiredFields as $value) {
-            if ($value === 'approver') {
-                $orderFields['approver'] = [
-                    'firstName' => $orderDetails['firstname'],
-                    'lastName' => $orderDetails['lastname'],
-                    'jobTitle' => $orderDetails['jobtitle'],
-                    'email' => $orderDetails['email'],
-                    'voice' => $orderDetails['phonenumber']
-                ];
-            } else {
-                $orderFields[$value] = $sslService[$mapping[$value]];
-            }
-        }
+        $orderFields = $this->mapRequestFields($orderDetails, $productDetails);
 
         $dcv = array_map(fn($dcvEntry) => [...$dcvEntry,
             'type' => $dcvEntry['type'] === 'HTTP' ? 'FILE' : $dcvEntry['type']],
@@ -125,9 +103,9 @@ class AdminReissueCertificate extends Ajax
                  $orderFields['address'],
                  $orderFields['postalCode'],
                  $orderFields['city'],
-                 null,
+                 $orderFields['coc'],
                  $orderFields['approver'],
-                 $orderFields['country'],
+                 null,
                  null,
                  empty($dcv) ? null : $dcv,
                  $mainDomain,
