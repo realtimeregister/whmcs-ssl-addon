@@ -184,6 +184,10 @@ class SSL extends \Illuminate\Database\Eloquent\Model
         $fields['approveremail'] = $email;
         $this->setConfigdataKey('fields', $fields);
     }
+
+    public function getApproverEmail() {
+        return ((array) $this->getConfigdataKey('fields'))['approveremail'];
+    }
     
     public function setSubscriptionStarts($date)
     {

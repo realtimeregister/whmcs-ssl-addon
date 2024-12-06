@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use Exception;
-use Illuminate\Database\Capsule\Manager as Capsule;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\models\orders\Order;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository;
+use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Domain\ResendDcvCollection;
 
-class AdminResendApproverEmail extends Ajax
+class AdminResendDCV extends Ajax
 {
     private array $p;
 
@@ -58,7 +59,7 @@ class AdminResendApproverEmail extends Ajax
         }
         $certificatesApi->resendDcv(
             (int)$serviceSSL->getRemoteId(),
-            $domainControlValidations
+            ResendDcvCollection::fromArray($domainControlValidations)
         );
     }
 }

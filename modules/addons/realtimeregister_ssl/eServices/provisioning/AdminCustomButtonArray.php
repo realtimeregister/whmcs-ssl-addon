@@ -2,6 +2,9 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
+
 class AdminCustomButtonArray
 {
     private array $p;
@@ -13,16 +16,21 @@ class AdminCustomButtonArray
 
     public function run(): array
     {
+        $sslOrder = (new SSLRepo())->getByServiceId($this->p['serviceid']);
         $buttons = [
-            'Manage SSL'            => 'SSLAdminManageSSL',
-            'Resend Certificate'    => 'SSLAdminResendCertificate',
-            'View Certificate'      => 'SSLAdminViewCertificate',
-            'Reissue Certificate'   => 'SSLAdminReissueCertificate'
+            'Manage SSL' => 'SSLAdminManageSSL',
         ];
 
-        if (strtolower($this->p['status']) !== 'active') {
-            $buttons['Resend Approver Email'] = 'SSLAdminResendApproverEmail';
-            $buttons['Recheck Certificate Details'] = 'SSLAdminRecheckCertificateDetails';
+        if ($sslOrder->status === SSL::PENDING_INSTALLATION || $sslOrder->status === SSL::ACTIVE) {
+            $buttons['Resend Certificate'] = 'SSLAdminResendCertificate';
+            $buttons['View Certificate'] = 'SSLAdminViewCertificate';
+            $buttons['Reissue Certificate'] = 'SSLAdminReissueCertificate';
+        }
+
+        if ($sslOrder->status === SSL::CONFIGURATION_SUBMITTED) {
+            $buttons['Resend DCV'] = 'SSLAdminResendDCV';
+            $buttons['View Certificate'] = 'SSLAdminViewCertificate';
+            $buttons['Refresh'] = '';
         }
 
         return $buttons;

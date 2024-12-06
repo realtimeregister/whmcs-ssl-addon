@@ -487,7 +487,7 @@ class home extends AbstractController
         $apiConf = (new Repository())->get();
         $sendCertificateTemplate = $apiConf->send_certificate_template;
 
-        $pathAttachemts = false;
+        $pathAttachments = false;
         $checkSettings = Capsule::schema()->hasTable('tblfileassetsettings');
         if ($checkSettings !== false) {
             $filesetting = Capsule::table('tblfileassetsettings')->where('asset_type', 'email_attachments')->first();
@@ -499,7 +499,7 @@ class home extends AbstractController
                     if (isset($storage->settings) && !empty($storage->settings)) {
                         $storageData = json_decode($storage->settings, true);
                         if (isset($storageData['local_path']) && !empty($storageData['local_path'])) {
-                            $pathAttachemts = $storageData['local_path'];
+                            $pathAttachments = $storageData['local_path'];
                         }
                     }
                 }
@@ -508,7 +508,7 @@ class home extends AbstractController
 
         $attachments = [];
         if (!empty($orderStatus->getCa())) {
-            if ($pathAttachemts === false) {
+            if ($pathAttachments === false) {
                 $tmp_ca_code = tempnam("/tmp", "FOO");
                 $handle = fopen($tmp_ca_code, "w");
                 fwrite($handle, $orderStatus['ca_code']);
@@ -519,7 +519,7 @@ class home extends AbstractController
                     'path' => $tmp_ca_code
                 ];
             } else {
-                $filetemp = $pathAttachemts . DIRECTORY_SEPARATOR . $input['params']['serviceid']
+                $filetemp = $pathAttachments . DIRECTORY_SEPARATOR . $input['params']['serviceid']
                     . $input['params']['accountid'] . '_ca_code.ca';
                 file_exists($filetemp) || touch($filetemp);
                 file_put_contents($filetemp, $orderStatus->getCa());
@@ -532,7 +532,7 @@ class home extends AbstractController
         }
 
         if (!empty($orderStatus->getCrt())) {
-            if ($pathAttachemts === false) {
+            if ($pathAttachments === false) {
                 $tmp_crt_code = tempnam("/tmp", "FOO");
                 $handle = fopen($tmp_crt_code, "w");
                 fwrite($handle, $orderStatus->getCrt());
@@ -543,7 +543,7 @@ class home extends AbstractController
                     'path' => $tmp_crt_code
                 ];
             } else {
-                $filetemp = $pathAttachemts . DIRECTORY_SEPARATOR . $input['params']['serviceid']
+                $filetemp = $pathAttachments . DIRECTORY_SEPARATOR . $input['params']['serviceid']
                     . $input['params']['accountid'] . '_crt_code.crt';
                 file_exists($filetemp) || touch($filetemp);
                 file_put_contents($filetemp, $orderStatus->getCrt());
@@ -556,7 +556,7 @@ class home extends AbstractController
         }
 
         if (!empty($orderStatus->getCsr())) {
-            if ($pathAttachemts === false) {
+            if ($pathAttachments === false) {
                 $tmp_csr_code = tempnam("/tmp", "FOO");
                 $handle = fopen($tmp_csr_code, "w");
                 fwrite($handle, $orderStatus->getCsr());
@@ -567,7 +567,7 @@ class home extends AbstractController
                     'path' => $tmp_csr_code
                 ];
             } else {
-                $filetemp = $pathAttachemts . DIRECTORY_SEPARATOR . $input['params']['serviceid']
+                $filetemp = $pathAttachments . DIRECTORY_SEPARATOR . $input['params']['serviceid']
                     . $input['params']['accountid'] . '_csr_code.csr';
                 file_exists($filetemp) || touch($filetemp);
                 file_put_contents($filetemp, $orderStatus->getCsr());
@@ -726,7 +726,7 @@ class home extends AbstractController
         $privateKey = $sslService->getPrivateKey();
 
         if ($privateKey = $sslService->getPrivateKey()) {
-            if (strpos($privateKey, '-----BEGIN PRIVATE KEY-----') === false) {
+            if (!str_contains($privateKey, '-----BEGIN PRIVATE KEY-----')) {
                 $privateKey = decrypt($privateKey);
             }
 
@@ -777,22 +777,5 @@ class home extends AbstractController
             return ['success' => 0, 'message' => $e->getMessage()];
         }
         return ['success' => 1, 'message' => Lang::getInstance()->T('The certificate has been installed correctly')];
-    }
-
-    public function getCertificateDetailsJSON($input, $vars = [])
-    {
-        $clientCheckCertificateDetails = new ClientRecheckCertificateDetails($input);
-        $details = $clientCheckCertificateDetails->run();
-    }
-
-    public function getPasswordJSON($input, $vars = [])
-    {
-        //do something with input
-        unset($input);
-        unset($vars);
-
-        return [
-            'password' => 'fuNPassword'
-        ];
     }
 }

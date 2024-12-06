@@ -51,36 +51,32 @@ class AdminServicesTabFields
 
             $return = [];
             $return['Realtime Register SSL API Order ID'] = $sslService->remoteid;
+            $configDataUpdate = new UpdateConfigData($sslService);
+            $orderDetails = $configDataUpdate->run();
 
-            $orderDetails = (array)$sslService->configdata;
-
-            if (!$orderDetails['domain']) {
-                $configDataUpdate = new UpdateConfigData($sslService);
-                $orderStatus = $configDataUpdate->run();
-
-                $sslService = $ssl->getByServiceId($this->p['serviceid']);
-                $orderDetails = (array)$sslService->configdata;
-            }
-
-            $return['Cron Synchronized'] =
-                isset($orderDetails['synchronized'])
-                && !empty($orderDetails['synchronized']) ? $orderDetails['synchronized'] : 'Not synchronized';
-            $return['Partner Order ID'] = $orderDetails['partner_order_id'] ?: "-";
+            $return['Partner Order ID'] = $orderDetails->getPartnerOrderId() ?? '-';
             $return['Configuration Status'] = $sslService->status;
-            $return['Domain'] = $orderDetails['domain'];
-            $return['Order Status'] = ucfirst($orderDetails['ssl_status']);
-            if (isset($orderDetails['approver_method']->email) && !empty($orderDetails['approver_method']->email)) {
-                $return['Approver email'] = $orderDetails['approver_method']->email;
-            }
-            $return['Order Status Description'] = $orderDetails['order_status_description'] ?: '-';
+            $return['Domain'] = $orderDetails->getDomain();
+            $return['Order Status'] = $orderDetails->getSSLStatus();
+            $return['Approver email'] = $orderDetails->getApproverEmail() ?? 'N/A';
+            $return['Order Status Description'] = $orderDetails->getOrderStatusDescription();
 
-            if ($orderDetails['ssl_status'] === 'ACTIVE' || $orderDetails['ssl_status'] === 'COMPLETED') {
-                $return['Valid From'] = $orderDetails['valid_from']->date;
-                $return['Expires'] = $orderDetails['valid_till']->date;
+            if ($orderDetails->getSSLStatus() === 'ACTIVE' || $orderDetails->getSSLStatus() === 'COMPLETED') {
+                $return['Valid From'] = (new \DateTimeImmutable($orderDetails->getValidFrom()->date))
+                    ->format('Y-m-d H:i:s');;
+                $return['Expires'] = (new \DateTimeImmutable($orderDetails->getValidTill()->date))
+                    ->format('Y-m-d H:i:s');;
             }
 
-            foreach ($orderDetails['san_details'] as $key => $san) {
-                $return['SAN ' . ($key + 1)] = sprintf('%s / %s', $san->san_name, $san->status_description);
+            foreach ($orderDetails->getSanDetails() as $key => $san) {
+                $return['SAN ' . ($key + 1)] = $san->san_name;
+                if ($san->validation_method) {
+                    if ($san->validation_method === 'email') {
+                        $return['SAN ' . ($key + 1)] .= ' / ' . $san->email;
+                    } else {
+                        $return['SAN ' . ($key + 1)] .= ' / ' . $san->validation_method;
+                    }
+                }
             }
 
             return $return;
