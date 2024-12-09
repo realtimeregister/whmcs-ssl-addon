@@ -5,6 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
+use DateTimeImmutable;
 use Exception;
 
 class AdminServicesTabFields
@@ -62,10 +63,15 @@ class AdminServicesTabFields
             $return['Order Status Description'] = $orderDetails->getOrderStatusDescription();
 
             if ($orderDetails->getSSLStatus() === 'ACTIVE' || $orderDetails->getSSLStatus() === 'COMPLETED') {
-                $return['Valid From'] = (new \DateTimeImmutable($orderDetails->getValidFrom()->date))
-                    ->format('Y-m-d H:i:s');;
-                $return['Expires'] = (new \DateTimeImmutable($orderDetails->getValidTill()->date))
-                    ->format('Y-m-d H:i:s');;
+                $return['Valid From'] = self::formatDate($orderDetails->getValidFrom());
+                $return['Expires'] = self::formatDate($orderDetails->getValidTill());
+            }
+
+            if ($orderDetails->getSubscriptionEnd()) {
+                $return['Subscription Starts'] = self::formatDate($orderDetails->getSubscriptionStarts());
+                $return['Subscription Ends'] = self::formatDate($orderDetails->getSubscriptionEnd());
+                $return['Reissue Before'] = $return['Expires'];
+                unset($return['Expires']);
             }
 
             foreach ($orderDetails->getSanDetails() as $key => $san) {
@@ -113,5 +119,12 @@ class AdminServicesTabFields
             'adminpath' => $adminpath,
             'version' => substr($CONFIG['Version'], 0, 1)
         ];
+    }
+
+    /**
+     * @throws Exception
+     */
+    private static function formatDate($date): string {
+        return (new DateTimeImmutable($date->date))->format('Y-m-d H:i:s');
     }
 }

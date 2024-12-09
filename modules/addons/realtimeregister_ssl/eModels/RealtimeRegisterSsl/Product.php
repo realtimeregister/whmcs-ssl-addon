@@ -69,7 +69,7 @@ class Product
     
     public function getPayType()
     {
-        if (strpos(strtolower($this->product), 'trial') === false) {
+        if (!str_contains(strtolower($this->product), 'trial')) {
             return 'recurring';
         }
         return 'free';

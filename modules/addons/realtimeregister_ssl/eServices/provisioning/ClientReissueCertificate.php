@@ -83,10 +83,10 @@ class ClientReissueCertificate
         SansDomains::decodeSanAprroverEmailsAndMethods($_POST);
         $this->setMainDomainDcvMethod($_POST);
         $this->setSansDomainsDcvMethod($_POST);
-        return $this->miniControler();
+        return $this->reissueController();
     }
 
-    private function miniControler()
+    private function reissueController()
     {
         try {
             $this->validateService();
@@ -197,6 +197,7 @@ class ClientReissueCertificate
         $this->vars['email'] = $configData->email;
         $this->vars['phonenumber'] = $configData->phonenumber;
         $this->vars['jobtitle'] = $configData->jobtitle;
+        $this->vars['coc'] = $configData->coc;
         $this->vars['orgname'] = $cert->organization;
         $this->vars['city'] = $cert->city;
         $this->vars['state'] = $cert->state;
@@ -314,7 +315,7 @@ class ClientReissueCertificate
             $approver = [
                 "firstName" => $this->post['firstname'],
                 "lastName" => $this->post['lastname'],
-                "jobTitle" => $this->post['jobtitle'],
+                "jobTitle" => $this->post['jobtitle'] ?: null,
                 "email" => $this->post['email'],
                 "voice" => str_replace(" ", "",
                     '+' . $this->post['country-calling-code-phonenumber'] . '.' . $this->post['phonenumber'])
