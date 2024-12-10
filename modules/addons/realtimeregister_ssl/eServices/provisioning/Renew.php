@@ -18,6 +18,8 @@ use WHMCS\Database\Capsule;
 
 class Renew
 {
+    use SSLUtils;
+
     private $p;
 
     /**
@@ -150,34 +152,11 @@ class Renew
             ->getApi(CertificatesApi::class)
             ->getProduct($orderDetails['product_id']);
 
-        $mapping = [
-            'organization' => 'orgname',
-            'country' => 'country',
-            'state' => 'state',
-            'address' => 'address1',
-            'postalCode' => 'postcode',
-            'city' => 'city',
-            'dcv' => 'dcv'
-        ]; // 'coc','language', 'uniqueValue','authKey' == missing
-
-        $orderFields = [];
-        foreach ($productDetails->requiredFields as $value) {
-            if ($value === 'approver') {
-                $orderFields['approver'] = [
-                    'firstName' => $this->p['firstname'],
-                    'lastName' => $this->p['lastname'],
-                    'jobTitle' => $this->p['jobtitle'],
-                    'email' => $this->p['email'],
-                    'voice' => $this->p['phonenumber']
-                ];
-            } else {
-                $orderFields[$value] = $orderDetails[$mapping[$value]];
-            }
-        }
+        $orderFields = $this->mapRequestFields($orderDetails, $productDetails);
 
         $addSSLRenewOrder = $certificateApi->renewCertificate(
             $configData['certificateId'],
-            intval($this->p['configoptions']['years']) * 12,
+            intval($this->p['configoptions'][ConfigOptions::OPTION_PERIOD]) * 12,
             $configData['csr'],
             empty($configData['san_details'])
                 ? null
@@ -255,9 +234,8 @@ class Renew
             }
         }
 
-        Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->update([
-            'remoteid' => $addSSLRenewOrder->processId ?? $addSSLRenewOrder->certificateId
-        ]);
+        Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])
+            ->update(['remoteid' => $addSSLRenewOrder->processId]);
         $this->loadSslService();
 
         $configDataUpdate = new UpdateConfigData($this->sslService);
