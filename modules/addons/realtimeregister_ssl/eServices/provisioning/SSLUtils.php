@@ -77,14 +77,14 @@ trait SSLUtils
         $orgFields = ((array) $params['fields']) ?? [];
         $order = [];
 
-        foreach (array_merge($product->requiredFields, $product->optionalFields) as $value) {
+        foreach (array_merge($product->requiredFields ?? [], $product->optionalFields ?? []) as $value) {
             if ($value === 'approver') {
                 $order['approver'] = [
                     'firstName' => $params['firstname'],
                     'lastName' => $params['lastname'],
                     'jobTitle' => $params['jobtitle'] ?: null,
                     'email' => $params['email'],
-                    'voice' => $params['phonenumber']
+                    'voice' => preg_replace('/\r|\n|\s/', '', $params['phonenumber'])
                 ];
             } else {
                 $order[$value] = $orgFields[$orgMapping[$value]] ?: $params[$mapping[$value]];

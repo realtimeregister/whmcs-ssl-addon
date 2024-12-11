@@ -49,6 +49,7 @@
             }
         {/if}
 
+        $('.alert-info').hide();
         var brand = JSON.parse('{$brand}');
         $('textarea[name="csr"]').closest('.form-group').after('<input class="form-control" type="hidden" name="sslbrand" value="' + brand + '" />');
 
@@ -65,7 +66,7 @@
         $('input, textarea, select').addClass('form-control');
 
         //remove (Required if Organization Name is set) comment
-        var jobTitleInput = $('input[name="jobtitle"]');         
+        var jobTitleInput = $('input[name="jobtitle"]');
         var jobTitleLabel = jobTitleInput.parent().find('label');//for simplicity template
         
         jobTitleInput.parent().html(jobTitleInput);        
