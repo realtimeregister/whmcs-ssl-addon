@@ -99,26 +99,6 @@ class Lang
     }
 
     /**
-     * Get Avaiable Translations
-     *
-     * @return type
-     */
-    public static function getAvaiable()
-    {
-        $langArray = [];
-        $handle    = opendir(self::$instance->dir);
-
-        while (false !== ($entry = readdir($handle))) {
-            list($lang, $ext) = explode('.', $entry);
-            if ($lang && isset($ext) && strtolower($ext) == 'php') {
-                $langArray[] = $lang;
-            }
-        }
-
-        return $langArray;
-    }
-
-    /**
      * Load Lang File
      *
      * @param string $lang Lang Name
