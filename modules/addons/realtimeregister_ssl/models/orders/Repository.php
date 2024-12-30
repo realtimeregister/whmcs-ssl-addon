@@ -142,10 +142,11 @@ class Repository extends MainRepository
                 $table->integer('ssl_order_id');
                 $table->string('verification_method');
                 $table->string('status');
-                $table->json('data');
+                $table->text('data');
                 $table->datetime('date');
             });
         }
+        $this->removeJsonFieldFromTable();
     }
 
     public function updateOrdersTable()
@@ -159,16 +160,29 @@ class Repository extends MainRepository
                 $table->integer('ssl_order_id');
                 $table->string('verification_method');
                 $table->string('status');
-                $table->json('data');
+                $table->text('data');
                 $table->datetime('date');
             });
         }
+        $this->removeJsonFieldFromTable();
     }
 
     public function dropOrdersTable()
     {
         if (Capsule::schema()->hasTable($this->tableName)) {
             Capsule::schema()->dropIfExists($this->tableName);
+        }
+    }
+
+    private function removeJsonFieldFromTable()
+    {
+        if (
+            Capsule::schema()->hasTable($this->tableName) && Capsule::schema()->hasColumn($this->tableName, 'data')
+        ) {
+            // Convert JSON fieldtype to TEXT, because of missing MariaDB support
+            $connection = Capsule::connection()->getPdo();
+            $statement = $connection->prepare('ALTER TABLE ' . $this->tableName . ' MODIFY data TEXT NOT NULL');
+            $statement->execute();
         }
     }
 }
