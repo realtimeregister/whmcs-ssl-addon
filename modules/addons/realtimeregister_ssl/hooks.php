@@ -71,48 +71,6 @@ add_hook("ClientAreaPage",1 ,function($vars) {
 
 
 add_hook('ClientAreaPage', 1, function($params) {
-
-    if ($params['templatefile'] != 'invoice-payment' && $params['filename'] != 'viewinvoice') {
-        Invoice::createPendingPaymentInvoice();
-        $checkInvoicePending = Capsule::table(Invoice::INVOICE_PENDINGPAYMENT_TABLE_NAME)
-            ->where('user_id', $_SESSION['uid'])->get();
-        foreach($checkInvoicePending as $invoiceToPending) {
-            $checkUnpaid = Capsule::table('tblinvoices')->where('id', $invoiceToPending->invoice_id)
-                ->where('status', 'Unpaid')->first();
-            if (isset($checkUnpaid->id)) {
-                Capsule::table('tblinvoices')->where('id', $invoiceToPending->invoice_id)
-                    ->update(['status' => 'Payment Pending']);
-                Capsule::table(Invoice::INVOICE_PENDINGPAYMENT_TABLE_NAME)
-                    ->where('invoice_id', $invoiceToPending->invoice_id)->delete();
-            }
-        }
-    }
-
-    if (
-        $params['filename'] == 'viewinvoice' && ($params['status'] == 'Payment Pending'
-            ||  $params['status'] == 'Unpaid')
-    ) {
-        Capsule::table('tblinvoices')->where('id', $params['invoiceid'])->update([
-            'status' => 'Unpaid'
-        ]);
-
-        Invoice::createPendingPaymentInvoice();
-        $check = Capsule::table(
-            'REALTIMEREGISTERSSL_invoices_pendingpayment'
-        )->where('user_id', $_SESSION['uid'])->where('invoice_id', $params['invoiceid'])->first();
-        if (!isset($check->id))
-        {
-            Capsule::table(Invoice::INVOICE_PENDINGPAYMENT_TABLE_NAME)->insert([
-                'user_id' => $_SESSION['uid'],
-                'invoice_id' => $params['invoiceid'],
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ]);
-        }
-
-//        redir('id='.$params['invoiceid'], 'viewinvoice.php');
-    }
-
     new Loader();
     $activator = new Activator();
     $activator->run();
