@@ -58,7 +58,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '0.4.7';
+    public $version = '0.4.9';
 
     private static string $LEGACY_TABLE_PREFIX = 'mgfw_';
 
@@ -183,7 +183,7 @@ class Configuration extends AbstractConfiguration
         EmailTemplateService::updateRenewalTemplate();
         EmailTemplateService::updateReissueTemplate();
         InvoiceHelper::updateInfosTable(self::$LEGACY_TABLE_PREFIX);
-        InvoiceHelper::updateInfosTable(self::$LEGACY_TABLE_PREFIX);
+        InvoiceHelper::updatePendingPaymentTable(self::$LEGACY_TABLE_PREFIX);
         Products::updateTable(self::$LEGACY_TABLE_PREFIX);
         (new APIConfigurationRepo())->updateApiConfigurationTable(self::$LEGACY_TABLE_PREFIX);
         (new ProductPriceRepo())->updateApiProductsPricesTable(self::$LEGACY_TABLE_PREFIX);
