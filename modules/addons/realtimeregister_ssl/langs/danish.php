@@ -293,7 +293,7 @@ $_LANG['addonCA']['sslSummaryOrdersPage']['Next Due Date']             = 'Næste
 $_LANG['addonCA']['sslSummaryOrdersPage']['Status']                    = 'Status';
 
 $_LANG['invalidEmailAddress']           = 'E-mailadressen er ugyldig';
-$_LANG['csrCodeGeneraterdSuccessfully'] = 'CSR-kode blev genereret';
+$_LANG['csrCodeGeneratedSuccessfully'] = 'CSR-kode blev genereret';
 $_LANG['invalidCountryCode']            = 'Landekode er forkert';
 $_LANG['csrCodeGeneraterFailed']        = 'Kunne ikke generere CSR-kode';
 

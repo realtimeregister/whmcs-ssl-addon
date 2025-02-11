@@ -90,7 +90,7 @@ class SSLSummary
         if ($expiresSoonSelectedDays != null && trim($expiresSoonSelectedDays) != '') {
             $daysBefore = $expiresSoonSelectedDays;
         }
-        //$daysBefore = 1000; //to test
+
         foreach ($this->services as $service) {
             $SSLOrder = new SSL();
 
@@ -99,34 +99,33 @@ class SSLSummary
             if ($ssl == null || $ssl->remoteid == '') {
                 continue;
             }
-            $expiry_date = $this->getSSLCertificateValidTillDate($service->id);
+            $expiryDate = $this->getSSLCertificateValidTillDate($service->id)?->date;
             $sslStatus = $this->getSSLCertificateStatus($service->id);
 
-            if ($expiry_date != '0000-00-00' && ($sslStatus === 'ACTIVE' || $sslStatus === 'COMPLETED')) {
-                if ($this->checkOrderExpireDate($expiry_date, $daysBefore))
-                    $services[] = $service;
+            if ($expiryDate != null
+                && $expiryDate != '0000-00-00'
+                && ($sslStatus === 'ACTIVE' || $sslStatus === 'COMPLETED')
+                && $this->checkOrderExpiryDate($expiryDate, $daysBefore)) {
+                $services[] = $service;
             }
         }
 
         return $services;
     }
 
-    private function checkOrderExpireDate($expireDate, $days = 30)
+    private function checkOrderExpiryDate($expiryDate, $days = 30)
     {
-        if (stripos($expireDate, ':') === false) {
-            $expireDate .= ' 23:59:59';
-        }
-        $expire = new DateTime($expireDate);
-        $today = new DateTime(); //to test ad properly date in format ->2019-06-19 23:59:59.000000
+        $expiry = new DateTime($expiryDate);
+        $today = new DateTime();
 
-        $diff = $expire->diff($today)->format("%a");
-
-        if ($diff == 0 || $expire < $today) {
-            //if date from past
+        if ($expiry < $today) {
+            // Date is in the past
             return false;
         }
 
-        return ($diff <= $days) ? true : false;
+        $diff = $expiry->diff($today)->format("%a");
+
+        return $diff <= $days;
     }
 
     private function getSSLCertificateValidTillDate($serviceID)
