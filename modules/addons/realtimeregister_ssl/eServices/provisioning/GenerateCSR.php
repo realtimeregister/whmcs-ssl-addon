@@ -2,10 +2,10 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use Exception;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Domains;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
+use Exception;
 
 class GenerateCSR
 {
@@ -97,7 +97,7 @@ class GenerateCSR
         return json_encode(
             [
                 'success' => 1,
-                'msg' => Lang::getInstance()->T('csrCodeGeneraterdSuccessfully'),
+                'msg' => Lang::getInstance()->T('csrCodeGeneratedSuccessfully'),
                 'public_key' => $csrOut,
                 'private_key' => encrypt($pKeyOut)
             ]
