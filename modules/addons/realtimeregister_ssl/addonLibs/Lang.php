@@ -37,14 +37,14 @@ class Lang
 
     /**
      * Get Single-ton Instance
-     * 
-     * @param type $dir
-     * @param type $lang
-     * @return \AddonModule\RealtimeRegisterSsl\Lang
+     *
+     * @param string|null $dir
+     * @param string|null $lang
+     * @return Lang
      */
-    public static function getInstance($dir = null, $lang = null)
+    public static function getInstance(string $dir = null, string $lang = null): Lang
     {
-        if (self::$instance === null) {
+        if (self::$instance === null || $dir != null) {
             self::$instance      = new self();
             self::$instance->dir = $dir;
             self::$instance->loadLang('english');
