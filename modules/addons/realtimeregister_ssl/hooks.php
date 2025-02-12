@@ -249,7 +249,6 @@ function realtimeregister_ssl_displaySSLSummaryStats($vars)
 
             GLOBAl $smarty;
 
-
             Addon::I(true);
 
             $apiConf           = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
@@ -258,10 +257,7 @@ function realtimeregister_ssl_displaySSLSummaryStats($vars)
                 return '';
             }
 
-            $sslSummaryIntegrationCode = '';
-
             $titleLang       = Lang::T('addonCA', 'sslSummary', 'title');
-            $totalLang       = Lang::T('addonCA', 'sslSummary', 'total');
             $unpaidLang      = Lang::T('addonCA', 'sslSummary', 'unpaid');
             $processingLang  = Lang::T('addonCA', 'sslSummary', 'processing');
             $expiresSoonLang = Lang::T('addonCA', 'sslSummary', 'expiresSoon');
@@ -280,7 +276,7 @@ function realtimeregister_ssl_displaySSLSummaryStats($vars)
             $processingOrders  = $sslSummaryStats->getProcessingSSLOrdersCount();
             $expiresSoonOrders = $sslSummaryStats->getExpiresSoonSSLOrdersCount();
 
-            $sslSummaryIntegrationCode .= "
+            $sslSummaryIntegrationCode = "
                 <div class=\"col-sm-12\">
                         <div menuitemname=\"SSL Order Summary\" class=\"panel panel-default panel-accent-gold\">
                                 <div class=\"panel-heading\">

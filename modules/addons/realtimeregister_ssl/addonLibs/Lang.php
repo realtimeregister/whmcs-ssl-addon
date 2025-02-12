@@ -62,6 +62,10 @@ class Lang
         return self::$instance;
     }
 
+    public static function reset() : void {
+        self::$instance = null;
+    }
+
     public static function getMissingLangs()
     {
         return self::$instance->missingLangs;
@@ -104,7 +108,8 @@ class Lang
      * @param string $lang Lang Name
      */
     public static function loadLang($lang)
-    {    
+    {
+        global $_LANG;
         $originalLanguageFile = self::getInstance()->dir . DS . $lang . '.php';
         if (file_exists($originalLanguageFile))
         {
