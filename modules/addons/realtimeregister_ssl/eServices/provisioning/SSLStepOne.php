@@ -118,10 +118,11 @@ class SSLStepOne
             $countriesForGenerateCsrForm,
             ['wildcard' => $wildCard]
         ) : '';
-        //when server type is not selected exception
+
         if (isset($_POST['privateKey']) && $_POST['privateKey'] != null && empty(json_decode($fillVarsJSON))) {
             $autoFillPrivateKeyField = ScriptService::getAutoFillPrivateKeyField($_POST['privateKey']);
         }
+
         //auto fill order type field
         if (isset($_POST['fields']['order_type']) && $_POST['fields']['order_type'] != null) {
             $autoFillOrderTypeField = ScriptService::getAutoFillOrderTypeField($_POST['fields']['order_type']);
