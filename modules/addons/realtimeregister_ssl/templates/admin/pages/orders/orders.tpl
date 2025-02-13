@@ -39,11 +39,19 @@
             "serverSide": true,
             "order": [[0, "asc"]],
             "bInfo": false,
-            ajax: function (data, callback, settings) {
+            ajax: function (data, callback) {
                 let filter = {};
                 JSONParser.request(
                     'getOrders',
-                    {json: true, 'addon-page': 'orders',filter:filter,order:data.order[0],limit: data.length,offset: data.start,search:data.search.value},
+                    {
+                        json: true,
+                        'addon-page': 'orders',
+                        filter: filter,
+                        order: data.order[0],
+                        limit: data.length,
+                        offset: data.start,
+                        search: data.search.value,
+                    },
                     function (data) {
                         callback(data);
                     }

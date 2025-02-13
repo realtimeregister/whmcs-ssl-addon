@@ -302,8 +302,8 @@ $_LANG['viewAll']		= 'Vis alle';
 $_LANG['additionalSingleDomainInfo'] = 'This product has %s additional single domain SAN\'s included.';
 $_LANG['additionalSingleDomainWildcardInfo'] = 'This product has %s additional wildcard domain SAN\'s included.';
 
-$_LANG['addonAA']['userCommissions']['modal']['noClientAvaialblePlaceholder'] = 'No Client Avaialble Placeholder';
-$_LANG['addonAA']['userCommissions']['modal']['noProductAvaialblePlaceholder'] = 'No Product Avaialble Placeholder';
+$_LANG['addonAA']['userCommissions']['modal']['noClientAvailablePlaceholder'] = 'No Client Avaialble Placeholder';
+$_LANG['addonAA']['userCommissions']['modal']['noProductAvailablePlaceholder'] = 'No Product Avaialble Placeholder';
 $_LANG['addonAA']['userCommissions']['modal']['editCommissionRule'] = 'Edit Commission Rule';
 $_LANG['addonAA']['pagesLabels']['label']['logs'] = 'Logs';
 
