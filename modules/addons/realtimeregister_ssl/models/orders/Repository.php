@@ -22,7 +22,9 @@ class Repository extends MainRepository
 
     public function getByServiceId($serviceId)
     {
-        return Capsule::table($this->tableName)->where('service_id', $serviceId)->first();
+        return Capsule::table($this->tableName)
+            ->where('service_id', $serviceId)
+            ->first();
     }
 
     public function remove($id)
@@ -66,12 +68,14 @@ class Repository extends MainRepository
     public function getList($limit, $offset, $orderBy = [], $search = '')
     {
         if (empty($search)) {
-            $query = Capsule::table(
-                $this->tableName
-            )->limit($limit)->offset($offset)->orderBy($orderBy[0], $orderBy[1]);
+            $query = Capsule::table($this->tableName)
+                ->limit($limit)
+                ->offset($offset)
+                ->orderBy($orderBy[0], $orderBy[1]);
+
             return [
                 'results' => $query->get(),
-                'count' =>$query->count()
+                'count' => self::count()
             ];
         }
 
@@ -91,11 +95,13 @@ class Repository extends MainRepository
             ->orWhere($this->tableName.'.verification_method', 'like', '%'.$search.'%')
             ->orWhere($this->tableName.'.status', 'like', '%'.$search.'%')
             ->orWhere($this->tableName.'.date', 'like', '%'.$search.'%')
-            ->limit($limit)->offset($offset)->orderBy($orderBy[0], $orderBy[1]);
+            ->limit($limit)
+            ->offset($offset)
+            ->orderBy($orderBy[0], $orderBy[1]);
 
         return [
             'results' => $query->get(),
-            'count' =>$query->count()
+            'count' => self::count()
         ];
     }
 

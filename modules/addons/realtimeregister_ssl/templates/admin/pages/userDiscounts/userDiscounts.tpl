@@ -5,8 +5,8 @@
         var pleaseSelectProductFirst = '{/literal}{$ADDONLANG->T('modal','pleaseSelectProductFirst')}{literal}';
         var noDataAvailable = '{/literal}{$ADDONLANG->T('modal','noDataAvailable')}{literal}';
         var pleaseSelectClientFirst = '{/literal}{$ADDONLANG->T('modal','selectClientFirstPlaceholder')}{literal}';
-        var noClientAvaialblePlaceholder = '{/literal}{$ADDONLANG->T('modal','noClientAvaialblePlaceholder')}{literal}';
-        var noProductAvaialblePlaceholder = '{/literal}{$ADDONLANG->T('modal','noProductAvaialblePlaceholder')}{literal}';
+        var noClientAvailablePlaceholder = '{/literal}{$ADDONLANG->T('modal','noClientAvailablePlaceholder')}{literal}';
+        var noProductAvailablePlaceholder = '{/literal}{$ADDONLANG->T('modal','noProductAvailablePlaceholder')}{literal}';
 
     </script>
 {/literal}

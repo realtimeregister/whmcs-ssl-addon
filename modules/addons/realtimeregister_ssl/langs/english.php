@@ -325,8 +325,8 @@ $_LANG['addonAA']['productsConfiguration']['products_saved']       = 'Products h
 $_LANG['additionalSingleDomainInfo'] = 'This product has %s additional single domain SAN\'s included.';
 $_LANG['additionalSingleDomainWildcardInfo'] = 'This product has %s additional wildcard domain SAN\'s included.';
 
-$_LANG['addonAA']['userDiscounts']['modal']['noClientAvaialblePlaceholder'] = 'No Client Available Placeholder';
-$_LANG['addonAA']['userDiscounts']['modal']['noProductAvaialblePlaceholder'] = 'No Product Available Placeholder';
+$_LANG['addonAA']['userDiscounts']['modal']['noClientAvailablePlaceholder'] = 'No Client Available Placeholder';
+$_LANG['addonAA']['userDiscounts']['modal']['noProductAvailablePlaceholder'] = 'No Product Available Placeholder';
 $_LANG['addonAA']['userDiscounts']['modal']['editCommissionRule'] = 'Edit Commission Rule';
 $_LANG['addonAA']['pagesLabels']['label']['logs'] = 'Logs';
 
