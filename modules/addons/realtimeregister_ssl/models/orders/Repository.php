@@ -101,7 +101,7 @@ class Repository extends MainRepository
 
         return [
             'results' => $query->get(),
-            'count' => self::count()
+            'count' => $query->count()
         ];
     }
 
