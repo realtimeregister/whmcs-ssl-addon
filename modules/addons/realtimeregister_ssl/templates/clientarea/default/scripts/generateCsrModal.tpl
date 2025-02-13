@@ -90,7 +90,6 @@
 
         $("#countryName option[value=\"{$csrData['country']}\"]").attr('selected','');
 
-        $('#modalgenerateCsrSubmit').prop('disabled',true);
         $.urlParam = function(name){
             var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
             if (results==null){
