@@ -37,14 +37,14 @@ class Lang
 
     /**
      * Get Single-ton Instance
-     * 
-     * @param type $dir
-     * @param type $lang
-     * @return \AddonModule\RealtimeRegisterSsl\Lang
+     *
+     * @param string|null $dir
+     * @param string|null $lang
+     * @return Lang
      */
-    public static function getInstance($dir = null, $lang = null)
+    public static function getInstance(string $dir = null, string $lang = null): Lang
     {
-        if (self::$instance === null) {
+        if (self::$instance === null || $dir != null) {
             self::$instance      = new self();
             self::$instance->dir = $dir;
             self::$instance->loadLang('english');
@@ -60,6 +60,10 @@ class Lang
             }
         }
         return self::$instance;
+    }
+
+    public static function reset() : void {
+        self::$instance = null;
     }
 
     public static function getMissingLangs()
@@ -104,7 +108,8 @@ class Lang
      * @param string $lang Lang Name
      */
     public static function loadLang($lang)
-    {    
+    {
+        global $_LANG;
         $originalLanguageFile = self::getInstance()->dir . DS . $lang . '.php';
         if (file_exists($originalLanguageFile))
         {

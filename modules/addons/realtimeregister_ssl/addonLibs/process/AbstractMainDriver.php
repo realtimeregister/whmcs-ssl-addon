@@ -79,7 +79,7 @@ abstract class AbstractMainDriver
             $class = get_called_class();
             
             MainInstance::setInstanceName($class);
-                        
+
             self::$_instance = new $class();
             self::$_instance->_mainNamespace = substr(__NAMESPACE__,0,  strpos(__NAMESPACE__, '\addonLibs'));
             self::$_instance->_mainDIR = call_user_func([$class,'getMainDIR']);
