@@ -68,6 +68,8 @@ class UpdateConfigData
             ['process:eq' => $this->sslService->remoteid]
         );
 
+        $currentOrder = $orderRepo->getByServiceId($this->sslService->serviceid);
+
         if ($certificateResults->count() === 1) {
             /** @var CertificatesApi $certificatesApi */
             $order = $certificateResults[0];
@@ -103,12 +105,14 @@ class UpdateConfigData
             $sslOrder = $this->sslService;
 
             $sslOrder->setCrt($order->certificate);
+            $sslOrder->setCsr($order->csr);
             $sslOrder->setSSLStatus($order->status);
             $sslOrder->setOrderStatusDescription($order->status);
             $sslOrder->setPartnerOrderId($order->providerId);
 
             if ($sslOrder->status === SSL::CONFIGURATION_SUBMITTED) {
                 $sslOrder->status = SSL::PENDING_INSTALLATION;
+                $orderRepo->updateStatus($this->sslService->serviceid, SSL::PENDING_INSTALLATION);
             }
             
             $sslOrder->setCertificateId($order->id);
@@ -141,8 +145,8 @@ class UpdateConfigData
             return $sslOrder;
         }
 
-        $currentOrder = $orderRepo->getByServiceId($this->sslService->serviceid);
         $sslOrder = $this->sslService;
+        $sslOrder->setCsr(trim($sslOrder->getCsr()));
         $sslOrder->configdata = array_merge(json_decode($currentOrder->data, true), (array) $sslOrder->configdata);
         $sslOrder->setDomain($sslOrder->getDomain() ?? $this->orderdata['domain']);
 

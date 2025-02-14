@@ -266,7 +266,7 @@ class SSLStepThree
 
         $this->sslConfig->setCrt('--placeholder--');
         $this->sslConfig->setConfigdataKey('private_key', $this->p['private_key']);
-        $this->sslConfig->setCsr($this->p['configdata']['csr']);
+        $this->sslConfig->setCsr(trim($this->p['configdata']['csr']));
         $this->sslConfig->setDomain($orderDetails->identifier);
         $this->sslConfig->setOrderStatusDescription($orderDetails->status);
         $this->sslConfig->setApproverMethod($this->p['approvalmethod']);
