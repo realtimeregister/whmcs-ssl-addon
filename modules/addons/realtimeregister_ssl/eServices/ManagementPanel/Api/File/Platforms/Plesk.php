@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Platforms;
 
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Client;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
-use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -46,11 +46,8 @@ class Plesk extends Client implements PlatformInterface
             ],
         ];
 
-        $this->request('POST', $this->packet($packet));
-
         $this->detectAndUpdateExtension();
-
-        $this->request();
+        $this->request('POST', $this->packet($packet));
     }
 
     public function detectAndUpdateExtension()

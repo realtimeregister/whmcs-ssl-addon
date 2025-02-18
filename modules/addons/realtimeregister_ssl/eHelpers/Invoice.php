@@ -440,6 +440,7 @@ class Invoice
             if ($whmcsProduct->getShowDomainOptions() || $whmcsProduct->getPayType() == 'free') {
                 return;
             }
+
             //get invoice related with order
             $whmcsOrder = $service->order();
             $invoice = $whmcsOrder->invoice();
@@ -447,7 +448,6 @@ class Invoice
             $invoiceItemsRepo->onlyInvoiceId($invoice->getId())->onlyServiceId($serviceID);
             $serviceInvoiceItems = $invoiceItemsRepo->get();
             foreach ($serviceInvoiceItems as $item) {
-                $newDescription = '';
                 $domainInfo = $whmcsProduct->getName() . ' - ' . $domain;
                 if ($checkIfAlreadyIncluded && $domainIncluded = self::checkIfAddedDomainInfoInInvoiceItemDescription(
                         $item->getDescription(),
@@ -457,15 +457,15 @@ class Invoice
                 } else {
                     $newDescription = str_replace($whmcsProduct->getName(), $domainInfo, $item->getDescription());
                 }
-                if ($newDescription) {
-                    $oldDescription = $item->getDescription();
-                    $item->setDescription($newDescription);
-                    $item->save();
 
-                    Whmcs::savelogActivityRealtimeRegisterSsl(
-                        "Realtime Register SSL WHMCS: Description of the invoice item for Invoice ID: " . $invoice->getId() . ' has been changed from "' . $oldDescription . '" to "' . $newDescription . '"'
-                    );
-                }
+                $oldDescription = $item->getDescription();
+                $item->setDescription($newDescription);
+                $item->save();
+
+                Whmcs::savelogActivityRealtimeRegisterSsl(
+                    "Realtime Register SSL WHMCS: Description of the invoice item for Invoice ID: "
+                    . $invoice->getId() . ' has been changed from "' . $oldDescription . '" to "' . $newDescription . '"'
+                );
             }
         } catch (\Exception $e) {
             return;
