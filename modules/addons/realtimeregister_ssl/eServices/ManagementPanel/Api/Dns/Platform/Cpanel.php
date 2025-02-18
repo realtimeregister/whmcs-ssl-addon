@@ -2,8 +2,8 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Platform;
 
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Client;
 use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Client;
 
 class Cpanel extends Client implements PlatformInterface
 {
@@ -44,7 +44,7 @@ class Cpanel extends Client implements PlatformInterface
         if($type == "A" || $type == "AAAA") {
             $args['address'] = $value;
         } elseif($type == "CNAME") {
-            $argc['name'] = substr($name,  0,-(strlen($domain)+1));
+            $args['name'] = substr($name,  0,-(strlen($domain)+1));
             $args['cname'] = $value;
         } elseif ($type == "TXT") {
             $args['txtdata'] = $value;
