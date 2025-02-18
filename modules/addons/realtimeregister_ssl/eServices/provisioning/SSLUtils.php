@@ -123,7 +123,7 @@ trait SSLUtils
                         $this->p['userid'],
                         $this->p['serviceid'],
                         'success',
-                        'FileControl at . '.  $panel['platform']. ' for ' . $dcvEntry['commonName'] .': ' . $result['message']
+                        'FileControl at '.  $panel['platform']. ' for ' . $dcvEntry['commonName'] .': ' . $result['message']
                     );
                 } elseif ($dcvEntry['type'] == 'DNS') {
                     $result = DnsControl::generateRecord($dcvEntry, $panel);
@@ -131,7 +131,7 @@ trait SSLUtils
                         $this->p['userid'],
                         $this->p['serviceid'],
                         'success',
-                        'DnsControl at . '.  $panel['platform']. ' for ' . $dcvEntry['commonName'] .': ' . $result['message']
+                        'DnsControl at '.  $panel['platform']. ' for ' . $dcvEntry['commonName'] .': ' . $result['message']
                     );
                 }
             } catch (\Exception $e) {
