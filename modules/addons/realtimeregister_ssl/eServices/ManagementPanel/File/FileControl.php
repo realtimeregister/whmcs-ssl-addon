@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File;
 
+use Exception;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Validation\Manage as ValidationManage;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Manage;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Manage as FileManage;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Validation\Manage as ValidationManage;
-use Exception;
 
 class FileControl
 {
@@ -35,7 +35,7 @@ class FileControl
     }
 
     /**
-     * @param array $panel
+     * @param \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel $panel
      * @return array
      * @throws Exception
      */

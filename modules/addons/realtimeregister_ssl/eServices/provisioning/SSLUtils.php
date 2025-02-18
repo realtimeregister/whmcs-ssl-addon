@@ -3,10 +3,6 @@
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
-use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use RealtimeRegister\Domain\Product;
 
 trait SSLUtils
@@ -101,47 +97,5 @@ trait SSLUtils
         }
 
         return $order;
-    }
-
-    public function processDcvEntries(array $dcvEntries): void {
-        $logs = new LogsRepo();
-        foreach ($dcvEntries as $dcvEntry) {
-            try {
-                $panel = Panel::getPanelData($dcvEntry['commonName']);
-                if (!$panel) {
-                    continue;
-                }
-                if ($dcvEntry['type'] == 'FILE') {
-                    $result = FileControl::create(
-                        [
-                            'fileLocation' => $dcvEntry['fileLocation'], // whole url,
-                            'fileContents' => $dcvEntry['fileContents']
-                        ],
-                        $panel
-                    );
-                    $logs->addLog(
-                        $this->p['userid'],
-                        $this->p['serviceid'],
-                        'success',
-                        'FileControl at . '.  $panel['platform']. ' for ' . $dcvEntry['commonName'] .': ' . $result['message']
-                    );
-                } elseif ($dcvEntry['type'] == 'DNS') {
-                    $result = DnsControl::generateRecord($dcvEntry, $panel);
-                    $logs->addLog(
-                        $this->p['userid'],
-                        $this->p['serviceid'],
-                        'success',
-                        'DnsControl at . '.  $panel['platform']. ' for ' . $dcvEntry['commonName'] .': ' . $result['message']
-                    );
-                }
-            } catch (\Exception $e) {
-                $logs->addLog(
-                    $this->p['userid'],
-                    $this->p['serviceid'],
-                    'error',
-                    '[' . $dcvEntry['commonName']. '] Error:' . $e->getMessage()
-                );
-            }
-        }
     }
 }

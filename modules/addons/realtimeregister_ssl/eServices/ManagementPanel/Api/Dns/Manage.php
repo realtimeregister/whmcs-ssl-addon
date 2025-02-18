@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns;
 
-use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
 use Exception;
+use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DNSException;
 
 class Manage
 {
@@ -33,11 +33,11 @@ class Manage
      * @param array $records Records [$type => ['name' => $name, 'value' => $value]]
      * @throws Exception
      */
-    public static function addRecord(array $panel, string $domain, array $dcvRecord)
+    public static function addRecord(array $panel, string $domain, array $dcvRecords)
     {
         self::loadPanel($panel);
 
-        self::createRecord($dcvRecord, $domain);
+        self::createRecords($dcvRecords, $domain);
 
         return 'Record(s) has been successfully added.';
     }
@@ -45,12 +45,14 @@ class Manage
     /**
      * @throws Exception
      */
-    private static function createRecord(array $record, string $domain)
+    private static function createRecords(array $records, string $domain)
     {
-        try {
-            self::$instance->createDNSRecord($domain, $record['dnsRecord'], $record['dnsContents'], $record['dnsType']);
-        } catch (Exception $ex) {
-            throw new DNSException($ex->getMessage());
+        foreach ($records as $record) {
+            try {
+                self::$instance->createDNSRecord($domain, $record['dnsRecord'], $record['dnsContents'], $record['dnsType']);
+            } catch (Exception $ex) {
+                throw new DNSException($ex->getMessage());
+            }
         }
     }
 

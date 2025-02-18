@@ -7,9 +7,13 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Domain\DomainControlValidation;
 use WHMCS\Database\Capsule;
 
 class Renew
@@ -179,7 +183,56 @@ class Renew
         $this->sslService->setSSLStatus("SUSPENDED");
         $this->sslService->save();
 
-        $this->processDcvEntries($addSSLRenewOrder->validations?->dcv?->toArray() ?? []);
+        $logs = new LogsRepo();
+        /** @var DomainControlValidation $data */
+        foreach ($addSSLRenewOrder->validations->dcv as $data) {
+            try {
+                $panel = Panel::getPanelData($data->commonName);
+                if (!$panel) {
+                    continue;
+                }
+
+                if ($data->type == 'FILE') {
+                    $result = FileControl::create(
+                        [
+                            'fileLocation' => $data->fileLocation, // whole url,
+                            'fileContents' => $data->fileContents
+                        ],
+                        $panel
+                    );
+
+                    if ($result['status'] === 'success') {
+                        $logs->addLog(
+                            $this->p['userid'],
+                            $this->p['serviceid'],
+                            'success',
+                            'The ' . $service->domain . ' domain has been verified using the file method.'
+                        );
+                    }
+                } elseif ($data->type == 'DNS') {
+                    if ($data->dnsType == 'CNAME') {
+
+                        $result = DnsControl::generateRecord($data->toArray(), $panel);
+                        if ($result) {
+                            $logs->addLog(
+                                $this->p['userid'],
+                                $this->p['serviceid'],
+                                'success',
+                                'The ' . $service->domain . ' domain has been verified using the dns method.'
+                            );
+                        }
+                    }
+                }
+            } catch (Exception $e) {
+                $logs->addLog(
+                    $this->p['userid'],
+                    $this->p['serviceid'],
+                    'error',
+                    '[' . $service->domain . '] Error:' . $e->getMessage()
+                );
+                continue;
+            }
+        }
 
         Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])
             ->update(['remoteid' => $addSSLRenewOrder->processId]);
