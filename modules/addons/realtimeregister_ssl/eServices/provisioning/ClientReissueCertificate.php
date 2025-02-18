@@ -12,9 +12,6 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMappi
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
 use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
@@ -24,7 +21,6 @@ use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
-use RealtimeRegister\Api\ProcessesApi;
 
 class ClientReissueCertificate
 {
@@ -274,7 +270,7 @@ class ClientReissueCertificate
                 foreach ($_POST['approveremails'] as $domain => $approveremail) {
                     $dcv[] = [
                         "commonName" => $domain,
-                        "type" => self::getDcvMethod(strtolower($sanDcvMethods[$i])),
+                        "type" => self::getDcvMethod($sanDcvMethods[$i]),
                         "email" => $approveremail
                     ];
                     $i++;
@@ -321,9 +317,7 @@ class ClientReissueCertificate
                     '+' . $this->post['country-calling-code-phonenumber'] . '.' . $this->post['phonenumber'])
             ];
         }
-
-
-
+        
         $reissueData = ApiProvider::getInstance()
             ->getApi(CertificatesApi::class)
             ->reissueCertificate(
@@ -343,61 +337,11 @@ class ClientReissueCertificate
                 $commonName,
             null,
                 $state);
-        /** @var ProcessesApi $processesApi */
+
         $this->sslService->setRemoteId($reissueData->processId);
-        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-        $orderDetails = $processesApi->info($this->sslService->getRemoteId())->toArray();
 
         $logs = new LogsRepo();
-
-        foreach ($orderDetails['validations']['dcv'] as $data) {
-            try {
-                $panel = Panel::getPanelData($data['commonName']);
-                if (!$panel) {
-                    continue;
-                }
-
-                if ($data['type'] == 'FILE') {
-                    $result = FileControl::create(
-                        [
-                            'fileLocation' => $data['fileLocation'], // whole url,
-                            'fileContents' => $data['fileContents']
-                        ],
-                        $panel
-                    );
-
-                    if ($result['status'] === 'success') {
-                        $logs->addLog(
-                            $this->p['userid'],
-                            $this->p['serviceid'],
-                            'success',
-                            'The ' . $service->domain . ' domain has been verified using the file method.'
-                        );
-                    }
-                } elseif ($data['type'] == 'DNS') {
-                    if ($data['dnsType'] == 'CNAME') {
-
-                        $result = DnsControl::generateRecord($data, $panel);
-                        if ($result) {
-                            $logs->addLog(
-                                $this->p['userid'],
-                                $this->p['serviceid'],
-                                'success',
-                                'The ' . $service->domain . ' domain has been verified using the dns method.'
-                            );
-                        }
-                    }
-                }
-            } catch (Exception $e) {
-                $logs->addLog(
-                    $this->p['userid'],
-                    $this->p['serviceid'],
-                    'error',
-                    '[' . $service->domain . '] Error:' . $e->getMessage()
-                );
-                continue;
-            }
-        }
+        $this->processDcvEntries($reissueData->validations?->dcv?->toArray() ?? []);
 
         //save private key
         if (isset($_POST['privateKey']) && $_POST['privateKey'] != null) {
@@ -435,7 +379,7 @@ class ClientReissueCertificate
     }
 
     private static function getDcvMethod(string $dcvMethod) : string {
-        return $dcvMethod == 'http' ? 'FILE' : strtoupper($dcvMethod);
+        return strtolower($dcvMethod) == 'http' ? 'FILE' : strtoupper($dcvMethod);
     }
 
     private function getSansDomainsValidationMethods()

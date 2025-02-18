@@ -9,9 +9,6 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMappi
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service as Service;
@@ -194,27 +191,29 @@ class SSLStepThree
         $logs = new LogsRepo();
 
         try {
-            $addedSSLOrder = ApiProvider::getInstance()->getApi(CertificatesApi::class)->requestCertificate(
-                ApiProvider::getCustomer(),
-                $order['product'],
-                $order['period'],
-                $order['csr'],
-                $order['san'],
-                $order['organization'],
-                $order['department'],
-                $order['address'],
-                $order['postalCode'],
-                $order['city'],
-                $order['coc'],
-                $order['approver']['email'],
-                $order['approver'],
-                $order['country'],
-                null,
-                $order['dcv'],
-                $order['domain'],
-                null,
-                $order['state'],
-            );
+            $addedSSLOrder = ApiProvider::getInstance()
+                ->getApi(CertificatesApi::class)
+                ->requestCertificate(
+                    ApiProvider::getCustomer(),
+                    $order['product'],
+                    $order['period'],
+                    $order['csr'],
+                    $order['san'],
+                    $order['organization'],
+                    $order['department'],
+                    $order['address'],
+                    $order['postalCode'],
+                    $order['city'],
+                    $order['coc'],
+                    $order['approver']['email'],
+                    $order['approver'],
+                    $order['country'],
+                    null,
+                    $order['dcv'],
+                    $order['domain'],
+                    null,
+                    $order['state'],
+                );
         } catch (BadRequestException $exception) {
             $logs->addLog(
                 $this->p['userid'], $this->p['serviceid'],
@@ -249,10 +248,6 @@ class SSLStepThree
         /** @var ProcessesApi $processesApi */
         $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
         $orderDetails = $processesApi->get($addedSSLOrder->processId);
-        if ($this->p[ConfigOptions::MONTH_ONE_TIME] && !empty($this->p[ConfigOptions::MONTH_ONE_TIME])) {
-            $service = new Service($this->p['serviceid']);
-            $service->save();
-        }
 
         $approveremails = [];
         foreach ($order['dcv'] as $d) {
@@ -295,58 +290,7 @@ class SSLStepThree
         );
 
         $logs->addLog($this->p['userid'], $this->p['serviceid'], 'success', 'The order has been placed.');
-
-        $order = Capsule::table('REALTIMEREGISTERSSL_orders')->where('service_id', $this->p['serviceid'])->first();
-        $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();
-        $orderDetails = json_decode($order->data, true);
-
-        foreach ($orderDetails['validations']['dcv'] as $data) {
-            try {
-                $panel = Panel::getPanelData($data['commonName']);
-                if (!$panel) {
-                    continue;
-                }
-
-                if ($data['type'] == 'FILE') {
-                    $result = FileControl::create(
-                        [
-                            'fileLocation' => $data['fileLocation'], // whole url,
-                            'fileContents' => $data['fileContents']
-                        ],
-                        $panel
-                    );
-
-                    if ($result['status'] === 'success') {
-                        $logs->addLog(
-                            $this->p['userid'],
-                            $this->p['serviceid'],
-                            'success',
-                            'The ' . $service->domain . ' domain has been verified using the file method.'
-                        );
-                    }
-                } elseif ($data['type'] == 'DNS') {
-                    if ($data['dnsType'] == 'CNAME') {
-                        $result = DnsControl::generateRecord($data, $panel);
-                        if ($result) {
-                            $logs->addLog(
-                                $this->p['userid'],
-                                $this->p['serviceid'],
-                                'success',
-                                'The ' . $service->domain . ' domain has been verified using the dns method.'
-                            );
-                        }
-                    }
-                }
-            } catch (Exception $e) {
-                $logs->addLog(
-                    $this->p['userid'],
-                    $this->p['serviceid'],
-                    'error',
-                    '[' . $service->domain . '] Error:' . $e->getMessage()
-                );
-                continue;
-            }
-        }
+        $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? []);
     }
 
     private function getSansDomainsValidationMethods()

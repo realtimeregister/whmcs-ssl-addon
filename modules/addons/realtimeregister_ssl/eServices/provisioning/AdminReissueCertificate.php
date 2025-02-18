@@ -10,9 +10,6 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
@@ -70,11 +67,6 @@ class AdminReissueCertificate extends Ajax
             throw new Exception('An error occurred.');
         }
 
-        $data = [
-            'csr' => $this->p['csr'],
-            'approver_email' => $this->p['approveremail'],
-        ];
-
         $sanDomains =  SansDomains::parseDomains($this->p['sanDomains']);
         $wildcardDomains =  SansDomains::parseDomains($this->p['sanDomainsWildcard']);
         $allSans = array_merge($sanDomains, $wildcardDomains);
@@ -115,50 +107,7 @@ class AdminReissueCertificate extends Ajax
 
         $logs = new LogsRepo();
 
-        foreach ($responseData->validations?->dcv->toArray() ?? [] as $dcvEntry) {
-            try {
-                $panel = Panel::getPanelData($dcvEntry['commonName']);
-                if (!$panel) {
-                    continue;
-                }
-                if ($dcvEntry['type'] == 'FILE') {
-                    $result = FileControl::create(
-                        [
-                            'fileLocation' => $data['fileLocation'], // whole url,
-                            'fileContents' => $data['fileContents']
-                        ],
-                        $panel
-                    );
-
-                    if ($result['status'] === 'success') {
-                        $logs->addLog(
-                            $this->p['userid'],
-                            $this->p['serviceid'],
-                            'success',
-                            'The ' . $dcvEntry['commonName'] . ' domain has been verified using the file method.'
-                        );
-                    }
-                } elseif ($data['type'] == 'DNS') {
-                    $result = DnsControl::generateRecord($data, $panel);
-                    if ($result) {
-                        $logs->addLog(
-                            $this->p['userid'],
-                            $this->p['serviceid'],
-                            'success',
-                            'The ' . $dcvEntry['commonName'] . ' domain has been verified using the dns method.'
-                        );
-                    }
-                }
-            } catch (Exception $e) {
-                $logs->addLog(
-                    $this->p['userid'],
-                    $this->p['serviceid'],
-                    'error',
-                    '[' . $dcvEntry['commonName']. '] Error:' . $e->getMessage()
-                );
-                continue;
-            }
-        }
+        $this->processDcvEntries($responseData->validations?->dcv->toArray() ?? []);
 
         $sslService->setRemoteId($responseData->processId);
         $sslService->setConfigdataKey('private_key', null);

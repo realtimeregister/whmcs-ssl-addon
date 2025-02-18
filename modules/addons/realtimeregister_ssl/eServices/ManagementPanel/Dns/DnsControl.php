@@ -2,10 +2,10 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns;
 
-use Exception;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Manage;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Dns\Manage as DNSManage;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Validation\Manage as ValidationManage;
+use Exception;
 
 class DnsControl
 {
@@ -75,23 +75,19 @@ class DnsControl
 
 
     /**
-     * @param Manage $panel
+     * @param array $panel
      * @return array
      * @throws Exception
      */
-    public static function generateRecord(array $certificate, $panel)
+    public static function generateRecord(array $dcvRecord, $panel)
     {
-        try {
-            $result = DNSManage::addRecord($panel, $certificate['commonName'], $certificate['validations']['dcv']);
+        $result = DNSManage::addRecord($panel, $dcvRecord['commonName'], $dcvRecord);
 
-            return [
-                'result' => $result,
-                'status' => 'success',
-                'message' => $result,
-            ];
-        } catch (Exception $e) {
-            return ['status' => 'error', 'message' => $e->getMessage()];
-        }
+        return [
+            'result' => $result,
+            'status' => 'success',
+            'message' => $result,
+        ];
     }
 
     /**
