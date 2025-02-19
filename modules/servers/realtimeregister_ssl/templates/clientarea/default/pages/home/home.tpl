@@ -1157,12 +1157,11 @@
 
                 $('.copy-to-clipboard').on('click', () => {
                     const key = $('#privateKey').text();
-                    navigator.clipboard.writeText(key)
+                    navigator.clipboard.writeText(key);
                 })
 
-                {literal}
-                var serviceid = {/literal}'{$serviceid}'{literal};
-                var domain =   {/literal}'{$domain}'{literal};
+                var serviceid = '{$serviceid}';
+                var domain =   '{$domain}';
                 jQuery('#btnChange_Approver_Email').on("click", function(){
                     getDomainEmails(serviceid, domain, 0);
                 });
@@ -1170,9 +1169,12 @@
                 if(additionalActions.length == 0) {
                     $('#additionalActionsTr').remove();
                 }
+                {literal}
                 jQuery('#resend-validation-email').on("click",function(){
                     $('#resend-validation-email').append(' <i id="resendSpinner" class="fa fa-spinner fa-spin"></i>');
+
                     JSONParser.request('resendValidationEmail',{json: 1, id: serviceid}, function (data) {
+
                         if (data.success == true) {
                             $('#AddonAlerts>div[data-prototype="success"]').show();
                             $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
@@ -1183,6 +1185,7 @@
                         $('#resend-validation-email').find('.fa-spinner').remove();
                     }, false);
                 });
+
                 jQuery('#send-certificate-email').on("click",function(){
                     $('#send-certificate-email').find('.fa-spinner').remove();
                     $('#send-certificate-email').append(' <i id="resendSpinner" class="fa fa-spinner fa-spin"></i>');
@@ -1197,6 +1200,7 @@
                         $('#send-certificate-email').find('.fa-spinner').remove();
                     }, false);
                 });
+
                 jQuery('#getPrivateKey').on("click",function(){
 
                     $('#getPrivateKey').append(' <i class="fa fa-spinner fa-spin"></i>');
