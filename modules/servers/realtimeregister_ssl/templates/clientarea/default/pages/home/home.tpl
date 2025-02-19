@@ -1087,6 +1087,12 @@
                      </div>
                 </div>
                 <div class="modal-footer panel-footer">
+                    <button type="button" class="btn btn-default download-private-key">
+                        {$ADDONLANG->T('downloadToFile')}
+                    </button>
+                    <button type="button" class="btn btn-default copy-to-clipboard">
+                        {$ADDONLANG->T('copyToClipboard')}
+                    </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">
                         {$ADDONLANG->T('Close')}
                     </button>
@@ -1096,13 +1102,14 @@
     </div>
     <script type="text/javascript">
 
-        {literal}
+        // TODO: Refactor this mess
+
 
             function getDomainEmails(serviceid = null, domain, index){
-                var brand = {/literal}'{$brand}'{literal};
+                var brand = '{$brand}'
                 var serviceUrl = 'clientarea.php?action=productdetails&json=1&addon-action=getApprovalEmailsForDomain&brand=' + brand + '&domain=' + domain;
 
-                serviceUrl += '&id=' + {/literal}'{$serviceid}'{literal};
+                serviceUrl += '&id=' + '{$serviceid}'
 
                 $.ajax({
                         type: "POST",
@@ -1116,7 +1123,7 @@
                             data = JSON.parse(ret);
                             if (data.success === 1) {
                                 var  htmlOptions = [];
-                                htmlOptions += '<option>'+{/literal}'{$ADDONLANG->T('pleaseChooseOne')}'{literal}+'</option>';
+                                htmlOptions += '<option>'+'{$ADDONLANG->T('pleaseChooseOne')}'+'</option>';
                                 var domainEmails = data.data.domainEmails;
                                 for (var i = 0; i < domainEmails.length; i++) {
                                      htmlOptions += '<option value="' + domainEmails[i] + '">' + domainEmails[i] + '</option>';
@@ -1128,12 +1135,32 @@
                             }
                         },
                         error: function (jqXHR, errorText, errorThrown) {
-                            nErrorOccurred();
+                            anErrorOccurred();
                         }
                     });
             }
-            $(document).ready(function () {
+            $(function() {
+                $('.download-private-key').on('click', () => {
+                    const key = $('#privateKey').text();
+                    const blob = new Blob([key], { type: "text/plain" });
 
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(blob);
+                    a.download = "private.key";
+
+                    document.body.appendChild(a);
+                    a.click();
+
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(a.href);
+                })
+
+                $('.copy-to-clipboard').on('click', () => {
+                    const key = $('#privateKey').text();
+                    navigator.clipboard.writeText(key)
+                })
+
+                {literal}
                 var serviceid = {/literal}'{$serviceid}'{literal};
                 var domain =   {/literal}'{$domain}'{literal};
                 jQuery('#btnChange_Approver_Email').on("click", function(){
