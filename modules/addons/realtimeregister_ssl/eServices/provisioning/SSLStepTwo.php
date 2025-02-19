@@ -265,7 +265,7 @@ class SSLStepTwo
             'org_city',
             'org_country',
             'org_postalcode',
-            'org_regions'
+            'org_region'
         ];
 
         foreach ($baseFields as $value) {
