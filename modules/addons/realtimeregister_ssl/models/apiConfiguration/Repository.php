@@ -121,7 +121,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->boolean('api_test');
                 $table->boolean('use_admin_contact');
                 $table->boolean('display_csr_generator');
-                $table->boolean('profile_data_csr');
                 $table->boolean('auto_install_panel');
                 $table->boolean('auto_renew_invoice_one_time');
                 $table->boolean('auto_renew_invoice_reccuring');
@@ -145,7 +144,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->string('tech_region');
                 $table->string('renew_invoice_days_reccuring')->nullable();
                 $table->string('renew_invoice_days_one_time')->nullable();
-                $table->string('default_csr_generator_country')->nullable();
                 $table->string('summary_expires_soon_days')->nullable();
                 $table->integer('send_certificate_template')->nullable();
                 $table->boolean('display_ca_summary');
@@ -210,11 +208,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                     $table->string('renew_invoice_days_one_time')->nullable();
                 });
             }
-            if (!Capsule::schema()->hasColumn($this->tableName, 'default_csr_generator_country')) {
-                Capsule::schema()->table($this->tableName, function($table) {
-                    $table->string('default_csr_generator_country')->nullable();
-                });
-            }
             if (!Capsule::schema()->hasColumn($this->tableName, 'summary_expires_soon_days')) {
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->string('summary_expires_soon_days')->nullable();
@@ -248,11 +241,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
             if (!Capsule::schema()->hasColumn($this->tableName, 'disable_email_validation')) {
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->boolean('disable_email_validation');
-                });
-            }
-            if (!Capsule::schema()->hasColumn($this->tableName, 'profile_data_csr')) {
-                Capsule::schema()->table($this->tableName, function($table) {
-                    $table->boolean('profile_data_csr');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'auto_install_panel')) {
