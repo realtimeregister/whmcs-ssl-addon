@@ -65,7 +65,7 @@ class Organization
             'Description'  => '',
             'Required'     => false
         ];
-        $org['org_regions']       = [
+        $org['org_region']       = [
             'FriendlyName' => Lang::getInstance()->T('confOrganizationStateRegion'),
             'Type'         => 'text',
             'Size'         => '30',
