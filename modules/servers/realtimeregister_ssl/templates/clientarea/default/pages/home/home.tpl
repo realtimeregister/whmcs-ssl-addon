@@ -1101,11 +1101,7 @@
         </div>
     </div>
     <script type="text/javascript">
-
-        // TODO: Refactor this mess
-
-
-            function getDomainEmails(serviceid = null, domain, index){
+        function getDomainEmails(serviceid = null, domain, index){
                 var brand = '{$brand}'
                 var serviceUrl = 'clientarea.php?action=productdetails&json=1&addon-action=getApprovalEmailsForDomain&brand=' + brand + '&domain=' + domain;
 
