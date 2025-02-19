@@ -273,11 +273,7 @@ class SSLStepTwo
         }
 
         foreach ($additional as $value) {
-            if ($value == 'fields[order_type]') {
-                $fields[$value] = $this->p['fields']['order_type'];
-            } else {
-                $fields[sprintf('fields[%s]', $value)] = $this->p[$value];
-            }
+            $fields[sprintf('fields[%s]', $value)] = $this->p[$value];
         }
 
         FlashService::setFieldsMemory($_GET['cert'], $fields);

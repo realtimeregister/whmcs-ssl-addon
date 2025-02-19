@@ -72,7 +72,7 @@ class Countries
         throw new Exception('Can not match country code to country name');
     }
     
-    public function getCountriesForWhmcsDropdownOptions(string $default = '')
+    public function getCountriesForWhmcsDropdownOptions()
     {
         return implode(',', $this->countries);
     }

@@ -81,24 +81,6 @@ class SSLStepOne
             );
         }
         $countriesForGenerateCsrForm = Countries::getInstance()->getCountriesForAddonDropdown();
-
-        //get selected default country for CSR Generator
-        $defaultCsrGeneratorCountry = ($displayCsrGenerator) ? $apiConf->default_csr_generator_country : '';
-        if (
-            key_exists($defaultCsrGeneratorCountry, $countriesForGenerateCsrForm)
-            && $defaultCsrGeneratorCountry != null
-        ) {
-            //get country name
-            $elementValue = $countriesForGenerateCsrForm[$defaultCsrGeneratorCountry]/* . ' (default)'*/
-            ;
-            //remove country from list
-            unset($countriesForGenerateCsrForm[$defaultCsrGeneratorCountry]);
-            //insert default country on the begin of countries list
-            $countriesForGenerateCsrForm = array_merge(
-                [$defaultCsrGeneratorCountry => $elementValue], $countriesForGenerateCsrForm
-            );
-        }
-
         $wildCard = false;
         $apiProducts = Products::getInstance()->getAllProducts();
         if (
