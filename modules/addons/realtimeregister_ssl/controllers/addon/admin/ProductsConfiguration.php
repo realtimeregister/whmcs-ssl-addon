@@ -63,14 +63,13 @@ class ProductsConfiguration extends AbstractController
 
                 $apiConfig = (object)null;
                 $apiConfig->name = $apiProduct->product;
-                $apiConfig->peroids = $apiProduct->max_period;
+                $apiConfig->periods = $apiProduct->max_period;
                 $apiConfig->availablePeriods = $apiProduct->getPeriods();
                 $apiConfig->isSanEnabled = $apiProduct->isSanEnabled();
                 $apiConfig->isWildcardSanEnabled = $apiProduct->isSanWildcardEnabled();
                 $products[$key]->apiConfig = $apiConfig;
                 $products[$key]->confOption = ConfigurableOptionService::getForProduct($product->id)->toArray();
                 $products[$key]->confOptionWildcard = ConfigurableOptionService::getForProductWildcard($product->id)->toArray();
-                $products[$key]->confOptionPeriod = ConfigurableOptionService::getForProductPeriod($product->id);
             }
 
             $vars['products'] = $products;
@@ -159,12 +158,7 @@ class ProductsConfiguration extends AbstractController
         }
 
         foreach ($input['currency'] as $key => $value) {
-            $pricing = ['monthly' => $value['monthly'] == 'on' ? 0 : -1,
-                'annually' => $value['annually'] == 'on' ? 0 : -1,
-                'biennially' => $value['biennially'] == 'on' ? 0 : -1,
-                'triennially' => $value['triennially'] == 'on' ? 0 : -1,
-            ];
-            $productModel->updateProductPricing($key, $pricing);
+            $productModel->updateProductPricing($key, $value);
         }
 
         return true;

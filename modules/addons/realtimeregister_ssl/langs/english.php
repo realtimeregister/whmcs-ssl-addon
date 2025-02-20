@@ -211,6 +211,7 @@ $_LANG['addonAA']['productsCreator']['includedSans'] = 'Included SANs:';
 
 $_LANG['addonAA']['productsCreator']['pricing']             = 'Pricing:';
 $_LANG['addonAA']['productsCreator']['pricingMonthly']      = 'One Time / Monthly';
+$_LANG['addonAA']['productsCreator']['pricingOnetime']      = 'One Time';
 $_LANG['addonAA']['productsCreator']['pricingQuarterly']    = 'Quarterly';
 $_LANG['addonAA']['productsCreator']['pricingSemiAnnually'] = 'Semi-Annually';
 $_LANG['addonAA']['productsCreator']['pricingAnnually']     = 'Annually';

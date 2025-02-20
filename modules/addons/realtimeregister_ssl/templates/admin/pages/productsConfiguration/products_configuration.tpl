@@ -167,8 +167,8 @@
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{$ADDONLANG->T('months')}</label>
                                 <div class="col-sm-10">
-                                    <div  class="maxMonths {if $product->paytype == 'onetime'}hidden{/if}">{$product->apiConfig->peroids}</div>
-                                    <input {if $product->paytype == 'onetime'}class="hidden" disabled=""{/if} type="hidden" name="product[{$product->id}][configoption2]" value="{$product->apiConfig->peroids}"></input>
+                                    <div  class="maxMonths {if $product->paytype == 'onetime'}hidden{/if}">{$product->apiConfig->periods}</div>
+                                    <input {if $product->paytype == 'onetime'}class="hidden" disabled=""{/if} type="hidden" name="product[{$product->id}][configoption2]" value="{$product->apiConfig->periods}"></input>
                                     <select name="product[{$product->id}][configoption2]" class="form-control {if $product->paytype != 'onetime'}hidden{/if}" {if $product->paytype != 'onetime'}disabled=""{/if}>
                                         {foreach from=$product->apiConfig->availablePeriods item=period}
                                             <option {if $product->configoption2 == $period}selected{/if} value="{$period}">{$period}</option>
@@ -219,7 +219,6 @@
                                 <label class="control-label col-sm-2">{$ADDONLANG->T('paymentType')}</label>
                                 <div class="col-sm-10">
                                     <select name="product[{$product->id}][paytype]" class="form-control addon-js-pricing-select" data-id="{$product->id}">
-                                        <option {if $product->paytype == 'free'}selected{/if} value="free">{$ADDONLANG->T('paymentTypeFree')}</option>
                                         <option {if $product->paytype == 'recurring'}selected{/if} value="recurring">{$ADDONLANG->T('paymentTypeRecurring')}</option>
                                         <option {if $product->paytype == 'onetime'}selected{/if} value="onetime">{$ADDONLANG->T('paymentTypeOneTime')}</option>
                                     </select>
@@ -284,34 +283,54 @@
                                         <table class="table">
                                             <tbody>
                                                 <tr style="text-align:center;font-weight:bold">
-                                                    <td></td>
-                                                    <td class="prod-pricing-monthly-onetime">{$ADDONLANG->T('pricingMonthly')}</td>
+                                                    <td><small>{$ADDONLANG->T('pricingInclude')}</small></td>
+                                                    {if $product->paytype == 'onetime'}<td class="prod-pricing-monthly-onetime">{$ADDONLANG->T('pricingOnetime')}</td>{else}
                                                     {if in_array('12',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$ADDONLANG->T('pricingAnnually')}</td>{/if}
                                                     {if in_array('24',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$ADDONLANG->T('pricingBiennially')}</td>{/if}
                                                     {if in_array('36',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$ADDONLANG->T('pricingTriennially')}</td>{/if}
+                                                    {/if}
                                                 </tr>
                                                 {foreach from=$product->pricing item=pricing}
-                                                    <tr style="text-align:center" bgcolor="#ffffff" currency="{$pricing->code}">
-                                                        <td rowspan="2" bgcolor="#efefef"><b>{$pricing->code}</b></td>
+                                                    <tr style="text-align:center">
+                                                        <td rowspan="2"><b>{$pricing->code}</b></td>
                                                     </tr>
                                                     <tr style="text-align:center" bgcolor="#ffffff">
-                                                        <td class="prod-pricing-monthly-onetime">
-                                                            <input name="currency[{$pricing->pricing_id}][monthly]" class="pricingtgl" currency="{$pricing->code}" data-pricing-id="{$pricing->pricing_id}" cycle="monthly" type="checkbox" {if $pricing->monthly gte 0} checked="checked" {/if}>
-                                                        </td>
+                                                        {if $product->paytype == 'onetime'}
+                                                            <td class="prod-pricing-monthly-onetime">
+                                                                <input name="currency[{$pricing->pricing_id}][onetime]"
+                                                                       id="pricing_{$pricing->code}_onetime"
+                                                                       size="10" value="{$pricing->monthly}" style=""
+                                                                       class="form-control input-inline input-100 text-center"
+                                                                       type="text">
+                                                            </td>
+                                                            {else}
                                                         {if in_array('12',$product->apiConfig->availablePeriods)}
                                                             <td style="display: table-cell;" class="prod-pricing-recurring">
-                                                                <input name="currency[{$pricing->pricing_id}][annually]" class="pricingtgl" currency="{$pricing->code}" data-pricing-id="{$pricing->pricing_id}" cycle="annually" {if $pricing->annually gte 0} checked="checked" {/if} type="checkbox">
+                                                                <input name="currency[{$pricing->pricing_id}][annually]"
+                                                                       id="pricing_{$pricing->code}_annually"
+                                                                       size="10" value="{$pricing->annually}" style=""
+                                                                       class="form-control input-inline input-100 text-center"
+                                                                       type="text">
                                                             </td>
                                                         {/if}
                                                         {if in_array('24',$product->apiConfig->availablePeriods)}
                                                             <td style="display: table-cell;" class="prod-pricing-recurring">
-                                                                <input name="currency[{$pricing->pricing_id}][biennially]" class="pricingtgl" data-pricing-id="{$pricing->pricing_id}" currency="{$pricing->code}" {if $pricing->biennially gte 0} checked="checked" {/if} cycle="biennially" type="checkbox">
+                                                                <input name="currency[{$pricing->pricing_id}][biennially]"
+                                                                       id="pricing_{$pricing->code}_biennially"
+                                                                       size="10" value="{$pricing->biennially}" style=""
+                                                                       class="form-control input-inline input-100 text-center"
+                                                                       type="text">
                                                             </td>
                                                         {/if}
                                                         {if in_array('36',$product->apiConfig->availablePeriods)}
                                                             <td style="display: table-cell;" class="prod-pricing-recurring">
-                                                                <input name="currency[{$pricing->pricing_id}][triennially]" class="pricingtgl" data-pricing-id="{$pricing->pricing_id}" currency="{$pricing->code}" cycle="triennially" {if $pricing->triennially gte 0} checked="checked" {/if} type="checkbox">
+                                                                <input name="currency[{$pricing->pricing_id}][triennially]"
+                                                                       id="pricing_{$pricing->code}_triennially"
+                                                                       size="10" value="{$pricing->triennially}" style=""
+                                                                       class="form-control input-inline input-100 text-center"
+                                                                       type="text">
                                                             </td>
+                                                        {/if}
                                                         {/if}
                                                     </tr>
                                                 {/foreach}
@@ -463,6 +482,7 @@
                 }
 
                 function enablePrices(element) {
+
                     element.removeAttr('disabled')
                     element.removeClass('disabled');
                 }
@@ -472,9 +492,7 @@
                     element.find("input[cycle='monthly']").removeAttr('disabled');
 
                     if (element.find("input[cycle='monthly']").hasClass('monthly')) {
-                        if (type !== 'free') {
-                            $(element).find("input[cycle='monthly']").prop('checked', false);
-                        }
+                        $(element).find("input[cycle='monthly']").prop('checked', false);
                         element.find("input[cycle='monthly']").removeClass('monthly');
                     }
                     element.find("input[cycle='monthly']").addClass('onetime');

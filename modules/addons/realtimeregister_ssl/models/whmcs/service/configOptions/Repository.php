@@ -38,24 +38,24 @@ class Repository
         }
     }
 
-    public function getID(string $name, int $period)
+    public function getID(string $name)
     {
-        return $this->getConfigOption($name, $period)?->id;
+        return $this->getConfigOption($name)?->id;
     }
 
-    public function getConfigID(string $name, int $period)
+    public function getConfigID(string $name)
     {
-        return $this->getConfigOption($name, $period)?->configid;
+        return $this->getConfigOption($name)?->configid;
     }
 
-    public function getOptionID(string $name, int $period): ?int
+    public function getOptionID(string $name): ?int
     {
-        return $this->getConfigOption($name, $period)?->optionid;
+        return $this->getConfigOption($name)?->optionid;
     }
 
-    public function getFriendlyName(string $name, int $period): ?string
+    public function getFriendlyName(string $name): ?string
     {
-        return $this->getConfigOption($name, $period)?->friendlyName;
+        return $this->getConfigOption($name)?->friendlyName;
     }
 
     public function load() : void
@@ -91,7 +91,7 @@ class Repository
         }
     }
 
-    private function getConfigOption(string $name, int $period) {
-        return $this->_configOptions[$name] ?? $this->_configOptions[$name . $period] ?? null;
+    private function getConfigOption(string $name) {
+        return $this->_configOptions[$name] ?? null;
     }
 }

@@ -351,23 +351,12 @@ class Invoice
         $serviceParams = $server->buildParams();
         $period = intval($serviceParams['configoptions']['years']);
 
-
-        $configoptionsResults['years'] = [
-            'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_PERIOD, $period),
-            'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_PERIOD, $period),
-            'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_PERIOD],
-            'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_PERIOD, $period),
-            'billingCycle' => $service->billingcycle === 'One Time'
-                ? 'monthly'
-                : $service->billingcycle
-        ];
-
         if ($isSanEnabled) {
             $configoptionsResults['single'] = [
-                'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_SANS_COUNT, $period),
-                'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_SANS_COUNT, $period),
-                'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period],
-                'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_SANS_COUNT, $period),
+                'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_SANS_COUNT),
+                'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_SANS_COUNT),
+                'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_COUNT],
+                'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_SANS_COUNT),
                 'billingCycle' => $service->billingcycle === 'One Time'
                     ? 'monthly'
                     : $service->billingcycle
@@ -377,10 +366,10 @@ class Invoice
 
         if ($isSanEnabledWildcard) {
             $configoptionsResults['wildcard'] = [
-                'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT, $period),
-                'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT, $period),
-                'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period],
-                'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_SANS_WILDCARD_COUNT, $period),
+                'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT),
+                'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT),
+                'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT],
+                'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_SANS_WILDCARD_COUNT),
                 'billingCycle' => $service->billingcycle === 'One Time'
                     ? 'monthly'
                     : $service->billingcycle
