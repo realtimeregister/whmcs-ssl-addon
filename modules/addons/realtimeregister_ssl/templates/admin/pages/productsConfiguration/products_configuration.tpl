@@ -297,8 +297,8 @@
                                                     <tr style="text-align:center" bgcolor="#ffffff">
                                                         {if $product->paytype == 'onetime'}
                                                             <td class="prod-pricing-monthly-onetime">
-                                                                <input name="currency[{$pricing->pricing_id}][onetime]"
-                                                                       id="pricing_{$pricing->code}_onetime"
+                                                                <input name="currency[{$pricing->pricing_id}][monthly]"
+                                                                       id="pricing_{$pricing->code}_monthly"
                                                                        size="10" value="{$pricing->monthly}" style=""
                                                                        class="form-control input-inline input-100 text-center"
                                                                        type="text">
