@@ -114,7 +114,7 @@ class SSLStepThree
         $order = [];
 
         $order['product'] = $apiProduct->product;
-        $order['period'] = intval($this->p['configoptions']['years'][0]) * 12;
+        $order['period'] = $this->parsePeriod($this->p['model']->billingcycle);
 
         $order['csr'] = str_replace('\n', "\n", $this->p['csr']); // Fix for RT-14675
         /** @var Product $productDetails */

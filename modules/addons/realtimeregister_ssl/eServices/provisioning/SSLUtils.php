@@ -17,10 +17,20 @@ trait SSLUtils
         if (!$sanEnabledForWHMCSProduct) {
             return 0;
         }
-        $period = intval($params['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
         $includedSans = (int)$params[ConfigOptions::PRODUCT_INCLUDED_SANS];
-        $boughtSans = (int)$params['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period];
+        $boughtSans = (int)$params['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
         return $includedSans + $boughtSans;
+    }
+
+    function parsePeriod($billingCycle) {
+        switch ($billingCycle) {
+            case 'Biennially':
+                return 24;
+            case 'Triennially':
+                return 36;
+            default:
+                return 12;
+        }
     }
 
     public function getSansLimitWildcard(array $params)
@@ -29,9 +39,8 @@ trait SSLUtils
         if (!$sanEnabledForWHMCSProduct) {
             return 0;
         }
-        $period = intval($params['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
         $includedSans = (int)$params[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
-        $boughtSans = (int)$params['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period];
+        $boughtSans = (int)$params['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT];
         return $includedSans + $boughtSans;
     }
 

@@ -3,7 +3,6 @@
 use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
-use AddonModule\RealtimeRegisterSsl\eHelpers\Discount;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\JsInserter;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
@@ -502,58 +501,6 @@ function realtimeregister_ssl_overideProductPricingBasedOnDiscount($vars)
 
 add_hook('OrderProductPricingOverride', 1, 'realtimeregister_ssl_overideProductPricingBasedOnDiscount');
 
-function realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts($vars)
-{
-    global $smarty;
-    global $smartyvalues;
-
-    require_once __DIR__ . DS . 'Loader.php';
-
-    new Loader();
-    AddonModule\RealtimeRegisterSsl\Addon::I(true);
-    if($vars['filename'] == 'cart' || $vars['filename'] == 'index') {
-        switch ($smarty->tpl_vars['templatefile']->value) {
-            case 'products':
-                $products = $smarty->tpl_vars['products']->value;
-                foreach($products as $key => &$product) {
-                    $productRealtimeRegisterSsl = Capsule::table('tblproducts')
-                            ->where('id', $product['pid'])
-                            ->where('servertype', 'realtimeregister_ssl')
-                            ->first();
-
-                    if (!empty($productRealtimeRegisterSsl->id)) {
-                        $pid = $product['pid'];
-
-                        $discount = Discount::getDiscountValue(['pid' => $pid]);
-                        $products[$key]['pricing'] = Whmcs::getPricingInfo($pid, $discount, true);
-                    }
-                }
-
-                $smartyvalues['products'] = $products;
-                $smarty->assign('products', $products);
-                break;
-            case 'configureproduct':
-                $pid = $smarty->tpl_vars['productinfo']->value['pid'];
-
-                $productRealtimeRegisterSsl = Capsule::table('tblproducts')
-                            ->where('id', $pid)
-                            ->where('servertype', 'realtimeregister_ssl')
-                            ->first();
-
-                if (isset($productRealtimeRegisterSsl->id) && !empty($productRealtimeRegisterSsl->id)) {
-                    $commission = AddonModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue(['pid' => $pid]);
-                    $pricing = AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs::getPricingInfo($pid, $commission);
-
-                    $smartyvalues['pricing'] = $pricing;
-                    $smarty->assign('pricing', $pricing);
-                }
-                break;
-            default:
-                break;
-        }
-    }
-}
-add_hook('ClientAreaHeadOutput', 1, 'realtimeregister_ssl_overideDisaplayedProductPricingBasedOnConfigOpts');
 
 add_hook('InvoiceCreation', 1, function($vars) {
     $invoiceid = $vars['invoiceid'];

@@ -96,11 +96,11 @@ class AdminServicesTabFields
         global $CONFIG;
         $period = intval($this->p['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
         $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS];
-        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period];
+        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
         $sansLimit = $boughtSans + $includedSans;
 
         $includedSansWildcard = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
-        $boughtSansWildcard = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period];
+        $boughtSansWildcard = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT];
         $sansLimitWildcard = $boughtSansWildcard + $includedSansWildcard;
 
         require dirname(dirname(dirname(dirname(dirname(__DIR__))))) . DIRECTORY_SEPARATOR . 'configuration.php';
