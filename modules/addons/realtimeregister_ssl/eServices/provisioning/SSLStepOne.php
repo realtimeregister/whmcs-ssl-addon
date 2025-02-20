@@ -39,7 +39,7 @@ class SSLStepOne
         $apiRepo = new Products();
         $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
 
-        $fillVarsJSON = json_encode(FlashService::getFieldsMemory($_GET['cert']));
+        $fillVars = FlashService::getFieldsMemory($_GET['cert']);
         $sanEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN] === 'on';
         $sanWildcardEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN_WILDCARD] === 'on';
 
@@ -66,28 +66,21 @@ class SSLStepOne
                 $this->p
             );
         }
+
         if ($apiProduct->isOrganizationRequired()) {
             $fields['additionalfields'][Organization::getTitle()] = Organization::getFields();
-        }
-        $countriesForGenerateCsrForm = Countries::getInstance()->getCountriesForAddonDropdown();
-
-        //get selected default country for CSR Generator
-        $defaultCsrGeneratorCountry = ($displayCsrGenerator) ? $apiConf->default_csr_generator_country : '';
-        if (
-            key_exists($defaultCsrGeneratorCountry, $countriesForGenerateCsrForm)
-            && $defaultCsrGeneratorCountry != null
-        ) {
-            //get country name
-            $elementValue = $countriesForGenerateCsrForm[$defaultCsrGeneratorCountry]/* . ' (default)'*/
-            ;
-            //remove country from list
-            unset($countriesForGenerateCsrForm[$defaultCsrGeneratorCountry]);
-            //insert default country on the begin of countries list
-            $countriesForGenerateCsrForm = array_merge(
-                [$defaultCsrGeneratorCountry => $elementValue], $countriesForGenerateCsrForm
+            $client = $this->p['clientsdetails'];
+            $fillVars = array_merge(
+                array_filter(['fields[org_name]' => $client['companyname'],
+                    'fields[org_addressline1]' => $client['address1'],
+                    'fields[org_city]' => $client['city'],
+                    'fields[org_country]' => Countries::getInstance()->getCountryNameByCode($client['country']),
+                    'fields[org_postalcode]' => $client['postcode'],
+                    'fields[org_region]' => $client['fullstate']]),
+                array_filter($fillVars)
             );
         }
-
+        $countriesForGenerateCsrForm = Countries::getInstance()->getCountriesForAddonDropdown();
         $wildCard = false;
         $apiProducts = Products::getInstance()->getAllProducts();
         if (
@@ -108,18 +101,18 @@ class SSLStepOne
 
         $stepOneBaseScript = ScriptService::getStepOneBaseScript($apiProduct->brand, $domains);
         $webServerTypeScript = ScriptService::getWebServerTypeScript();
-        $autoFillFieldsScript = ScriptService::getAutoFillFieldsScript($fillVarsJSON);
+        $autoFillFieldsScript = ScriptService::getAutoFillFieldsScript(json_encode($fillVars));
         $autoFillPrivateKeyField = null;
         $autoFillOrderTypeField = null;
 
         $generateCsrModalScript = ($displayCsrGenerator) ? ScriptService::getGenerateCsrModalScript(
             $this->p['serviceid'],
-            $fillVarsJSON,
+            json_encode($fillVars),
             $countriesForGenerateCsrForm,
             ['wildcard' => $wildCard]
         ) : '';
 
-        if (isset($_POST['privateKey']) && $_POST['privateKey'] != null && empty(json_decode($fillVarsJSON))) {
+        if (isset($_POST['privateKey']) && $_POST['privateKey'] != null && empty($fillVars)) {
             $autoFillPrivateKeyField = ScriptService::getAutoFillPrivateKeyField($_POST['privateKey']);
         }
 

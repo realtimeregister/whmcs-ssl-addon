@@ -204,36 +204,13 @@ class ApiConfiguration extends AbstractController
         $field->colWidth = 3;
         $field->continue = true;
 
-        $field = new SelectField();
-        $field->disabled = $input['display_csr_generator'] ? false : true;
-        $field->name = 'default_csr_generator_country';
-        $field->required = true;
-        $field->value = $input['default_csr_generator_country'];
-        $field->translateOptions = false;
-        $field->inline = true;
-        $field->colWidth = 5;
-        $field->continue = false;
-        $field->enableDescription = true;
-        $field->options = Countries::getInstance()->getCountriesForAddonDropdown();
-        $field->error = $this->getFieldError('default_csr_generator_country');
-        $form->addField($field);
-
-        $field = new CheckboxField();
-        $field->name = 'profile_data_csr';
-        $field->options = ['profileDataCsr'];
-        $field->value = $input['profile_data_csr'] ? ['profileDataCsr'] : [''];
-        $form->addField($field);
-        $field->inline = true;
-        $field->colWidth = 3;
-        $field->continue = true;
-
         $field = new CheckboxField();
         $field->name = 'auto_install_panel';
         $field->options = ['autoInstallPanel'];
         $field->value = $input['auto_install_panel'] ? ['autoInstallPanel'] : [''];
         $form->addField($field);
         $field->inline = true;
-        $field->colWidth = 5;
+        $field->colWidth = 3;
         $field->continue = true;
 
         $field = new LegendField();

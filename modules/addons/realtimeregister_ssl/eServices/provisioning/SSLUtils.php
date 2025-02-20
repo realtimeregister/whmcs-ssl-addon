@@ -71,7 +71,7 @@ trait SSLUtils
         $orgMapping = [
             'organization' => 'org_name',
             'country' => 'org_country',
-            'state' => 'org_regions',
+            'state' => 'org_region',
             'address' => 'org_addressline1',
             'postalCode' => 'org_postalcode',
             'city' => 'org_city',

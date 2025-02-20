@@ -265,28 +265,15 @@ class SSLStepTwo
             'org_city',
             'org_country',
             'org_postalcode',
-            'org_regions'
+            'org_region'
         ];
 
         foreach ($baseFields as $value) {
-            $fields[] = [
-                'name' => $value,
-                'value' => $this->p[$value]
-            ];
+            $fields[$value] = $this->p[$value];
         }
 
         foreach ($additional as $value) {
-            if ($value == 'fields[order_type]') {
-                $fields[] = [
-                    'name' => sprintf('%s', $value),
-                    'value' => $this->p['fields']['order_type']
-                ];
-            } else {
-                $fields[] = [
-                    'name' => sprintf('fields[%s]', $value),
-                    'value' => $this->p['fields'][$value]
-                ];
-            }
+            $fields[sprintf('fields[%s]', $value)] = $this->p[$value];
         }
 
         FlashService::setFieldsMemory($_GET['cert'], $fields);

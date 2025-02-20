@@ -2,15 +2,15 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices;
 
+use AddonModule\RealtimeRegisterSsl\Addon;
+use AddonModule\RealtimeRegisterSsl\addonLibs\Smarty;
+
 class TemplateService
 {
     public static function buildTemplate($template, array $vars = [])
     {
-        \AddonModule\RealtimeRegisterSsl\Addon::I(true);
-        $dir = \AddonModule\RealtimeRegisterSsl\Addon::getModuleTemplatesDir();
-        return \AddonModule\RealtimeRegisterSsl\addonLibs\Smarty::I()->view($dir . '/' . $template, $vars);
-        $path = $dir . '/' . $template;
-        $path = str_replace('\\', '/', $path);
-        return \AddonModule\RealtimeRegisterSsl\addonLibs\Smarty::I()->view($path, $vars);
+        Addon::I(true);
+        $dir = Addon::getModuleTemplatesDir();
+        return Smarty::I()->view($dir . '/' . $template, $vars);
     }
 }

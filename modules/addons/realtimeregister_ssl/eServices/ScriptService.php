@@ -46,31 +46,25 @@ class ScriptService
         $countriesForGenerateCsrForm,
         $vars = []
     ) {
-        $apiConf = (new Repository())->get();
-        $profile_data_csr = $apiConf->profile_data_csr;
 
-        $csrWithData = false;
         $csrData = [];
-        if ($profile_data_csr) {
-            $service = new Service($serviceId);
-            $client = new Client($service->clientID);
+        $service = new Service($serviceId);
+        $client = new Client($service->clientID);
 
-            $csrData['country'] = $client->getCountry();
-            $csrData['state'] = $client->getState();
-            $csrData['locality'] = $client->getCity();
-            $csrData['organization'] = $client->companyname ?: $client->getFullName();
-            $csrData['org_unit'] = 'IT';
-            $csrData['common_name'] = $service->domain;
-            $csrData['email'] = $client->email;
+        $csrData['country'] = $client->getCountry();
+        $csrData['state'] = $client->getState();
+        $csrData['locality'] = $client->getCity();
+        $csrData['organization'] = $client->companyname ?: $client->getFullName();
+        $csrData['org_unit'] = '';
+        $csrData['common_name'] = $service->domain;
+        $csrData['email'] = $client->email;
 
-            $csrWithData = true;
-        }
 
         return TemplateService::buildTemplate(self::GENERATE_CSR_MODAL, [
             'fillVars' => addslashes($fillVarsJSON),
             'countries'=> json_encode($countriesForGenerateCsrForm),
             'vars' => $vars,
-            'csrWithData' => $csrWithData,
+            'csrWithData' => true,
             'csrData' => $csrData
         ]);
     }

@@ -56,6 +56,21 @@ class Countries
         }
         throw new Exception('Can not match country name to country code');
     }
+
+    /**
+     *
+     * @throws Exception
+     */
+    public function getCountryNameByCode(string $code): string
+    {
+        $code = strtoupper($code);
+
+        if (isset($this->countries[$code])) {
+            return $this->countries[$code];
+        }
+
+        throw new Exception('Can not match country code to country name');
+    }
     
     public function getCountriesForWhmcsDropdownOptions()
     {

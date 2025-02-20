@@ -70,8 +70,8 @@
             $('label[for="inputAdditionalField"]')[1].remove();
             $('textarea[name="fields[sans_domains]"]')[1].remove();
         }
-        if ($('input[name="fields[org_regions]"]').length > 1) {
-            $('input[name="fields[org_regions]"]')[1].remove();
+        if ($('input[name="fields[org_region]"]').length > 1) {
+            $('input[name="fields[org_region]"]')[1].remove();
         }
 
         $('label[for="inputAdditionalField"]').each(function (index) {
