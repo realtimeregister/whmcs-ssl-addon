@@ -245,10 +245,8 @@
                                 <div class="form-group">
                                     <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptions')}</label>
                                     <div class="col-sm-10">
-                                        {foreach from=$product->confOption key=i item=confOption}
-                                            <a href="#" onclick="manageconfigoptions('{$confOption->id}');return false;"
-                                            class="btn btn-success">{$i + 1} {$ADDONLANG->T('editYears')}</a>
-                                        {/foreach}
+                                        <a href="#" onclick="manageconfigoptions('{$product->confOption->id}');return false;"
+                                            class="btn btn-success">{$ADDONLANG->T('editPrices')}</a>
                                         <small>{$ADDONLANG->T('pricingInclude')}</small>
                                     </div>
                                 </div>
@@ -258,10 +256,8 @@
                                 <div class="form-group">
                                     <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptionsWildcard')}</label>
                                     <div class="col-sm-10">
-                                        {foreach from=$product->confOptionWildcard key=i item=confOption}
-                                            <a href="#" onclick="manageconfigoptions('{$confOption->id}');return false;"
-                                            class="btn btn-success">{$i + 1} {$ADDONLANG->T('editYears')}</a>
-                                        {/foreach}
+                                        <a href="#" onclick="manageconfigoptions('{$product->confOptionWildcard->id}');return false;"
+                                            class="btn btn-success">{$ADDONLANG->T('editPrices')}</a>
                                         <small>{$ADDONLANG->T('pricingInclude')}</small>
                                     </div>
                                 </div>

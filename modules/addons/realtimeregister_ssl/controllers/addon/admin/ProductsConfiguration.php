@@ -65,8 +65,8 @@ class ProductsConfiguration extends AbstractController
                 $apiConfig->isSanEnabled = $apiProduct->isSanEnabled();
                 $apiConfig->isWildcardSanEnabled = $apiProduct->isSanWildcardEnabled();
                 $products[$key]->apiConfig = $apiConfig;
-                $products[$key]->confOption = ConfigurableOptionService::getForProduct($product->id)->toArray();
-                $products[$key]->confOptionWildcard = ConfigurableOptionService::getForProductWildcard($product->id)->toArray();
+                $products[$key]->confOption = ConfigurableOptionService::getForProduct($product->id)[0];
+                $products[$key]->confOptionWildcard = ConfigurableOptionService::getForProductWildcard($product->id)[0];
             }
 
             $vars['products'] = $products;

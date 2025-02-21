@@ -83,11 +83,11 @@ class ProductsCreator extends AbstractController
             C::PRODUCT_ENABLE_SAN_WILDCARD => $input[C::PRODUCT_ENABLE_SAN_WILDCARD] ?: '',
         ];
 
-        if (isset($input['issued_ssl_message']) && !empty($input['issued_ssl_message'])) {
+        if (!empty($input['issued_ssl_message'])) {
             $productData[C::OPTION_ISSUED_SSL_MESSAGE] = $input['issued_ssl_message'];
         }
 
-        if (isset($input['custom_guide']) && !empty($input['custom_guide'])) {
+        if (!empty($input['custom_guide'])) {
             $productData[C::OPTION_CUSTOM_GUIDE] = $input['custom_guide'];
         }
 
