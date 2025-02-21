@@ -145,18 +145,23 @@ class ProductsConfiguration extends AbstractController
             return true;
         }
 
+        $product = array_pop($input['product']);
+
         foreach ($input['currency'] as $key => $value) {
+            if ($product['paytype'] == 'recurring') {
+                $value['monthly'] = '-1.00';
+            } else {
+                $value['monthly'] = $value['monthly'] ?? $value['annually'];
+            }
             $productModel->updateProductPricing($key, $value);
         }
 
-        foreach ($input['product'] as $key => $value) {
-            $product = $productModel->getById($key);
-            $productModel->updateProductDetails($key, $value);
-            $this->recalculatePrices(
-                $product,
-                $value[C::COMMISSION] ? $value[C::COMMISSION] / 100 : 0
-            );
-        }
+        $currentProduct = $productModel->getById($product['id']);
+        $productModel->updateProductDetails($product['id'], $product);
+        $this->recalculatePrices(
+            $currentProduct,
+            $product[C::COMMISSION] ? $product[C::COMMISSION] / 100 : 0
+        );
 
         return true;
     }
@@ -178,7 +183,7 @@ class ProductsConfiguration extends AbstractController
             $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
             if ($productModel->enableProduct($productId)) {
                 return [
-                    'success' => Lang::T('messages', '')
+                    'success' => ""
                 ];
             }
         }
@@ -197,7 +202,7 @@ class ProductsConfiguration extends AbstractController
             $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
             if ($productModel->disableProduct($productId)) {
                 return [
-                    'success' => Lang::T('messages', '')
+                    'success' => ""
                 ];
             }
         }
