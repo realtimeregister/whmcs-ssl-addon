@@ -168,8 +168,8 @@
                                 <label class="control-label col-sm-2">{$ADDONLANG->T('months')}</label>
                                 <div class="col-sm-10">
                                     <div  class="maxMonths {if $product->paytype == 'onetime'}hidden{/if}">{$product->apiConfig->periods}</div>
-                                    <input {if $product->paytype == 'onetime'}class="hidden" disabled=""{/if} type="hidden" name="product[{$product->id}][configoption2]" value="{$product->apiConfig->periods}"></input>
-                                    <select name="product[{$product->id}][configoption2]" class="form-control {if $product->paytype != 'onetime'}hidden{/if}" {if $product->paytype != 'onetime'}disabled=""{/if}>
+                                    <input {if $product->paytype == 'onetime'} disabled=""{/if} type="hidden" name="product[{$product->id}][configoption2]" value="{$product->apiConfig->periods}"></input>
+                                    <select name="product[{$product->id}][configoption2]" class="form-control" {if $product->paytype == 'onetime'}disabled=""{/if}>
                                         {foreach from=$product->apiConfig->availablePeriods item=period}
                                             <option {if $product->configoption2 == $period}selected{/if} value="{$period}">{$period}</option>
                                         {/foreach}
@@ -241,14 +241,6 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptionsPeriod')}</label>
-                                <div class="col-sm-10">
-                                    <a href="#" onclick="manageconfigoptions('{$product->confOptionPeriod->id}');return false;" class="btn btn-success">{$ADDONLANG->T('editPrices')}</a>
-                                    <small>{$ADDONLANG->T('pricingInclude')}</small>
-                                </div>
-                            </div>
-
                             {if $product->apiConfig->isSanEnabled}
                                 <div class="form-group">
                                     <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptions')}</label>
@@ -276,7 +268,7 @@
                             {/if}
 
                             <div class="form-group" id="addon-js-pricing-group-{$product->id}" {if $product->paytype == 'free'}style="display: none;"{/if}>
-                                <label class="control-label col-sm-2">{$ADDONLANG->T('enableFor')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptionsPeriod')}</label>
                                 <div class="col-sm-10">
 
                                     <div class="product_prices">
@@ -509,7 +501,6 @@
 
                 function setAsOneTime(select, type = null) {
                     var pc = select.closest('.product-container');
-                    //disablePrices(pc.find("input[cycle='monthly']"));
                     showOneTime(pc, type);
                     disablePrices(pc.find("input[cycle='annually']"));
                     disablePrices(pc.find("input[cycle='biennially']"));
@@ -519,7 +510,6 @@
 
                 function setAsNonOneTime(select, type = null) {
                     var pc = select.closest('.product-container');
-                    //enablePrices(pc.find("input[cycle='monthly']"));
                     hideOneTime(pc, type);
                     enablePrices(pc.find("input[cycle='annually']"));
                     enablePrices(pc.find("input[cycle='biennially']"));
@@ -566,13 +556,9 @@
                     var productId = select.data('id');
                     var type = select.val();
                     if (type === 'onetime') {
-                        $(select).parents('td').find('.maxMonths').addClass('hidden');
-                        $('input[name="product[' + productId + '][configoption2]"]').addClass('hidden').prop('disabled', true);
-                        $('select[name="product[' + productId + '][configoption2]"]').removeClass('hidden').prop('disabled', false);
+                        $('select[name="product[' + productId + '][configoption2]"]').prop('disabled', true);
                     } else {
-                        $(select).parents('td').find('.maxMonths').removeClass('hidden');
-                        $('input[name="product[' + productId + '][configoption2]"]').removeClass('hidden').prop('disabled', false);
-                        $('select[name="product[' + productId + '][configoption2]"]').addClass('hidden').prop('disabled', true);
+                        $('select[name="product[' + productId + '][configoption2]"]').prop('disabled', false);
                     }
                 }
 

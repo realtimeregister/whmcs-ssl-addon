@@ -4,7 +4,6 @@ use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
-use AddonModule\RealtimeRegisterSsl\eHelpers\JsInserter;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
@@ -673,39 +672,6 @@ add_hook('InvoiceCreationPreEmail', 1, function($vars)
             $results
         );
     }
-});
-
-add_hook('ClientAreaFooterOutput', 1, function($vars) {
-    $script = '';
-
-    if(is_array($vars['configurableoptions'])) {
-        $yearsConfigOptions = array_filter($vars['configurableoptions'], function ($configoption) {
-            return str_contains($configoption['optionname'], JSInserter::YEARS_CONFIG_OPTION_PREFIX);
-        });
-
-        $additionalDomainsConfigOptions = array_filter($vars['configurableoptions'], function ($configoption) {
-            return str_contains($configoption['optionname'], JSInserter::ADDITIONAL_DOMAIN_CONFIG_OPTION_PREFIX);
-        });
-        $wildcardDomainsConfigOptions = array_filter($vars['configurableoptions'], function ($configoption) {
-            return str_contains($configoption['optionname'], JSInserter::WILDCARD_DOMAIN_CONFIG_OPTION_PREFIX);
-        });
-        if ($vars['templatefile'] === "configureproduct") {
-            $yearsOption = count($yearsConfigOptions) && count($additionalDomainsConfigOptions)
-                ? array_pop($yearsConfigOptions)
-                : new stdClass();
-            $script = JSInserter::generateScript(
-                'modules/addons/realtimeregister_ssl/js/dist/additional-domains.js',
-                [
-                    'yearsOptionEncoded' => json_encode($yearsOption),
-                    'additionalDomainsConfigOptionsEncoded' => json_encode($additionalDomainsConfigOptions),
-                    'wildcardDomainsConfigOptionsEncoded' => json_encode($wildcardDomainsConfigOptions),
-                    'inputConfigOptionPrefix' => JSInserter::INPUT_CONFIG_OPTION_PREFIX,
-                    'productsTotalElementId' => JSInserter::PRODUCTS_TOTAL_ELEMENT_ID,
-                ]
-            );
-        }
-    }
-    return $script;
 });
 
 add_hook('AdminAreaFooterOutput', 1, function($vars)

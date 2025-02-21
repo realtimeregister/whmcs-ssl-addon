@@ -60,7 +60,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '0.6.5';
+    public $version = '0.6';
 
     private static string $LEGACY_TABLE_PREFIX = 'mgfw_';
 
@@ -101,8 +101,8 @@ class Configuration extends AbstractConfiguration
                 ->orderBy('id', 'asc')
                 ->get();
 
-            $currentSansOptionId = 0;
-            $currentWildcardSansOptionId = 0;
+            $currentSansOptionSubId = 0;
+            $currentWildcardSansOptionSubId = 0;
 
             foreach ($configOptions as $configOption) {
                 $configOptionSubs = Capsule::table('tblproductconfigoptionssub')
@@ -122,43 +122,50 @@ class Configuration extends AbstractConfiguration
                                 case 1:
                                 {
                                     $productPrice = floatval($price->annually) > 0.00 ? $price->annually : $price->monthly;
-                                    if (floatval($productPrice) <= 0.00) {
-                                        break;
-                                    }
                                     Capsule::table('tblpricing')
                                         ->where('relid', '=', $product->id)
                                         ->where('currency', '=', $price->currency)
                                         ->where('type', '=', 'product')
                                         ->update(['annually' => $productPrice, "monthly" => $productPrice]);
+                                    Capsule::table('tblhostingconfigoptions')
+                                        ->where('configid', '=', $configOption->id)
+                                        ->where('optionid', '=', $configOptionSub->id)
+                                        ->delete();
                                     break;
                                 }
                                 case 2:
                                 {
                                     $productPrice = floatval($price->biennially) > 0.00 ? $price->biennially : $price->monthly;
-                                    if (floatval($productPrice) <= 0.00) {
-                                        break;
-                                    }
                                     Capsule::table('tblpricing')
                                         ->where('relid', '=', $product->id)
                                         ->where('currency', '=', $price->currency)
                                         ->where('type', '=', 'product')
                                         ->update(['biennially' => $productPrice]);
+                                    Capsule::table('tblhostingconfigoptions')
+                                        ->where('configid', '=', $configOption->id)
+                                        ->where('optionid', '=', $configOptionSub->id)
+                                        ->delete();
                                     break;
                                 }
                                 case 3:
                                 {
                                     $productPrice = floatval($price->triennially) > 0.00 ? $price->triennially : $price->monthly;
-                                    if (floatval($productPrice) <= 0.00) {
-                                        break;
-                                    }
                                     Capsule::table('tblpricing')
                                         ->where('relid', '=', $product->id)
                                         ->where('currency', '=', $price->currency)
                                         ->where('type', '=', 'product')
                                         ->update(['triennially' => $productPrice]);
+                                    Capsule::table('tblhostingconfigoptions')
+                                        ->where('configid', '=', $configOption->id)
+                                        ->where('optionid', '=', $configOptionSub->id)
+                                        ->delete();
                                     break;
                                 }
                                 default:
+                                    Capsule::table('tblhostingconfigoptions')
+                                        ->where('configid', '=', $configOption->id)
+                                        ->where('optionid', '=', $configOptionSub->id)
+                                        ->delete();
                                     break;
                             }
                         }
@@ -188,11 +195,8 @@ class Configuration extends AbstractConfiguration
                         switch ($period) {
                             case 1:
                             {
-                                $currentSansOptionId = $configOptionSub->id;
+                                $currentSansOptionSubId = $configOptionSub->id;
                                 $productPrice = floatval($price->annually) > 0.00 ? $price->annually : $price->monthly;
-                                if (floatval($productPrice) <= 0.00) {
-                                    break;
-                                }
                                 Capsule::table('tblpricing')
                                     ->where('relid', '=', $configOptionSub->id)
                                     ->where('currency', '=', $price->currency)
@@ -209,11 +213,8 @@ class Configuration extends AbstractConfiguration
                             }
                             case 2:
                                 $productPrice = floatval($price->annually) > 0.00 ? $price->annually : $price->monthly;
-                                if (floatval($productPrice) <= 0.00) {
-                                    break;
-                                }
                                 Capsule::table('tblpricing')
-                                    ->where('relid', '=', $currentSansOptionId)
+                                    ->where('relid', '=', $currentSansOptionSubId)
                                     ->where('currency', '=', $price->currency)
                                     ->where('type', '=', 'configoptions')
                                     ->update(['biennially' => $productPrice]);
@@ -224,11 +225,8 @@ class Configuration extends AbstractConfiguration
                                 break;
                             case 3:
                                 $productPrice = floatval($price->annually) > 0.00 ? $price->annually : $price->monthly;
-                                if (floatval($productPrice) <= 0.00) {
-                                    break;
-                                }
                                 Capsule::table('tblpricing')
-                                    ->where('relid', '=', $currentSansOptionId)
+                                    ->where('relid', '=', $currentSansOptionSubId)
                                     ->where('currency', '=', $price->currency)
                                     ->where('type', '=', 'configoptions')
                                     ->update(['triennially' => $productPrice]);
@@ -243,6 +241,8 @@ class Configuration extends AbstractConfiguration
                                     ->select()
                                     ->where('id', '=', $configOption->id)
                                     ->delete();
+                                break;
+                            default:
                                 break;
                         }
                     }
@@ -260,11 +260,9 @@ class Configuration extends AbstractConfiguration
                         switch ($period) {
                             case 1:
                             {
-                                $currentWildcardSansOptionId = $configOptionSub->id;
+
+                                $currentWildcardSansOptionSubId = $configOptionSub->id;
                                 $productPrice = floatval($price->annually) > 0.00 ? $price->annually : $price->monthly;
-                                if (floatval($productPrice) <= 0.00) {
-                                    break;
-                                }
                                 Capsule::table('tblpricing')
                                     ->where('relid', '=', $configOptionSub->id)
                                     ->where('currency', '=', $price->currency)
@@ -281,11 +279,8 @@ class Configuration extends AbstractConfiguration
                             }
                             case 2:
                                 $productPrice = floatval($price->annually) > 0.00 ? $price->annually : $price->monthly;
-                                if (floatval($productPrice) <= 0.00) {
-                                    break;
-                                }
                                 Capsule::table('tblpricing')
-                                    ->where('relid', '=', $currentWildcardSansOptionId)
+                                    ->where('relid', '=', $currentWildcardSansOptionSubId)
                                     ->where('currency', '=', $price->currency)
                                     ->where('type', '=', 'configoptions')
                                     ->update(['biennially' => $productPrice]);
@@ -296,11 +291,8 @@ class Configuration extends AbstractConfiguration
                                 break;
                             case 3:
                                 $productPrice = floatval($price->annually) > 0.00 ? $price->annually : $price->monthly;
-                                if (floatval($productPrice) <= 0.00) {
-                                    break;
-                                }
                                 Capsule::table('tblpricing')
-                                    ->where('relid', '=', $currentWildcardSansOptionId)
+                                    ->where('relid', '=', $currentWildcardSansOptionSubId)
                                     ->where('currency', '=', $price->currency)
                                     ->where('type', '=', 'configoptions')
                                     ->update(['triennially' => $productPrice]);
@@ -315,6 +307,8 @@ class Configuration extends AbstractConfiguration
                                     ->select()
                                     ->where('id', '=', $configOption->id)
                                     ->delete();
+                                break;
+                            default:
                                 break;
                         }
                     }

@@ -12,7 +12,9 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ApiProductPriceRepo;
 use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use WHMCS\Product\Group;
 
 class ProductsCreator extends AbstractController
@@ -72,7 +74,7 @@ class ProductsCreator extends AbstractController
             'servertype' => 'realtimeregister_ssl',
             'hidden' => $input['hidden'] ?: 1,
             'autosetup' => $input['autosetup'],
-            C::PRICE_AUTO_DOWNLOAD => $input[C::PRICE_AUTO_DOWNLOAD]?: '',
+            C::PRICE_AUTO_DOWNLOAD => $input[C::PRICE_AUTO_DOWNLOAD] ?: '',
             C::API_PRODUCT_ID => $input[C::API_PRODUCT_ID],
             C::API_PRODUCT_MONTHS => $input[C::API_PRODUCT_MONTHS],
             C::PRODUCT_ENABLE_SAN => $input[C::PRODUCT_ENABLE_SAN] ?: '',
@@ -91,19 +93,10 @@ class ProductsCreator extends AbstractController
 
         $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
         $newProductId = $productModel->createNewProduct($productData);
-        foreach ($input['currency'] as $key => $value) {
-            $value['relid'] = $newProductId;
-            $productModel->createPricing($value);
-        }
 
         $apiProduct = $this->apiProductsRepo->getProduct(KeyToIdMapping::getIdByKey($input[C::API_PRODUCT_ID]));
 
-        ConfigurableOptionService::insertPeriods(
-            $newProductId,
-            $input[C::API_PRODUCT_ID],
-            $productData['name'],
-            $apiProduct->getPeriods()
-        );
+        self::insertPricing($input[C::API_PRODUCT_ID], $productData['paytype'], $newProductId, $apiProduct->getPeriods());
 
         if ($apiProduct->isSanEnabled() && $input[C::PRODUCT_ENABLE_SAN] === 'on') {
             ConfigurableOptionService::createForProduct(
@@ -111,6 +104,7 @@ class ProductsCreator extends AbstractController
                 $input[C::API_PRODUCT_ID],
                 $productData['name'],
                 $apiProduct,
+                $productData['paytype']
             );
         }
 
@@ -119,7 +113,8 @@ class ProductsCreator extends AbstractController
                 $newProductId,
                 $input[C::API_PRODUCT_ID],
                 $productData['name'],
-                $apiProduct
+                $apiProduct,
+                $productData['paytype']
             );
         }
 
@@ -147,25 +142,6 @@ class ProductsCreator extends AbstractController
                 }
             }
         }
-        
-        $dummyCurrencies = [];
-        foreach ($currencies as $currency) {
-            $temp = [];
-            $temp['currency'] = $currency->id;
-            $temp['msetupfee'] = '0.00';
-            $temp['qsetupfee'] = '0.00';
-            $temp['ssetupfee'] = '0.00';
-            $temp['asetupfee'] = '0.00';
-            $temp['bsetupfee'] = '0.00';
-            $temp['tsetupfee'] = '0.00';
-            $temp['monthly'] = '0.00';
-            $temp['quarterly'] = '-1.00';
-            $temp['semiannually'] = '-1.00';
-            $temp['annually'] = '-1.00';
-            $temp['biennially'] = '-1.00';
-            $temp['triennially'] = '-1.00';
-            $dummyCurrencies[] = $temp;
-        }
 
         foreach ($apiProducts as $apiProduct) {
             $input = [];
@@ -178,28 +154,91 @@ class ProductsCreator extends AbstractController
             $input[C::PRODUCT_INCLUDED_SANS] = $apiProduct->isSanEnabled() ? $apiProduct->includedDomains : '';
             $input[C::PRODUCT_ENABLE_SAN_WILDCARD] = $apiProduct->isSanWildcardEnabled() ? 'on' : '';
             $input[C::PRODUCT_INCLUDED_SANS_WILDCARD] = $apiProduct->isSanWildcardEnabled() ? 0 : '';
-            $input['paytype'] = 'onetime';
-            $input['currency'] = $dummyCurrencies;
-            $input['autosetup'] = ($apiProduct->getPayType() == 'free') ? 'order' : 'payment';
+            $input['paytype'] = 'recurring';
+            $input['autosetup'] = 'payment';
             $this->saveProduct($input);
         }
     }
 
-    public static function displayName($apiProduct) {
-         switch ($apiProduct->certificateType) {
-             case "MULTI_DOMAIN":
-             $certificateType = 'Multi Domain';
-             break;
-         case "WILDCARD":
-             $certificateType = 'Wildcard';
-             break;
-         default:
-             $certificateType = 'Single Domain';
-             break;
-         }
-         return $apiProduct->brand . " " . $apiProduct->name . " " .
-             $certificateType;
+    private function insertPricing($apiProductId, $payType, $productId, $periods)
+    {
+        $priceRepo = new ApiProductPriceRepo();
+
+        $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $currencies = $productModel->getAllCurrencies();
+        $defaultCurrency = $currencies->filter(fn($currency) => $currency->default === 1)->first();
+
+        // The prices are sometimes not imported yet, so we force an import when there is no data
+        ConfigurableOptionService::loadPrices($priceRepo, $apiProductId);
+
+        $pricing = [
+            'relid' => $productId,
+            'msetupfee' => '0.00',
+            'qsetupfee' => '0.00',
+            'ssetupfee' => '0.00',
+            'asetupfee' => '0.00',
+            'bsetupfee' => '0.00',
+            'tsetupfee' => '0.00',
+            'monthly' => -1.00,
+            'quarterly' => '-1.00',
+            'semiannually' => '-1.00',
+            'annually' => -1.00,
+            'biennially' => -1.00,
+            'triennially' => -1.00
+        ];
+
+        foreach ($periods as $period) {
+            $price = $priceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($apiProductId))
+                ->onlyPeriod($period)
+                ->onlyAction("REQUEST")
+                ->fetchOne();
+            $basePrice = ConfigurableOptionService::getBasePrice($currencies, $price, $defaultCurrency);
+
+            switch ($period) {
+                case 12:
+                    if ($payType === 'onetime') {
+                        $pricing['monthly'] = $basePrice;
+                    }
+                    $pricing['annually'] = $basePrice;
+                    break;
+                case 24:
+                    $pricing['biennially'] = $basePrice;
+                    break;
+                case 36:
+                    $pricing['triennially'] = $basePrice;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        foreach ($currencies as $currency) {
+            $pricing['currency'] = $currency->id;
+            $pricing['monthly'] = $pricing['monthly'] === -1.00 ? $pricing['monthly'] : $pricing['monthly'] * $currency->rate;
+            $pricing['annually'] = $pricing['annually'] === -1.00 ? $pricing['annually'] : $pricing['annually'] * $currency->rate;
+            $pricing['biennially'] = $pricing['biennially'] === -1.00 ? $pricing['biennially'] : $pricing['biennially'] * $currency->rate;
+            $pricing['triennially'] = $pricing['triennially'] === -1.00 ? $pricing['triennially'] : $pricing['triennially'] * $currency->rate;
+            Capsule::table('tblpricing')->insert($pricing);
+        }
     }
+
+    public static function displayName($apiProduct)
+    {
+        switch ($apiProduct->certificateType) {
+            case "MULTI_DOMAIN":
+                $certificateType = 'Multi Domain';
+                break;
+            case "WILDCARD":
+                $certificateType = 'Wildcard';
+                break;
+            default:
+                $certificateType = 'Single Domain';
+                break;
+        }
+        return $apiProduct->brand . " " . $apiProduct->name . " " .
+            $certificateType;
+    }
+
     public function saveItemHTML($input, $vars = [])
     {
         if ($this->checkToken()) {

@@ -94,7 +94,6 @@ class AdminServicesTabFields
     private function getServiceVars()
     {
         global $CONFIG;
-        $period = intval($this->p['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
         $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS];
         $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
         $sansLimit = $boughtSans + $includedSans;

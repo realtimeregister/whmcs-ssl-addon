@@ -33,7 +33,6 @@ class ConfigOptions
     public const OPTION_SANS_WILDCARD_COUNT = 'sans_wildcard_count';
     public const OPTION_ISSUED_SSL_MESSAGE = 'configoption23';
     public const OPTION_CUSTOM_GUIDE = 'configoption24';
-    public const OPTION_PERIOD = 'years';
 
     public function __construct(&$params = null)
     {
@@ -111,43 +110,5 @@ class ConfigOptions
                 'Description' => ScriptService::getConfigOptionErrorScript($error)
             ]
         ];
-    }
-
-    public function validateAndSanitizeQuantityConfigOptions($configOption, array $configOptionsMinMaxQuantities)
-    {
-        $whmcs = Application::getInstance();
-        $errorMessage = '';
-        foreach ($configOption as $configid => $optionvalue) {
-            if (!key_exists($configid, $configOptionsMinMaxQuantities))
-                continue;
-            $data = get_query_vals("tblproductconfigoptions", "", ["id" => $configid]);
-            $optionname = $data["optionname"];
-            $qtyminimum = ($configOptionsMinMaxQuantities[$configid]['min'] != null)
-                ? $configOptionsMinMaxQuantities[$configid]['min'] : $data["qtyminimum"];
-            $qtymaximum = ($configOptionsMinMaxQuantities[$configid]['max'] != null)
-                ? $configOptionsMinMaxQuantities[$configid]['max'] : $data["qtymaximum"];
-            if (strpos($optionname, "|")) {
-                $optionname = explode("|", $optionname);
-                $optionname = trim($optionname[1]);
-            }
-            $optionvalue = (int)$optionvalue;
-            if ($qtyminimum < 0) {
-                $qtyminimum = 0;
-            }
-            if (
-                $optionvalue < 0 || $optionvalue < $qtyminimum && 0 < $qtyminimum
-                || 0 < $qtymaximum && $qtymaximum < $optionvalue
-            ) {
-                if ($qtymaximum <= 0) {
-                    $qtymaximum = $whmcs->get_lang("clientareaunlimited");
-                }
-
-                $errorMessage .= "<li>" . sprintf(
-                        $whmcs->get_lang("configoptionqtyminmax"), $optionname, $qtyminimum, $qtymaximum
-                    );
-            }
-        }
-
-        return $errorMessage;
     }
 }

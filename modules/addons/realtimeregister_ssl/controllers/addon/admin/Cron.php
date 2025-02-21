@@ -13,6 +13,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\ProductsPrices;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigs;
@@ -40,20 +41,16 @@ class Cron extends AbstractController
         //get all completed ssl orders
         $sslOrders = $this->getSSLOrders();
 
-        foreach ($sslOrders as $sslService)
-        {
+        foreach ($sslOrders as $sslService) {
             $serviceID = $sslService->serviceid;
 
-            if(!isset($sslService->remoteid) || empty($sslService->remoteid))
-            {
+            if (!isset($sslService->remoteid) || empty($sslService->remoteid)) {
                 continue;
             }
 
-            if($sslService->status != SSL::AWAITING_CONFIGURATION)
-            {
+            if ($sslService->status != SSL::AWAITING_CONFIGURATION) {
                 $configdata = json_decode($sslService->configdata, true);
-                if(isset($configdata['domain']) && !empty($configdata['domain']))
-                {
+                if (isset($configdata['domain']) && !empty($configdata['domain'])) {
                     Capsule::table('tblhosting')->where('id', $serviceID)->update(['domain' => $configdata['domain']]);
                 }
             }
@@ -65,7 +62,7 @@ class Cron extends AbstractController
             //set ssl certificate as synchronized
             $this->setSSLServiceAsSynchronized($serviceID);
 
-            try{
+            try {
                 /** @var ProcessesApi $processesApi */
                 $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
                 $order = $processesApi->get($sslService->remoteid);
@@ -84,8 +81,7 @@ class Cron extends AbstractController
                     ->update(['termination_date' => $order['valid_till']]);
             }
 
-            if ($order->status == 'expired' || $order->status == 'cancelled')
-            {
+            if ($order->status == 'expired' || $order->status == 'cancelled') {
                 $this->setSSLServiceAsTerminated($serviceID);
                 $updatedServices[] = $serviceID;
             }
@@ -93,21 +89,18 @@ class Cron extends AbstractController
             /** @var CertificatesApi $certificateApi */
             $certificateApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
 
-            $sslOrder = $certificateApi->listCertificates(1,null, null, ['process:eq' => $order->remoteid])[0];
+            $sslOrder = $certificateApi->listCertificates(1, null, null, ['process:eq' => $order->remoteid])[0];
 
             //if certificate is active
-            if ($order->status === 'ACTIVE')
-            {
+            if ($order->status === 'ACTIVE') {
                 //update whmcs service next due date
                 $newNextDueDate = $sslOrder->expiryDate;
-                if(!empty($order['end_date']))
-                {
+                if (!empty($order['end_date'])) {
                     $newNextDueDate = $sslOrder->expiryDate;
                 }
 
                 //set ssl certificate as terminated if expired
-                if (strtotime($sslOrder->expiryDate) < strtotime(date('Y-m-d')))
-                {
+                if (strtotime($sslOrder->expiryDate) < strtotime(date('Y-m-d'))) {
                     $this->setSSLServiceAsTerminated($serviceID);
                 }
 
@@ -135,46 +128,38 @@ class Cron extends AbstractController
     public function notifyCRON($input, $vars = [])
     {
         //get renewal settings
-        $apiConf                      = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
-        $auto_renew_invoice_one_time  = (bool) $apiConf->auto_renew_invoice_one_time;
-        $auto_renew_invoice_reccuring = (bool) $apiConf->auto_renew_invoice_reccuring;
+        $apiConf = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+        $auto_renew_invoice_one_time = (bool)$apiConf->auto_renew_invoice_one_time;
+        $auto_renew_invoice_reccuring = (bool)$apiConf->auto_renew_invoice_reccuring;
 //        $renew_new_order              = (bool) $apiConf->renew_new_order;
         //get saved amount days to generate invoice (one time & reccuring)
-        $renew_invoice_days_one_time  = $apiConf->renew_invoice_days_one_time;
+        $renew_invoice_days_one_time = $apiConf->renew_invoice_days_one_time;
         $renew_invoice_days_reccuring = $apiConf->renew_invoice_days_reccuring;
 
-        $send_expiration_notification_reccuring = (bool) $apiConf->send_expiration_notification_reccuring;
-        $send_expiration_notification_one_time  = (bool) $apiConf->send_expiration_notification_one_time;
+        $send_expiration_notification_reccuring = (bool)$apiConf->send_expiration_notification_reccuring;
+        $send_expiration_notification_one_time = (bool)$apiConf->send_expiration_notification_one_time;
 
         $this->sslRepo = new SSLRepo();
 
         //get all completed ssl orders
-        $sslOrders       = $this->getSSLOrders();
+        $sslOrders = $this->getSSLOrders();
 
         $synchServicesId = [];
-        foreach($sslOrders as $row)
-        {
+        foreach ($sslOrders as $row) {
             $config = json_decode($row->configdata);
-            if (isset($config->synchronized))
-            {
+            if (isset($config->synchronized)) {
                 $synchServicesId[] = $row->serviceid;
-            }
-            else
-            {
+            } else {
                 $serviceonetime = Service::where('id', $row->serviceid)->where('billingcycle', 'One Time')->first();
-                if(isset($serviceonetime->id))
-                {
+                if (isset($serviceonetime->id)) {
                     $synchServicesId[] = $serviceonetime->id;
                 }
             }
         }
 
-        if(!empty($synchServicesId))
-        {
+        if (!empty($synchServicesId)) {
             $services = Service::whereIn('id', $synchServicesId)->get();
-        }
-        else
-        {
+        } else {
             $services = [];
         }
 
@@ -182,15 +167,14 @@ class Cron extends AbstractController
         $emailSendsCountReissue = 0;
 
         $packageLists = [];
-        $serviceIDs   = [];
+        $serviceIDs = [];
 
-        foreach ($synchServicesId as $serviceid)
-        {
+        foreach ($synchServicesId as $serviceid) {
             $srv = Capsule::table('tblhosting')->where('id', $serviceid)->first();
 
             //get days left to expire from WHMCS
-            $daysLeft         = $this->checkOrderExpireDate($srv->nextduedate);
-            $daysReissue         = $this->checkReissueDate($srv->id);
+            $daysLeft = $this->checkOrderExpireDate($srv->nextduedate);
+            $daysReissue = $this->checkReissueDate($srv->id);
 
             /*
              * if service is One Time and nextduedate is setted as 0000-00-00 get valid
@@ -202,43 +186,39 @@ class Cron extends AbstractController
                 if (!empty($sslOrder->remoteid)) {
                     /** @var CertificatesApi $sslOrderApi */
                     $sslOrderApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-                    $ssl = $sslOrderApi->listCertificates(1,null,null, ['process:eq' => $sslOrder->remoteid]);
+                    $ssl = $sslOrderApi->listCertificates(1, null, null, ['process:eq' => $sslOrder->remoteid]);
                     $daysLeft = $this->checkOrderExpireDate($ssl[0]->expiryDate);
                 }
             }
 
             $product = Capsule::table('tblproducts')->where('id', $srv->packageid)->first();
 
-            if($srv->domainstatus == 'Active' && $daysReissue == '30' && $product->configoption2 > 12)
-            {
+            if ($srv->domainstatus == 'Active' && $daysReissue == '30' && $product->configoption2 > 12) {
                 // send email
                 $emailSendsCountReissue += $this->sendReissueNotifyEmail($srv->id);
             }
 
             //service was synchronized, so we can base on nextduedate, that should be the same as valid_till
             //$daysLeft = 90;
-            if ($daysLeft >= 0)
-            {
+            if ($daysLeft >= 0) {
                 if ($srv->billingcycle == 'One Time' && $send_expiration_notification_one_time
-                     || $srv->billingcycle != 'One Time' && $send_expiration_notification_reccuring
+                    || $srv->billingcycle != 'One Time' && $send_expiration_notification_reccuring
                 ) {
                     $emailSendsCount += $this->sendExpireNotifyEmail($srv->id, $daysLeft);
                 }
             }
 
             $savedRenewDays = $renew_invoice_days_reccuring;
-            if ($srv->billingcycle == 'One Time')
-            {
+            if ($srv->billingcycle == 'One Time') {
                 $savedRenewDays = $renew_invoice_days_one_time;
             }
             //if it is proper amount of days before expiry, we create invoice
-            if ($daysLeft == (int) $savedRenewDays)
-            {
+            if ($daysLeft == (int)$savedRenewDays) {
                 if ($srv->billingcycle == 'One Time' && $auto_renew_invoice_one_time
                     || $srv->billingcycle != 'One Time' && $auto_renew_invoice_reccuring
                 ) {
                     $packageLists[$srv->packageid][] = $srv;
-                    $serviceIDs[]                    = $srv->id;
+                    $serviceIDs[] = $srv->id;
                 }
             }
         }
@@ -247,7 +227,7 @@ class Cron extends AbstractController
         echo '<br />Number of emails send (expire): ' . $emailSendsCount . PHP_EOL;
         echo '<br />Number of emails send (reissue): ' . $emailSendsCountReissue . PHP_EOL;
 
-        logActivity('Notifier completed. Number of emails send: '.$emailSendsCount, 0);
+        logActivity('Notifier completed. Number of emails send: ' . $emailSendsCount, 0);
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
             "Realtime Register SSL WHMCS: Notifier completed. Number of emails send: " . $emailSendsCount
@@ -262,7 +242,7 @@ class Cron extends AbstractController
         Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Sender started.");
 
         $emailSendsCount = 0;
-        $this->sslRepo   = new SSLRepo();
+        $this->sslRepo = new SSLRepo();
 
         $services = new \AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
         $services->onlyStatus(['Active']);
@@ -360,7 +340,7 @@ class Cron extends AbstractController
                     'data' => json_encode($apiProduct)
                 ]);
             }
-            $i +=10;
+            $i += 10;
 
             $total = $apiProducts->pagination->total;
             if ($total < $i) {
@@ -391,13 +371,13 @@ class Cron extends AbstractController
         echo 'Certificate Stats Loader started.' . PHP_EOL;
         Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Stats Loader started.");
 
-        $this->sslRepo   = new SSLRepo();
+        $this->sslRepo = new SSLRepo();
 
         $services = new \AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
         $services->onlyStatus(['Active', 'Suspended']);
 
         foreach ($services->get() as $service) {
-            $product   = $service->product();
+            $product = $service->product();
             //check if product is Realtime Register Ssl
             if ($product->serverType != 'realtimeregister_ssl') {
                 continue;
@@ -416,7 +396,7 @@ class Cron extends AbstractController
             /** @var CertificatesApi $certificatesApi */
             $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
 
-            $sslInformation = $certificatesApi->listCertificates(100,null,null,['process:eq' => $ssl->remoteid]);
+            $sslInformation = $certificatesApi->listCertificates(100, null, null, ['process:eq' => $ssl->remoteid]);
 
             if (count($sslInformation) === 1) {
                 $this->setSSLCertificateValidTillDate($service->id, $sslInformation[0]->expiryDate);
@@ -435,23 +415,20 @@ class Cron extends AbstractController
         echo 'Products Price Updater started.' . PHP_EOL;
         Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Products Price Updater started.");
 
-        try
-        {
+        try {
             //get all products prices
             $apiProductsPrices = ProductsPrices::getInstance();
 
-            foreach ($apiProductsPrices->getAllProductsPrices() as $productPrice)
-            {
+            foreach ($apiProductsPrices->getAllProductsPrices() as $productPrice) {
                 $productPrice->saveToDatabase();
             }
 
             $productModel = new Repository();
             //get RealtimeRegisterSsl all products
-            $products     = $productModel->getModuleProducts();
+            $products = $productModel->getModuleProducts();
             $apiProducts = Products::getInstance();
 
-            foreach ($products as $product)
-            {
+            foreach ($products as $product) {
                 //if auto price not enabled skip product
                 if (!$product->{C::PRICE_AUTO_DOWNLOAD}) {
                     continue;
@@ -463,9 +440,8 @@ class Cron extends AbstractController
                 //generate new price
                 $this->generateNewPricesBasedOnAPI($apiPrice, $apiProduct, $product->id);
             }
-        }
-        catch (Exception $e)
-        {;
+        } catch (Exception $e) {
+            ;
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 "Realtime Register SSL WHMCS Products Price Updater Error: " . $e->getMessage()
             );
@@ -484,13 +460,10 @@ class Cron extends AbstractController
             $cids[] = $sslorder->remoteid;
         }
 
-        try
-        {
+        try {
             $configDataUpdate = new UpdateConfigs($cids, $processingOnly);
             $configDataUpdate->run();
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 "Realtime Register SSL WHMCS Products Price Updater Error: " . $e->getMessage()
             );
@@ -502,11 +475,11 @@ class Cron extends AbstractController
         echo 'Certificates (ssl status Completed) Data Updater started.' . PHP_EOL;
         $this->sslRepo = new SSLRepo();
         $sslorders = Capsule::table('tblhosting')
-        ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
-        ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
-        ->where('tblhosting.domainstatus', 'Active')
-        ->whereIn('tblsslorders.status', [SSL::PENDING_INSTALLATION, SSL::ACTIVE, SSL::CONFIGURATION_SUBMITTED])
-        ->get(['tblsslorders.*']);
+            ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
+            ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
+            ->where('tblhosting.domainstatus', 'Active')
+            ->whereIn('tblsslorders.status', [SSL::PENDING_INSTALLATION, SSL::ACTIVE, SSL::CONFIGURATION_SUBMITTED])
+            ->get(['tblsslorders.*']);
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
             "Realtime Register SSL WHMCS: Certificates (ssl status Completed) Data Updater started."
@@ -528,12 +501,12 @@ class Cron extends AbstractController
         echo 'Certificates (ssl status Processing) Data Updater started.' . PHP_EOL;
         $this->sslRepo = new SSLRepo();
         $sslorders = Capsule::table('tblhosting')
-        ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
-        ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
-        ->where('tblhosting.domainstatus', 'Active')
-        ->where('tblsslorders.configdata', 'like', '%"ssl_status":"COMPLETED"%')
-        ->orWhere('tblsslorders.status', '=',  SSL::CONFIGURATION_SUBMITTED)
-        ->get(['tblsslorders.*']);
+            ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
+            ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
+            ->where('tblhosting.domainstatus', 'Active')
+            ->where('tblsslorders.configdata', 'like', '%"ssl_status":"COMPLETED"%')
+            ->orWhere('tblsslorders.status', '=', SSL::CONFIGURATION_SUBMITTED)
+            ->get(['tblsslorders.*']);
 
         Whmcs::savelogActivityRealtimeRegisterSsl(
             "Realtime Register SSL WHMCS: Certificates (ssl status Processing) Data Updater started."
@@ -554,15 +527,28 @@ class Cron extends AbstractController
     {
         $optionGroupResult = Capsule::table('tblproductconfiggroups')
             ->select('id')
-            ->where('name', '=', 'RealtimeRegisterSSL - '. ProductsCreator::displayName($apiProduct))
+            ->where('name', '=', 'RealtimeRegisterSSL - ' . ProductsCreator::displayName($apiProduct))
             ->where('description', '=', 'Auto generated by module - RealtimeRegisterSSL #' . $productId)
             ->first();
+        $periods = $apiProduct->getPeriods();
 
         $commission = (new \AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product($productId))
             ->configuration()
             ->getConfigOptions()[C::COMMISSION];
 
         $multiplier = $commission === '' ? 1 : 1 + $commission;
+        $currentPrices = Capsule::table('tblpricing')
+            ->where('relid', '=', $productId)
+            ->where('type', '=', 'product')
+            ->get();
+
+        foreach ($periods as $period) {
+            $newPrice = array_filter($apiPrices, function ($price) use ($period) {
+                return $price->period == $period && $price->action === 'REQUEST';
+            });
+
+            self::generateNewPrice(array_pop($newPrice), $currentPrices, $multiplier, $period);
+        }
 
         if ($optionGroupResult == null) {
             return;
@@ -573,59 +559,60 @@ class Cron extends AbstractController
             ->where('gid', '=', $optionGroupResult->id)
             ->get();
 
-        foreach($configOptions as $configOption) {
+        foreach ($configOptions as $configOption) {
             $configOptionSubs = Capsule::table('tblproductconfigoptionssub')
                 ->select()
                 ->where('configid', '=', $configOption->id)
                 ->orderBy('sortorder')
                 ->get();
-            if (str_contains($configOption->optionname, 'years|')) {
-                foreach ($configOptionSubs as $i => $configOptionSub) {
-                    $newPrice = array_filter($apiPrices, function ($price) use ($i) {
-                        return $price->period == (($i + 1) * 12) && $price->action === 'REQUEST';
+            $currentPrices = Capsule::table('tblpricing')
+                ->where('relid', '=', $configOptionSub->id)
+                ->where('type', '=', 'configoptions')
+                ->get();
+            if (str_contains($configOption->optionname, ConfigOptions::OPTION_SANS_COUNT)) {
+                $configOptionSub = $configOptionSubs[0];
+
+                foreach ($periods as $period) {
+                    $newPrice = array_filter($apiPrices, function ($price) use ($period) {
+                        return $price->period == $period && $price->action === 'EXTRA_DOMAIN';
                     });
-                    $currentPrices =  Capsule::table('tblpricing')
-                        ->where('relid', '=', $configOptionSub->id)
-                        ->get();
-                    self::generateNewPrice(array_pop($newPrice), $currentPrices, $multiplier);
+                    self::generateNewPrice(array_pop($newPrice), $currentPrices, $multiplier, $period);
                 }
-            } elseif (str_contains($configOption->optionname, 'sans_count')) {
+            } elseif (str_contains($configOption->optionname, ConfigOptions::OPTION_SANS_WILDCARD_COUNT)) {
                 $configOptionSub = $configOptionSubs[0];
-                preg_match_all('/\d+/', $configOption->optionname, $matches);
 
-                $period = intval($matches[0][0]) * 12;
-                $newPrice = array_filter($apiPrices, function ($price) use ($period) {
-                    return $price->period == $period  && $price->action === 'EXTRA_DOMAIN';
-                });
-                $currentPrices =  Capsule::table('tblpricing')
-                    ->where('relid', '=', $configOptionSub->id)
-                    ->get();
-
-                self::generateNewPrice(array_pop($newPrice), $currentPrices, $multiplier);
-            } elseif (str_contains($configOption->optionname, 'sans_wildcard_count')) {
-                $configOptionSub = $configOptionSubs[0];
-                preg_match_all('/\d+/', $configOption->optionname, $matches);
-
-                $period = intval($matches[0][0]) * 12;
-                $newPrice = array_filter($apiPrices, function ($price) use ($period) {
-                    return $price->period == $period  && $price->action === 'EXTRA_WILDCARD';
-                });
-                $currentPrices =  Capsule::table('tblpricing')
-                    ->where('relid', '=', $configOptionSub->id)
-                    ->get();
-
-                self::generateNewPrice(array_pop($newPrice), $currentPrices, $multiplier);
+                foreach ($periods as $period) {
+                    $newPrice = array_filter($apiPrices, function ($price) use ($period) {
+                        return $price->period == $period && $price->action === 'EXTRA_WILDCARD';
+                    });
+                    self::generateNewPrice(array_pop($newPrice), $currentPrices, $multiplier, $period);
+                }
             }
         }
     }
 
-    private static function generateNewPrice($apiPrice, $currentPrices, $multiplier) {
+    private static function generateNewPrice($apiPrice, $currentPrices, $multiplier, $period)
+    {
+        switch ($period) {
+            case 12:
+                $periodString = 'annually';
+                break;
+            case 24:
+                $periodString = 'biennially';
+                break;
+            case 36:;
+                $periodString = 'triennially';
+                break;
+            default:
+                return;
+        }
+
         $productModel = new Repository();
         $currencies = $productModel->getAllCurrencies();
         $defaultCurrency = $currencies->filter(fn($currency) => $currency->default === 1)->first();
 
         if ($apiPrice->currency !== $defaultCurrency->code) {
-            $currency = $currencies->filter(function($currency) use ($apiPrice) {
+            $currency = $currencies->filter(function ($currency) use ($apiPrice) {
                 return $apiPrice->currency === $currency->code;
             })->first();
             if ($currency === null) {
@@ -636,13 +623,18 @@ class Cron extends AbstractController
             $newPrice = $apiPrice->price / 100;
         }
 
-        foreach($currencies->toArray() as $currency) {
+        foreach ($currencies->toArray() as $currency) {
             $currentPrice = $currentPrices->filter(function ($price) use ($currency) {
                 return $price->currency === $currency->id;
             })->first();
 
             Capsule::table("tblpricing")->where('id', '=', $currentPrice->id)
-                ->update(['monthly' => $newPrice * $currency->rate * $multiplier]);
+                ->update([$periodString => $newPrice * $currency->rate * $multiplier]);
+
+            if ($periodString === 'annually' && floatval($currentPrice->monthly) > 0.00 ) {
+                Capsule::table("tblpricing")->where('id', '=', $currentPrice->id)
+                    ->update(['monthly' => $newPrice * $currency->rate * $multiplier]);
+            }
         }
     }
 
@@ -662,8 +654,7 @@ class Cron extends AbstractController
     private function updateServiceNextDueDate($serviceID, $date)
     {
         $service = Service::find($serviceID);
-        if (!empty($service))
-        {
+        if (!empty($service)) {
             $createInvoiceDaysBefore = Capsule::table("tblconfiguration")
                 ->where('setting', 'CreateInvoiceDaysBefore')->first();
             $service->nextduedate = $date;
@@ -672,14 +663,14 @@ class Cron extends AbstractController
             $service->save();
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register SSL WHMCS: Service #$serviceID nextduedate set to ".$date." and nextinvoicedate to". $nextinvoicedate
+                "Realtime Register SSL WHMCS: Service #$serviceID nextduedate set to " . $date . " and nextinvoicedate to" . $nextinvoicedate
             );
         }
     }
 
     private function setSSLServiceAsSynchronized($serviceID)
     {
-        $sslService = $this->sslRepo->getByServiceId((int) $serviceID);
+        $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
         $sslService->setConfigdataKey('synchronized', date('Y-m-d'));
         $sslService->save();
     }
@@ -687,8 +678,7 @@ class Cron extends AbstractController
     private function setSSLServiceAsTerminated($serviceID)
     {
         $service = Service::find($serviceID);
-        if (!empty($service))
-        {
+        if (!empty($service)) {
             $service->status = 'terminated';
             $service->save();
 
@@ -700,14 +690,13 @@ class Cron extends AbstractController
 
     private function checkIfSynchronized($serviceID)
     {
-        $result     = false;
-        $sslService = $this->sslRepo->getByServiceId((int) $serviceID);
+        $result = false;
+        $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
 
         $date = date('Y-m-d');
         $date = strtotime("-5 day", strtotime($date));
 
-        if (strtotime($sslService->getConfigdataKey('synchronized')) > $date)
-        {
+        if (strtotime($sslService->getConfigdataKey('synchronized')) > $date) {
             $result = true;
         }
 
@@ -716,13 +705,12 @@ class Cron extends AbstractController
 
     public function checkIfCertificateSent($serviceID)
     {
-        $result        = false;
+        $result = false;
         if ($this->sslRepo === null)
             $this->sslRepo = new SSLRepo();
 
-        $sslService = $this->sslRepo->getByServiceId((int) $serviceID);
-        if ($sslService->getConfigdataKey('certificateSent'))
-        {
+        $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
+        if ($sslService->getConfigdataKey('certificateSent')) {
             $result = true;
         }
 
@@ -734,21 +722,21 @@ class Cron extends AbstractController
         if ($this->sslRepo === null) {
             $this->sslRepo = new SSLRepo();
         }
-        $sslService    = $this->sslRepo->getByServiceId((int) $serviceID);
+        $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
         $sslService->setConfigdataKey('certificateSent', true);
         $sslService->save();
     }
 
     private function setSSLCertificateValidTillDate($serviceID, $date)
     {
-        $sslService = $this->sslRepo->getByServiceId((int) $serviceID);
+        $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
         $sslService->setConfigdataKey('valid_till', $date);
         $sslService->save();
     }
 
     private function setSSLCertificateStatus($serviceID, $status)
     {
-        $sslService = $this->sslRepo->getByServiceId((int) $serviceID);
+        $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
         $sslService->setConfigdataKey('ssl_status', $status);
         $sslService->save();
     }
@@ -756,11 +744,10 @@ class Cron extends AbstractController
     private function checkServiceBillingPeriod($serviceID)
     {
         $skipPeriods = ['Monthly', 'One Time', 'Free Account'];
-        $skip        = false;
-        $service     = Service::find($serviceID);
+        $skip = false;
+        $service = Service::find($serviceID);
 
-        if (in_array($service->billingcycle, $skipPeriods) || $service == null)
-        {
+        if (in_array($service->billingcycle, $skipPeriods) || $service == null) {
             $skip = true;
         }
 
@@ -771,7 +758,7 @@ class Cron extends AbstractController
     {
         $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
 
-        if (isset($sslOrder->configdata) && !empty($sslOrder->configdata)){
+        if (isset($sslOrder->configdata) && !empty($sslOrder->configdata)) {
             $configdata = json_decode($sslOrder->configdata, true);
 
             if (isset($configdata['end_date']) && !empty($configdata['end_date'])) {
@@ -794,7 +781,7 @@ class Cron extends AbstractController
             $expireDate .= ' 23:59:59';
         }
         $expire = new DateTime($expireDate);
-        $today  = new DateTime();
+        $today = new DateTime();
 
         $diff = $expire->diff($today, false);
         if ($diff->invert == 0) {
@@ -810,9 +797,9 @@ class Cron extends AbstractController
         $command = 'SendEmail';
 
         $postData = [
-            'id'          => $serviceId,
+            'id' => $serviceId,
             'messagename' => EmailTemplateService::EXPIRATION_TEMPLATE_ID,
-            'customvars'  => base64_encode(serialize(["expireDaysLeft" => $daysLeft])),
+            'customvars' => base64_encode(serialize(["expireDaysLeft" => $daysLeft])),
         ];
 
         $adminUserName = Admin::getAdminUserName();
@@ -833,7 +820,7 @@ class Cron extends AbstractController
         $command = 'SendEmail';
 
         $postData = [
-            'serviceid'          => $serviceId,
+            'serviceid' => $serviceId,
             'messagename' => EmailTemplateService::REISSUE_TEMPLATE_ID,
         ];
 
@@ -842,8 +829,7 @@ class Cron extends AbstractController
         $results = localAPI($command, $postData, $adminUserName);
 
         $resultSuccess = $results['result'] == 'success';
-        if (!$resultSuccess)
-        {
+        if (!$resultSuccess) {
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 'Realtime Register SSL WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message']
             );
@@ -857,10 +843,10 @@ class Cron extends AbstractController
             return 0;
         }
 
-        $products             = \WHMCS\Product\Product::whereIn('id', array_keys($packages))->get();
-        $invoiceGenerator     = new Invoice();
+        $products = \WHMCS\Product\Product::whereIn('id', array_keys($packages))->get();
+        $invoiceGenerator = new Invoice();
         $servicesAlreadyAdded = $invoiceGenerator->checkInvoiceAlreadyCreated($serviceIds);
-        $getInvoiceID         = false;
+        $getInvoiceID = false;
         if ($jsonAction) {
             $getInvoiceID = true;
         }
