@@ -3,15 +3,12 @@
 namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\Popup;
-use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
-use AddonModule\RealtimeRegisterSsl\addonLibs\Smarty;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
-use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use Exception;
 
 /*
@@ -63,14 +60,13 @@ class ProductsConfiguration extends AbstractController
 
                 $apiConfig = (object)null;
                 $apiConfig->name = $apiProduct->product;
-                $apiConfig->peroids = $apiProduct->max_period;
+                $apiConfig->periods = $apiProduct->max_period;
                 $apiConfig->availablePeriods = $apiProduct->getPeriods();
                 $apiConfig->isSanEnabled = $apiProduct->isSanEnabled();
                 $apiConfig->isWildcardSanEnabled = $apiProduct->isSanWildcardEnabled();
                 $products[$key]->apiConfig = $apiConfig;
-                $products[$key]->confOption = ConfigurableOptionService::getForProduct($product->id)->toArray();
-                $products[$key]->confOptionWildcard = ConfigurableOptionService::getForProductWildcard($product->id)->toArray();
-                $products[$key]->confOptionPeriod = ConfigurableOptionService::getForProductPeriod($product->id);
+                $products[$key]->confOption = ConfigurableOptionService::getForProduct($product->id)[0];
+                $products[$key]->confOptionWildcard = ConfigurableOptionService::getForProductWildcard($product->id)[0];
             }
 
             $vars['products'] = $products;
@@ -149,23 +145,23 @@ class ProductsConfiguration extends AbstractController
             return true;
         }
 
-        foreach ($input['product'] as $key => $value) {
-            $product = $productModel->getById($key);
-            $productModel->updateProductDetails($key, $value);
-            $this->recalculatePrices(
-                $product,
-                $value[C::COMMISSION] ? $value[C::COMMISSION] / 100 : 0
-            );
-        }
+        $product = array_pop($input['product']);
 
         foreach ($input['currency'] as $key => $value) {
-            $pricing = ['monthly' => $value['monthly'] == 'on' ? 0 : -1,
-                'annually' => $value['annually'] == 'on' ? 0 : -1,
-                'biennially' => $value['biennially'] == 'on' ? 0 : -1,
-                'triennially' => $value['triennially'] == 'on' ? 0 : -1,
-            ];
-            $productModel->updateProductPricing($key, $pricing);
+            if ($product['paytype'] == 'recurring') {
+                $value['monthly'] = '-1.00';
+            } else {
+                $value['monthly'] = $value['monthly'] ?? $value['annually'];
+            }
+            $productModel->updateProductPricing($key, $value);
         }
+
+        $currentProduct = $productModel->getById($product['id']);
+        $productModel->updateProductDetails($product['id'], $product);
+        $this->recalculatePrices(
+            $currentProduct,
+            $product[C::COMMISSION] ? $product[C::COMMISSION] / 100 : 0
+        );
 
         return true;
     }
@@ -187,7 +183,7 @@ class ProductsConfiguration extends AbstractController
             $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
             if ($productModel->enableProduct($productId)) {
                 return [
-                    'success' => Lang::T('messages', '')
+                    'success' => ""
                 ];
             }
         }
@@ -206,137 +202,13 @@ class ProductsConfiguration extends AbstractController
             $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
             if ($productModel->disableProduct($productId)) {
                 return [
-                    'success' => Lang::T('messages', '')
+                    'success' => ""
                 ];
             }
         }
 
         return [
             'error' => Lang::T('messages', '')
-        ];
-    }
-
-    function saveItemHTML($input, $vars = [])
-    {
-        if ($this->checkToken()) {
-            try {
-                $login = trim($input['login']);
-                $password = trim($input['password']);
-                if (empty($login) || empty($password)) {
-                    throw new Exception('empty_fields');
-                }
-
-                $login = $input['login'];
-                $password = $input['password'];
-
-                $apiConfigRepo = new Repository();
-                $apiConfigRepo->setConfiguration($login, $password);
-            } catch (Exception $ex) {
-                $vars['formError'] = Lang::T('messages', $ex->getMessage());
-            }
-        }
-
-        return $this->indexHTML($input, $vars);
-    }
-
-    /**
-     * This is custom page.
-     */
-    public function pageHTML(): array
-    {
-        $vars = [];
-
-        return [
-            //You have to create tpl file  /modules/addons/RealtimeRegisterSsl/templates/admin/pages/example1/page.1tpl
-            'tpl' => 'page',
-            'vars' => $vars
-        ];
-    }
-
-    /*
-     * ************************************************************************
-     * AJAX USING ARRAY
-     * ************************************************************************
-     */
-
-    /**
-     * Display custom page for ajax errors
-     */
-    public function ajaxErrorHTML(): array
-    {
-        return [
-            'tpl' => 'ajaxError'
-        ];
-    }
-
-    /**
-     * Return error message using array
-     */
-    public function getErrorArrayJSON(): array
-    {
-        return [
-            'error' => 'Custom error'
-        ];
-    }
-
-    /**
-     * Return success message using array
-     */
-    public function getSuccessArrayJSON(): array
-    {
-        return [
-            'success' => 'Custom success'
-        ];
-    }
-
-    /*
-     * ************************************************************************
-     * AJAX USING DATA-ACT
-     * ***********************************************************************
-     */
-
-    public function ajaxErrorDataActHTML(): array
-    {
-        return [
-            'tpl' => 'ajaxErrorDataAct'
-        ];
-    }
-
-    /*
-     * ************************************************************************
-     * AJAX CONTENT
-     * *********************************************************************** */
-
-    public function ajaxContentHTML()
-    {
-        return [
-            'tpl' => 'ajaxContent'
-        ];
-    }
-
-    public function ajaxContentJSON()
-    {
-        return [
-            'html' => Smarty::I()->view('ajaxContentJSON')
-        ];
-    }
-
-    /*
-     * ******************************************************
-     * CREATOR
-     * *****************************************************
-     */
-    public function getCreatorJSON(): array
-    {
-        $creator = new Popup('mymodal');
-        $creator->addField(new TextField([
-            'name' => 'customTextField',
-            'value' => 'empty_value',
-            'placeholder' => 'placeholder!'
-        ]));
-
-        return [
-            'modal' => $creator->getHTML()
         ];
     }
 }

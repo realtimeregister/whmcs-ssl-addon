@@ -23,10 +23,6 @@
     <div class="panel panel-default">
         <div class="panel-body">
 
-            <div class="button-container pull-right">
-                <button type="button" class="btn btn-primary save-all-products">{$ADDONLANG->T('save_all_products')}</button>
-            </div>
-
             <! --- start new form --->
             <form action="" method="post" class="form-horizontal margin-bottom-15" onsubmit="return confirm('{$ADDONLANG->T('areYouSureManyProducts')}');">
 
@@ -164,18 +160,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="control-label col-sm-2">{$ADDONLANG->T('months')}</label>
-                                <div class="col-sm-10">
-                                    <div  class="maxMonths {if $product->paytype == 'onetime'}hidden{/if}">{$product->apiConfig->peroids}</div>
-                                    <input {if $product->paytype == 'onetime'}class="hidden" disabled=""{/if} type="hidden" name="product[{$product->id}][configoption2]" value="{$product->apiConfig->peroids}"></input>
-                                    <select name="product[{$product->id}][configoption2]" class="form-control {if $product->paytype != 'onetime'}hidden{/if}" {if $product->paytype != 'onetime'}disabled=""{/if}>
-                                        {foreach from=$product->apiConfig->availablePeriods item=period}
-                                            <option {if $product->configoption2 == $period}selected{/if} value="{$period}">{$period}</option>
-                                        {/foreach}
-                                    </select>
-                                </div>
-                            </div>
 
                             {if $product->apiConfig->isSanEnabled}
                                 <div class="form-group">
@@ -219,7 +203,6 @@
                                 <label class="control-label col-sm-2">{$ADDONLANG->T('paymentType')}</label>
                                 <div class="col-sm-10">
                                     <select name="product[{$product->id}][paytype]" class="form-control addon-js-pricing-select" data-id="{$product->id}">
-                                        <option {if $product->paytype == 'free'}selected{/if} value="free">{$ADDONLANG->T('paymentTypeFree')}</option>
                                         <option {if $product->paytype == 'recurring'}selected{/if} value="recurring">{$ADDONLANG->T('paymentTypeRecurring')}</option>
                                         <option {if $product->paytype == 'onetime'}selected{/if} value="onetime">{$ADDONLANG->T('paymentTypeOneTime')}</option>
                                     </select>
@@ -242,22 +225,12 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptionsPeriod')}</label>
-                                <div class="col-sm-10">
-                                    <a href="#" onclick="manageconfigoptions('{$product->confOptionPeriod->id}');return false;" class="btn btn-success">{$ADDONLANG->T('editPrices')}</a>
-                                    <small>{$ADDONLANG->T('pricingInclude')}</small>
-                                </div>
-                            </div>
-
                             {if $product->apiConfig->isSanEnabled}
                                 <div class="form-group">
                                     <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptions')}</label>
                                     <div class="col-sm-10">
-                                        {foreach from=$product->confOption key=i item=confOption}
-                                            <a href="#" onclick="manageconfigoptions('{$confOption->id}');return false;"
-                                            class="btn btn-success">{$i + 1} {$ADDONLANG->T('editYears')}</a>
-                                        {/foreach}
+                                        <a href="#" onclick="return manageconfigoptions('{$product->confOption->id}')"
+                                            class="btn btn-success">{$ADDONLANG->T('editPrices')}</a>
                                         <small>{$ADDONLANG->T('pricingInclude')}</small>
                                     </div>
                                 </div>
@@ -267,51 +240,69 @@
                                 <div class="form-group">
                                     <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptionsWildcard')}</label>
                                     <div class="col-sm-10">
-                                        {foreach from=$product->confOptionWildcard key=i item=confOption}
-                                            <a href="#" onclick="manageconfigoptions('{$confOption->id}');return false;"
-                                            class="btn btn-success">{$i + 1} {$ADDONLANG->T('editYears')}</a>
-                                        {/foreach}
+                                        <a href="#" onclick="return manageconfigoptions('{$product->confOptionWildcard->id}')"
+                                            class="btn btn-success">{$ADDONLANG->T('editPrices')}</a>
                                         <small>{$ADDONLANG->T('pricingInclude')}</small>
                                     </div>
                                 </div>
                             {/if}
 
                             <div class="form-group" id="addon-js-pricing-group-{$product->id}" {if $product->paytype == 'free'}style="display: none;"{/if}>
-                                <label class="control-label col-sm-2">{$ADDONLANG->T('enableFor')}</label>
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptionsPeriod')}</label>
                                 <div class="col-sm-10">
 
                                     <div class="product_prices">
                                         <table class="table">
                                             <tbody>
                                                 <tr style="text-align:center;font-weight:bold">
-                                                    <td></td>
-                                                    <td class="prod-pricing-monthly-onetime">{$ADDONLANG->T('pricingMonthly')}</td>
+                                                    <td><small>{$ADDONLANG->T('pricingInclude')}</small></td>
+                                                    {if $product->paytype == 'onetime'}<td class="prod-pricing-monthly-onetime">{$ADDONLANG->T('pricingOnetime')}</td>{else}
                                                     {if in_array('12',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$ADDONLANG->T('pricingAnnually')}</td>{/if}
                                                     {if in_array('24',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$ADDONLANG->T('pricingBiennially')}</td>{/if}
                                                     {if in_array('36',$product->apiConfig->availablePeriods)}<td style="display: table-cell;" class="prod-pricing-recurring">{$ADDONLANG->T('pricingTriennially')}</td>{/if}
+                                                    {/if}
                                                 </tr>
                                                 {foreach from=$product->pricing item=pricing}
-                                                    <tr style="text-align:center" bgcolor="#ffffff" currency="{$pricing->code}">
-                                                        <td rowspan="2" bgcolor="#efefef"><b>{$pricing->code}</b></td>
+                                                    <tr style="text-align:center">
+                                                        <td rowspan="2"><b>{$pricing->code}</b></td>
                                                     </tr>
                                                     <tr style="text-align:center" bgcolor="#ffffff">
-                                                        <td class="prod-pricing-monthly-onetime">
-                                                            <input name="currency[{$pricing->pricing_id}][monthly]" class="pricingtgl" currency="{$pricing->code}" data-pricing-id="{$pricing->pricing_id}" cycle="monthly" type="checkbox" {if $pricing->monthly gte 0} checked="checked" {/if}>
-                                                        </td>
+                                                        {if $product->paytype == 'onetime'}
+                                                            <td class="prod-pricing-monthly-onetime">
+                                                                <input name="currency[{$pricing->pricing_id}][monthly]"
+                                                                       id="pricing_{$pricing->code}_monthly"
+                                                                       size="10" value="{$pricing->monthly}" style=""
+                                                                       class="form-control input-inline input-100 text-center"
+                                                                       type="text">
+                                                            </td>
+                                                            {else}
                                                         {if in_array('12',$product->apiConfig->availablePeriods)}
                                                             <td style="display: table-cell;" class="prod-pricing-recurring">
-                                                                <input name="currency[{$pricing->pricing_id}][annually]" class="pricingtgl" currency="{$pricing->code}" data-pricing-id="{$pricing->pricing_id}" cycle="annually" {if $pricing->annually gte 0} checked="checked" {/if} type="checkbox">
+                                                                <input name="currency[{$pricing->pricing_id}][annually]"
+                                                                       id="pricing_{$pricing->code}_annually"
+                                                                       size="10" value="{$pricing->annually}" style=""
+                                                                       class="form-control input-inline input-100 text-center"
+                                                                       type="text">
                                                             </td>
                                                         {/if}
                                                         {if in_array('24',$product->apiConfig->availablePeriods)}
                                                             <td style="display: table-cell;" class="prod-pricing-recurring">
-                                                                <input name="currency[{$pricing->pricing_id}][biennially]" class="pricingtgl" data-pricing-id="{$pricing->pricing_id}" currency="{$pricing->code}" {if $pricing->biennially gte 0} checked="checked" {/if} cycle="biennially" type="checkbox">
+                                                                <input name="currency[{$pricing->pricing_id}][biennially]"
+                                                                       id="pricing_{$pricing->code}_biennially"
+                                                                       size="10" value="{$pricing->biennially}" style=""
+                                                                       class="form-control input-inline input-100 text-center"
+                                                                       type="text">
                                                             </td>
                                                         {/if}
                                                         {if in_array('36',$product->apiConfig->availablePeriods)}
                                                             <td style="display: table-cell;" class="prod-pricing-recurring">
-                                                                <input name="currency[{$pricing->pricing_id}][triennially]" class="pricingtgl" data-pricing-id="{$pricing->pricing_id}" currency="{$pricing->code}" cycle="triennially" {if $pricing->triennially gte 0} checked="checked" {/if} type="checkbox">
+                                                                <input name="currency[{$pricing->pricing_id}][triennially]"
+                                                                       id="pricing_{$pricing->code}_triennially"
+                                                                       size="10" value="{$pricing->triennially}" style=""
+                                                                       class="form-control input-inline input-100 text-center"
+                                                                       type="text">
                                                             </td>
+                                                        {/if}
                                                         {/if}
                                                     </tr>
                                                 {/foreach}
@@ -326,68 +317,19 @@
                     <input type="submit" name="saveProduct" class="btn btn-success" value="{$ADDONLANG->T('save')}" />
                 </form>
             {/foreach}
-            <div class="button-container pull-right">
-                <button type="button" class="btn btn-primary save-all-products">{$ADDONLANG->T('save_all_products')}</button>
-            </div>
         </div>
     </div>
     <script>
         {literal}
             function manageconfigoptions(id) {
                 window.open('configproductoptions.php?manageoptions=true&cid=' + id, 'configoptions', 'width=900,height=500,scrollbars=yes');
+                return false;
             }
-            $(document).ready(function () {
-
-                $('body').on('click','.save-all-products', function(){
-
-                    $('#AddonLoader').show();
-
-                    var promises = [];
-
-                    $('.save-product-form').each( function(){
-
-                        var dataForm = $(this).serialize();
-                        var urlFrom = $(this).attr('action');
-
-                        var request = $.ajax({
-                            type: "POST",
-                            url: urlFrom,
-                            async: true,
-                            data: {
-                                'field': dataForm,
-                                'ajax': '1',
-                                'saveProduct': 'Save'
-                            },
-                            success: function(data)
-                            {
-
-                            }
-                        });
-
-                        promises.push(request);
-                    });
-
-                    $.when.apply(null, promises).done(function(){
-                        $('#AddonAlerts div[data-prototype="success"] strong').text('{/literal}{$ADDONLANG->T('products_saved')}{literal}');
-                        $('#AddonAlerts div[data-prototype="success"]').show();
-                        $('#AddonLoader').hide();
-                        $("html, body").animate({ scrollTop: 0 }, "slow");
-                    });
-                });
+            $(function () {
 
                 $('body').on('change', 'select[name="type"]', function(){
-
-                    var valtype = $(this).val();
-
-                    if(valtype == 'all')
-                    {
-                        $('select[name="products[]"]').prop('disabled', true);
-                    }
-                    else
-                    {
-                        $('select[name="products[]"]').prop('disabled', false);
-                    }
-
+                    const valtype = $(this).val();
+                    $('select[name="products[]"]').prop('disabled', valtype === 'all');
                 });
 
                 $('.addon-js-create-options').on('click', function () {
@@ -403,26 +345,22 @@
                     $('#createConfOptionsFormWildcard').submit();
                 });
 
-                jQuery('.buttons-container').on('click', '.disable-product', function () {
-                    var productId = $(this).data('product-id');
-                    button = $(this);
+                $('.buttons-container').on('click', '.disable-product', function () {
+                    const productId = $(this).data('product-id');
+                    const button = $(this);
                     JSONParser.request('disableProduct', {productId: productId}, function (data) {
-                        if (data.success) {
-                            switchButtons('enToDis', button, productId);
-                        } else {
+                        if ('success' in data) {
                             switchButtons('disToEn', button, productId);
                         }
                     }, false);
                 });
 
 
-                jQuery('.buttons-container').on('click', '.enable-product', function () {
-                    var productId = $(this).data('product-id');
-                    button = $(this);
+                $('.buttons-container').on('click', '.enable-product', function () {
+                    const productId = $(this).data('product-id');
+                    const button = $(this);
                     JSONParser.request('enableProduct', {productId: productId}, function (data) {
-                        if (data.success) {
-                            switchButtons('disToEn', button, productId);
-                        } else {
+                        if ('success' in data) {
                             switchButtons('enToDis', button, productId);
                         }
                     }, false);
@@ -430,31 +368,12 @@
 
 
                 function switchButtons(type, container, productId) {
-                    if (type == 'enToDis') {
+                    if (type === 'enToDis') {
                         container.parent().html('<button type="button" data-product-id="' + productId + '" class="btn btn-danger disable-product">{/literal}{$ADDONLANG->T('statusDisable')}{literal}</button>');
                     } else {
                         container.parent().html('<button type="button" data-product-id="' + productId + '" class="btn btn-success enable-product">{/literal}{$ADDONLANG->T('statusEnable')}{literal}</button>');
                     }
                 }
-
-                function initFields() {
-                    $(".pricingtgl").each(function (no, item) {
-
-                        if ($(item).is(":checked")) {
-
-                        } else {
-
-                            var cycle = $(item).attr("cycle");
-                            var currency = $(item).attr("currency");
-                            var pricingId = $(item).data('pricing-id');
-
-                            $("#pricing_" + currency + "_" + cycle + "_" + pricingId).val("-1.00").hide();
-                            $("#pricing_commission_" + currency + "_" + cycle + "_" + pricingId).hide();
-                            $("#setup_" + currency + "_" + cycle + "_" + pricingId).hide();
-                        }
-                    });
-                }
-                initFields();
 
                 function disablePrices(element) {
                     element.attr("disabled", true);
@@ -472,9 +391,7 @@
                     element.find("input[cycle='monthly']").removeAttr('disabled');
 
                     if (element.find("input[cycle='monthly']").hasClass('monthly')) {
-                        if (type !== 'free') {
-                            $(element).find("input[cycle='monthly']").prop('checked', false);
-                        }
+                        $(element).find("input[cycle='monthly']").prop('checked', false);
                         element.find("input[cycle='monthly']").removeClass('monthly');
                     }
                     element.find("input[cycle='monthly']").addClass('onetime');
@@ -490,31 +407,26 @@
                 }
 
                 function setAsOneTime(select, type = null) {
-                    var pc = select.closest('.product-container');
-                    //disablePrices(pc.find("input[cycle='monthly']"));
+                    const pc = select.closest('.product-container');
                     showOneTime(pc, type);
                     disablePrices(pc.find("input[cycle='annually']"));
                     disablePrices(pc.find("input[cycle='biennially']"));
                     disablePrices(pc.find("input[cycle='triennially']"));
-                    initFields();
                 }
 
                 function setAsNonOneTime(select, type = null) {
-                    var pc = select.closest('.product-container');
-                    //enablePrices(pc.find("input[cycle='monthly']"));
+                    const pc = select.closest('.product-container');
                     hideOneTime(pc, type);
                     enablePrices(pc.find("input[cycle='annually']"));
                     enablePrices(pc.find("input[cycle='biennially']"));
-                    enablePrices(pc.find("input[cycle='semiannually']"));
                     enablePrices(pc.find("input[cycle='triennially']"));
-                    initFields();
                 }
 
 
                 $(".pricingtgl").click(function () {
-                    var cycle = $(this).attr("cycle");
-                    var currency = $(this).attr("currency");
-                    var pricingId = $(this).data('pricing-id');
+                    const cycle = $(this).attr("cycle");
+                    const currency = $(this).attr("currency");
+                    const pricingId = $(this).data('pricing-id');
 
                     if ($(this).is(":checked")) {
                         if ($('input[name="product[' + pricingId + '][configoption5]"]').is(':checked'))
@@ -530,8 +442,8 @@
                 });
 
                 function showHidePricing(select) {
-                    var productId = select.data('id');
-                    var type = select.val();
+                    const productId = select.data('id');
+                    const type = select.val();
                     if (type === 'free') {
                         setAsNonOneTime(select);
                         $('#addon-js-pricing-group-' + productId).hide();
@@ -545,36 +457,23 @@
                 }
 
                 function showHidePeriodSelection(select) {
-                    var productId = select.data('id');
-                    var type = select.val();
-                    if (type === 'onetime') {
-                        $(select).parents('td').find('.maxMonths').addClass('hidden');
-                        $('input[name="product[' + productId + '][configoption2]"]').addClass('hidden').prop('disabled', true);
-                        $('select[name="product[' + productId + '][configoption2]"]').removeClass('hidden').prop('disabled', false);
-                    } else {
-                        $(select).parents('td').find('.maxMonths').removeClass('hidden');
-                        $('input[name="product[' + productId + '][configoption2]"]').removeClass('hidden').prop('disabled', false);
-                        $('select[name="product[' + productId + '][configoption2]"]').addClass('hidden').prop('disabled', true);
-                    }
-                }
+                    const productId = select.data('id');
+                    const type = select.val();
 
-                function enableDisableCommission(select)
-                {
-                    var productId = select.data('id');
-                    var type = select.val();
-                    if (type === 'free')
-                    {
-                        $('input[name="product[' + productId + '][configoption6]"]').val('').prop('readonly', true);
-                    } else
-                    {
-                        $('input[name="product[' + productId + '][configoption6]"]').prop('readonly', false);
-                    }
+                    $('select[name="product[' + productId + '][configoption2]"]')
+                        .prop('disabled', type === 'onetime');
+
+                    $('select[name="product[' + productId + '][configoption2]"] option[selected=""]')
+                        .prop('selected', false)
+
+                    $('select[name="product[' + productId + '][configoption2]"] option[value=12]')
+                        .prop('selected', true)
                 }
 
                 function enableDisableAutoPriceUpdate(select)
                 {
-                    var productId = select.data('id');
-                    var type = select.val();
+                    const productId = select.data('id');
+                    const type = select.val();
                     if (type === 'free')
                     {
                         $('input[name="product[' + productId + '][configoption5]"]').prop('checked', false).prop('readonly', true).prop('disabled', true);
@@ -585,38 +484,10 @@
                 }
 
                 function enableDisablePriceField(checkbox) {
-                    var productId = checkbox.data('id');
-                    var checked = false;
-                    if (checkbox.is(":checked")) {
-                        checked = true;
-                    }
+                    const productId = checkbox.data('id');
+                    const checked = checkbox.is(":checked")
 
-                    if (checked)
-                    {
-                        $('#addon-js-pricing-group-' + productId).find('input[id^="pricing_"]').prop('readonly', true);
-                    } else
-                    {
-                        $('#addon-js-pricing-group-' + productId).find('input[id^="pricing_"]').prop('readonly', false);
-                    }
-                }
-                function changePriceWithCommission(input) {
-                    const commissionValue = parseFloat(input.val());
-                    const checkboxes = input.parents('#product_configuration').find('.product_prices').find('.pricingtgl');
-                    checkboxes.each(function (index) {
-                        if ($(this).is(':checked')) {
-                            const cycle = $(this).attr("cycle");
-                            const currency = $(this).attr("currency");
-                            const pricingId = $(this).data('pricing-id');
-                            let price = parseFloat($("#pricing_" + currency + "_" + cycle + "_" + pricingId).val());
-                            let priceWithCommission = price * commissionValue / 100 + price;
-
-                            if(isNaN(price))
-                                price = '0.00';
-                            if (isNaN(priceWithCommission))
-                                priceWithCommission = price;
-                            $("#pricing_commission_" + currency + "_" + cycle + "_" + pricingId).val('').val(priceWithCommission.toFixed(2));
-                        }
-                    });
+                    $('#addon-js-pricing-group-' + productId).find('input[id^="pricing_"]').prop('readonly', checked);
                 }
 
                 $('.addon-js-pricing-select').each(function () {
@@ -631,17 +502,10 @@
                 $('.addon-js-pricing-select').on('change', function () {
                     showHidePricing($(this), true);
                     showHidePeriodSelection($(this));
-                    enableDisableCommission($(this));
                     enableDisableAutoPriceUpdate($(this));
                 });
                 $('.addon-js-pricing-auto-download').on('change', function () {
                     enableDisablePriceField($(this))
-                });
-                $('.addon-product-commission').on('change keyup paste', function () {
-                    changePriceWithCommission($(this))
-                });
-                $('input[id^="pricing_"]').on('change keyup paste', function () {
-                    changePriceWithCommission($(this).parents('#product_configuration').find('.addon-product-commission'))
                 });
             });
         {/literal}

@@ -176,6 +176,7 @@ $_LANG['addonAA']['productsConfiguration']['paymentTypeOneTime']   = 'One Time';
 
 $_LANG['addonAA']['productsConfiguration']['pricing']             = 'Pricing:';
 $_LANG['addonAA']['productsConfiguration']['pricingMonthly']      = 'One Time / Monthly';
+$_LANG['addonAA']['productsConfiguration']['pricingOnetime']      = 'One Time';
 $_LANG['addonAA']['productsConfiguration']['pricingQuarterly']    = 'Quarterly';
 $_LANG['addonAA']['productsConfiguration']['pricingSemiAnnually'] = 'Semi-Annually';
 $_LANG['addonAA']['productsConfiguration']['pricingAnnually']     = 'Annually';

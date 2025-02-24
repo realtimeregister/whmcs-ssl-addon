@@ -202,15 +202,14 @@ class Invoice
 
         $configOptions = $this->getConfigOptions($service);
         $clientCurrencyID = $this->getClientCurrencyID($service->userid);
-        $configOptionsPeriod = $configOptions[ConfigOptions::OPTION_PERIOD];
-        $billingCycle = $configOptionsPeriod['billingCycle'];
+        $billingCycle = $service->billingcycle;
         $pricing = get_query_val(
             "tblpricing",
             $billingCycle,
             [
-                "type" => "configoptions",
+                "type" => "product",
                 "currency" => $clientCurrencyID,
-                "relid" => $configOptions[ConfigOptions::OPTION_PERIOD]['configOptionID']
+                "relid" => $product->id
             ]
         );
 
@@ -218,13 +217,12 @@ class Invoice
             throw new \Exception("Pricing not available for period");
         }
 
-        if ($service->billingcycle == 'One Time') {
+        if ($billingCycle == 'One Time') {
             //get product pricing
             $invoiceItemDescription = $product->name . ($service->domain ? ' - ' . $service->domain : '')
                 . ' - Renewal';
         } else {
-
-            $timeShift = 'P' . BillingCycle::convertStringToPeriod($billingCycle . 'M');
+            $timeShift = 'P' . BillingCycle::convertStringToPeriod($billingCycle) . 'M';
             $startDate = $service->nextduedate;
             $endDate = $this->getNextDueDate($service->nextduedate, $dateFormat, $timeShift);
             $invoiceItemDescription = $product->name . ($service->domain ? ' - ' . $service->domain : '')
@@ -246,11 +244,12 @@ class Invoice
             ? 0
             : $configOptions['single']['boughtSans'];
 
+
         $invoiceItemNum = 2;
         if ($boughtSans > 0) {
             $qtyprice = get_query_val(
                 "tblpricing",
-                strtolower($configOptions['single']['billingCycle']),
+                $billingCycle,
                 [
                     "type" => "configoptions",
                     "currency" => $clientCurrencyID,
@@ -274,7 +273,7 @@ class Invoice
         if ($boughtSansWildcard > 0) {
             $qtyprice = get_query_val(
                 "tblpricing",
-                strtolower($configOptions['wildcard']['billingCycle']),
+                $billingCycle,
                 ["type" => "configoptions",
                     "currency" => $clientCurrencyID,
                     "relid" => $configOptions['wildcard']['configOptionID']
@@ -287,11 +286,12 @@ class Invoice
             $invoiceData['itemdescription' . $invoiceItemNum] = $configOptions['wildcard']['friendlyName']
                 . ': ' . $configOptions['wildcard']['boughtSans']
                 . ' x ' . $optionname;
-            $invoiceData['itemamount' . $invoiceItemNum] = $qtyprice * $configOptions['wildcard']['boughtSans'] * $multiplier;;
+            $invoiceData['itemamount' . $invoiceItemNum] = $qtyprice * $configOptions['wildcard']['boughtSans'] * $multiplier;
             $invoiceData['itemtaxed' . $invoiceItemNum] = $product->tax;
         }
 
         $adminUserName = Admin::getAdminUserName();
+
 
         $results = localAPI('CreateInvoice', $invoiceData, $adminUserName);
 
@@ -302,6 +302,7 @@ class Invoice
         Capsule::table('tblinvoiceitems')
             ->where('invoiceid', '=', $invoiceId)
             ->update(['type' => 'Hosting']);
+
         /*
          * add relid to invoiceitem entry in the tblinvoiceitems table -> WHMCS does not fill this column
          * via local API CreateInvoice command
@@ -349,25 +350,12 @@ class Invoice
             );
         }
         $serviceParams = $server->buildParams();
-        $period = intval($serviceParams['configoptions']['years']);
-
-
-        $configoptionsResults['years'] = [
-            'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_PERIOD, $period),
-            'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_PERIOD, $period),
-            'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_PERIOD],
-            'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_PERIOD, $period),
-            'billingCycle' => $service->billingcycle === 'One Time'
-                ? 'monthly'
-                : $service->billingcycle
-        ];
-
         if ($isSanEnabled) {
             $configoptionsResults['single'] = [
-                'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_SANS_COUNT, $period),
-                'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_SANS_COUNT, $period),
-                'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period],
-                'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_SANS_COUNT, $period),
+                'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_SANS_COUNT),
+                'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_SANS_COUNT),
+                'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_COUNT],
+                'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_SANS_COUNT),
                 'billingCycle' => $service->billingcycle === 'One Time'
                     ? 'monthly'
                     : $service->billingcycle
@@ -377,10 +365,10 @@ class Invoice
 
         if ($isSanEnabledWildcard) {
             $configoptionsResults['wildcard'] = [
-                'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT, $period),
-                'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT, $period),
-                'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period],
-                'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_SANS_WILDCARD_COUNT, $period),
+                'configOptionID' => $configOptions->getOptionID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT),
+                'configID' => $configOptions->getConfigID(ConfigOptions::OPTION_SANS_WILDCARD_COUNT),
+                'boughtSans' => $serviceParams['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT],
+                'friendlyName' => $configOptions->getFriendlyName(ConfigOptions::OPTION_SANS_WILDCARD_COUNT),
                 'billingCycle' => $service->billingcycle === 'One Time'
                     ? 'monthly'
                     : $service->billingcycle

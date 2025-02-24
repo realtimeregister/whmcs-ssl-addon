@@ -7,6 +7,7 @@ use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
 use RealtimeRegister\Domain\Product;
 
 trait SSLUtils
@@ -17,10 +18,20 @@ trait SSLUtils
         if (!$sanEnabledForWHMCSProduct) {
             return 0;
         }
-        $period = intval($params['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
         $includedSans = (int)$params[ConfigOptions::PRODUCT_INCLUDED_SANS];
-        $boughtSans = (int)$params['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period];
+        $boughtSans = (int)$params['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
         return $includedSans + $boughtSans;
+    }
+
+    function parsePeriod($billingCycle) {
+        switch (strtolower($billingCycle)) {
+            case BillingCycle::BIENNIALLY:
+                return 24;
+            case BillingCycle::TRIENNIALLY:
+                return 36;
+            default:
+                return 12;
+        }
     }
 
     public function getSansLimitWildcard(array $params)
@@ -29,9 +40,8 @@ trait SSLUtils
         if (!$sanEnabledForWHMCSProduct) {
             return 0;
         }
-        $period = intval($params['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
         $includedSans = (int)$params[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
-        $boughtSans = (int)$params['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period];
+        $boughtSans = (int)$params['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT];
         return $includedSans + $boughtSans;
     }
 

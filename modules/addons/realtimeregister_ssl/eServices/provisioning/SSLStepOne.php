@@ -43,11 +43,10 @@ class SSLStepOne
         $sanEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN] === 'on';
         $sanWildcardEnabledForWHMCSProduct = $this->p[ConfigOptions::PRODUCT_ENABLE_SAN_WILDCARD] === 'on';
 
-        $period = intval($this->p['configoptions'][ConfigOptions::OPTION_PERIOD][0]);
         $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS];
         $includedSansWildcard = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
 
-        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT . $period];
+        $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
 
         $sansLimit = $includedSans + $boughtSans;
 
@@ -61,7 +60,7 @@ class SSLStepOne
         if ($sansLimit > 0 || $sanWildcardEnabledForWHMCSProduct == 'on') {
             $fields['additionalfields'][San::getTitle()] = San::getFields(
                 $sansLimit,
-                (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT . $period]
+                (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT]
                 + $includedSansWildcard,
                 $this->p
             );

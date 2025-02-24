@@ -9,13 +9,6 @@ const VALUE_ASSIGN_STRING = " = '" . VALUE_PLACEHOLDER . "';";
 
 class JSInserter
 {
-    const PRODUCTS_TOTAL_ELEMENT_ID = 'producttotal';
-    const INPUT_CONFIG_OPTION_PREFIX = 'inputConfigOption';
-    const YEARS_CONFIG_OPTION_PREFIX = 'Years';
-    const ADDITIONAL_DOMAIN_CONFIG_OPTION_PREFIX = "Additional Single domain SANs";
-    const WILDCARD_DOMAIN_CONFIG_OPTION_PREFIX = 'Additional Wildcard domain';
-
-
     /**
      * Pass js file path
      * and associative array of variable name => variable value pairs.

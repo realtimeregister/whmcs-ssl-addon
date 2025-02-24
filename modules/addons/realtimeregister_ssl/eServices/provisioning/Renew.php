@@ -152,7 +152,7 @@ class Renew
 
         $addSSLRenewOrder = $certificateApi->renewCertificate(
             $configData['certificateId'],
-            intval($this->p['configoptions'][ConfigOptions::OPTION_PERIOD]) * 12,
+            $this->parsePeriod($service->billingcycle),
             $configData['csr'],
             empty($configData['san_details'])
                 ? null
