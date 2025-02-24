@@ -12,12 +12,8 @@
                 '<label for="csrReadOnly" style="font-size: 13px;float: left;margin-top: ' +
                 '-20px;margin-left: 20px;">{$ADDONLANG->T('csrReadOnly')}</label></div>').insertBefore(csrInput);
 
-            $('#csrReadOnly').on('change', e => {
-                if (e.target.checked) {
-                    csrInput.removeAttr('readonly');
-                } else {
-                    csrInput.attr('readonly', '');
-                }
+            $('#csrReadOnly').change(e => {
+                csrInput.attr('readonly', !e.target.checked);
             });
 
             alertInfo.after('<div class="card-body select-cpanel-server">' +
@@ -36,7 +32,6 @@
             $('#step-type-data').on('change', (e) => {
                 $('input[name="CN"]').val(e.target.value);
             })
-
         {/if}
 
 
@@ -58,7 +53,8 @@
 
         //remove (Required if Organization Name is set) comment
         const jobTitleInput = $('input[name="jobtitle"]');
-        const jobTitleLabel = jobTitleInput.parent().find('label');//for simplicity template
+        jobTitleInput.val("  ")
+        const jobTitleLabel = jobTitleInput.parent().find('label');
 
         jobTitleInput.parent().html(jobTitleInput);
         //for simplicity template
