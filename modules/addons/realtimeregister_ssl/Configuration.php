@@ -17,7 +17,6 @@ use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPri
 use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
 use WHMCS\Database\Capsule;
 
-
 class Configuration extends AbstractConfiguration
 {
     /**
@@ -326,7 +325,8 @@ class Configuration extends AbstractConfiguration
             'productsConfiguration' => ['icon' => 'fa fa-edit'],
             'userDiscounts' => ['icon' => 'fa fa-user-plus'],
             'orders' => ['icon' => 'fa fa-shopping-cart'],
-            'logs' => ['icon' => 'fa fa-list']
+            'logs' => ['icon' => 'fa fa-list'],
+            'crons' => ['icon' => 'fa fa-refresh'],
         ];
     }
 
@@ -378,8 +378,6 @@ class Configuration extends AbstractConfiguration
 
     /**
      * Run When Module Install
-     *
-     * @return array
      */
     function activate()
     {
@@ -400,7 +398,6 @@ class Configuration extends AbstractConfiguration
 
     /**
      * Do something after module deactivate. You can status and description
-     * @return array
      */
     function deactivate()
     {

@@ -534,19 +534,6 @@ class Addon extends AbstractMainDriver
         return '<JSONRESPONSE#' . json_encode($content) . '#ENDJSONRESPONSE>';
     }
 
-    public static function cron($input, $action = 'index')
-    {
-        try {
-            self::I()->isAdmin(true);
-            self::I()->setMainLangContext();
-
-            self::I()->runController('Cron', $action, $input, 'CRON');
-        } catch (Exception $ex) {
-            self::dump($ex);
-            Register::register($ex);
-        }
-    }
-
     public static function localAPI($action, $arguments)
     {
         $output = [

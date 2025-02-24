@@ -4,7 +4,7 @@ namespace AddonModule\RealtimeRegisterSsl\controllers\server\clientarea;
 
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
-use AddonModule\RealtimeRegisterSsl\controllers\addon\admin\Cron;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -413,10 +413,9 @@ class home extends AbstractController
             );
 
             $errorInvoiceExist = false;
-            $cron = new Cron();
             // TODO fix the following lines
             $service = \WHMCS\Service\Service::where('id', $input['id'])->get();
-            $result = $cron->createAutoInvoice([$input['params']['pid'] => $service], $input['id'], true);
+            $result = $this->createAutoInvoice([$input['params']['pid'] => $service], $input['id'], true);
             if (is_array($result) && isset($result['invoiceID'])) {
                 $existInvoiceID = $result['invoiceID'];
                 $errorInvoiceExist = Lang::getInstance()->T('Related invoice already exist.');
@@ -777,5 +776,37 @@ class home extends AbstractController
             return ['success' => 0, 'message' => $e->getMessage()];
         }
         return ['success' => 1, 'message' => Lang::getInstance()->T('The certificate has been installed correctly')];
+    }
+
+    private function createAutoInvoice($packages, $serviceIds, $jsonAction = false)
+    {
+        if (empty($packages)) {
+            return 0;
+        }
+
+        $products             = \WHMCS\Product\Product::whereIn('id', array_keys($packages))->get();
+        $invoiceGenerator     = new Invoice();
+        $servicesAlreadyAdded = $invoiceGenerator->checkInvoiceAlreadyCreated($serviceIds);
+        $getInvoiceID         = false;
+        if ($jsonAction) {
+            $getInvoiceID = true;
+        }
+        $invoiceCounter = 0;
+        foreach ($products as $prod) {
+            foreach ($packages[$prod->id] as $service) {
+                //have product, service
+                if (isset($servicesAlreadyAdded[$service->id])) {
+                    if ($jsonAction) {
+                        return [
+                            'invoiceID' => $invoiceGenerator->getLatestCreatedInvoiceInfo($service->id)['invoice_id']
+                        ];
+                    }
+                    continue;
+                }
+                $invoiceCounter += $invoiceGenerator->createInvoice($service, $prod, $getInvoiceID);
+            }
+        }
+
+        return $invoiceCounter;
     }
 }

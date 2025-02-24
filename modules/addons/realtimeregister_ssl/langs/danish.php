@@ -5,40 +5,27 @@ $_LANG['generalError'] = 'Noget gik galt. Gennemse logfilerne og kontakt adminis
 
 // Realtime Register Ssl configuration
 $_LANG['addonAA']['pagesLabels']['label']['apiConfiguration']                                          = 'Konfiguration';
-$_LANG['addonAA']['apiConfiguration']['crons']['header']                                               = 'Crons';
+$_LANG['addonAA']['crons']['header'] = 'Cronjobs';
+$_LANG['addonAA']['crons']['explanation'] = 'Her kan du vælge eller fravælge de cronjobs, der skal køres. Vi foreslår, at du holder dem alle aktiveret for den bedste oplevelse';
 //synchronization cron
-$_LANG['addonAA']['apiConfiguration']['DailyCron']['pleaseNote']                             = 'Bemærk:';
-$_LANG['addonAA']['apiConfiguration']['DailyCron']['info']                                   = 'For at kunne aktivere automatisk daglig synkronisering skal du opsætte følgende cron job:';
-$_LANG['addonAA']['apiConfiguration']['DailyCron']['commandLine']['cronFrequency']           = '0 0 * * *';
+$_LANG['addonAA']['crons']['cron_daily'] = 'Automatisk daglig synkronisering';
 //processing cron
-$_LANG['addonAA']['apiConfiguration']['cronProcessing']['pleaseNote']                             = 'Bemærk:';
-$_LANG['addonAA']['apiConfiguration']['cronProcessing']['info']                                   = 'For at kunne aktivere automatisk synkronisering af behandling af ordrer hvert 5. minut skal du opsætte følgende cron job:';
-$_LANG['addonAA']['apiConfiguration']['cronProcessing']['commandLine']['cronFrequency']           = '*/5 * * * *';
+$_LANG['addonAA']['crons']['cron_processing'] = 'Automatisk synkronisering af behandling af ordrer hvert 5. minut';
 
 //synchronization cron
-$_LANG['addonAA']['apiConfiguration']['cronSynchronization']['pleaseNote']                             = 'Bemærk:';
-$_LANG['addonAA']['apiConfiguration']['cronSynchronization']['info']                                   = 'For at kunne aktivere automatisk synkronisering skal du opsætte følgende cron job (hver time anbefalet):';
-$_LANG['addonAA']['apiConfiguration']['cronSynchronization']['commandLine']['cronFrequency']           = '0 */1 * * *';
+$_LANG['addonAA']['crons']['cron_synchronization'] = 'Automatisk synkronisering (hver time)';
 //summary order cron
-$_LANG['addonAA']['apiConfiguration']['cronSSLSummaryStats']['pleaseNote']                             = 'Bemærk:';
-$_LANG['addonAA']['apiConfiguration']['cronSSLSummaryStats']['info']                                   = 'For at kunne aktivere indlæsning af nuværende SSL ordrers status skal du opsætte følgende cron job (hver 4. time anbefalet):';
-$_LANG['addonAA']['apiConfiguration']['cronSSLSummaryStats']['commandLine']['cronFrequency']           = '1 */4 * * *';
+$_LANG['addonAA']['crons']['cron_ssl_summary_stats'] = 'Indlæs den aktuelle SSL-ordrestatus (hver 4. time)';
 //customers notification and creating renewals
-$_LANG['addonAA']['apiConfiguration']['cronRenewal']['pleaseNote']                                     = 'Bemærk:';
-$_LANG['addonAA']['apiConfiguration']['cronRenewal']['info']                                           = 'For at kunne sende en notifikation til kunden om services, der udløber, og oprette en faktura til fornyelse for services, der udløber inden det valgte antal dage, skal du opsætte følgende cron job (én gang dagligt anbefalet):';
-$_LANG['addonAA']['apiConfiguration']['cronRenewal']['commandLine']['cronFrequency']                   = '0 0 * * *';
+$_LANG['addonAA']['crons']['cron_renewal'] = 'Send kunder meddelelser om udløb af tjenester og opret fornyelsesfakturaer for tjenester, der udløber inden for det valgte antal dage (en gang om dagen)';
 //customers send certificate
-$_LANG['addonAA']['apiConfiguration']['cronSendCertificate']['pleaseNote']                             = 'Bemærk:';
-$_LANG['addonAA']['apiConfiguration']['cronSendCertificate']['info']                                   = 'For at kunne sende et certifikat til kunden, når ordren for SSL ændres til aktiv status skal du opsætte følgende cron job (hver 3. time anbefalet):';
-$_LANG['addonAA']['apiConfiguration']['cronSendCertificate']['commandLine']['cronFrequency']           = '0 */3 * * *';
+$_LANG['addonAA']['crons']['cron_send_certificate'] = 'Send et certifikat til klienten, når SSL-ordren ændres til aktiv status (hver 3. time)';
 //customers send certificate
-$_LANG['addonAA']['apiConfiguration']['cronPriceUpdater']['pleaseNote']                             = 'Bemærk:';
-$_LANG['addonAA']['apiConfiguration']['cronPriceUpdater']['info']                                   = 'For at kunne synkronisere produktpriserne i WHMCS med produktpriserne fra API\'en skal du opsætte følgende cron job (hver 3. dag anbefalet):';
-$_LANG['addonAA']['apiConfiguration']['cronPriceUpdater']['commandLine']['cronFrequency']           = '0 0 */3 * *';
+$_LANG['addonAA']['crons']['cron_price_updater'] = 'Synkroniser WHMCS-produktpriserne med API-produktpriserne (hver dag)';
 //customers send certificate
-$_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['pleaseNote']                             = 'Bemærk:';
-$_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['info']                                   = 'For at kunne synkronisere certifikatdetaljer i WHMCS med certifikatdetaljer fra API\'en skal du opsætte følgende cron job (én gang dagligt anbefalet):';
-$_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['commandLine']['cronFrequency']           = '0 0 * * *';
+$_LANG['addonAA']['crons']['cron_certificate_details_updater'] = 'Synkroniser certifikatdetaljer i WHMCS med certifikatdetaljerne i API (en gang om dagen)';
+$_LANG['addonAA']['crons']['label'] = 'Gem cron-indstillinger';
+
 //
 $_LANG['addonAA']['apiConfiguration']['item']['price_rate']['label']                                   = 'Rate for currency from RealtimeRegisterSSL';
 $_LANG['addonAA']['apiConfiguration']['item']['rate']['label']                                         = 'Rate';
@@ -344,9 +331,7 @@ $_LANG['addonAA']['orders']['table']['actions'] = 'Actions';
 
 $_LANG['Choose a domain'] = 'Choose a domain';
 
-$_LANG['addonAA']['apiConfiguration']['cronCertificateInstaller']['pleaseNote'] = 'Please Note:';
-$_LANG['addonAA']['apiConfiguration']['cronCertificateInstaller']['info'] = 'In order to install certificate in your hostingpanel, set the following command line cron (once a day suggested):';
-$_LANG['addonAA']['apiConfiguration']['cronCertificateInstaller']['commandLine']['cronFrequency'] = '0 0 * * *';
+$_LANG['addonAA']['crons']['cron_certificate_installer'] = 'Installer certifikat i dit hostingpanel (en gang om dagen)';
 
 $_LANG['addonAA']['orders']['table']['set as verified'] = 'Set as verified';
 $_LANG['addonAA']['orders']['table']['set as installed'] = 'Set as installed';
