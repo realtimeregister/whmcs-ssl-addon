@@ -96,7 +96,7 @@ trait SSLUtils
                 $order['approver'] = [
                     'firstName' => $params['firstname'],
                     'lastName' => $params['lastname'],
-                    'jobTitle' => $params['jobtitle'] ?: null,
+                    'jobTitle' => trim($params['jobtitle'] ?? '') ?: null,
                     'email' => $params['email'],
                     'voice' => preg_replace('/\r|\n|\s/', '', $params['phonenumber'])
                 ];
