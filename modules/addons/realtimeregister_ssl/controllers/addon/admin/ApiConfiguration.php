@@ -386,26 +386,6 @@ class ApiConfiguration extends AbstractController
 
         $vars['form'] = $form->getHTML();
 
-        //get cron command line
-        $vars['cronCommandLine'] = 'php -q ' . ROOTDIR . DS . 'modules' . DS . 'addons'
-            . DS . 'realtimeregister_ssl' . DS . 'cron' . DS . 'cron.php';
-        $vars['cronCommandLine7'] = 'php -q ' . ROOTDIR . DS . 'modules' . DS . 'addons'
-            . DS . 'realtimeregister_ssl' . DS . 'cron' . DS . 'APIProcessingOrders.php';
-        $vars['cronCommandLine8'] = 'php -q ' . ROOTDIR . DS . 'modules' . DS . 'addons'
-            . DS . 'realtimeregister_ssl' . DS . 'cron' . DS . 'APIDailyStatusUpdater.php';
-        $vars['cronCommandLine2'] = 'php -q ' . ROOTDIR . DS . 'modules' . DS . 'addons'
-            . DS . 'realtimeregister_ssl' . DS . 'cron' . DS . 'certificateStatsLoader.php';
-        $vars['cronCommandLine3'] = 'php -q ' . ROOTDIR . DS . 'modules' . DS . 'addons'
-            . DS . 'realtimeregister_ssl' . DS . 'cron' . DS . 'notifier.php';
-        $vars['cronCommandLine4'] = 'php -q ' . ROOTDIR . DS . 'modules' . DS . 'addons'
-            . DS . 'realtimeregister_ssl' . DS . 'cron' . DS . 'certificateSender.php';
-        $vars['cronCommandLine5'] = 'php -q ' . ROOTDIR . DS . 'modules' . DS . 'addons'
-            . DS . 'realtimeregister_ssl' . DS . 'cron' . DS . 'APIPriceUpdater.php';
-        $vars['cronCommandLine6'] = 'php -q ' . ROOTDIR . DS . 'modules' . DS . 'addons'
-            . DS . 'realtimeregister_ssl' . DS . 'cron' . DS . 'certificateDetailsUpdater.php';
-        $vars['cronCommandLine9'] = 'php -q ' . ROOTDIR . DS . 'modules' . DS . 'addons'
-            . DS . 'realtimeregister_ssl' . DS . 'cron' . DS . 'installCertificates.php';
-
         return [
             'tpl' => 'api_configuration',
             'vars' => $vars

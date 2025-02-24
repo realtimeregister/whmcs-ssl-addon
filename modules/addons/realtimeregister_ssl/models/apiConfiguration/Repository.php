@@ -64,6 +64,15 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'custom_guide'                           => $params['custom_guide'],
                         'disable_email_validation'               => $params['disable_email_validation'],
                         'tech_phone_country'                     => $params['tech_phone_country'],
+                        'cron_daily' => $params['cron_daily'],
+                        'cron_processing' => $params['cron_processing'],
+                        'cron_synchronization' => $params['cron_synchronization'],
+                        'cron_ssl_summary_stats' => $params['cron_ssl_summary_stats'],
+                        'cron_renewal' => $params['cron_renewal'],
+                        'cron_send_certificate' => $params['cron_send_certificate'],
+                        'cron_price_updater' => $params['cron_price_updater'],
+                        'cron_certificate_details_updater' => $params['cron_certificate_details_updater'],
+                        'cron_certificate_installer' => $params['cron_certificate_installer'],
             ]);
         } else {
             if (!isset($params['tech_fax']) || empty($params['tech_fax'])) {
@@ -108,6 +117,15 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'sidebar_templates'                      => $params['sidebar_templates'],
                         'custom_guide'                           => $params['custom_guide'],
                         'disable_email_validation'               => $params['disable_email_validation'],
+                        'cron_daily' => $params['cron_daily'],
+                        'cron_processing' => $params['cron_processing'],
+                        'cron_synchronization' => $params['cron_synchronization'],
+                        'cron_ssl_summary_stats' => $params['cron_ssl_summary_stats'],
+                        'cron_renewal' => $params['cron_renewal'],
+                        'cron_send_certificate' => $params['cron_send_certificate'],
+                        'cron_price_updater' => $params['cron_price_updater'],
+                        'cron_certificate_details_updater' => $params['cron_certificate_details_updater'],
+                        'cron_certificate_installer' => $params['cron_certificate_installer'],
             ]);
         }
     }
@@ -258,6 +276,60 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
             if (!Capsule::schema()->hasColumn($this->tableName, 'tech_phone_country')) {
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->string('tech_phone_country');
+                });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'cron_daily')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->boolean('cron_daily')->default(true);
+                });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'cron_processing')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->boolean('cron_processing')->default(true);
+                });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'cron_synchronization')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->boolean('cron_synchronization')->default(true);
+                });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'cron_ssl_summary_stats')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->boolean('cron_ssl_summary_stats')->default(true);
+                });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'cron_renewal')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->boolean('cron_renewal')->default(true);
+                });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'cron_send_certificate')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->boolean('cron_send_certificate')->default(true);
+                });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'cron_price_updater')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->boolean('cron_price_updater')->default(true);
+                });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'cron_certificate_details_updater')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->boolean('cron_certificate_details_updater')->default(true);
+                });
+            }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'cron_certificate_installer')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->boolean('cron_certificate_installer')->default(true);
                 });
             }
         }

@@ -5,85 +5,10 @@
             <p><strong>{$formError}</strong></p>
         </div>
     </div>
-{/if}  
-
-{*<div class="panel panel-default">
-<div class="panel-heading">How to get API details</div>
-<div class="panel-body">
-Proin malesuada eros in risus accumsan euismod. Vivamus lacinia pellentesque nunc, pretium varius felis tempus aliquam. In et pretium diam. Fusce in ex a ipsum semper mollis. Sed arcu eros, dictum quis orci vel, luctus volutpat enim. Curabitur vitae ante posuere, facilisis lacus a, tristique urna. Suspendisse rutrum arcu id turpis venenatis rutrum. 
-</div>
-</div>*}
+{/if}
 
 <div class="panel panel-default">
     <div class="panel-body">
-        <form class="form-horizontal normal-form">
-            <div class="form-group">
-                <div class="col-lg-12 cronSynchronizationInfo">
-                    <legend>{$ADDONLANG->T('crons','header')}</legend>
-
-                    <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$ADDONLANG->T('DailyCron','pleaseNote')}</span>
-                        <span>{$ADDONLANG->T('DailyCron', 'info')}</span>
-                    </div>
-                    <input type="text" class="form-control" value="{$ADDONLANG->T('DailyCron', 'commandLine', 'cronFrequency')} {$cronCommandLine8}" readonly="">
-                    <br />
-                    <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$ADDONLANG->T('cronProcessing','pleaseNote')}</span>
-                        <span>{$ADDONLANG->T('cronProcessing', 'info')}</span>
-                    </div>
-                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronProcessing', 'commandLine', 'cronFrequency')} {$cronCommandLine7}" readonly="">
-                    <br />
-
-                    <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$ADDONLANG->T('cronSynchronization','pleaseNote')}</span>
-                        <span>{$ADDONLANG->T('cronSynchronization', 'info')}</span>
-                    </div>
-                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronSynchronization', 'commandLine', 'cronFrequency')} {$cronCommandLine}" readonly="">
-                    <br />
-                    <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$ADDONLANG->T('cronSSLSummaryStats','pleaseNote')}</span>
-                        <span>{$ADDONLANG->T('cronSSLSummaryStats', 'info')}</span>
-                    </div>
-                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronSSLSummaryStats', 'commandLine', 'cronFrequency')} {$cronCommandLine2}" readonly="">
-                    <br />
-                    <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$ADDONLANG->T('cronRenewal','pleaseNote')}</span>
-                        <span>{$ADDONLANG->T('cronRenewal', 'info')}</span>
-                    </div>                   
-                    <br />
-                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronRenewal', 'commandLine', 'cronFrequency')} {$cronCommandLine3}" readonly="">
-                    <br />                    
-                    <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$ADDONLANG->T('cronSendCertificate','pleaseNote')}</span>
-                        <span>{$ADDONLANG->T('cronSendCertificate', 'info')}</span>
-                    </div> 
-                    <br />
-                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronSendCertificate', 'commandLine', 'cronFrequency')} {$cronCommandLine4}" readonly="">
-                    <br />                    
-                    <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$ADDONLANG->T('cronPriceUpdater','pleaseNote')}</span>
-                        <span>{$ADDONLANG->T('cronPriceUpdater', 'info')}</span>
-                    </div> 
-                    <br />
-                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronPriceUpdater', 'commandLine', 'cronFrequency')} {$cronCommandLine5}" readonly="">
-                    <br /> 
-                            <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$ADDONLANG->T('cronCertificateDetailsUpdater','pleaseNote')}</span>
-                        <span>{$ADDONLANG->T('cronCertificateDetailsUpdater', 'info')}</span>
-                    </div> 
-                    <br />
-                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronCertificateDetailsUpdater', 'commandLine', 'cronFrequency')} {$cronCommandLine6}" readonly="">
-                    <br />
-                    <div class="col-lg-11 marginated">
-                        <span class="text-danger bold">{$ADDONLANG->T('cronCertificateInstaller','pleaseNote')}</span>
-                        <span>{$ADDONLANG->T('cronCertificateInstaller', 'info')}</span>
-                    </div>
-                    <br />
-                    <input type="text" class="form-control" value="{$ADDONLANG->T('cronCertificateInstaller', 'commandLine', 'cronFrequency')} {$cronCommandLine9}" readonly="">
-
-                </div>
-            </div>
-        </form>
         {$form} 
     </div>
 </div>
