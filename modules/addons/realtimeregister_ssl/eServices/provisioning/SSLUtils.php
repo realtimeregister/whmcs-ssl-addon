@@ -7,6 +7,7 @@ use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
 use RealtimeRegister\Domain\Product;
 
 trait SSLUtils
@@ -23,10 +24,10 @@ trait SSLUtils
     }
 
     function parsePeriod($billingCycle) {
-        switch ($billingCycle) {
-            case 'Biennially':
+        switch (strtolower($billingCycle)) {
+            case BillingCycle::BIENNIALLY:
                 return 24;
-            case 'Triennially':
+            case BillingCycle::TRIENNIALLY:
                 return 36;
             default:
                 return 12;

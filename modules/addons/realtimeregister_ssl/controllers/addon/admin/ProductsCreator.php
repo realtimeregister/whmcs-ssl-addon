@@ -13,6 +13,7 @@ use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ApiProductPriceRepo;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use WHMCS\Product\Group;
@@ -179,12 +180,12 @@ class ProductsCreator extends AbstractController
             'asetupfee' => '0.00',
             'bsetupfee' => '0.00',
             'tsetupfee' => '0.00',
-            'monthly' => -1.00,
-            'quarterly' => '-1.00',
-            'semiannually' => '-1.00',
-            'annually' => -1.00,
-            'biennially' => -1.00,
-            'triennially' => -1.00
+            BillingCycle::MONTHLY => -1.00,
+            BillingCycle::QUARTERLY  => '-1.00',
+            BillingCycle::SEMI_ANNUALLY => '-1.00',
+            BillingCycle::ANNUALLY => -1.00,
+            BillingCycle::BIENNIALLY => -1.00,
+            BillingCycle::TRIENNIALLY => -1.00
         ];
 
         foreach ($periods as $period) {
@@ -196,16 +197,16 @@ class ProductsCreator extends AbstractController
 
             switch ($period) {
                 case 12:
-                    if ($payType === 'onetime') {
-                        $pricing['monthly'] = $basePrice;
+                    if ($payType === BillingCycle::ONE_TIME) {
+                        $pricing[BillingCycle::MONTHLY] = $basePrice;
                     }
-                    $pricing['annually'] = $basePrice;
+                    $pricing[BillingCycle::ANNUALLY] = $basePrice;
                     break;
                 case 24:
-                    $pricing['biennially'] = $basePrice;
+                    $pricing[BillingCycle::BIENNIALLY] = $basePrice;
                     break;
                 case 36:
-                    $pricing['triennially'] = $basePrice;
+                    $pricing[BillingCycle::TRIENNIALLY] = $basePrice;
                     break;
                 default:
                     break;
@@ -214,10 +215,18 @@ class ProductsCreator extends AbstractController
 
         foreach ($currencies as $currency) {
             $pricing['currency'] = $currency->id;
-            $pricing['monthly'] = $pricing['monthly'] === -1.00 ? $pricing['monthly'] : $pricing['monthly'] * $currency->rate;
-            $pricing['annually'] = $pricing['annually'] === -1.00 ? $pricing['annually'] : $pricing['annually'] * $currency->rate;
-            $pricing['biennially'] = $pricing['biennially'] === -1.00 ? $pricing['biennially'] : $pricing['biennially'] * $currency->rate;
-            $pricing['triennially'] = $pricing['triennially'] === -1.00 ? $pricing['triennially'] : $pricing['triennially'] * $currency->rate;
+            $pricing[BillingCycle::MONTHLY] = $pricing[BillingCycle::MONTHLY] === -1.00
+                ? $pricing[BillingCycle::MONTHLY]
+                : $pricing[BillingCycle::MONTHLY] * $currency->rate;
+            $pricing[BillingCycle::ANNUALLY] = $pricing[BillingCycle::ANNUALLY] === -1.00
+                ? $pricing[BillingCycle::ANNUALLY]
+                : $pricing[BillingCycle::ANNUALLY] * $currency->rate;
+            $pricing[BillingCycle::BIENNIALLY] = $pricing[BillingCycle::BIENNIALLY] === -1.00
+                ? $pricing[BillingCycle::BIENNIALLY]
+                : $pricing[BillingCycle::BIENNIALLY] * $currency->rate;
+            $pricing[BillingCycle::TRIENNIALLY] = $pricing[BillingCycle::TRIENNIALLY] === -1.00
+                ? $pricing[BillingCycle::TRIENNIALLY]
+                : $pricing[BillingCycle::TRIENNIALLY] * $currency->rate;
             Capsule::table('tblpricing')->insert($pricing);
         }
     }
