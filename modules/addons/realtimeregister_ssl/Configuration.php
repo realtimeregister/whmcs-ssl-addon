@@ -60,7 +60,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '0.6';
+    public $version = '0.6.1';
 
     private static string $LEGACY_TABLE_PREFIX = 'mgfw_';
 
@@ -119,7 +119,7 @@ class Configuration extends AbstractConfiguration
 
                     foreach ($currentPrices as $price) {
                         switch ($i) {
-                            case 1:
+                            case 0:
                             {
                                 $productPrice = floatval($price->annually) > 0.00 ? $price->annually : $price->monthly;
                                 Capsule::table('tblpricing')
@@ -133,7 +133,7 @@ class Configuration extends AbstractConfiguration
                                     ->delete();
                                 break;
                             }
-                            case 2:
+                            case 1:
                             {
                                 $productPrice = floatval($price->biennially) > 0.00 ? $price->biennially : $price->monthly;
                                 Capsule::table('tblpricing')
@@ -147,7 +147,7 @@ class Configuration extends AbstractConfiguration
                                     ->delete();
                                 break;
                             }
-                            case 3:
+                            case 2:
                             {
                                 $productPrice = floatval($price->triennially) > 0.00 ? $price->triennially : $price->monthly;
                                 Capsule::table('tblpricing')
