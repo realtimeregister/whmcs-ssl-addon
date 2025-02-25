@@ -17,7 +17,6 @@ use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPri
 use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
 use WHMCS\Database\Capsule;
 
-
 class Configuration extends AbstractConfiguration
 {
     /**
@@ -332,9 +331,8 @@ class Configuration extends AbstractConfiguration
 
     /**
      * Addon module visible in client area
-     * @return array
      */
-    function getClienMenu()
+    function getClienMenu(): array
     {
         return [
             'Orders' => ['icon' => 'glyphicon glyphicon-home']
@@ -343,9 +341,8 @@ class Configuration extends AbstractConfiguration
 
     /**
      * Provisioning menu visible in admin area
-     * @return array
      */
-    function getServerMenu()
+    function getServerMenu(): array
     {
         return [
             'configuration' => ['icon' => 'glyphicon glyphicon-cog']
@@ -378,8 +375,6 @@ class Configuration extends AbstractConfiguration
 
     /**
      * Run When Module Install
-     *
-     * @return array
      */
     function activate()
     {
@@ -396,11 +391,12 @@ class Configuration extends AbstractConfiguration
         EmailTemplateService::createExpireNotificationTemplate();
         EmailTemplateService::createRenewalTemplate();
         EmailTemplateService::createReissueTemplate();
+        EmailTemplateService::createValidationInformationTemplate();
+        EmailTemplateService::createValidationInformationTemplate();
     }
 
     /**
      * Do something after module deactivate. You can status and description
-     * @return array
      */
     function deactivate()
     {
@@ -417,6 +413,7 @@ class Configuration extends AbstractConfiguration
         EmailTemplateService::deleteExpireNotificationTemplate();
         EmailTemplateService::deleteRenewalTemplate();
         EmailTemplateService::deleteReissueTemplate();
+        EmailTemplateService::deleteValidationInformationTemplate();
     }
 
     /**
@@ -427,6 +424,7 @@ class Configuration extends AbstractConfiguration
         EmailTemplateService::updateConfigurationTemplate();
         EmailTemplateService::updateRenewalTemplate();
         EmailTemplateService::updateReissueTemplate();
+        EmailTemplateService::updateValidationInformationTemplate();
         InvoiceHelper::updateInfosTable(self::$LEGACY_TABLE_PREFIX);
         InvoiceHelper::updatePendingPaymentTable(self::$LEGACY_TABLE_PREFIX);
         Products::updateTable(self::$LEGACY_TABLE_PREFIX);

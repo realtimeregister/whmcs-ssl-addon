@@ -12,6 +12,7 @@ class EmailTemplateService
     public const SEND_CERTIFICATE_TEMPLATE_ID = 'RealtimeRegisterSSL - Send Certificate';
     public const RENEWAL_TEMPLATE_ID = 'RealtimeRegisterSSL - Renewal';
     public const REISSUE_TEMPLATE_ID = 'RealtimeRegisterSSL - Reissue';
+    public const VALIDATION_INFORMATION_TEMPLATE_ID = 'RealtimeRegisterSSL - Validation Information';
 
     public static function createRenewalTemplate() {
         if(!is_null(self::getTemplate(self::RENEWAL_TEMPLATE_ID))) {
@@ -276,5 +277,58 @@ class EmailTemplateService
             return 'Template not exist, nothing to do here';
         }
         $template->delete();
+    }
+
+    public static function createValidationInformationTemplate()
+    {
+        if (!is_null(self::getTemplate(self::VALIDATION_INFORMATION_TEMPLATE_ID))) {
+            return 'Template exist, nothing to do here';
+        }
+        $newTemplate = new EmailTemplate();
+        $newTemplate->type = 'product';
+        $newTemplate->name = self::VALIDATION_INFORMATION_TEMPLATE_ID;
+        $newTemplate->subject = 'SSL Certificate - Validation Information';
+        $newTemplate->message = '<p>Dear {$client_name},</p><p>Your SSL certificate #{$service_id} for {$domain} has been requested</p>' .
+            '<p>{$signature}</p>';
+        $newTemplate->attachments = '';
+        $newTemplate->fromname = '';
+        $newTemplate->fromemail = '';
+        $newTemplate->disabled = '0';
+        $newTemplate->custom = 1;
+        $newTemplate->language = '';
+        $newTemplate->copyto = '';
+
+        $query = Capsule::connection()->select("SHOW COLUMNS FROM `tblemailtemplates` LIKE 'blind_copy_to';");
+        if (!empty($query)) {
+            $newTemplate->blind_copy_to = '';
+        }
+
+        $newTemplate->plaintext = '0';
+        $newTemplate->created_at = date('Y-m-d H:i:s');
+        $newTemplate->updated_at = date('Y-m-d H:i:s');
+        $newTemplate->save();
+    }
+
+    public static function updateValidationInformationTemplate()
+    {
+        $template = EmailTemplate::whereName(self::VALIDATION_INFORMATION_TEMPLATE_ID)->first();
+
+        if (empty($template)) {
+            self::createValidationInformationTemplate();
+        }
+
+        $template = EmailTemplate::whereName(self::VALIDATION_INFORMATION_TEMPLATE_ID)->first();
+        $template->subject = 'SSL Certificate - Validation Information';
+        $template->message = '<p>Dear {$client_name},</p><p>Your SSL certificate #{$service_id} for {$domain} has been requested</p>' .
+            '<p>{$signature}</p>';
+        $template->save();
+    }
+
+    public static function deleteValidationInformationTemplate()
+    {
+        $template = self::getTemplate(self::VALIDATION_INFORMATION_TEMPLATE_ID);
+        if (!is_null($template)) {
+            $template->delete();
+        }
     }
 }
