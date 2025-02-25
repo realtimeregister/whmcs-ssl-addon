@@ -8,6 +8,7 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
@@ -288,6 +289,11 @@ class SSLStepThree
             'Pending Verification',
             array_merge((array) $this->sslConfig->configdata, $addedSSLOrder->toArray())
         );
+
+        sendMessage(EmailTemplateService::VALIDATION_INFORMATION_TEMPLATE_ID, $this->p['serviceid'], [
+            'domain' => $this->sslConfig->getDomain(),
+            'sslConfig' => $this->sslConfig->toArray()
+        ]);
 
         $logs->addLog($this->p['userid'], $this->p['serviceid'], 'success', 'The order has been placed.');
         $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? []);
