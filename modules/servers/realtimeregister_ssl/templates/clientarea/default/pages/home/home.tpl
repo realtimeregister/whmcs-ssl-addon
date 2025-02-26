@@ -62,20 +62,12 @@
                     <td class="text-left">
                         {if $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
                             {$ADDONLANG->T('activationStatusActive')}
-                        {elseif $activationStatus === 'new_order'}
-                            {$ADDONLANG->T('activationStatusNewOrder')}
-                        {elseif $activationStatus === 'pending'}
-                            {$ADDONLANG->T('activationStatusPending')}
-                        {elseif $activationStatus === 'cancelled'}
-                            {$ADDONLANG->T('activationStatusCancelled')}
-                        {elseif $activationStatus === 'payment needed'}
-                            {$ADDONLANG->T('activationStatusPaymentNeeded')}
-                        {elseif $activationStatus === 'processing'}
-                            {$ADDONLANG->T('activationStatusProcessing')}
-                        {elseif $activationStatus === 'incomplete'}
-                            {$ADDONLANG->T('activationStatusIncomplete')}
-                        {elseif $activationStatus === 'rejected'}
-                            {$ADDONLANG->T('activationStatusRejected')}
+                        {elseif $activationStatus === 'SUSPENDED'}
+                            {if $requiresAttention}
+                               {$ADDONLANG->T('contactSupport')}
+                            {else}
+                                {$ADDONLANG->T('awaitingValidation')}
+                            {/if}
                         {else}
                             {$activationStatus|ucfirst}
                         {/if}
