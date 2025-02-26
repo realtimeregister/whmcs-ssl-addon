@@ -332,7 +332,7 @@ class Configuration extends AbstractConfiguration
     /**
      * Addon module visible in client area
      */
-    function getClienMenu(): array
+    function getClientMenu(): array
     {
         return [
             'Orders' => ['icon' => 'glyphicon glyphicon-home']
@@ -391,7 +391,6 @@ class Configuration extends AbstractConfiguration
         EmailTemplateService::createExpireNotificationTemplate();
         EmailTemplateService::createRenewalTemplate();
         EmailTemplateService::createReissueTemplate();
-        EmailTemplateService::createValidationInformationTemplate();
         EmailTemplateService::createValidationInformationTemplate();
     }
 
