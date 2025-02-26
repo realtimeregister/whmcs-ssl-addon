@@ -179,7 +179,7 @@ class AutomaticSynchronisation extends BaseTask
             $service->save();
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register SSL WHMCS: Service #$serviceID nextduedate set to " . $date . " and nextinvoicedate to" . $nextinvoicedate
+                "Realtime Register SSL WHMCS: Service #" . $serviceID . " nextduedate set to " . $date . " and nextinvoicedate to" . $nextinvoicedate
             );
         }
     }
