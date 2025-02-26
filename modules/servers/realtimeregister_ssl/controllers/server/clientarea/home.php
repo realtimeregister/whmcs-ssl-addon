@@ -93,6 +93,7 @@ class home extends AbstractController
 
                 $configDataUpdate->run();
 
+                $vars['requiresAttention'] = $infoProcess['requiresAttention'];
                 $vars['activationStatus'] = $sslService->getSSLStatus();
             }
 
