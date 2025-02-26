@@ -6,76 +6,6 @@ if(!defined('DS')) {
     define('DS',DIRECTORY_SEPARATOR);
 }
 
-add_hook('ClientAreaPage', 1, function ($params)
-{
-    $loaderdir = false;
-    if(file_exists(__DIR__ . DS . 'Loader.php')) {
-        $loaderdir = __DIR__ . DS . 'Loader.php';
-    } 
-
-    if(file_exists(getcwd().DS.'modules'.DS.'servers'.DS.'realtimeregister_ssl'.DS.'Loader.php')) {
-        $loaderdir = getcwd().DS.'modules'.DS.'servers'.DS.'realtimeregister_ssl'.DS.'Loader.php';
-    }
-    if($loaderdir === false) {
-        return;
-    }
-    
-    require_once $loaderdir;
-    $activator = new \AddonModule\RealtimeRegisterSsl\eServices\provisioning\Activator();
-    $activator->run();
-
-    if (isset($params['templatefile'])) {
-        global $smarty;
-        switch ($params['templatefile']) {
-            case 'configureproduct':
-                $product = DB::table('tblproducts')->where('id', $params['productinfo']['pid'])->where('servertype', 'realtimeregister_ssl')->first();
-                $includedsan = $product->configoption4;
-                $includedsanwildcard = $product->configoption8;
-                
-                $txtincluded = '';
-                
-                if ($includedsan > 0) {
-                    $txt = sprintf (\AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->T('additionalSingleDomainInfo'), $includedsan);
-                    $txtincluded .= '<p>'.$txt.'</p>';
-                }
-                if ($includedsanwildcard > 0) {
-                    $txt = sprintf (\AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->T('additionalSingleDomainWildcardInfo'), $includedsanwildcard);
-                    $txtincluded .= '<p>'.$txt.'</p>';
-                }
-                $smarty->assign('txtincluded', $txtincluded);
-                break;
-            case 'clientareaproductdetails':
-                $product = DB::table('tblproducts')->where('id', $params['pid'])->where('servertype', 'realtimeregister_ssl')->first();
-                $includedsan = $product->configoption4;
-                $includedsanwildcard = $product->configoption8;
-                
-                $txtincluded = '';
-                
-                if ($includedsan > 0) {
-                    $txt = sprintf (\AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->absoluteT('additionalSingleDomainInfo'), $includedsan);
-                    $txtincluded .= '<p>'.$txt.'</p>';
-                }
-                if ($includedsanwildcard > 0) {
-                    $txt = sprintf (\AddonModule\RealtimeRegisterSsl\addonLibs\Lang::getInstance()->absoluteT('additionalSingleDomainWildcardInfo'), $includedsanwildcard);
-                    $txtincluded .= '<p>'.$txt.'</p>';
-                }                
-                $smarty->assign('txtincluded', $txtincluded);
-                $smarty->assign('customRealtimeRegisterSslAssetsURL', \AddonModule\RealtimeRegisterSsl\Server::I()->getAssetsURL());
-                $smarty->assign('customProductDetailsIcon', true);
-                break;
-            case 'configuressl-stepone':
-                if (isset($_GET['cert'])) {
-                    $r = DB::table('tblsslorders')->where(DB::raw('md5(id)'), '=', $_GET['cert'])->first();
-                    if ($r AND $r->module == \AddonModule\RealtimeRegisterSsl\Server::I()->configuration()->systemName) {
-                        $smarty->assign('customBackToServiceButton', true);
-                        $smarty->assign('customBackToServiceButtonLang', \AddonModule\RealtimeRegisterSsl\addonLibs\Lang::T('addonCA', 'customBackToServiceButtonLang'));
-                    }
-                }
-                break;
-        }
-    }
-});
-
 add_hook('ClientAreaPageUpgrade', 1, function($vars)
 {
     $step = filter_input(INPUT_POST, 'step', FILTER_VALIDATE_INT);
@@ -295,6 +225,7 @@ add_hook('InvoiceCreationPreEmail', 1, function($vars)
                 }
             }
         }
+
 
         if (!empty($itemdescriptionArray) && !empty($itemamountArray) && !empty($itemtaxedArray)) {
             $command2  = 'UpdateInvoice';
