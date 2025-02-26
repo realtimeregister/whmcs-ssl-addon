@@ -206,7 +206,6 @@ class Notifier extends BaseTask
 
             if (!empty($configdata['end_date'])) {
                 $now = strtotime(date('Y-m-d'));
-                dump($configdata['valid_till']);
                 $end_date = strtotime($configdata['valid_till']['date']);
                 $datediff = $now - $end_date;
 
