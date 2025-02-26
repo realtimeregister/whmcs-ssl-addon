@@ -5,40 +5,27 @@ $_LANG['generalError'] = 'Etwas ist schief gelaufen. Bitte überprüfen Sie die 
 
 // Realtime Register Ssl configuration
 $_LANG['addonAA']['pagesLabels']['label']['apiConfiguration']                                          = 'Configuration';
-$_LANG['addonAA']['apiConfiguration']['crons']['header']                                               = 'Crons';
+$_LANG['addonAA']['crons']['header'] = 'Cronjobs';
+$_LANG['addonAA']['crons']['explanation'] = 'Hier können Sie die Cronjobs auswählen oder abwählen, die ausgeführt werden sollen. Wir empfehlen, sie alle aktiviert zu lassen, um das beste Erlebnis zu erzielen';
 //synchronization cron
-$_LANG['addonAA']['apiConfiguration']['DailyCron']['pleaseNote']                             = 'Bitte beachten:';
-$_LANG['addonAA']['apiConfiguration']['DailyCron']['info']                                   = 'Um die automatische tägliche Synchronisierung zu aktivieren, richten Sie bitte folgende Cron-Befehlszeile ein:';
-$_LANG['addonAA']['apiConfiguration']['DailyCron']['commandLine']['cronFrequency']           = '0 0 * * *';
+$_LANG['addonAA']['crons']['cron_daily'] = 'Automatische tägliche Synchronisierung';
 //processing cron
-$_LANG['addonAA']['apiConfiguration']['cronProcessing']['pleaseNote']                             = 'Bitte beachten:';
-$_LANG['addonAA']['apiConfiguration']['cronProcessing']['info']                                   = 'Um die automatische Synchronisierung der Aufträge in Bearbeitung alle 5 Minuten zu ermöglichen, richten Sie bitte folgende Cron-Befehlszeile ein:';
-$_LANG['addonAA']['apiConfiguration']['cronProcessing']['commandLine']['cronFrequency']           = '*/5 * * * *';
+$_LANG['addonAA']['crons']['cron_processing'] = 'Automatische Synchronisierung der Auftragsabwicklung alle 5 Minuten';
 
 //synchronization cron
-$_LANG['addonAA']['apiConfiguration']['cronSynchronization']['pleaseNote']                             = 'Bitte beachten:';
-$_LANG['addonAA']['apiConfiguration']['cronSynchronization']['info']                                   = 'Um die automatische Synchronisierung zu aktivieren, richten Sie bitte folgende Cron-Befehlszeile ein (jede Stunde empfohlen):';
-$_LANG['addonAA']['apiConfiguration']['cronSynchronization']['commandLine']['cronFrequency']           = '0 */1 * * *';
+$_LANG['addonAA']['crons']['cron_synchronization'] = 'Automatische Synchronisierung (stündlich)';
 //summary order cron
-$_LANG['addonAA']['apiConfiguration']['cronSSLSummaryStats']['pleaseNote']                             = 'Bitte beachten:';
-$_LANG['addonAA']['apiConfiguration']['cronSSLSummaryStats']['info']                                   = 'Um den Status der aktuellen SSL-Bestellungen zu laden, richten Sie bitte folgende Cron-Befehlszeile ein (alle 4 Stunden empfohlen):';
-$_LANG['addonAA']['apiConfiguration']['cronSSLSummaryStats']['commandLine']['cronFrequency']           = '1 */4 * * *';
+$_LANG['addonAA']['crons']['cron_ssl_summary_stats'] = 'Aktuellen SSL-Bestellstatus laden (alle 4 Stunden)';
 //customers notification and creating renewals
-$_LANG['addonAA']['apiConfiguration']['cronRenewal']['pleaseNote']                                     = 'Bitte beachten:';
-$_LANG['addonAA']['apiConfiguration']['cronRenewal']['info']                                           = 'Um Kunden Benachrichtigungen über auslaufende Dienste zu senden und Verlängerungsrechnungen für Dienste zu erstellen, die innerhalb der ausgewählten Anzahl von Tagen ablaufen, richten Sie bitte folgende Cron-Befehlszeile ein (einmal täglich empfohlen):';
-$_LANG['addonAA']['apiConfiguration']['cronRenewal']['commandLine']['cronFrequency']                   = '0 0 * * *';
+$_LANG['addonAA']['crons']['cron_renewal'] = 'Senden Sie Kunden Benachrichtigungen über auslaufende Dienste und erstellen Sie Verlängerungsrechnungen für Dienste, die innerhalb der ausgewählten Anzahl von Tagen ablaufen (einmal täglich)';
 //customers send certificate
-$_LANG['addonAA']['apiConfiguration']['cronSendCertificate']['pleaseNote']                             = 'Bitte beachten:';
-$_LANG['addonAA']['apiConfiguration']['cronSendCertificate']['info']                                   = 'Um ein Zertifikat dem Kunden zu senden, wenn die SSL-Bestellung in den aktiven Status wechselt, richten Sie bitte folgende Cron-Befehlszeile ein (alle 3 Stunden empfohlen).:';
-$_LANG['addonAA']['apiConfiguration']['cronSendCertificate']['commandLine']['cronFrequency']           = '0 */3 * * *';
+$_LANG['addonAA']['crons']['cron_send_certificate'] = 'Senden Sie dem Client ein Zertifikat, wenn die SSL-Bestellung in den aktiven Status wechselt (alle 3 Stunden)';
 //customers send certificate
-$_LANG['addonAA']['apiConfiguration']['cronPriceUpdater']['pleaseNote']                             = 'Bitte beachten:';
-$_LANG['addonAA']['apiConfiguration']['cronPriceUpdater']['info']                                   = 'Um die WHMCS-Produktpreise mit den API-Produktpreisen zu synchronisieren, richten Sie bitte folgende Cron-Befehlszeile ein (alle 3 Tage empfohlen):';
-$_LANG['addonAA']['apiConfiguration']['cronPriceUpdater']['commandLine']['cronFrequency']           = '0 0 */3 * *';
+$_LANG['addonAA']['crons']['cron_price_updater'] = 'Synchronisieren Sie die WHMCS-Produktpreise mit den API-Produktpreisen (täglich)';
 //customers send certificate
-$_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['pleaseNote']                             = 'Bitte beachten:';
-$_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['info']                                   = 'Um die Zertifikatdetails in WHMCS mit den Zertifikatdetails in der API zu synchronisieren, richten Sie die folgende Cron-Befehlszeile ein (einmal täglich empfohlen):';
-$_LANG['addonAA']['apiConfiguration']['cronCertificateDetailsUpdater']['commandLine']['cronFrequency']           = '0 0 * * *';
+$_LANG['addonAA']['crons']['cron_certificate_details_updater'] = 'Zertifikatsdetails in WHMCS mit den Zertifikatsdetails in der API synchronisieren (einmal täglich)';
+$_LANG['addonAA']['crons']['label'] = 'Cron-Einstellungen speichern';
+
 //
 $_LANG['addonAA']['apiConfiguration']['item']['price_rate']['label']                                   = 'Rate for currency from RealtimeRegisterSSL';
 $_LANG['addonAA']['apiConfiguration']['item']['rate']['label']                                         = 'Rate';
@@ -362,9 +349,7 @@ $_LANG['addonAA']['orders']['table']['actions'] = 'Actions';
 
 $_LANG['Choose a domain'] = 'Choose a domain';
 
-$_LANG['addonAA']['apiConfiguration']['cronCertificateInstaller']['pleaseNote'] = 'Please Note:';
-$_LANG['addonAA']['apiConfiguration']['cronCertificateInstaller']['info'] = 'In order to install certificate in your hostingpanel, set the following command line cron (once a day suggested):';
-$_LANG['addonAA']['apiConfiguration']['cronCertificateInstaller']['commandLine']['cronFrequency'] = '0 0 * * *';
+$_LANG['addonAA']['crons']['cron_certificate_installer'] = 'Installieren Sie das Zertifikat in Ihrem Hostingpanel (einmal täglich)';
 
 $_LANG['addonAA']['orders']['table']['set as verified'] = 'Set as verified';
 $_LANG['addonAA']['orders']['table']['set as installed'] = 'Set as installed';
