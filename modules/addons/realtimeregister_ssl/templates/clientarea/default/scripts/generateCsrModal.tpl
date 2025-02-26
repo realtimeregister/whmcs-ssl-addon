@@ -44,6 +44,7 @@
                                                   <div class="form-group">\n\
                                                     <label class="control-label" for="C">'+'{$ADDONLANG->T('countryLabel')}'+'</label>\n\
                                                     <select class="form-control  generateCsrInput" id="countryName" name="C" required="">\n\
+                                                    <option value="">-</option>\n\
 \n\                                                 ' + countryOptions + '\n\
 \n\                                                 </select>\n\
                                                   </div>\n\
@@ -113,7 +114,6 @@
         generateCsrSubmitBtn,
         body = $('body');
         function assignModalElements() {
-
             generateCsrModal = $('#modalGenerateCsr');
             generateCsrBody = $('#modalgenerateCsrBody');
             generateCsrBody.contents()
@@ -213,17 +213,11 @@
             }
         function validateForm () {
              var fields = [
-                    generateCsrCountryName,
-                    generateCsrStateOrProvinceName,
-                    generateCsrLocalityName,
-                    generateCsrOrganizationName,
-                    generateCsrOrganizationalUnitName,
                     generateCsrCommonName,
-                    generateCsrEmailAddress
                 ]
                 fields.forEach(function(value, index){
                     value.bind("keyup change input",function() {
-                        var empty = false;
+                        let empty = false;
                         fields.forEach(function(value2) {
                             if (value2.attr("required") && value2.val() === '') {
                                 empty = true;
@@ -290,6 +284,7 @@
                         $('input[name="privateKey"]').remove();
                         $('textarea[name="csr"]').closest('.form-group').after('<input class="form-control" type="hidden" name="privateKey" value="'+data.private_key+'" />');
                         closeModal(generateCsrModal);
+                        $("label[for=inputCsr]").show();
 
                     } else {
                         showDangerAlert(data.msg);
@@ -310,8 +305,8 @@
         validateForm();
         bindSubmitBtn();
     });
-    var fillVars = JSON.parse('{$fillVars}');
-    for (var i = 0; i < fillVars.length; i++) {
+    let fillVars = JSON.parse('{$fillVars}');
+    for (let i = 0; i < fillVars.length; i++) {
         if(fillVars[i].name === 'privateKey') {
             $('input[name="privateKey"]').remove();
             $('textarea[name="csr"]').closest('.form-group').after('<input class="form-control" type="hidden" name="privateKey" value="'+fillVars[i].value+'" />');

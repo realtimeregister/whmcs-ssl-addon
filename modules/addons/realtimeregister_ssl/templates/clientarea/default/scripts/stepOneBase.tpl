@@ -2,38 +2,91 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        {if $domains && $auto_install_panel}
-
+        {if $domains}
             const alertInfo = $('.alert-info').first();
+
             const csrInput = $('#inputCsr');
-            csrInput.attr('readonly', '');
 
-            $('<div><input style="width: 15px;height: 15px;float: left;" type="checkbox" id="csrReadOnly" />' +
-                '<label for="csrReadOnly" style="font-size: 13px;float: left;margin-top: ' +
-                '-20px;margin-left: 20px;">{$ADDONLANG->T('csrReadOnly')}</label></div>').insertBefore(csrInput);
+            {if $auto_install_panel}
+                csrInput.attr('readonly', '');
 
-            $('#csrReadOnly').change(e => {
-                csrInput.attr('readonly', !e.target.checked);
-            });
+                $('<div><input style="width: 15px;height: 15px;float: left;" type="checkbox" id="csrReadOnly">' +
+                    '<label for="csrReadOnly" style="font-size: 13px;float: left;margin-top: ' +
+                    '-20px;margin-left: 20px;">{$ADDONLANG->T('csrReadOnly')}</label></div>').insertBefore(csrInput);
 
-            alertInfo.after('<div class="card-body select-cpanel-server">' +
+                $('#csrReadOnly').change(e => {
+                    csrInput.attr('readonly', !e.target.checked);
+                });
+            {/if}
+
+            alertInfo.after('<div class="card-body">' +
                 '<h2>{$ADDONLANG->T('Choose a domain')}</h2>' +
                 '<select id="step-type-data">' +
-                '<option value="custom">{$ADDONLANG->T('Custom domain')}</option>' +
+                '<option value="">{$ADDONLANG->T('Custom domain')}</option>' +
                 '</select>' +
                 '<div style="margin-top: 20px;" class="form-group">' +
+                '<input id="custom-hostname" placeholder="Type your domainname here">' +
+                '<div class="form-horizontal" style="margin-top:20px;">' +
+                '   <div class="row">' +
+                '       <div class="col-6">' +
+                '           <label class="radio-inline">' +
+                '               <input type="radio" name="csr-type" value="1" class=""> {$ADDONLANG->T('createCsr')}' +
+                '           </label>' +
+                '       </div>' +
+                '       <div class="col-6">' +
+                '           <label class="radio-inline">' +
+                '               <input type="radio" name="csr-type" value="2" class=""> {$ADDONLANG->T('haveCsr')}'+
+                '           </label>' +
+                '       </div>' +
+                '   </div>' +
                 '</div>');
             alertInfo.hide();
+
+            const customHostname = $('#custom-hostname');
+            customHostname.on('change', e => {
+                $('input[name="CN"]').val(e.target.value);
+            });
 
             {foreach $domains as $domain}
                 $('#step-type-data').append('<option value="{$domain}">{$domain}</option>');
             {/foreach}
 
             $('#step-type-data').on('change', (e) => {
-                $('input[name="CN"]').val(e.target.value);
+                if (e.target.value !== '') {
+                    $('input[name="CN"]').val(e.target.value);
+                    customHostname.hide();
+                } else {
+                    customHostname.show();
+                    customHostname.trigger('change');
+                }
             })
-        {/if}
 
+            $('input[name="csr-type"]').on('change', e => {
+                let inputCsr = $('#inputCsr');
+                if (e.target.value === '1') {
+                    // Help the user creating a CSR
+                    $('#generateCsrBtn').show();
+
+                    // We do want to show the csr, if one has been created, so we check if the csr field is empty
+                    if (inputCsr.val().length < 100) {
+                        $("label[for=inputCsr]").hide();
+                        inputCsr.hide();
+                    }
+                    inputCsr.attr('readonly', true);
+                } else if(e.target.value === '2') {
+                    // Provide your own CSR
+                    inputCsr.show();
+                    $("label[for=inputCsr]").show();
+                    inputCsr.attr('readonly', false);
+                    $('#generateCsrBtn').hide();
+                }
+            });
+
+            if ($('input[name=csr-type]:checked').val() === undefined) {
+                $('input[name="csr-type"][value="1"]').attr('checked', 'checked')
+            }
+            $('input[name="csr-type"]:checked').trigger('change');
+        {/if}
 
         const brand = JSON.parse('{$brand}');
         $('textarea[name="csr"]').closest('.form-group')
@@ -49,7 +102,7 @@
             element.parent().remove();
         }
 
-        $('input, textarea, select').addClass('form-control');
+        $('input:not([type="radio"]), textarea, select').addClass('form-control');
 
         //remove (Required if Organization Name is set) comment
         const jobTitleInput = $('input[name="jobtitle"]');
@@ -75,6 +128,5 @@
                 $(this).parent('.row').parent('fieldset').remove();
             }
         });
-
     });
 </script>
