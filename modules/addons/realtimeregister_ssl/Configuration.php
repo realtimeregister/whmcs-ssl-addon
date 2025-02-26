@@ -332,9 +332,8 @@ class Configuration extends AbstractConfiguration
 
     /**
      * Addon module visible in client area
-     * @return array
      */
-    function getClienMenu()
+    function getClientMenu(): array
     {
         return [
             'Orders' => ['icon' => 'glyphicon glyphicon-home']
@@ -343,9 +342,8 @@ class Configuration extends AbstractConfiguration
 
     /**
      * Provisioning menu visible in admin area
-     * @return array
      */
-    function getServerMenu()
+    function getServerMenu(): array
     {
         return [
             'configuration' => ['icon' => 'glyphicon glyphicon-cog']
@@ -394,6 +392,7 @@ class Configuration extends AbstractConfiguration
         EmailTemplateService::createExpireNotificationTemplate();
         EmailTemplateService::createRenewalTemplate();
         EmailTemplateService::createReissueTemplate();
+        EmailTemplateService::createValidationInformationTemplate();
     }
 
     /**
@@ -414,6 +413,7 @@ class Configuration extends AbstractConfiguration
         EmailTemplateService::deleteExpireNotificationTemplate();
         EmailTemplateService::deleteRenewalTemplate();
         EmailTemplateService::deleteReissueTemplate();
+        EmailTemplateService::deleteValidationInformationTemplate();
     }
 
     /**
@@ -424,6 +424,7 @@ class Configuration extends AbstractConfiguration
         EmailTemplateService::updateConfigurationTemplate();
         EmailTemplateService::updateRenewalTemplate();
         EmailTemplateService::updateReissueTemplate();
+        EmailTemplateService::updateValidationInformationTemplate();
         InvoiceHelper::updateInfosTable(self::$LEGACY_TABLE_PREFIX);
         InvoiceHelper::updatePendingPaymentTable(self::$LEGACY_TABLE_PREFIX);
         Products::updateTable(self::$LEGACY_TABLE_PREFIX);

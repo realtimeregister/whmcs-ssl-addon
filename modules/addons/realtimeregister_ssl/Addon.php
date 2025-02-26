@@ -337,7 +337,7 @@ class Addon extends AbstractMainDriver
     public static function getHTMLClientAreaPage($input)
     {
         $menu = [];
-        foreach (self::I()->configuration()->getClienMenu() as $catName => $category) {
+        foreach (self::I()->configuration()->getClientMenu() as $catName => $category) {
             // display the page or not
             if (strpos($catName, "documentation") === false) {
                 $className = self::I()->getMainNamespace() . "\\controllers\\" . self::I()->getType(
