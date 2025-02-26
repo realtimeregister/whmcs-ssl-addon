@@ -8,13 +8,13 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use DateTime;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
 use WHMCS\Service\Service;
-use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Notifier extends BaseTask
 {
-    protected $skipDailyCron = true;
+    protected $skipDailyCron = false;
     protected $defaultPriority = 4200;
     protected $defaultDescription = 'Send customers notifications of expiring services and create renewal invoices ' .
     'for services that expire within the selected number of days';
@@ -74,11 +74,11 @@ class Notifier extends BaseTask
                 $srv = Capsule::table('tblhosting')->where('id', $serviceid)->first();
 
                 //get days left to expire from WHMCS
-                $daysLeft = $this->checkOrderExpireDate($srv->nextduedate);
+                $daysLeft = $this->checkOrderExpireDate(new DateTime($srv->nextduedate));
                 $daysReissue = $this->checkReissueDate($srv->id);
 
                 /*
-                 * if service is One Time and nextduedate is setted as 0000-00-00 get valid
+                 * if service is One Time and nextduedate is set as 0000-00-00 get valid
                  * till from Realtime Register Ssl API
                  */
                 if ($srv->billingcycle == 'One Time') {
@@ -88,7 +88,9 @@ class Notifier extends BaseTask
                         /** @var CertificatesApi $sslOrderApi */
                         $sslOrderApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
                         $ssl = $sslOrderApi->listCertificates(1, null, null, ['process:eq' => $sslOrder->remoteid]);
-                        $daysLeft = $this->checkOrderExpireDate($ssl[0]->expiryDate);
+                        if ($ssl[0]) {
+                            $daysLeft = $this->checkOrderExpireDate($ssl[0]->expiryDate);
+                        }
                     }
                 }
 
@@ -136,17 +138,12 @@ class Notifier extends BaseTask
         }
     }
 
-    private function checkOrderExpireDate($expireDate): bool | int
+    private function checkOrderExpireDate($expiryDate): bool | int
     {
         $expireDaysNotify = array_flip(['90', '60', '30', '15', '10', '7', '3', '1', '0']);
-
-        if (stripos($expireDate, ':') === false) {
-            $expireDate .= ' 23:59:59';
-        }
-        $expire = new DateTime($expireDate);
         $today = new DateTime();
 
-        $diff = $expire->diff($today, false);
+        $diff = $expiryDate->diff($today, false);
         if ($diff->invert == 0) {
             //if date from past
             return -1;
@@ -204,12 +201,13 @@ class Notifier extends BaseTask
     {
         $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
 
-        if (isset($sslOrder->configdata) && !empty($sslOrder->configdata)) {
+        if (!empty($sslOrder->configdata)) {
             $configdata = json_decode($sslOrder->configdata, true);
 
-            if (isset($configdata['end_date']) && !empty($configdata['end_date'])) {
+            if (!empty($configdata['end_date'])) {
                 $now = strtotime(date('Y-m-d'));
-                $end_date = strtotime($configdata['valid_till']);
+                dump($configdata['valid_till']);
+                $end_date = strtotime($configdata['valid_till']['date']);
                 $datediff = $now - $end_date;
 
                 $nextReissue = abs(round($datediff / (60 * 60 * 24)));

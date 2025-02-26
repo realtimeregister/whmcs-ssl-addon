@@ -12,7 +12,7 @@ use RealtimeRegister\Api\ProcessesApi;
 
 class CertificateSender extends BaseTask
 {
-    protected $defaultFrequency = 10800;
+    protected $defaultFrequency = 180;
     protected $skipDailyCron = true;
     protected $defaultPriority = 4200;
     protected $defaultName = "Certificate Sender started";

@@ -10,7 +10,7 @@ use RealtimeRegister\Api\ProcessesApi;
 
 class CertificateStatisticsLoader extends BaseTask
 {
-    protected $defaultFrequency = 14400;
+    protected $defaultFrequency = 240;
     protected $skipDailyCron = true;
     protected $defaultPriority = 4200;
     protected $defaultDescription = 'Load current SSL orders status';

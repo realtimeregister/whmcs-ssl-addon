@@ -8,7 +8,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 class ProcessingOrders extends BaseTask
 {
-    protected $defaultFrequency = 300;
+    protected $defaultFrequency = 5;
     protected $skipDailyCron = true;
     protected $defaultPriority = 4200;
     protected $defaultDescription = 'automatic synchronization of processing orders';

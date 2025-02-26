@@ -13,8 +13,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 class PriceUpdater extends BaseTask
 {
-    protected $defaultFrequency = 10800;
-    protected $skipDailyCron = true;
+    protected $skipDailyCron = false;
     protected $defaultPriority = 4200;
     protected $defaultName = "SSL price updater";
 

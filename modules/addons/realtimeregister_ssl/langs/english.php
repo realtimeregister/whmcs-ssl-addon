@@ -232,6 +232,7 @@ $_LANG['addonAA']['userDiscounts']['info2']                             = '2. Ad
 $_LANG['addonAA']['userDiscounts']['info3']                             = '3. Open the file';
 $_LANG['addonAA']['userDiscounts']['info4']                             = '4. Add this code on the top of file';
 $_LANG['addonAA']['pagesLabels']['label']['userDiscounts']              = 'Discount Rules';
+$_LANG['addonAA']['pagesLabels']['label']['crons']              = 'Crons';
 $_LANG['addonAA']['userDiscounts']['title']                             = 'Discount Rules';
 $_LANG['addonAA']['userDiscounts']['addNewDiscountRule']              = 'Add New Rule';
 $_LANG['addonAA']['userDiscounts']['editItem']                          = 'Edit';

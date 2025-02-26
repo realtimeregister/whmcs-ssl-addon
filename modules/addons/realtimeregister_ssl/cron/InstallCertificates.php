@@ -3,12 +3,12 @@
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
-use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 
 class InstallCertificates extends BaseTask
 {
-    protected $skipDailyCron = true;
+    protected $skipDailyCron = false;
     protected $defaultPriority = 28800;
     protected $defaultName = "Install certificates";
 

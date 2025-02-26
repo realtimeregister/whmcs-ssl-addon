@@ -6,14 +6,14 @@ use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
 use WHMCS\Service\Service;
-use Illuminate\Database\Capsule\Manager as Capsule;
 
 class AutomaticSynchronisation extends BaseTask
 {
-    protected $defaultFrequency = 3600;
+    protected $defaultFrequency = 60;
     protected $skipDailyCron = true;
     protected $defaultPriority = 4200;
     protected $successCountIdentifier = "synced";
