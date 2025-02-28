@@ -10,6 +10,7 @@ use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
 use RealtimeRegister\Domain\Enum\DownloadFormatEnum;
+use RealtimeRegister\Domain\Enum\ProcessStatusEnum;
 use WHMCS\Database\Capsule;
 
 class UpdateConfigData
@@ -25,7 +26,7 @@ class UpdateConfigData
                 ->getApi(ProcessesApi::class);
             $process = $processesApi->get($sslService->getRemoteId());
 
-            if ($process->status === 'COMPLETED') {
+            if ($process->status === ProcessStatusEnum::STATUS_COMPLETED) {
                 $this->orderdata = [];
                 return;
             }

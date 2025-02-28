@@ -6,9 +6,12 @@ use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
+use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Domain\Certificate;
+use RealtimeRegister\Domain\Enum\ProcessStatusEnum;
 use WHMCS\Service\Service;
 
 class AutomaticSynchronisation extends BaseTask
@@ -81,6 +84,7 @@ class AutomaticSynchronisation extends BaseTask
                 /** @var CertificatesApi $certificateApi */
                 $certificateApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
 
+                /** @var Certificate $sslOrder */
                 $sslOrder = $certificateApi->listCertificates(1, null, null, ['process:eq' => $order->remoteid])[0];
 
                 //if certificate is active
@@ -104,6 +108,20 @@ class AutomaticSynchronisation extends BaseTask
                     $this->updateServiceNextDueDate($serviceID, $newNextDueDate);
 
                     $updatedServices[] = $serviceID;
+                } elseif ($order->status === ProcessStatusEnum::STATUS_SUSPENDED) {
+                    $customerNotified = $sslService->getConfigdataKey('customer_notified');
+
+                    // If the status is suspended, we need some more data of the customer, so we send this person an email
+                    if (!$customerNotified) {
+                        sendMessage(EmailTemplateService::VALIDATION_INFORMATION_TEMPLATE_ID, $sslService->getServiceId(), [
+                            'domain' => $sslService->getDomain(),
+                            'sslConfig' => $sslService->getConfigData()
+                        ]);
+
+                        // We don't want to spam users all the time, just once is enough for now..
+                        $sslService->setConfigdataKey('customer_notified', new \DateTime());
+                        $sslService->save();
+                    }
                 }
             }
             logActivity('Realtime Register SSL: Synchronization completed.');
