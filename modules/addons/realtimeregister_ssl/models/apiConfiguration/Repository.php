@@ -20,12 +20,13 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
 
     public function setConfiguration($params)
     {
+        if (empty($params['tech_fax'])) {
+            $params['tech_fax'] = '';
+        }
+
         if (is_null($this->get()))
         {
-            if (!isset($params['tech_fax']) || empty($params['tech_fax'])) {
-                $params['tech_fax'] = '';
-            }
-            
+
             Capsule::table($this->tableName)->insert(
                     [
                         'api_login'                              => $params['api_login'],
@@ -64,6 +65,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'custom_guide'                           => $params['custom_guide'],
                         'disable_email_validation'               => $params['disable_email_validation'],
                         'tech_phone_country'                     => $params['tech_phone_country'],
+                        'autorenew_ordertype'                    => $params['autorenew_ordertype'],
                         'cron_daily' => $params['cron_daily'],
                         'cron_processing' => $params['cron_processing'],
                         'cron_synchronization' => $params['cron_synchronization'],
@@ -75,10 +77,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'cron_certificate_installer' => $params['cron_certificate_installer'],
             ]);
         } else {
-            if (!isset($params['tech_fax']) || empty($params['tech_fax'])) {
-                $params['tech_fax'] = '';
-            }
-            
+
             Capsule::table($this->tableName)->update(
                     [
                         'api_login'                              => $params['api_login'],
@@ -117,6 +116,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'sidebar_templates'                      => $params['sidebar_templates'],
                         'custom_guide'                           => $params['custom_guide'],
                         'disable_email_validation'               => $params['disable_email_validation'],
+                        'autorenew_ordertype'                    => $params['autorenew_ordertype'],
                         'cron_daily' => $params['cron_daily'],
                         'cron_processing' => $params['cron_processing'],
                         'cron_synchronization' => $params['cron_synchronization'],
@@ -160,6 +160,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->string('tech_fax');
                 $table->string('tech_postalcode');
                 $table->string('tech_region');
+                $table->string('autorenew_ordertype')->default('renew_always');
                 $table->string('renew_invoice_days_recurring')->nullable();
                 $table->string('renew_invoice_days_one_time')->nullable();
                 $table->string('summary_expires_soon_days')->nullable();
@@ -330,6 +331,12 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_certificate_installer')) {
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->boolean('cron_certificate_installer')->default(true);
+                });
+            }
+
+            if(!Capsule::schema()->hasColumn($this->tableName, 'autorenew_ordertype')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->string('autorenew_ordertype')->default('renew_always');
                 });
             }
         }

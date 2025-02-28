@@ -77,6 +77,10 @@ $_LANG['addonAA']['apiConfiguration']['item']['auto_renew_invoice_one_time']['de
 $_LANG['addonAA']['apiConfiguration']['item']['send_expiration_notification_one_time']['label']        = '';
 $_LANG['addonAA']['apiConfiguration']['item']['renew_invoice_days_one_time']['description']            = 'Days before expiry';
 $_LANG['addonAA']['apiConfiguration']['item']['send_expiration_notification_one_time']['description']  = 'Send expiration notifications';
+$_LANG['addonAA']['apiConfiguration']['item']['autorenew_ordertype']['label']                                  = 'Auto-renew Setting';
+$_LANG['addonAA']['apiConfiguration']['item']['autorenew_ordertype']['options']['renew_always']                              = 'Always renew';
+$_LANG['addonAA']['apiConfiguration']['item']['autorenew_ordertype']['options']['wait_for_payment']                              = 'Wait for payment';
+$_LANG['addonAA']['apiConfiguration']['item']['tech_region']['label']                                  = 'State/Region';
 
 
 $_LANG['addonAA']['apiConfiguration']['item']['automatic_processing_of_renewal_orders']['label']                  = '';

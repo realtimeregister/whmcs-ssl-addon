@@ -3,6 +3,7 @@
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigs;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
@@ -43,8 +44,8 @@ class BaseTask extends \WHMCS\Scheduling\Task\AbstractTask
         }
     }
 
-    protected function getSSLOrders()
+    protected function getSSLOrders($status = [SSL::CONFIGURATION_SUBMITTED, SSL::PENDING_INSTALLATION, SSL::ACTIVE])
     {
-        return $this->sslRepo->getActiveOrders();
+        return $this->sslRepo->getOrdersWithStatus($status);
     }
 }

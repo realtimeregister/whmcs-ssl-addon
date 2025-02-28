@@ -11,20 +11,17 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextareaField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
-use AddonModule\RealtimeRegisterSsl\eHelpers\Migration;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
-use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Products;
 use Exception;
 use RealtimeRegister\Api\CustomersApi;
 use RealtimeRegister\Domain\PriceCollection;
 use WHMCS\Database\Capsule;
 
 /*
- * Base example
+ * API configuration
  */
 class ApiConfiguration extends AbstractController
 {
@@ -33,25 +30,9 @@ class ApiConfiguration extends AbstractController
      */
     public function indexHTML($input = [], $vars = []): array
     {
-        $oldModuleProducts = $oldModuleServices = [];
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $apiConfigRepo = new Repository();
             $input = (array)$apiConfigRepo->get();
-
-            $productsRepo = new Products();
-            $productsRepo->onlyModule(Migration::MODULE_NAME);
-
-            foreach ($productsRepo->get() as $product) {
-                $oldModuleProducts[] = '<a target="_blank" href="configproducts.php?action=edit&id=' .
-                    $product->id . '">#' . $product->id . '</a>';
-            }
-            $SSLOrders = new SSL();
-            $orders = $SSLOrders->getBy(['module' => Migration::MODULE_NAME]);
-
-            foreach ($orders as $ssl) {
-                $oldModuleServices[] = '<a target="_blank" href="clientsservices.php?id='
-                    . $ssl->serviceid . '">#' . $ssl->serviceid . '</a>';
-            }
         }
 
         $form = new Creator('item');
@@ -105,7 +86,7 @@ class ApiConfiguration extends AbstractController
         $field->value = $input['autorenew_ordertype'];
         $field->translateOptions = true;
         $field->enableDescription = false;
-        $field->options = ['renew_always' => 'renew_always', 'wait_for_payment' => "wait_for_payment"];
+        $field->options = ['renew_always', "wait_for_payment"];
         $form->addField($field);
 
         $field = new CheckboxField();
@@ -376,6 +357,8 @@ class ApiConfiguration extends AbstractController
 
     public function saveItemHTML($input, $vars = [])
     {
+        $apiConfigRepo = new Repository();
+        $crons = (array)$apiConfigRepo->get();
         if ($this->checkToken()) {
             try {
                 $checkFieldsArray = [
@@ -412,7 +395,7 @@ class ApiConfiguration extends AbstractController
                 }
 
                 $apiConfigRepo = new Repository();
-                $apiConfigRepo->setConfiguration($input);
+                $apiConfigRepo->setConfiguration(array_merge($crons, $input));
             } catch (Exception $ex) {
                 $vars['formError'] = Lang::T('messages', $ex->getMessage());
             }
