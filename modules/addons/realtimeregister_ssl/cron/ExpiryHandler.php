@@ -35,8 +35,8 @@ class ExpiryHandler extends BaseTask
 
             $apiConf = (new ApiConfiguration())->get();
 
-            $renewWithinOnetime = (int) $apiConf->renew_invoice_days_one_time;
-            $renewWithinRecurring = (int) $apiConf->renew_invoice_days_recurring;
+            $renewWithinOnetime = (int)$apiConf->renew_invoice_days_one_time;
+            $renewWithinRecurring = (int)$apiConf->renew_invoice_days_recurring;
 
             $send_expiration_notification_recurring = (bool)$apiConf->send_expiration_notification_recurring;
             $send_expiration_notification_one_time = (bool)$apiConf->send_expiration_notification_one_time;
@@ -75,7 +75,6 @@ class ExpiryHandler extends BaseTask
                 if (in_array($daysLeft, self::getExpiryMailRange($renewWithinRecurring))
                     && $srv->billingcycle != 'One Time'
                     && $send_expiration_notification_recurring) {
-                    dump("send");
                     $emailSendsCount += $this->sendExpireNotifyEmail($srv->id, $daysLeft);
                 }
 
@@ -171,30 +170,25 @@ class ExpiryHandler extends BaseTask
 
     private function sendExpireNotifyEmail($serviceId, $daysLeft): bool
     {
-        try {
-            $command = 'SendEmail';
+        $command = 'SendEmail';
 
-            $postData = [
-                'id' => $serviceId,
-                'messagename' => EmailTemplateService::EXPIRATION_TEMPLATE_ID,
-                'customvars' => base64_encode(serialize(["expireDaysLeft" => $daysLeft])),
-            ];
+        $postData = [
+            'id' => $serviceId,
+            'messagename' => EmailTemplateService::EXPIRATION_TEMPLATE_ID,
+            'customvars' => base64_encode(serialize(["expireDaysLeft" => $daysLeft])),
+        ];
 
-            $adminUserName = Admin::getAdminUserName();
+        $adminUserName = Admin::getAdminUserName();
 
-            $results = localAPI($command, $postData, $adminUserName);
+        $results = localAPI($command, $postData, $adminUserName);
 
-            $resultSuccess = $results['result'] == 'success';
-            if (!$resultSuccess) {
-                Whmcs::savelogActivityRealtimeRegisterSsl(
-                    'Realtime Register SSL WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message']
-                );
-            }
-            return $resultSuccess;
-        } catch (\Exception $e) {
-            dump($e);
-            throw $e;
+        $resultSuccess = $results['result'] == 'success';
+        if (!$resultSuccess) {
+            Whmcs::savelogActivityRealtimeRegisterSsl(
+                'Realtime Register SSL WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message']
+            );
         }
+        return $resultSuccess;
     }
 
     private function checkReissueDate($serviceid): float|bool|int
