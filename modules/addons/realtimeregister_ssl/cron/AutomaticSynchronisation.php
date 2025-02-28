@@ -108,7 +108,7 @@ class AutomaticSynchronisation extends BaseTask
                     $this->updateServiceNextDueDate($serviceID, $newNextDueDate);
 
                     $updatedServices[] = $serviceID;
-                } elseif ($sslOrder->status === ProcessStatusEnum::STATUS_SUSPENDED) {
+                } elseif ($order->status === ProcessStatusEnum::STATUS_SUSPENDED) {
                     $customerNotified = $sslService->getConfigdataKey('customer_notified');
 
                     // If the status is suspended, we need some more data of the customer, so we send this person an email
