@@ -4,17 +4,8 @@
         {if $domains}
             const alertInfo = $('.alert-info').first();
 
-            {if $auto_install_panel}
-                csrInput.attr('readonly', '');
-
-                $('<div><input style="width: 15px;height: 15px;float: left;" type="checkbox" id="csrReadOnly">' +
-                    '<label for="csrReadOnly" style="font-size: 13px;float: left;margin-top: ' +
-                    '-20px;margin-left: 20px;">{$ADDONLANG->T('csrReadOnly')}</label></div>').insertBefore($('#inputCsr'));
-
-                $('#csrReadOnly').change(e => {
-                    $('#inputCsr').attr('readonly', !e.target.checked);
-                });
-            {/if}
+            $('<p class="auto_install_warning hidden"><small>{$ADDONLANG->T('csrReadOnly')}</small></p>')
+                .insertBefore($('#inputCsr'));
 
             alertInfo.after('<div class="card-body">' +
                 '<h2>{$ADDONLANG->T('Choose a domain')}</h2>' +
@@ -67,6 +58,7 @@
             $('input[name="csr-type"]').on('change', e => {
                 if (e.target.value === '1') {
                     // Help the user creating a CSR
+                    $('.auto_install_warning').hide();
                     $('#generateCsrBtn').show();
 
                     // We do want to show the csr, if one has been created, so we check if the csr field is empty
@@ -78,6 +70,9 @@
                     }
                     $('#inputCsr').attr('readonly', true);
                 } else if(e.target.value === '2') {
+                    {if $auto_install_panel}
+                        $('.auto_install_warning').show();
+                    {/if}
                     // Provide your own CSR
                     $('#inputCsr').show();
                     $("label[for=inputCsr]").show();

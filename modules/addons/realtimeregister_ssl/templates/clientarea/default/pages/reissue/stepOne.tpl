@@ -18,13 +18,13 @@
                 <div class="col-sm-10">
                     {if $smarty.post.csr}
                         <textarea name="csr" class="form-control" rows="8">{$smarty.post.csr}</textarea>
-                    {else if $csrreissue}
+                    {elseif $csrreissue}
                         <textarea name="csr" class="form-control" rows="8">{$csrreissue}</textarea>
-                             {else}
+                    {else}
                         <textarea name="csr" class="form-control" rows="8">-----BEGIN CERTIFICATE REQUEST-----
 
 -----END CERTIFICATE REQUEST-----</textarea>
-                        {/if}
+                    {/if}
                 </div>
             </div>
 
