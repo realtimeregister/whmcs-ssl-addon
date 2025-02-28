@@ -11,7 +11,6 @@ class ScriptService
     public const WEB_SERVER = 'scripts/webServerType';
     public const SAN_EMAILS = 'scripts/sanApprovals';
     public const ADMIN_SERVICE = 'scripts/adminService';
-    public const AUTO_FILL = 'scripts/autoFill';
     public const PRIVATE_KEY_FILL = 'scripts/privateKeyFill';
     public const ORDER_TYPE_FILL = 'scripts/orderTypeFill';
     public const OPTION_ERROR = 'scripts/configOptionsError';
@@ -24,13 +23,18 @@ class ScriptService
         return TemplateService::buildTemplate(self::WEB_SERVER);
     }
     
-    public static function getStepOneBaseScript($brand, $domains = [])
+    public static function getStepOneBaseScript($brand, $domains = [], $fillVars = [])
     {
         $apiConf = (new Repository())->get();
         $auto_install_panel = $apiConf->auto_install_panel;
         return TemplateService::buildTemplate(
             self::STEP_ONE_BASE,
-            ['brand' => json_encode($brand), 'domains' => $domains, 'auto_install_panel' => $auto_install_panel]
+            [
+                'brand' => json_encode($brand),
+                'fillVars' => addslashes(json_encode($fillVars)),
+                'domains' => $domains,
+                'auto_install_panel' => $auto_install_panel
+            ]
         );
     }
     public static function getOrderTypeScript($orderTypes, $fillVarsJSON)
@@ -40,13 +44,13 @@ class ScriptService
             'orderTypes' => json_encode($orderTypes)
         ]);
     }
+
     public static function getGenerateCsrModalScript(
         $serviceId,
         $fillVarsJSON,
         $countriesForGenerateCsrForm,
         $vars = []
     ) {
-
         $csrData = [];
         $service = new Service($serviceId);
         $client = new Client($service->clientID);
@@ -58,7 +62,6 @@ class ScriptService
         $csrData['org_unit'] = '';
         $csrData['common_name'] = $service->domain;
         $csrData['email'] = $client->email;
-
 
         return TemplateService::buildTemplate(self::GENERATE_CSR_MODAL, [
             'fillVars' => addslashes($fillVarsJSON),
@@ -77,10 +80,6 @@ class ScriptService
     public static function getAutoFillOrderTypeField($orderType)
     {
         return TemplateService::buildTemplate(self::ORDER_TYPE_FILL, ['orderType' => $orderType]);
-    }
-    public static function getAutoFillFieldsScript($fillVarsJSON)
-    {
-        return TemplateService::buildTemplate(self::AUTO_FILL, ['fillVars' => addslashes($fillVarsJSON)]);
     }
 
     public static function getSanEmailsScript(

@@ -236,7 +236,7 @@ $_LANG['serverCA']['home']['The certificate has been installed correctly'] = 'Th
 
 $_LANG['serverCA']['home']['installCertificateBtn'] = 'Install Certificate';
 
-$_LANG['csrReadOnly'] = 'Tick to enter your CSR, remember that if you want to use automatic certificate installation you must use the button to generate CSR.';
+$_LANG['csrReadOnly'] = 'If you want to use automatic certificate installation you must use the button to generate CSR.';
 
 $_LANG['serverCA']['home']['downloadToFile']           = 'Download to file';
 $_LANG['serverCA']['home']['copyToClipboard']           = 'Copy to clipboard';

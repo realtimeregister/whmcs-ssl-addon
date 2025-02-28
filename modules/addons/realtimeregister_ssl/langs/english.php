@@ -362,3 +362,6 @@ $_LANG['addonAA']['crons']['cron_certificate_installer'] = 'Install certificate 
 $_LANG['addonAA']['orders']['table']['set as verified'] = 'Set as verified';
 $_LANG['addonAA']['orders']['table']['set as installed'] = 'Set as installed';
 $_LANG['addonAA']['orders']['messages']['Success'] = 'Success';
+
+$_LANG['haveCsr'] = 'I have a CSR which I want to use';
+$_LANG['createCsr'] = 'Help me create a CSR';

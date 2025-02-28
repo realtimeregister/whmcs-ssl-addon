@@ -336,3 +336,6 @@ $_LANG['addonAA']['crons']['cron_certificate_installer'] = 'Installer certifikat
 $_LANG['addonAA']['orders']['table']['set as verified'] = 'Set as verified';
 $_LANG['addonAA']['orders']['table']['set as installed'] = 'Set as installed';
 $_LANG['addonAA']['orders']['messages']['Success'] = 'Success';
+
+$_LANG['haveCsr'] = 'Jeg har en CSR, som jeg vil bruge';
+$_LANG['createCsr'] = 'Hjælp mig med at oprette en CSR';

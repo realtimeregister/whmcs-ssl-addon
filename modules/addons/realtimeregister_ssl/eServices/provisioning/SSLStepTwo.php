@@ -254,7 +254,9 @@ class SSLStepTwo
             'postcode',
             'country',
             'phonenumber',
-            'privateKey'
+            'privateKey',
+            'custom-hostname',
+            'step-type-data-domain',
         ];
 
         $additional = [
