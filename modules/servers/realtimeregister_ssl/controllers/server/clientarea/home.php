@@ -217,7 +217,7 @@ class home extends AbstractController
                     }
 
                     //dump($daysUntilExpired, $serviceBillingCycle);
-                    if ($daysUntilExpired && (int)$daysUntilExpired < 30 && $serviceBillingCycle != 'One Time') {
+                    if ($daysUntilExpired && (int)$daysUntilExpired < 30 && $serviceBillingCycle == 'One Time') {
                         $vars['displayRenewButton'] = true;
                     }
 
