@@ -15,14 +15,14 @@ use DateTime;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use WHMCS\Service\Service;
 
-class Notifier extends BaseTask
+class ExpiryHandler extends BaseTask
 {
     protected $defaultFrequency = 0;
     protected $skipDailyCron = false;
     protected $defaultPriority = 4200;
-    protected $defaultDescription = 'Send customers notifications of expiring services and create renewal invoices ' .
-    'for services that expire within the selected number of days';
-    protected $defaultName = 'Certificate notifier';
+    protected $defaultDescription = 'Expiry handler, send notifications, creates invoices and renews certificates based 
+    configuration.';
+    protected $defaultName = 'Expiry Handler';
     protected $outputs = ["sent" => ["defaultValue" => 0, "identifier" => "sent", "name" => "Emails Sent"]];
     protected $icon = "fas fa-envelope";
     protected $successCountIdentifier = "sent";
@@ -75,6 +75,7 @@ class Notifier extends BaseTask
                 if (in_array($daysLeft, self::getExpiryMailRange($renewWithinRecurring))
                     && $srv->billingcycle != 'One Time'
                     && $send_expiration_notification_recurring) {
+                    dump("send");
                     $emailSendsCount += $this->sendExpireNotifyEmail($srv->id, $daysLeft);
                 }
 
@@ -104,13 +105,7 @@ class Notifier extends BaseTask
 
     private static function getExpiryMailRange($renewWithin)
     {
-        $range = [];
-        foreach ([0, 1, 3, 7, 14, 21, 30] as $daysLeft) {
-            if ($renewWithin >= $daysLeft) {
-                $range[] = $daysLeft;
-            }
-        }
-        return $range;
+        return array_filter([0, 1, 3, 7, 14, 21, 30], fn($daysLeft) => $daysLeft <= $renewWithin);
     }
 
     /**

@@ -17,7 +17,6 @@ use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use Exception;
 use RealtimeRegister\Api\CustomersApi;
-use RealtimeRegister\Domain\PriceCollection;
 use WHMCS\Database\Capsule;
 
 /*
@@ -406,9 +405,8 @@ class ApiConfiguration extends AbstractController
 
     public function testConnectionJSON($input = [], $vars = [])
     {
-        $customersApi = ApiProvider::getInstance()->getApi(CustomersApi::class);
-        /** @var PriceCollection $apiProducts */
-        $customersApi->priceList(ApiProvider::getCustomer());
+        ApiProvider::standalone(CustomersApi::class, $input['api_login'], $input['api_test'] === 'true')
+            ->priceList(ApiProvider::parseCustomer($input['api_login']));
         return [
             'success' => Lang::T('messages', 'api_connection_success')
         ];

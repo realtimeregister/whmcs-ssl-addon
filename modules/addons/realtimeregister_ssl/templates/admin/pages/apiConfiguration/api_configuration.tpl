@@ -48,8 +48,10 @@
             });
             $('button[name="testConnection"]').click(function () {
                 const login = $('#item_default_api_login').val();
+                const isTest = $('input[name^="api_test"]').is(":checked");
+                console.log(isTest);
 
-                JSONParser.request('testConnection', {api_login: login}, function (data) {
+                JSONParser.request('testConnection', {api_login: login, api_test: isTest}, function (data) {
                     if (data.success === true) {
                         $('#AddonAlerts>div[data-prototype="success"]').show();
                         $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
