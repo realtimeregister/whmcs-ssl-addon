@@ -13,8 +13,8 @@ class ApiProvider
 {
     private static $instance;
 
-    private string $apiUrl = 'https://api.yoursrs.com';
-    private string $apiTestUrl = 'https://api.yoursrs-ote.com';
+    private const API_URL = 'https://api.yoursrs.com';
+    private const API_TEST_URL = 'https://api.yoursrs-ote.com';
 
     /**
      * @var AbstractApi[]
@@ -28,6 +28,10 @@ class ApiProvider
             self::$instance = new ApiProvider();
         }
         return self::$instance;
+    }
+
+    public static function standalone(string $className, string $apiLogin, bool $isTest): mixed {
+        return new $className(new AuthorizedClient(self::getUrl($isTest), $apiLogin));
     }
 
     /**
@@ -49,23 +53,24 @@ class ApiProvider
     {
         $apiKeyRecord = Capsule::table('REALTIMEREGISTERSSL_api_configuration')->first();
 
-        $apiUrl = $this->apiUrl;
-        if ($apiKeyRecord->api_test === 1) {
-            $apiUrl = $this->apiTestUrl;
-        }
-
+        $apiUrl = self::getUrl($apiKeyRecord->api_test === 1);
         $this->api[$className] = new $className(new AuthorizedClient($apiUrl, $apiKeyRecord->api_login));
-        self::$customer = $this->setCustomer($apiKeyRecord->api_login);
+        self::$customer = self::parseCustomer($apiKeyRecord->api_login);
     }
 
-    private function setCustomer(string $apiKey): string
+    public static function parseCustomer(string $apiKey): string
     {
         $tmp = base64_decode($apiKey);
         return explode('/', $tmp)[0];
     }
 
+
     public static function getCustomer(): string
     {
         return self::$customer;
+    }
+
+    private static function getUrl(bool $isTest) {
+        return $isTest ? self::API_TEST_URL : self::API_URL;
     }
 }

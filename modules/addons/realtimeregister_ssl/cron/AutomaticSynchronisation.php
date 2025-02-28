@@ -3,7 +3,6 @@
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
-use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
@@ -42,11 +41,9 @@ class AutomaticSynchronisation extends BaseTask
                     continue;
                 }
 
-                if ($sslService->status != SSL::AWAITING_CONFIGURATION) {
-                    $configdata = json_decode($sslService->configdata, true);
-                    if (isset($configdata['domain']) && !empty($configdata['domain'])) {
-                        Capsule::table('tblhosting')->where('id', $serviceID)->update(['domain' => $configdata['domain']]);
-                    }
+                $configdata = json_decode($sslService->configdata, true);
+                if (!empty($configdata['domain'])) {
+                    Capsule::table('tblhosting')->where('id', $serviceID)->update(['domain' => $configdata['domain']]);
                 }
 
                 //if service is synchronized skip it
@@ -88,21 +85,16 @@ class AutomaticSynchronisation extends BaseTask
                 $sslOrder = $certificateApi->listCertificates(1, null, null, ['process:eq' => $order->remoteid])[0];
 
                 //if certificate is active
-                if ($order->status === 'ACTIVE') {
+                if ($sslOrder) {
                     //update whmcs service next due date
                     $newNextDueDate = $sslOrder->expiryDate;
-                    if (!empty($order['end_date'])) {
-                        $newNextDueDate = $sslOrder->expiryDate;
+                    if ($sslOrder->subscriptionEndDate) {
+                        $newNextDueDate = $sslOrder->subscriptionEndDate;
                     }
 
                     //set ssl certificate as terminated if expired
                     if (strtotime($sslOrder->expiryDate) < strtotime(date('Y-m-d'))) {
                         $this->setSSLServiceAsTerminated($serviceID);
-                    }
-
-                    //if service is montlhy, one time, free skip it
-                    if ($this->checkServiceBillingPeriod($serviceID)) {
-                        continue;
                     }
 
                     $this->updateServiceNextDueDate($serviceID, $newNextDueDate);

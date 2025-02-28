@@ -778,7 +778,7 @@ new Loader();
 \AddonModule\RealtimeRegisterSsl\cron\ProcessingOrders::register();
 \AddonModule\RealtimeRegisterSsl\cron\DailyStatusUpdater::register();
 \AddonModule\RealtimeRegisterSsl\cron\CertificateStatisticsLoader::register();
-\AddonModule\RealtimeRegisterSsl\cron\Notifier::register();
+\AddonModule\RealtimeRegisterSsl\cron\ExpiryHandler::register();
 \AddonModule\RealtimeRegisterSsl\cron\CertificateSender::register();
 \AddonModule\RealtimeRegisterSsl\cron\PriceUpdater::register();
 \AddonModule\RealtimeRegisterSsl\cron\CertificateDetailsUpdater::register();

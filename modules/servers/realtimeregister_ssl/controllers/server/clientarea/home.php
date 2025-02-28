@@ -216,7 +216,8 @@ class home extends AbstractController
                             ->format('%a');
                     }
 
-                    if ($daysUntilExpired && (int)$daysUntilExpired < 30) {
+                    //dump($daysUntilExpired, $serviceBillingCycle);
+                    if ($daysUntilExpired && (int)$daysUntilExpired < 30 && $serviceBillingCycle == 'One Time') {
                         $vars['displayRenewButton'] = true;
                     }
 
@@ -415,8 +416,8 @@ class home extends AbstractController
 
             $errorInvoiceExist = false;
             // TODO fix the following lines
-            $service = \WHMCS\Service\Service::where('id', $input['id'])->get();
-            $result = $this->createAutoInvoice([$input['params']['pid'] => $service], $input['id'], true);
+            $service = \WHMCS\Service\Service::where('id', $input['id'])->first();
+            $result = $this->createAutoInvoice($input['params']['pid'], $service, true);
             if (is_array($result) && isset($result['invoiceID'])) {
                 $existInvoiceID = $result['invoiceID'];
                 $errorInvoiceExist = Lang::getInstance()->T('Related invoice already exist.');
@@ -779,35 +780,29 @@ class home extends AbstractController
         return ['success' => 1, 'message' => Lang::getInstance()->T('The certificate has been installed correctly')];
     }
 
-    private function createAutoInvoice($packages, $serviceIds, $jsonAction = false)
+    private function createAutoInvoice($productId, $service, $jsonAction = false)
     {
-        if (empty($packages)) {
-            return 0;
+        if ($productId == null) {
+            return null;
         }
 
-        $products             = \WHMCS\Product\Product::whereIn('id', array_keys($packages))->get();
+        $product             = \WHMCS\Product\Product::where('id', '=' ,$productId)->first();
         $invoiceGenerator     = new Invoice();
-        $servicesAlreadyAdded = $invoiceGenerator->checkInvoiceAlreadyCreated($serviceIds);
+        $servicesAlreadyAdded = $invoiceGenerator->checkInvoiceAlreadyCreated($service->id);
         $getInvoiceID         = false;
         if ($jsonAction) {
             $getInvoiceID = true;
         }
         $invoiceCounter = 0;
-        foreach ($products as $prod) {
-            foreach ($packages[$prod->id] as $service) {
                 //have product, service
-                if (isset($servicesAlreadyAdded[$service->id])) {
-                    if ($jsonAction) {
-                        return [
-                            'invoiceID' => $invoiceGenerator->getLatestCreatedInvoiceInfo($service->id)['invoice_id']
-                        ];
-                    }
-                    continue;
-                }
-                $invoiceCounter += $invoiceGenerator->createInvoice($service, $prod, $getInvoiceID);
+        if ($servicesAlreadyAdded) {
+            if ($jsonAction) {
+                return [
+                    'invoiceID' => $invoiceGenerator->getLatestCreatedInvoiceInfo($service->id)['invoice_id']
+                ];
             }
         }
 
-        return $invoiceCounter;
+        return $invoiceGenerator->createInvoice($service, $product, $getInvoiceID);
     }
 }

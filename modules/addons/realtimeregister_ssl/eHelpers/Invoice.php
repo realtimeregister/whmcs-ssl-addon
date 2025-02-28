@@ -79,22 +79,22 @@ class Invoice
         }
     }
 
-    public function checkInvoiceAlreadyCreated($serviceIDs)
+    public function checkInvoiceAlreadyCreated($serviceId)
     {
-        $services = Query::select(
-            ['service_id', 'id', 'invoice_id'], self::INVOICE_INFOS_TABLE_NAME, ['service_id' => $serviceIDs]
-        )->fetchAll();
+        $service = Capsule::table(self::INVOICE_INFOS_TABLE_NAME)
+            ->where('service_id', '=', $serviceId)
+            ->get();
 
-        $result = [];
-        foreach ($services as $srvinfo) {
+        if ($service != null) {
             $invoice = Capsule::table('tblinvoices')
-                ->where('id', $srvinfo['invoice_id'])->where('status', 'Paid')->first();
+                ->where('id', $service->invoice_id)
+                ->where('status', 'Paid')->first();
             if (!isset($invoice->id)) {
-                $result[$srvinfo['service_id']] = $srvinfo;
+                return $service;
             }
         }
 
-        return $result;
+        return null;
     }
 
     public function getInvoiceCreatedInfo($invoiceId, $orderIdNull = true)
@@ -322,10 +322,6 @@ class Invoice
                 ->where('description', 'like', '%' . $configOptions['wildcard']['friendlyName'] . '%')
                 ->where('invoiceid', '=', $invoiceId)
                 ->update(['relid' => $service->id, 'type' => '']);
-        }
-
-        if (!$input['renewal_invoice_status_unpaid']) {
-            Capsule::table('tblinvoices')->where('id', '=', $invoiceId)->update(['status' => 'Payment Pending']);
         }
 
         if ($returnInvoiceID) {

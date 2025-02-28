@@ -2,7 +2,6 @@
 
 namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
-use AddonModule\RealtimeRegisterSsl as main;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\CheckboxField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\Creator;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\HiddenField;
@@ -12,20 +11,16 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextareaField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
-use AddonModule\RealtimeRegisterSsl\eHelpers\Migration;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
-use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Products;
 use Exception;
 use RealtimeRegister\Api\CustomersApi;
-use RealtimeRegister\Domain\PriceCollection;
 use WHMCS\Database\Capsule;
 
 /*
- * Base example
+ * API configuration
  */
 class ApiConfiguration extends AbstractController
 {
@@ -34,25 +29,9 @@ class ApiConfiguration extends AbstractController
      */
     public function indexHTML($input = [], $vars = []): array
     {
-        $oldModuleProducts = $oldModuleServices = [];
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $apiConfigRepo = new Repository();
             $input = (array)$apiConfigRepo->get();
-
-            $productsRepo = new Products();
-            $productsRepo->onlyModule(Migration::MODULE_NAME);
-
-            foreach ($productsRepo->get() as $product) {
-                $oldModuleProducts[] = '<a target="_blank" href="configproducts.php?action=edit&id=' .
-                    $product->id . '">#' . $product->id . '</a>';
-            }
-            $SSLOrders = new SSL();
-            $orders = $SSLOrders->getBy(['module' => Migration::MODULE_NAME]);
-
-            foreach ($orders as $ssl) {
-                $oldModuleServices[] = '<a target="_blank" href="clientsservices.php?id='
-                    . $ssl->serviceid . '">#' . $ssl->serviceid . '</a>';
-            }
         }
 
         $form = new Creator('item');
@@ -97,23 +76,22 @@ class ApiConfiguration extends AbstractController
         $form->addField($field);
 
         $field = new LegendField();
-        $field->name = 'renewal_settings_legend';
+        $field->name = 'recurring_settings';
+        $form->addField($field);
+
+        $field = new SelectField();
+        $field->name = 'autorenew_ordertype';
+        $field->required = true;
+        $field->value = $input['autorenew_ordertype'];
+        $field->translateOptions = true;
+        $field->enableDescription = false;
+        $field->options = ['renew_always', 'wait_for_payment'];
         $form->addField($field);
 
         $field = new CheckboxField();
-        $field->name = 'visible_renew_button';
-        $field->options = ['visible_renew_button'];
-        $field->value = $input['visible_renew_button'] ? ['visible_renew_button'] : [''];
-        $field->inline = true;
-        $field->colWidth = 3;
-        $field->continue = false;
-        $field->enableDescription = true;
-        $form->addField($field);
-
-        $field = new CheckboxField();
-        $field->name = 'auto_renew_invoice_reccuring';
-        $field->options = ['auto_renew_invoice_reccuring'];
-        $field->value = $input['auto_renew_invoice_reccuring'] ? ['auto_renew_invoice_reccuring'] : [''];
+        $field->name = 'auto_renew_invoice_recurring';
+        $field->options = ['auto_renew_invoice_recurring'];
+        $field->value = $input['auto_renew_invoice_recurring'] ? ['auto_renew_invoice_recurring'] : [''];
         $field->inline = true;
         $field->colWidth = 3;
         $field->continue = true;
@@ -121,24 +99,24 @@ class ApiConfiguration extends AbstractController
         $form->addField($field);
 
         $field = new SelectField();
-        $field->disabled = $input['auto_renew_invoice_reccuring'] ? false : true;
-        $field->name = 'renew_invoice_days_reccuring';
+        $field->disabled = $input['renew_invoice_days_recurring'] ? false : true;
+        $field->name = 'renew_invoice_days_recurring';
         $field->required = true;
-        $field->value = $input['renew_invoice_days_reccuring'];
+        $field->value = $input['renew_invoice_days_recurring'];
         $field->translateOptions = false;
         $field->inline = true;
         $field->colWidth = 2;
         $field->continue = false;
         $field->enableDescription = true;
-        $field->options = ['30' => '30', '21' => '21', '14' => '14', '7' => '7', '3' => '3', '1' => '1', '0' => '0'];
-        $field->error = $this->getFieldError('renew_invoice_days_reccuring');
+        $field->options = ['30' => '30', '21' => '21', '14' => '14', '7' => '7', '3' => '3', '1' => '1'];
+        $field->error = $this->getFieldError('renew_invoice_days_recurring');
         $form->addField($field);
 
         $field = new CheckboxField();
-        $field->name = 'send_expiration_notification_reccuring';
-        $field->options = ['send_expiration_notification_reccuring'];
-        $field->value = $input['send_expiration_notification_reccuring']
-            ? ['send_expiration_notification_reccuring'] : [''];
+        $field->name = 'send_expiration_notification_recurring';
+        $field->options = ['send_expiration_notification_recurring'];
+        $field->value = $input['send_expiration_notification_recurring']
+            ? ['send_expiration_notification_recurring'] : [''];
         $field->inline = true;
         $field->enableLabel = true;
         $field->colWidth = 5;
@@ -146,10 +124,15 @@ class ApiConfiguration extends AbstractController
         $field->enableDescription = true;
         $form->addField($field);
 
+        $field = new LegendField();
+        $field->name = 'onetime_settings';
+        $form->addField($field);
+
         $field = new CheckboxField();
-        $field->name = 'auto_renew_invoice_one_time';
-        $field->options = ['auto_renew_invoice_one_time'];
-        $field->value = $input['auto_renew_invoice_one_time'] ? ['auto_renew_invoice_one_time'] : [''];
+        $field->name = 'send_expiration_notification_one_time';
+        $field->options = ['send_expiration_notification_one_time'];
+        $field->value = $input['send_expiration_notification_one_time']
+            ? ['send_expiration_notification_one_time'] : [''];
         $field->inline = true;
         $field->colWidth = 3;
         $field->continue = true;
@@ -164,31 +147,10 @@ class ApiConfiguration extends AbstractController
         $field->translateOptions = false;
         $field->inline = true;
         $field->colWidth = 2;
-        $field->continue = false;
-        $field->enableDescription = true;
-        $field->options = ['30' => '30', '21' => '21', '14' => '14', '7' => '7', '3' => '3', '1' => '1', '0' => '0'];
-        $field->error = $this->getFieldError('renew_invoice_days_one_time');
-        $form->addField($field);
-
-        $field = new CheckboxField();
-        $field->name = 'send_expiration_notification_one_time';
-        $field->options = ['send_expiration_notification_one_time'];
-        $field->value = $input['send_expiration_notification_one_time']
-            ? ['send_expiration_notification_one_time'] : [''];
-        $field->inline = true;
-        $field->colWidth = 5;
-        $field->continue = false;
-        $field->enableDescription = true;
-        $form->addField($field);
-
-        $field = new CheckboxField();
-        $field->name = 'renewal_invoice_status_unpaid';
-        $field->options = ['renewal_invoice_status_unpaid'];
-        $field->value = $input['renewal_invoice_status_unpaid'] ? ['renewal_invoice_status_unpaid'] : [''];
-        $field->inline = true;
-        $field->colWidth = 3;
         $field->continue = true;
         $field->enableDescription = true;
+        $field->options = ['30' => '30', '21' => '21', '14' => '14', '7' => '7', '3' => '3', '1' => '1'];
+        $field->error = $this->getFieldError('renew_invoice_days_one_time');
         $form->addField($field);
 
         $field = new LegendField();
@@ -394,6 +356,8 @@ class ApiConfiguration extends AbstractController
 
     public function saveItemHTML($input, $vars = [])
     {
+        $apiConfigRepo = new Repository();
+        $crons = (array)$apiConfigRepo->get();
         if ($this->checkToken()) {
             try {
                 $checkFieldsArray = [
@@ -402,8 +366,8 @@ class ApiConfiguration extends AbstractController
                     'profile_data_csr',
                     'auto_install_panel',
                     'auto_renew_invoice_one_time',
-                    'auto_renew_invoice_reccuring',
-                    'send_expiration_notification_reccuring',
+                    'auto_renew_invoice_recurring',
+                    'send_expiration_notification_recurring',
                     'send_expiration_notification_one_time',
                     'renewal_invoice_status_unpaid',
                     'display_ca_summary',
@@ -419,8 +383,8 @@ class ApiConfiguration extends AbstractController
                         $input[$field] = false;
                     }
                 }
-                if (!$input['auto_renew_invoice_reccuring']) {
-                    $input['renew_invoice_days_reccuring'] = null;
+                if (!$input['auto_renew_invoice_recurring']) {
+                    $input['renew_invoice_days_recurring'] = null;
                 }
                 if (!$input['auto_renew_invoice_one_time']) {
                     $input['renew_invoice_days_one_time'] = null;
@@ -430,7 +394,7 @@ class ApiConfiguration extends AbstractController
                 }
 
                 $apiConfigRepo = new Repository();
-                $apiConfigRepo->setConfiguration($input);
+                $apiConfigRepo->setConfiguration(array_merge($crons, $input));
             } catch (Exception $ex) {
                 $vars['formError'] = Lang::T('messages', $ex->getMessage());
             }
@@ -441,27 +405,10 @@ class ApiConfiguration extends AbstractController
 
     public function testConnectionJSON($input = [], $vars = [])
     {
-        $customersApi = ApiProvider::getInstance()->getApi(CustomersApi::class);
-        /** @var PriceCollection $apiProducts */
-        $customersApi->priceList(ApiProvider::getCustomer());
+        ApiProvider::standalone(CustomersApi::class, $input['api_login'], $input['api_test'] === 'true')
+            ->priceList(ApiProvider::parseCustomer($input['api_login']));
         return [
             'success' => Lang::T('messages', 'api_connection_success')
-        ];
-    }
-
-    public function runMigrationJSON($input = [], $vars = [])
-    {
-        try {
-            Migration::getInstance()->run();
-        } catch (Exception $ex) {
-            return [
-                'success' => false,
-                'error' => $ex->getMessage()
-            ];
-        }
-
-        return [
-            'success' => Lang::T('messages', 'data_migration_success')
         ];
     }
 
@@ -474,126 +421,5 @@ class ApiConfiguration extends AbstractController
         }
 
         return $templatesArray;
-    }
-
-    /**
-     * This is custom page.
-     * @param type $input
-     * @param type $vars
-     * @return array
-     */
-    public function pageHTML()
-    {
-        $vars = [];
-
-        return
-            [
-                //You have to create tpl file  /modules/addons/RealtimeRegisterSsl/templates/admin/pages/example1/page.1tpl
-                'tpl' => 'page',
-                'vars' => $vars
-            ];
-    }
-    /*
-     * ************************************************************************
-     * AJAX USING ARRAY
-     * ************************************************************************
-     */
-
-    /**
-     * Display custom page for ajax errors
-     * @param type $input
-     * @param type $vars
-     * @return array
-     */
-    public function ajaxErrorHTML()
-    {
-        return
-            [
-                'tpl' => 'ajaxError'
-            ];
-    }
-
-    /**
-     * Return error message using array
-     * @param type $input
-     * @param type $vars
-     * @return array
-     */
-    public function getErrorArrayJSON()
-    {
-        return
-            [
-                'error' => 'Custom error'
-            ];
-    }
-
-    /**
-     * Return success message using array
-     * @param type $input
-     * @param type $vars
-     * @return array
-     */
-    public function getSuccessArrayJSON()
-    {
-        return
-            [
-                'success' => 'Custom success'
-            ];
-    }
-
-    /*
-     * ************************************************************************
-     * AJAX USING DATA-ACT
-     * ***********************************************************************
-     */
-
-    public function ajaxErrorDataActHTML()
-    {
-        return
-            [
-                'tpl' => 'ajaxErrorDataAct'
-            ];
-    }
-
-    /*
-     * ************************************************************************
-     * AJAX CONTENT
-     * ***********************************************************************
-     */
-
-    public function ajaxContentHTML()
-    {
-        return
-            [
-                'tpl' => 'ajaxContent'
-            ];
-    }
-
-    public function ajaxContentJSON()
-    {
-        return
-            [
-                'html' => main\addonLibs\Smarty::I()->view('ajaxContentJSON')
-            ];
-    }
-
-    /*     * ******************************************************
-     * CREATOR
-     * ***************************************************** */
-
-    public function getCreatorJSON()
-    {
-        $creator = new main\addonLibs\forms\Popup('mymodal');
-        $creator->addField(
-            new TextField([
-                'name' => 'customTextField',
-                'value' => 'empty_value',
-                'placeholder' => 'placeholder!'
-            ])
-        );
-
-        return [
-            'modal' => $creator->getHTML()
-        ];
     }
 }

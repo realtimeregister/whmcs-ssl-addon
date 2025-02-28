@@ -7,6 +7,7 @@
  */
 
 namespace AddonModule\RealtimeRegisterSsl\eHelpers;
+use Whmcs\Database\Capsule;
 
 /**
  * Description of Invoice
@@ -18,9 +19,10 @@ class Admin
     
     public static function getAdminUserName() {
         if (!self::$adminUserName) {
-            self::$adminUserName = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::query(
-                'SELECT username FROM tbladmins LIMIT 1'
-            )->fetchColumn('username');
+            self::$adminUserName = Capsule::table('tbladmins')
+                ->limit(1)
+                ->first()
+                ->username;
         }
         return self::$adminUserName;
     }

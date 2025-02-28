@@ -44,4 +44,12 @@ class SSL
     {
         return Model::getWhere($where, $realtimeregisterssl)->get();
     }
+
+    public function getOrdersWithStatus($status) {
+        return Model::query()
+            ->join('tblhosting', 'tblhosting.id', '=', 'serviceid')
+            ->where('tblhosting.domainstatus', 'Active')
+            ->whereIn('status', $status)
+            ->get();
+    }
 }

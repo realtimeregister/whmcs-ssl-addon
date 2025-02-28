@@ -64,17 +64,23 @@ $_LANG['addonAA']['apiConfiguration']['modal']['dataMigrationInfoAction'][2]    
 $_LANG['addonAA']['apiConfiguration']['messages']['data_migration_success']                            = 'Data and configuration have been imported successfully. The page will automatically reloaded after 5 seconds.';
 //
 $_LANG['addonAA']['apiConfiguration']['item']['renewal_settings_legend']['label']                      = 'Renewal Settings';
+$_LANG['addonAA']['apiConfiguration']['item']['recurring_settings']['label']                      = 'Recurring Orders';
+$_LANG['addonAA']['apiConfiguration']['item']['onetime_settings']['label']                      = 'One-Time Orders';
 $_LANG['addonAA']['apiConfiguration']['item']['logs_settings_legend']['label']                      = 'Logs Settings';
-$_LANG['addonAA']['apiConfiguration']['item']['auto_renew_invoice_reccuring']['label']                 = 'Recuring Orders';
-$_LANG['addonAA']['apiConfiguration']['item']['auto_renew_invoice_reccuring']['description']           = 'Create automatical renewal invoice';
-$_LANG['addonAA']['apiConfiguration']['item']['send_expiration_notification_reccuring']['label']       = '';
-$_LANG['addonAA']['apiConfiguration']['item']['renew_invoice_days_reccuring']['description']           = 'Days before expiry';
-$_LANG['addonAA']['apiConfiguration']['item']['send_expiration_notification_reccuring']['description'] = 'Send expiration notifications';
+$_LANG['addonAA']['apiConfiguration']['item']['auto_renew_invoice_recurring']['label']                 = '';
+$_LANG['addonAA']['apiConfiguration']['item']['auto_renew_invoice_recurring']['description']           = 'Automatically create renewal invoice';
+$_LANG['addonAA']['apiConfiguration']['item']['send_expiration_notification_recurring']['label']       = '';
+$_LANG['addonAA']['apiConfiguration']['item']['renew_invoice_days_recurring']['description']           = 'Days before expiry';
+$_LANG['addonAA']['apiConfiguration']['item']['send_expiration_notification_recurring']['description'] = 'Send expiration notifications';
 $_LANG['addonAA']['apiConfiguration']['item']['auto_renew_invoice_one_time']['label']                  = 'One Time Orders';
-$_LANG['addonAA']['apiConfiguration']['item']['auto_renew_invoice_one_time']['description']            = 'Create automatical renewal invoice';
+$_LANG['addonAA']['apiConfiguration']['item']['auto_renew_invoice_one_time']['description']            = 'Automatically create renewal invoice';
 $_LANG['addonAA']['apiConfiguration']['item']['send_expiration_notification_one_time']['label']        = '';
 $_LANG['addonAA']['apiConfiguration']['item']['renew_invoice_days_one_time']['description']            = 'Days before expiry';
 $_LANG['addonAA']['apiConfiguration']['item']['send_expiration_notification_one_time']['description']  = 'Send expiration notifications';
+$_LANG['addonAA']['apiConfiguration']['item']['autorenew_ordertype']['label']                                  = 'Auto-renew Setting';
+$_LANG['addonAA']['apiConfiguration']['item']['autorenew_ordertype']['options']['renew_always']                              = 'Always renew';
+$_LANG['addonAA']['apiConfiguration']['item']['autorenew_ordertype']['options']['wait_for_payment']                              = 'Wait for payment';
+$_LANG['addonAA']['apiConfiguration']['item']['tech_region']['label']                                  = 'State/Region';
 
 
 $_LANG['addonAA']['apiConfiguration']['item']['automatic_processing_of_renewal_orders']['label']                  = '';
@@ -90,7 +96,7 @@ $_LANG['addonAA']['apiConfiguration']['item']['renew_new_order']['description'] 
 $_LANG['addonAA']['apiConfiguration']['item']['visible_renew_button']['label']                  = '';
 $_LANG['addonAA']['apiConfiguration']['item']['visible_renew_button']['description']            = 'Visible "Renew" button in Client Area';
 $_LANG['addonAA']['apiConfiguration']['item']['save_activity_logs']['label']                  = 'Activity log';
-$_LANG['addonAA']['apiConfiguration']['item']['save_activity_logs']['description']            = 'Tick this field to save logs';
+$_LANG['addonAA']['apiConfiguration']['item']['save_activity_logs']['description']            = 'Save logs';
 
 $_LANG['addonAA']['apiConfiguration']['item']['api_test']['description'] = 'Enable for test environment';
 $_LANG['addonAA']['apiConfiguration']['item']['api_test']['label'] = '';

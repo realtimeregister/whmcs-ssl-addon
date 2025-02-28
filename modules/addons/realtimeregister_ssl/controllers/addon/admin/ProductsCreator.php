@@ -3,15 +3,12 @@
 namespace AddonModule\RealtimeRegisterSsl\controllers\addon\admin;
 
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\Popup;
-use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
-use AddonModule\RealtimeRegisterSsl\addonLibs\Smarty;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
-use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ApiProductPriceRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
 use Exception;
@@ -246,133 +243,5 @@ class ProductsCreator extends AbstractController
         }
         return $apiProduct->brand . " " . $apiProduct->name . " " .
             $certificateType;
-    }
-
-    public function saveItemHTML($input, $vars = [])
-    {
-        if ($this->checkToken()) {
-            try {
-                $login = trim($input['login']);
-                $password = trim($input['password']);
-                if (empty($login) || empty($password)) {
-                    throw new Exception('empty_fields');
-                }
-
-                $login = $input['login'];
-                $password = $input['password'];
-
-                $apiConfigRepo = new Repository();
-                $apiConfigRepo->setConfiguration($login, $password);
-            } catch (Exception $ex) {
-                $vars['formError'] = Lang::T('messages', $ex->getMessage());
-            }
-        }
-
-        return $this->indexHTML($input, $vars);
-    }
-
-    /**
-     * This is custom page.
-     */
-    public function pageHTML(): array
-    {
-        $vars = [];
-
-        return [
-            //You have to create tpl file  /modules/addons/RealtimeRegisterSsl/templates/admin/pages/example1/page.1tpl
-            'tpl' => 'page',
-            'vars' => $vars
-        ];
-    }
-
-    /*
-     * ************************************************************************
-     * AJAX USING ARRAY
-     * ************************************************************************
-     */
-
-    /**
-     * Display custom page for ajax errors
-     */
-    public function ajaxErrorHTML(): array
-    {
-        return [
-            'tpl' => 'ajaxError'
-        ];
-    }
-
-    /**
-     * Return error message using array
-     */
-    public function getErrorArrayJSON(): array
-    {
-        return [
-            'error' => 'Custom error'
-        ];
-    }
-
-    /**
-     * Return success message using array
-     */
-    public function getSuccessArrayJSON(): array
-    {
-        return [
-            'success' => 'Custom success'
-        ];
-    }
-
-    /*
-     * ************************************************************************
-     * AJAX USING DATA-ACT
-     * ***********************************************************************
-     */
-
-    public function ajaxErrorDataActHTML(): array
-    {
-        return [
-            'tpl' => 'ajaxErrorDataAct'
-        ];
-    }
-
-    /*
-     * ************************************************************************
-     * AJAX CONTENT
-     * ***********************************************************************
-     */
-
-    public function ajaxContentHTML(): array
-    {
-        return [
-            'tpl' => 'ajaxContent'
-        ];
-    }
-
-    public function ajaxContentJSON(): array
-    {
-        return [
-            'html' => Smarty::I()->view('ajaxContentJSON')
-        ];
-    }
-
-    /*
-     * ******************************************************
-     * CREATOR
-     * *****************************************************
-     */
-
-    public function getCreatorJSON()
-    {
-        $creator = new Popup('mymodal');
-        $creator->addField(
-            new TextField([
-                'name' => 'customTextField',
-                'value' => 'empty_value',
-                'placeholder' => 'placeholder!'
-            ])
-        );
-
-        return [
-            'modal' => $creator->getHTML()
-        ];
     }
 }

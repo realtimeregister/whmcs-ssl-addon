@@ -20,12 +20,13 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
 
     public function setConfiguration($params)
     {
+        if (empty($params['tech_fax'])) {
+            $params['tech_fax'] = '';
+        }
+
         if (is_null($this->get()))
         {
-            if (!isset($params['tech_fax']) || empty($params['tech_fax'])) {
-                $params['tech_fax'] = '';
-            }
-            
+
             Capsule::table($this->tableName)->insert(
                     [
                         'api_login'                              => $params['api_login'],
@@ -48,13 +49,13 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'tech_postalcode'                        => $params['tech_postalcode'],
                         'tech_region'                            => $params['tech_region'],
                         'auto_renew_invoice_one_time'            => $params['auto_renew_invoice_one_time'],
-                        'auto_renew_invoice_reccuring'           => $params['auto_renew_invoice_reccuring'],
-                        'send_expiration_notification_reccuring' => $params['send_expiration_notification_reccuring'],
+                        'auto_renew_invoice_recurring'           => $params['auto_renew_invoice_recurring'],
+                        'send_expiration_notification_recurring' => $params['send_expiration_notification_recurring'],
                         'send_expiration_notification_one_time'  => $params['send_expiration_notification_one_time'],
                         'renewal_invoice_status_unpaid'          => $params['renewal_invoice_status_unpaid'],
                         'visible_renew_button'                   => $params['visible_renew_button'],
                         'save_activity_logs'                     => $params['save_activity_logs'],
-                        'renew_invoice_days_reccuring'           => $params['renew_invoice_days_reccuring'],
+                        'renew_invoice_days_recurring'           => $params['renew_invoice_days_recurring'],
                         'renew_invoice_days_one_time'            => $params['renew_invoice_days_one_time'],
                         'default_csr_generator_country'          => $params['default_csr_generator_country'],
                         'summary_expires_soon_days'              => $params['summary_expires_soon_days'],
@@ -64,6 +65,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'custom_guide'                           => $params['custom_guide'],
                         'disable_email_validation'               => $params['disable_email_validation'],
                         'tech_phone_country'                     => $params['tech_phone_country'],
+                        'autorenew_ordertype'                    => $params['autorenew_ordertype'],
                         'cron_daily' => $params['cron_daily'],
                         'cron_processing' => $params['cron_processing'],
                         'cron_synchronization' => $params['cron_synchronization'],
@@ -75,10 +77,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'cron_certificate_installer' => $params['cron_certificate_installer'],
             ]);
         } else {
-            if (!isset($params['tech_fax']) || empty($params['tech_fax'])) {
-                $params['tech_fax'] = '';
-            }
-            
+
             Capsule::table($this->tableName)->update(
                     [
                         'api_login'                              => $params['api_login'],
@@ -102,13 +101,13 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'tech_postalcode'                        => $params['tech_postalcode'],
                         'tech_region'                            => $params['tech_region'],
                         'auto_renew_invoice_one_time'            => $params['auto_renew_invoice_one_time'], //
-                        'auto_renew_invoice_reccuring'           => $params['auto_renew_invoice_reccuring'],
-                        'send_expiration_notification_reccuring' => $params['send_expiration_notification_reccuring'],
+                        'auto_renew_invoice_recurring'           => $params['auto_renew_invoice_recurring'],
+                        'send_expiration_notification_recurring' => $params['send_expiration_notification_recurring'],
                         'send_expiration_notification_one_time'  => $params['send_expiration_notification_one_time'],
                         'renewal_invoice_status_unpaid'          => $params['renewal_invoice_status_unpaid'],
                         'visible_renew_button'                   => $params['visible_renew_button'],
                         'save_activity_logs'                     => $params['save_activity_logs'],
-                        'renew_invoice_days_reccuring'           => $params['renew_invoice_days_reccuring'],
+                        'renew_invoice_days_recurring'           => $params['renew_invoice_days_recurring'],
                         'renew_invoice_days_one_time'            => $params['renew_invoice_days_one_time'],
                         'default_csr_generator_country'          => $params['default_csr_generator_country'],
                         'summary_expires_soon_days'              => $params['summary_expires_soon_days'],
@@ -117,6 +116,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                         'sidebar_templates'                      => $params['sidebar_templates'],
                         'custom_guide'                           => $params['custom_guide'],
                         'disable_email_validation'               => $params['disable_email_validation'],
+                        'autorenew_ordertype'                    => $params['autorenew_ordertype'],
                         'cron_daily' => $params['cron_daily'],
                         'cron_processing' => $params['cron_processing'],
                         'cron_synchronization' => $params['cron_synchronization'],
@@ -141,8 +141,8 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->boolean('display_csr_generator');
                 $table->boolean('auto_install_panel');
                 $table->boolean('auto_renew_invoice_one_time');
-                $table->boolean('auto_renew_invoice_reccuring');
-                $table->boolean('send_expiration_notification_reccuring');
+                $table->boolean('auto_renew_invoice_recurring');
+                $table->boolean('send_expiration_notification_recurring');
                 $table->boolean('send_expiration_notification_one_time');
                 $table->boolean('renewal_invoice_status_unpaid');
                 $table->boolean('visible_renew_button');
@@ -160,7 +160,8 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->string('tech_fax');
                 $table->string('tech_postalcode');
                 $table->string('tech_region');
-                $table->string('renew_invoice_days_reccuring')->nullable();
+                $table->string('autorenew_ordertype')->default('wait_for_payment');
+                $table->string('renew_invoice_days_recurring')->nullable();
                 $table->string('renew_invoice_days_one_time')->nullable();
                 $table->string('summary_expires_soon_days')->nullable();
                 $table->integer('send_certificate_template')->nullable();
@@ -186,14 +187,14 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                     $table->boolean('auto_renew_invoice_one_time');
                 });
             }
-            if (!Capsule::schema()->hasColumn($this->tableName, 'auto_renew_invoice_reccuring')) {
+            if (!Capsule::schema()->hasColumn($this->tableName, 'auto_renew_invoice_recurring')) {
                 Capsule::schema()->table($this->tableName, function($table) {
-                    $table->boolean('auto_renew_invoice_reccuring');
+                    $table->boolean('auto_renew_invoice_recurring');
                 });
             }
-            if (!Capsule::schema()->hasColumn($this->tableName, 'send_expiration_notification_reccuring')) {
+            if (!Capsule::schema()->hasColumn($this->tableName, 'send_expiration_notification_recurring')) {
                 Capsule::schema()->table($this->tableName, function($table) {
-                    $table->boolean('send_expiration_notification_reccuring');
+                    $table->boolean('send_expiration_notification_recurring');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'send_expiration_notification_one_time')) {
@@ -216,9 +217,9 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                     $table->boolean('save_activity_logs');
                 });
             }  
-            if (!Capsule::schema()->hasColumn($this->tableName, 'renew_invoice_days_reccuring')) {
+            if (!Capsule::schema()->hasColumn($this->tableName, 'renew_invoice_days_recurring')) {
                 Capsule::schema()->table($this->tableName, function($table) {
-                    $table->string('renew_invoice_days_reccuring')->nullable();
+                    $table->string('renew_invoice_days_recurring')->nullable();
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'renew_invoice_days_one_time')) {
@@ -330,6 +331,12 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_certificate_installer')) {
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->boolean('cron_certificate_installer')->default(true);
+                });
+            }
+
+            if(!Capsule::schema()->hasColumn($this->tableName, 'autorenew_ordertype')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->string('autorenew_ordertype')->default('wait_for_payment');
                 });
             }
         }

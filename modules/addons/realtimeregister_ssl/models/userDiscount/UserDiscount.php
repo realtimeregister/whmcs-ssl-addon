@@ -1,11 +1,15 @@
 <?php
 namespace AddonModule\RealtimeRegisterSsl\models\userDiscount;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * @Table(name=REALTIMEREGISTERSSL_user_discount,prefixed=true)
  */
-class UserDiscount extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
+class UserDiscount extends Model
 {
+    public const TABLE_NAME = 'REALTIMEREGISTERSSL_user_discount';
+    protected $table = self::TABLE_NAME;
     /**
      *
      * @Column(id)
