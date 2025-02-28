@@ -12,12 +12,6 @@ use AddonModule\RealtimeRegisterSsl\models\whmcs\servers\Server;
 use stdClass;
 
 /**
- *
- * Dit.txt
- * dit.txt
- */
-
-/**
  * Description of account
  * @Table(name=tblhosting,preventUpdate,prefixed=false)
  * @SuppressWarnings(PHPMD)
@@ -365,7 +359,7 @@ class Service extends Orm
         }
 
         if ($this->id !== null && empty($data)) {
-            $data = query::select(
+            $data = Query::select(
                 static::fieldDeclaration(),
                 static::tableName(),
                 [

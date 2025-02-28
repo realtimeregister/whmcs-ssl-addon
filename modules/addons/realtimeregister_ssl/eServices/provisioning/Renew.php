@@ -181,7 +181,8 @@ class Renew
 
         $this->processDcvEntries($addSSLRenewOrder->validations?->dcv?->toArray() ?? []);
 
-        Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])
+        Capsule::table('tblsslorders')
+            ->where('serviceid', $this->p['serviceid'])
             ->update(['remoteid' => $addSSLRenewOrder->processId]);
         $this->loadSslService();
 

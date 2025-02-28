@@ -324,10 +324,6 @@ class Invoice
                 ->update(['relid' => $service->id, 'type' => '']);
         }
 
-        if (!$input['renewal_invoice_status_unpaid']) {
-            Capsule::table('tblinvoices')->where('id', '=', $invoiceId)->update(['status' => 'Payment Pending']);
-        }
-
         if ($returnInvoiceID) {
             return $invoiceId;
         }

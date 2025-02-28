@@ -2,7 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\whmcs\service\configOptions;
 
-use AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query;
+use WHMCS\Database\Capsule;
 
 /**
  * Description of repository
@@ -60,19 +60,19 @@ class Repository
 
     public function load() : void
     {
-        $query = "
-            SELECT V.id, V.optionid, V.qty, V.configid, O.optionname, O.optiontype
-            FROM tblhostingconfigoptions V
-            JOIN tblproductconfigoptions O ON V.configid = O.id
-            JOIN tblproductconfiglinks L ON L.gid = O.gid
-            JOIN tblhosting H ON H.packageid = L.pid AND H.id = V.relid
-            WHERE H.id = $this->serviceID
-        ";
+        $result = Capsule::table("tblhostingconfigoptions as hco")
+            ->select('hco.id', 'hco.optionid', 'hco.qty', 'hco.configid', 'pco.optionname', 'pco.optiontype')
+            ->join('tblproductconfigoptions AS pco', 'hco.configid', '=', 'pco.id')
+            ->join('tblproductconfiglinks', 'tblproductconfiglinks.gid', '=', 'pco.gid')
+            ->join('tblhosting', function($join) {
+                $join->on('tblhosting.packageid', '=', 'tblproductconfiglinks.pid');
+                $join->on('tblhosting.id', '=', 'hco.relid');
+            })
+            ->where('hco.id', '=', $this->serviceID)
+            ->get();
 
-        $result = Query::query($query);
-
-        while ($row = $result->fetch()) {
-            $tmp = explode('|', $row['optionname']);
+        foreach ($result as $row) {
+            $tmp = explode('|', $row->optionname);
 
             $name = $friendlyName = $tmp[0];
 
@@ -81,11 +81,11 @@ class Repository
             }
 
             $field = new ConfigOption();
-            $field->id = $row['id'];
-            $field->configid = $row['configid'];
-            $field->optionid = $row['optionid'];
+            $field->id = $row->id;
+            $field->configid = $row->configid;
+            $field->optionid = $row->optionid;
             $field->name = $name;
-            $field->type = $row['optiontype'];
+            $field->type = $row->optiontype;
             $field->friendlyName = $friendlyName;
             $this->_configOptions[$field->name] = $field;
         }

@@ -3,10 +3,13 @@
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
 use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
+use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\Renew;
 use DateTime;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
@@ -14,6 +17,7 @@ use WHMCS\Service\Service;
 
 class Notifier extends BaseTask
 {
+    protected $defaultFrequency = 0;
     protected $skipDailyCron = false;
     protected $defaultPriority = 4200;
     protected $defaultDescription = 'Send customers notifications of expiring services and create renewal invoices ' .
@@ -31,14 +35,15 @@ class Notifier extends BaseTask
 
             //get renewal settings
             $apiConf = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
-            $auto_renew_invoice_one_time = (bool)$apiConf->auto_renew_invoice_one_time;
-            $auto_renew_invoice_reccuring = (bool)$apiConf->auto_renew_invoice_reccuring;
             //get saved amount days to generate invoice (one time & reccuring)
             $renew_invoice_days_one_time = $apiConf->renew_invoice_days_one_time;
-            $renew_invoice_days_reccuring = $apiConf->renew_invoice_days_reccuring;
+            $renew_invoice_days_recurring = $apiConf->renew_invoice_days_recurring;
 
             $send_expiration_notification_reccuring = (bool)$apiConf->send_expiration_notification_reccuring;
             $send_expiration_notification_one_time = (bool)$apiConf->send_expiration_notification_one_time;
+
+            $createAutoInvoice = (bool)$apiConf->auto_renew_invoice_recurring;
+            $autoRenewSetting = 'always_renew';
 
             $this->sslRepo = new SSLRepo();
 
@@ -47,34 +52,17 @@ class Notifier extends BaseTask
 
             $synchServicesId = [];
             foreach ($sslOrders as $row) {
-                $config = json_decode($row->configdata);
-                if (isset($config->synchronized)) {
-                    $synchServicesId[] = $row->serviceid;
-                } else {
-                    $serviceonetime = Service::where('id', $row->serviceid)->where('billingcycle', 'One Time')->first();
-                    if (isset($serviceonetime->id)) {
-                        $synchServicesId[] = $serviceonetime->id;
-                    }
-                }
-            }
-
-            if (!empty($synchServicesId)) {
-                $services = Service::whereIn('id', $synchServicesId)->get();
-            } else {
-                $services = [];
+                $synchServicesId[] = $row->serviceid;
             }
 
             $emailSendsCount = 0;
             $emailSendsCountReissue = 0;
 
-            $packageLists = [];
-            $serviceIDs = [];
-
             foreach ($synchServicesId as $serviceid) {
                 $srv = Capsule::table('tblhosting')->where('id', $serviceid)->first();
 
                 //get days left to expire from WHMCS
-                $daysLeft = $this->checkOrderExpireDate(new DateTime($srv->nextduedate));
+                $daysLeft = $this->checkOrderExpiryDate(new DateTime($srv->nextduedate));
                 $daysReissue = $this->checkReissueDate($srv->id);
 
                 /*
@@ -89,7 +77,7 @@ class Notifier extends BaseTask
                         $sslOrderApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
                         $ssl = $sslOrderApi->listCertificates(1, null, null, ['process:eq' => $sslOrder->remoteid]);
                         if ($ssl[0]) {
-                            $daysLeft = $this->checkOrderExpireDate($ssl[0]->expiryDate);
+                            $daysLeft = $this->checkOrderExpiryDate($ssl[0]->expiryDate);
                         }
                     }
                 }
@@ -111,45 +99,66 @@ class Notifier extends BaseTask
                     }
                 }
 
-                $savedRenewDays = $renew_invoice_days_reccuring;
-                if ($srv->billingcycle == 'One Time') {
-                    $savedRenewDays = $renew_invoice_days_one_time;
-                }
+                $savedRenewDays = $renew_invoice_days_recurring;
+
                 //if it is proper amount of days before expiry, we create invoice
-                if ($daysLeft == (int)$savedRenewDays) {
-                    if ($srv->billingcycle == 'One Time' && $auto_renew_invoice_one_time
-                        || $srv->billingcycle != 'One Time' && $auto_renew_invoice_reccuring
-                    ) {
-                        $packageLists[$srv->packageid][] = $srv;
-                        $serviceIDs[] = $srv->id;
-                    }
+                if ($daysLeft >= 0
+                    && $daysLeft < (int)$savedRenewDays
+                    && $srv->billingcycle != 'One Time') {
+                    $this->handleAutoRenew($serviceid, $product, $createAutoInvoice, $autoRenewSetting);
                 }
             }
 
             logActivity('Notifier completed. Number of emails send: ' . $emailSendsCount, 0);
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register SSL WHMCS: Notifier completed. Number of emails send: " . $emailSendsCount
+                "Realtime Register SSL WHMCS: Notifier completed. Number of emails sent: " . $emailSendsCount
             );
 
             $this->output("sent")->write($emailSendsCount + $emailSendsCountReissue);
+        }
 
-            return $this;
+
+        return $this;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function handleAutoRenew($serviceId, $product, $createAutoInvoice, $autoRenewSetting)
+    {
+        try {
+            $invoiceGenerator = new Invoice();
+            $service = Service::where('id', $serviceId)->first();
+            if ($createAutoInvoice) {
+                $invoiceGenerator->createInvoice($service, $product);
+            }
+            if ($autoRenewSetting == 'always_renew') {
+                $params = ['serviceid' => $serviceId,
+                    'userid' => $service->client()->id,
+                    ConfigOptions::API_PRODUCT_ID => $product->{ConfigOptions::API_PRODUCT_ID}];
+                (new Renew($params))->run();
+            }
+        } catch (\Exception $e) {
+            Whmcs::savelogActivityRealtimeRegisterSsl(
+                'Realtime Register SSL WHMCS Notifier: 
+                Error while renewing SSL certificate (service ' . $serviceId . '): ' . $e->getMessage()
+            );
+            throw $e;
         }
     }
 
-    private function checkOrderExpireDate($expiryDate): bool | int
+    private function checkOrderExpiryDate($expiryDate): int
     {
-        $expireDaysNotify = array_flip(['90', '60', '30', '15', '10', '7', '3', '1', '0']);
         $today = new DateTime();
 
         $diff = $expiryDate->diff($today, false);
         if ($diff->invert == 0) {
-            //if date from past
+            // Date is in the past
             return -1;
         }
 
-        return isset($expireDaysNotify[$diff->days]) ? $diff->days : -1;
+        return $diff->days;
     }
 
     private function sendReissueNotifyEmail($serviceId): bool
@@ -197,7 +206,7 @@ class Notifier extends BaseTask
         return $resultSuccess;
     }
 
-    private function checkReissueDate($serviceid): float | bool | int
+    private function checkReissueDate($serviceid): float|bool|int
     {
         $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
 

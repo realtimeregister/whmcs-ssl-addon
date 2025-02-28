@@ -3,11 +3,15 @@
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigs;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 
 class BaseTask extends \WHMCS\Scheduling\Task\AbstractTask
 {
+    /**
+     * @var SSLRepo
+     */
     protected $sslRepo = null;
 
     protected function enabledTask(string $taskName): bool
@@ -39,17 +43,8 @@ class BaseTask extends \WHMCS\Scheduling\Task\AbstractTask
         }
     }
 
-    protected function getSSLOrders($serviceID = null)
+    protected function getSSLOrders()
     {
-        $where = [
-            'status' => 'Completed',
-            'module' => 'realtimeregister_ssl'
-        ];
-
-        if ($serviceID !== null) {
-            $where['serviceid'] = $serviceID;
-        }
-
-        return $this->sslRepo->getBy($where, true);
+        return $this->sslRepo->getActiveOrders();
     }
 }
