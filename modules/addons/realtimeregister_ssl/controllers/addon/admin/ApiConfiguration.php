@@ -85,7 +85,7 @@ class ApiConfiguration extends AbstractController
         $field->value = $input['autorenew_ordertype'];
         $field->translateOptions = true;
         $field->enableDescription = false;
-        $field->options = ['renew_always', "wait_for_payment"];
+        $field->options = ['renew_always', 'wait_for_payment'];
         $form->addField($field);
 
         $field = new CheckboxField();

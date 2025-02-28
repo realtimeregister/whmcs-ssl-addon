@@ -160,7 +160,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->string('tech_fax');
                 $table->string('tech_postalcode');
                 $table->string('tech_region');
-                $table->string('autorenew_ordertype')->default('renew_always');
+                $table->string('autorenew_ordertype')->default('wait_for_payment');
                 $table->string('renew_invoice_days_recurring')->nullable();
                 $table->string('renew_invoice_days_one_time')->nullable();
                 $table->string('summary_expires_soon_days')->nullable();
@@ -336,7 +336,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
 
             if(!Capsule::schema()->hasColumn($this->tableName, 'autorenew_ordertype')) {
                 Capsule::schema()->table($this->tableName, function($table) {
-                    $table->string('autorenew_ordertype')->default('renew_always');
+                    $table->string('autorenew_ordertype')->default('wait_for_payment');
                 });
             }
         }
