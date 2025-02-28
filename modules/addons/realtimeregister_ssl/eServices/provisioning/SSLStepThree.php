@@ -290,11 +290,6 @@ class SSLStepThree
             array_merge((array) $this->sslConfig->configdata, $addedSSLOrder->toArray())
         );
 
-        sendMessage(EmailTemplateService::VALIDATION_INFORMATION_TEMPLATE_ID, $this->p['serviceid'], [
-            'domain' => $this->sslConfig->getDomain(),
-            'sslConfig' => $this->sslConfig->toArray()
-        ]);
-
         $logs->addLog($this->p['userid'], $this->p['serviceid'], 'success', 'The order has been placed.');
         $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? []);
     }

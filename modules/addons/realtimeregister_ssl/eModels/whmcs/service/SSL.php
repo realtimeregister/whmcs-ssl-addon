@@ -337,6 +337,11 @@ class SSL extends \Illuminate\Database\Eloquent\Model
         $this->serviceid = $id;
     }
 
+    public function getServiceId()
+    {
+        return $this->serviceid;
+    }
+
     public function setAddonId($id)
     {
         $this->addon_id = $id;
