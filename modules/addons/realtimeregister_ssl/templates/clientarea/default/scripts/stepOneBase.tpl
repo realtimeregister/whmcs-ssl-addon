@@ -1,31 +1,28 @@
 <div id="divhideme" style="display: none"></div>
 <script type="text/javascript">
     $(document).ready(function () {
-
         {if $domains}
             const alertInfo = $('.alert-info').first();
-
-            const csrInput = $('#inputCsr');
 
             {if $auto_install_panel}
                 csrInput.attr('readonly', '');
 
                 $('<div><input style="width: 15px;height: 15px;float: left;" type="checkbox" id="csrReadOnly">' +
                     '<label for="csrReadOnly" style="font-size: 13px;float: left;margin-top: ' +
-                    '-20px;margin-left: 20px;">{$ADDONLANG->T('csrReadOnly')}</label></div>').insertBefore(csrInput);
+                    '-20px;margin-left: 20px;">{$ADDONLANG->T('csrReadOnly')}</label></div>').insertBefore($('#inputCsr'));
 
                 $('#csrReadOnly').change(e => {
-                    csrInput.attr('readonly', !e.target.checked);
+                    $('#inputCsr').attr('readonly', !e.target.checked);
                 });
             {/if}
 
             alertInfo.after('<div class="card-body">' +
                 '<h2>{$ADDONLANG->T('Choose a domain')}</h2>' +
-                '<select id="step-type-data">' +
+                '<select id="step-type-data" name="step-type-data">' +
                 '<option value="">{$ADDONLANG->T('Custom domain')}</option>' +
                 '</select>' +
                 '<div style="margin-top: 20px;" class="form-group">' +
-                '<input id="custom-hostname" placeholder="Type your domainname here">' +
+                '<input id="custom-hostname" name="custom-hostname" placeholder="Type your domainname here">' +
                 '<div class="form-horizontal" style="margin-top:20px;">' +
                 '   <div class="row">' +
                 '       <div class="col-6">' +
@@ -41,6 +38,12 @@
                 '   </div>' +
                 '</div>');
             alertInfo.hide();
+
+            for (const [key,value] of Object.entries(JSON.parse('{$fillVars}'))) {
+                $('input[name="' + key + '"]').val(value);
+                $('textarea[name="' + key + '"]').val(value);
+                $('select[name="' + key + '"]').val(value);
+            }
 
             const customHostname = $('#custom-hostname');
             customHostname.on('change', e => {
@@ -62,22 +65,23 @@
             })
 
             $('input[name="csr-type"]').on('change', e => {
-                let inputCsr = $('#inputCsr');
                 if (e.target.value === '1') {
                     // Help the user creating a CSR
                     $('#generateCsrBtn').show();
 
                     // We do want to show the csr, if one has been created, so we check if the csr field is empty
-                    if (inputCsr.val().length < 100) {
+                    if ($('#inputCsr').val().length < 100) {
                         $("label[for=inputCsr]").hide();
-                        inputCsr.hide();
+                        $('#inputCsr').hide();
+                    } else {
+                        $('#inputCsr').show();
                     }
-                    inputCsr.attr('readonly', true);
+                    $('#inputCsr').attr('readonly', true);
                 } else if(e.target.value === '2') {
                     // Provide your own CSR
-                    inputCsr.show();
+                    $('#inputCsr').show();
                     $("label[for=inputCsr]").show();
-                    inputCsr.attr('readonly', false);
+                    $('#inputCsr').attr('readonly', false);
                     $('#generateCsrBtn').hide();
                 }
             });

@@ -101,7 +101,10 @@
             }
         }
         var cert = $.urlParam('cert');
-        $('textarea[name="csr"]').after('<div align="middle"><button type="button" id="generateCsrBtn" class="btn btn-default" style="margin:5px">{$ADDONLANG->T('Generate CSR')}</button></div>');
+        if ($('#generateCsrBtn').length === 0) {
+            $('textarea[name="csr"]').after('<div align="middle"><button type="button" id="generateCsrBtn" class="btn btn-default" style="margin:5px">{$ADDONLANG->T('Generate CSR')}</button></div>');
+        }
+
         var token = $('input[name="token"]').val();
         var serviceUrl = 'configuressl.php?cert=' + cert + '&action=generateCsr&json=1&token=' + token,
         generateCsrBtn = $('#generateCsrBtn'),
@@ -167,7 +170,7 @@
             generateCsrDangerAlert.children('span').html(msg);
         }
 
-        function addSpiner(element) {
+        function addSpinner(element) {
             element.append('<i class="fa fa-spinner fa-spin"></i>');
         }
 
@@ -234,7 +237,7 @@
         function submitgenerateCsrModal() {
             $('#generateCsrSuccess').remove();
 
-            addSpiner(generateCsrSubmitBtn);
+            addSpinner(generateCsrSubmitBtn);
             disable(generateCsrSubmitBtn);
             var data = {
                 generateCsrModal: 'yes',
@@ -247,11 +250,8 @@
                 emailAddress: generateCsrEmailAddress.val()
             };
 
-
-            //if is reissue add additional serviceid field
-
-            if($('input[name="reissueServiceID"]').length > 0)
-            {
+            // if is reissue add additional serviceid field
+            if($('input[name="reissueServiceID"]').length > 0) {
                 var serviceID = $('input[name="reissueServiceID"]').val();
                 data['doNotSaveToDatabase'] = true;
                 data['serviceID'] = serviceID;
@@ -272,15 +272,14 @@
                     if (data.success === 1) {
                         showSuccessAlert(data.msg);
                         var csrTextarea = $('textarea[name="csr"]');
-                        var generateCsrBtn = $('#generateCsrBtn');
 
                         csrTextarea.empty();
-                        csrTextarea.remove();
+                        csrTextarea.show();
 
                         var tempkey = data.public_key;
                         var newkey = tempkey.substring(0, tempkey.length - 1);
 
-                        generateCsrBtn.before('<textarea name="csr" id="inputCsr" rows="7" readonly class="form-control">'+newkey+'</textarea>');
+                        csrTextarea.val(newkey);
                         $('input[name="privateKey"]').remove();
                         $('textarea[name="csr"]').closest('.form-group').after('<input class="form-control" type="hidden" name="privateKey" value="'+data.private_key+'" />');
                         closeModal(generateCsrModal);

@@ -66,19 +66,21 @@ class SSLStepOne
             );
         }
 
-        $fields['additionalfields'][Organization::getTitle()] = Organization::getFields();
-        $client = $this->p['clientsdetails'];
-        $fillVars = array_merge(
-            array_filter([
-                'fields[org_name]' => $client['companyname'],
-                'fields[org_addressline1]' => $client['address1'],
-                'fields[org_city]' => $client['city'],
-                'fields[org_country]' => Countries::getInstance()->getCountryNameByCode($client['country']),
-                'fields[org_postalcode]' => $client['postcode'],
-                'fields[org_region]' => $client['fullstate']
-            ]),
-            array_filter($fillVars)
-        );
+        if ($apiProduct->isOrganizationRequired()) {
+            $fields['additionalfields'][Organization::getTitle()] = Organization::getFields();
+            $client = $this->p['clientsdetails'];
+            $fillVars = array_merge(
+                array_filter([
+                    'fields[org_name]' => $client['companyname'],
+                    'fields[org_addressline1]' => $client['address1'],
+                    'fields[org_city]' => $client['city'],
+                    'fields[org_country]' => Countries::getInstance()->getCountryNameByCode($client['country']),
+                    'fields[org_postalcode]' => $client['postcode'],
+                    'fields[org_region]' => $client['fullstate']
+                ]),
+                array_filter($fillVars)
+            );
+        }
 
         $countriesForGenerateCsrForm = Countries::getInstance()->getCountriesForAddonDropdown();
         $wildCard = false;
@@ -99,9 +101,8 @@ class SSLStepOne
             }
         }
 
-        $stepOneBaseScript = ScriptService::getStepOneBaseScript($apiProduct->brand, $domains);
+        $stepOneBaseScript = ScriptService::getStepOneBaseScript($apiProduct->brand, $domains, $fillVars);
         $webServerTypeScript = ScriptService::getWebServerTypeScript();
-        $autoFillFieldsScript = ScriptService::getAutoFillFieldsScript(json_encode($fillVars));
         $autoFillPrivateKeyField = null;
         $autoFillOrderTypeField = null;
 
@@ -123,7 +124,7 @@ class SSLStepOne
 
         $fields['additionalfields']['<br />']['<br />'] = [
             'Description' => $stepOneBaseScript . $webServerTypeScript
-                . $autoFillFieldsScript . $generateCsrModalScript . $autoFillPrivateKeyField . $autoFillOrderTypeField,
+                . $generateCsrModalScript . $autoFillPrivateKeyField . $autoFillOrderTypeField,
         ];
 
         if (empty($fields['additionalfields']['SANs'])) {
