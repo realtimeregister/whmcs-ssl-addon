@@ -99,7 +99,6 @@ class ApiConfiguration extends AbstractController
         $form->addField($field);
 
         $field = new SelectField();
-        $field->disabled = $input['renew_invoice_days_recurring'] ? false : true;
         $field->name = 'renew_invoice_days_recurring';
         $field->required = true;
         $field->value = $input['renew_invoice_days_recurring'];
