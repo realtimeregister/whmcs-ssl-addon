@@ -63,7 +63,7 @@ function realtimeregister_ssl_SSLStepOne($params) {
 }
 
 function realtimeregister_ssl_SSLStepTwo($params) {
-    try{
+    try {
         // Custom fields we want to use in the order flow:
         $params['step-type-data'] = $_POST['step-type-data'];
         $params['custom-hostname'] = $_POST['custom-hostname'];

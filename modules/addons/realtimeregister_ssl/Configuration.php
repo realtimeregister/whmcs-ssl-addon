@@ -59,15 +59,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '0.8';
-
-    private static string $LEGACY_TABLE_PREFIX = 'mgfw_';
-
-
-    /**
-     * Table prefix. This prefix is used in database models. You have to change it!
-     * @var type
-     */
+    public $version = '0.8.1';
     public $tablePrefix = '';
     public $modelRegister = [];
 
@@ -425,13 +417,7 @@ class Configuration extends AbstractConfiguration
         EmailTemplateService::updateRenewalTemplate();
         EmailTemplateService::updateReissueTemplate();
         EmailTemplateService::updateValidationInformationTemplate();
-        InvoiceHelper::updateInfosTable(self::$LEGACY_TABLE_PREFIX);
-        InvoiceHelper::updatePendingPaymentTable(self::$LEGACY_TABLE_PREFIX);
-        Products::updateTable(self::$LEGACY_TABLE_PREFIX);
-        (new APIConfigurationRepo())->updateApiConfigurationTable(self::$LEGACY_TABLE_PREFIX);
-        (new ProductPriceRepo())->updateApiProductsPricesTable(self::$LEGACY_TABLE_PREFIX);
-        (new UserDiscountRepo())->updateUserDiscountTable(self::$LEGACY_TABLE_PREFIX);
-        (new KeyToIdMapping())->updateTable(self::$LEGACY_TABLE_PREFIX);
+        (new APIConfigurationRepo())->updateApiConfigurationTable();
         (new LogsRepo())->updateLogsTable();
         (new OrdersRepo())->updateOrdersTable();
         self::renameSSLOrderStatuses();

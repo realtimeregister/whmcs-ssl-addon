@@ -8,7 +8,6 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
@@ -79,6 +78,9 @@ class SSLStepThree
 
     private function SSLStepThree()
     {
+        if ($_REQUEST['action'] === 'redirectToStepOne') {
+            $this->redirectToStepOne();
+        }
         $this->loadSslConfig();
         $this->loadApiProduct();
         $this->orderCertificate();
@@ -303,9 +305,11 @@ class SSLStepThree
         return $data;
     }
 
-    private function redirectToStepOne($error)
+    private function redirectToStepOne($error = null)
     {
-        $_SESSION['realtimeregister_ssl_FLASH_ERROR_STEP_ONE'] = $error;
+        if ($error) {
+            $_SESSION['realtimeregister_ssl_FLASH_ERROR_STEP_ONE'] = $error;
+        }
         header('Location: configuressl.php?cert=' . $_GET['cert']);
         die();
     }

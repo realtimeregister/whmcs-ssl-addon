@@ -74,6 +74,7 @@ class Crons extends AbstractController
                 $vars['formError'] = Lang::T('messages', $ex->getMessage());
             }
         }
+        $vars['success'] = Lang::absoluteT('changessavedsuccessfully');
         return $this->indexHTML($input, $vars);
     }
 }

@@ -24,120 +24,90 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
             $params['tech_fax'] = '';
         }
 
-        if (is_null($this->get()))
-        {
+        if (is_null($this->get())) {
 
             Capsule::table($this->tableName)->insert(
-                    [
-                        'api_login'                              => $params['api_login'],
-                        'api_test' => $params['api_test'],
-                        'rate'                                   => $params['rate'],
-                        'use_admin_contact'                      => $params['use_admin_contact'],
-                        'display_csr_generator'                  => $params['display_csr_generator'],
-                        'profile_data_csr'                       => $params['profile_data_csr'],
-                        'auto_install_panel'                     => $params['auto_install_panel'],
-                        'tech_firstname'                         => $params['tech_firstname'],
-                        'tech_lastname'                          => $params['tech_lastname'],
-                        'tech_organization'                      => $params['tech_organization'],
-                        'tech_addressline1'                      => $params['tech_addressline1'],
-                        'tech_phone'                             => '+' . $params['country-calling-code-tech_phone'] . $params['tech_phone'],
-                        'tech_title'                             => $params['tech_title'],
-                        'tech_email'                             => $params['tech_email'],
-                        'tech_city'                              => $params['tech_city'],
-                        'tech_country'                           => $params['tech_country'],
-                        'tech_fax'                               => $params['tech_fax'],
-                        'tech_postalcode'                        => $params['tech_postalcode'],
-                        'tech_region'                            => $params['tech_region'],
-                        'auto_renew_invoice_one_time'            => $params['auto_renew_invoice_one_time'],
-                        'auto_renew_invoice_recurring'           => $params['auto_renew_invoice_recurring'],
-                        'send_expiration_notification_recurring' => $params['send_expiration_notification_recurring'],
-                        'send_expiration_notification_one_time'  => $params['send_expiration_notification_one_time'],
-                        'renewal_invoice_status_unpaid'          => $params['renewal_invoice_status_unpaid'],
-                        'visible_renew_button'                   => $params['visible_renew_button'],
-                        'save_activity_logs'                     => $params['save_activity_logs'],
-                        'renew_invoice_days_recurring'           => $params['renew_invoice_days_recurring'],
-                        'renew_invoice_days_one_time'            => $params['renew_invoice_days_one_time'],
-                        'default_csr_generator_country'          => $params['default_csr_generator_country'],
-                        'summary_expires_soon_days'              => $params['summary_expires_soon_days'],
-                        'send_certificate_template'              => $params['send_certificate_template'],
-                        'display_ca_summary'                     => $params['display_ca_summary'],
-                        'sidebar_templates'                      => $params['sidebar_templates'],
-                        'custom_guide'                           => $params['custom_guide'],
-                        'disable_email_validation'               => $params['disable_email_validation'],
-                        'tech_phone_country'                     => $params['tech_phone_country'],
-                        'autorenew_ordertype'                    => $params['autorenew_ordertype'],
-                        'cron_daily' => $params['cron_daily'],
-                        'cron_processing' => $params['cron_processing'],
-                        'cron_synchronization' => $params['cron_synchronization'],
-                        'cron_ssl_summary_stats' => $params['cron_ssl_summary_stats'],
-                        'cron_renewal' => $params['cron_renewal'],
-                        'cron_send_certificate' => $params['cron_send_certificate'],
-                        'cron_price_updater' => $params['cron_price_updater'],
-                        'cron_certificate_details_updater' => $params['cron_certificate_details_updater'],
-                        'cron_certificate_installer' => $params['cron_certificate_installer'],
-            ]);
+                [
+                    'api_login' => $params['api_login'],
+                    'api_test' => $params['api_test'],
+                    'rate' => $params['rate'],
+                    'display_csr_generator' => $params['display_csr_generator'],
+                    'profile_data_csr' => $params['profile_data_csr'],
+                    'auto_install_panel' => $params['auto_install_panel'],
+                    'auto_renew_invoice_one_time' => $params['auto_renew_invoice_one_time'],
+                    'auto_renew_invoice_recurring' => $params['auto_renew_invoice_recurring'],
+                    'send_expiration_notification_recurring' => $params['send_expiration_notification_recurring'],
+                    'send_expiration_notification_one_time' => $params['send_expiration_notification_one_time'],
+                    'renewal_invoice_status_unpaid' => $params['renewal_invoice_status_unpaid'],
+                    'visible_renew_button' => $params['visible_renew_button'],
+                    'save_activity_logs' => $params['save_activity_logs'],
+                    'renew_invoice_days_recurring' => $params['renew_invoice_days_recurring'],
+                    'renew_invoice_days_one_time' => $params['renew_invoice_days_one_time'],
+                    'default_csr_generator_country' => $params['default_csr_generator_country'],
+                    'summary_expires_soon_days' => $params['summary_expires_soon_days'],
+                    'send_certificate_template' => $params['send_certificate_template'],
+                    'display_ca_summary' => $params['display_ca_summary'],
+                    'sidebar_templates' => $params['sidebar_templates'],
+                    'custom_guide' => $params['custom_guide'],
+                    'disable_email_validation' => $params['disable_email_validation'],
+                    'tech_phone_country' => $params['tech_phone_country'],
+                    'autorenew_ordertype' => $params['autorenew_ordertype'],
+                    'cron_daily' => $params['cron_daily'],
+                    'cron_processing' => $params['cron_processing'],
+                    'cron_synchronization' => $params['cron_synchronization'],
+                    'cron_ssl_summary_stats' => $params['cron_ssl_summary_stats'],
+                    'cron_renewal' => $params['cron_renewal'],
+                    'cron_send_certificate' => $params['cron_send_certificate'],
+                    'cron_price_updater' => $params['cron_price_updater'],
+                    'cron_certificate_details_updater' => $params['cron_certificate_details_updater'],
+                    'cron_certificate_installer' => $params['cron_certificate_installer'],
+                ]);
         } else {
 
             Capsule::table($this->tableName)->update(
-                    [
-                        'api_login'                              => $params['api_login'],
-                        'api_test' => $params['api_test'],
-                        'rate'                                   => $params['rate'],
-                        'use_admin_contact'                      => $params['use_admin_contact'],
-                        'display_csr_generator'                  => $params['display_csr_generator'],
-                        'profile_data_csr'                       => $params['profile_data_csr'],
-                        'auto_install_panel'                     => $params['auto_install_panel'],
-                        'tech_firstname'                         => $params['tech_firstname'],
-                        'tech_lastname'                          => $params['tech_lastname'],
-                        'tech_organization'                      => $params['tech_organization'],
-                        'tech_addressline1'                      => $params['tech_addressline1'],
-                        'tech_phone'                             => '+' . $params['country-calling-code-tech_phone'] . $params['tech_phone'],
-                        'tech_phone_country'                => $params['tech_phone_country'],
-                        'tech_title'                             => $params['tech_title'],
-                        'tech_email'                             => $params['tech_email'],
-                        'tech_city'                              => $params['tech_city'],
-                        'tech_country'                           => $params['tech_country'],
-                        'tech_fax'                               => $params['tech_fax'],
-                        'tech_postalcode'                        => $params['tech_postalcode'],
-                        'tech_region'                            => $params['tech_region'],
-                        'auto_renew_invoice_one_time'            => $params['auto_renew_invoice_one_time'], //
-                        'auto_renew_invoice_recurring'           => $params['auto_renew_invoice_recurring'],
-                        'send_expiration_notification_recurring' => $params['send_expiration_notification_recurring'],
-                        'send_expiration_notification_one_time'  => $params['send_expiration_notification_one_time'],
-                        'renewal_invoice_status_unpaid'          => $params['renewal_invoice_status_unpaid'],
-                        'visible_renew_button'                   => $params['visible_renew_button'],
-                        'save_activity_logs'                     => $params['save_activity_logs'],
-                        'renew_invoice_days_recurring'           => $params['renew_invoice_days_recurring'],
-                        'renew_invoice_days_one_time'            => $params['renew_invoice_days_one_time'],
-                        'default_csr_generator_country'          => $params['default_csr_generator_country'],
-                        'summary_expires_soon_days'              => $params['summary_expires_soon_days'],
-                        'send_certificate_template'              => $params['send_certificate_template'],
-                        'display_ca_summary'                     => $params['display_ca_summary'],
-                        'sidebar_templates'                      => $params['sidebar_templates'],
-                        'custom_guide'                           => $params['custom_guide'],
-                        'disable_email_validation'               => $params['disable_email_validation'],
-                        'autorenew_ordertype'                    => $params['autorenew_ordertype'],
-                        'cron_daily' => $params['cron_daily'],
-                        'cron_processing' => $params['cron_processing'],
-                        'cron_synchronization' => $params['cron_synchronization'],
-                        'cron_ssl_summary_stats' => $params['cron_ssl_summary_stats'],
-                        'cron_renewal' => $params['cron_renewal'],
-                        'cron_send_certificate' => $params['cron_send_certificate'],
-                        'cron_price_updater' => $params['cron_price_updater'],
-                        'cron_certificate_details_updater' => $params['cron_certificate_details_updater'],
-                        'cron_certificate_installer' => $params['cron_certificate_installer'],
-            ]);
+                [
+                    'api_login' => $params['api_login'],
+                    'api_test' => $params['api_test'],
+                    'rate' => $params['rate'],
+                    'display_csr_generator' => $params['display_csr_generator'],
+                    'profile_data_csr' => $params['profile_data_csr'],
+                    'auto_install_panel' => $params['auto_install_panel'],
+                    'auto_renew_invoice_one_time' => $params['auto_renew_invoice_one_time'], //
+                    'auto_renew_invoice_recurring' => $params['auto_renew_invoice_recurring'],
+                    'send_expiration_notification_recurring' => $params['send_expiration_notification_recurring'],
+                    'send_expiration_notification_one_time' => $params['send_expiration_notification_one_time'],
+                    'renewal_invoice_status_unpaid' => $params['renewal_invoice_status_unpaid'],
+                    'visible_renew_button' => $params['visible_renew_button'],
+                    'save_activity_logs' => $params['save_activity_logs'],
+                    'renew_invoice_days_recurring' => $params['renew_invoice_days_recurring'],
+                    'renew_invoice_days_one_time' => $params['renew_invoice_days_one_time'],
+                    'default_csr_generator_country' => $params['default_csr_generator_country'],
+                    'summary_expires_soon_days' => $params['summary_expires_soon_days'],
+                    'send_certificate_template' => $params['send_certificate_template'],
+                    'display_ca_summary' => $params['display_ca_summary'],
+                    'sidebar_templates' => $params['sidebar_templates'],
+                    'custom_guide' => $params['custom_guide'],
+                    'disable_email_validation' => $params['disable_email_validation'],
+                    'autorenew_ordertype' => $params['autorenew_ordertype'],
+                    'cron_daily' => $params['cron_daily'],
+                    'cron_processing' => $params['cron_processing'],
+                    'cron_synchronization' => $params['cron_synchronization'],
+                    'cron_ssl_summary_stats' => $params['cron_ssl_summary_stats'],
+                    'cron_renewal' => $params['cron_renewal'],
+                    'cron_send_certificate' => $params['cron_send_certificate'],
+                    'cron_price_updater' => $params['cron_price_updater'],
+                    'cron_certificate_details_updater' => $params['cron_certificate_details_updater'],
+                    'cron_certificate_installer' => $params['cron_certificate_installer'],
+                ]);
         }
     }
 
     public function createApiConfigurationTable()
     {
         if (!Capsule::schema()->hasTable($this->tableName)) {
-            Capsule::schema()->create($this->tableName, function($table)
-            {
+            Capsule::schema()->create($this->tableName, function ($table) {
                 $table->string('api_login');
                 $table->boolean('api_test');
-                $table->boolean('use_admin_contact');
                 $table->boolean('display_csr_generator');
                 $table->boolean('auto_install_panel');
                 $table->boolean('auto_renew_invoice_one_time');
@@ -147,19 +117,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->boolean('renewal_invoice_status_unpaid');
                 $table->boolean('visible_renew_button');
                 $table->boolean('save_activity_logs');
-                $table->string('tech_firstname');
-                $table->string('tech_lastname');
-                $table->string('tech_organization');
-                $table->string('tech_addressline1');
-                $table->string('tech_phone');
-                $table->string('tech_title');
-                $table->string('tech_phone_country');
-                $table->string('tech_email');
-                $table->string('tech_city');
-                $table->string('tech_country');
-                $table->string('tech_fax');
-                $table->string('tech_postalcode');
-                $table->string('tech_region');
                 $table->string('autorenew_ordertype')->default('wait_for_payment');
                 $table->string('renew_invoice_days_recurring')->nullable();
                 $table->string('renew_invoice_days_one_time')->nullable();
@@ -174,168 +131,157 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
         }
     }
 
-    public function updateApiConfigurationTable(string $prefix = '')
+    public function updateApiConfigurationTable()
     {
-        if ($prefix && Capsule::schema()->hasTable($prefix . $this->tableName)) {
-            Capsule::schema()->rename($prefix . $this->tableName,
-                $this->tableName);
-        }
-
         if (Capsule::schema()->hasTable($this->tableName)) {
             if (!Capsule::schema()->hasColumn($this->tableName, 'auto_renew_invoice_one_time')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('auto_renew_invoice_one_time');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'auto_renew_invoice_recurring')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('auto_renew_invoice_recurring');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'send_expiration_notification_recurring')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('send_expiration_notification_recurring');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'send_expiration_notification_one_time')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('send_expiration_notification_one_time');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'renewal_invoice_status_unpaid')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('renewal_invoice_status_unpaid');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'visible_renew_button')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('visible_renew_button');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'save_activity_logs')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('save_activity_logs');
                 });
-            }  
+            }
             if (!Capsule::schema()->hasColumn($this->tableName, 'renew_invoice_days_recurring')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->string('renew_invoice_days_recurring')->nullable();
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'renew_invoice_days_one_time')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->string('renew_invoice_days_one_time')->nullable();
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'summary_expires_soon_days')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->string('summary_expires_soon_days')->nullable();
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'send_certificate_template')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->integer('send_certificate_template')->nullable();
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'display_ca_summary')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('display_ca_summary');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'sidebar_templates')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->string('sidebar_templates')->nullable();
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'rate')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->string('rate')->nullable();
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'custom_guide')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->text('custom_guide')->nullable();
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'disable_email_validation')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('disable_email_validation');
                 });
             }
             if (!Capsule::schema()->hasColumn($this->tableName, 'auto_install_panel')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('auto_install_panel');
                 });
             }
 
             if (!Capsule::schema()->hasColumn($this->tableName, 'api_test')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('api_test');
                 });
             }
 
-            if (!Capsule::schema()->hasColumn($this->tableName, 'tech_phone_country')) {
-                Capsule::schema()->table($this->tableName, function($table) {
-                    $table->string('tech_phone_country');
-                });
-            }
-
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_daily')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('cron_daily')->default(true);
                 });
             }
 
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_processing')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('cron_processing')->default(true);
                 });
             }
 
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_synchronization')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('cron_synchronization')->default(true);
                 });
             }
 
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_ssl_summary_stats')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('cron_ssl_summary_stats')->default(true);
                 });
             }
 
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_renewal')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('cron_renewal')->default(true);
                 });
             }
 
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_send_certificate')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('cron_send_certificate')->default(true);
                 });
             }
 
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_price_updater')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('cron_price_updater')->default(true);
                 });
             }
 
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_certificate_details_updater')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('cron_certificate_details_updater')->default(true);
                 });
             }
 
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_certificate_installer')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('cron_certificate_installer')->default(true);
                 });
             }
 
-            if(!Capsule::schema()->hasColumn($this->tableName, 'autorenew_ordertype')) {
-                Capsule::schema()->table($this->tableName, function($table) {
+            if (!Capsule::schema()->hasColumn($this->tableName, 'autorenew_ordertype')) {
+                Capsule::schema()->table($this->tableName, function ($table) {
                     $table->string('autorenew_ordertype')->default('wait_for_payment');
                 });
             }

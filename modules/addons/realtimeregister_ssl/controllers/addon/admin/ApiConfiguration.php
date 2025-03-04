@@ -12,7 +12,6 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use Exception;
@@ -240,107 +239,6 @@ class ApiConfiguration extends AbstractController
         $field->error = $this->getFieldError('summary_expires_soon_days');
         $form->addField($field);
 
-        $field = new LegendField();
-        $field->name = 'tech_legend';
-        $form->addField($field);
-
-        $field = new CheckboxField();
-        $field->name = 'use_admin_contact';
-        $field->options = ['useAdministrative'];
-        $field->value = $input['use_admin_contact'] ? ['useAdministrative'] : [''];
-        $form->addField($field);
-
-        $field = new TextField();
-        $field->readonly = $input['use_admin_contact'] ? true : false;
-        $field->name = 'tech_firstname';
-        $field->required = true;
-        $field->options = ['1', '2'];
-        $field->value = $input['tech_firstname'];
-        $field->error = $this->getFieldError('tech_firstname');
-        $form->addField($field);
-
-        $field = new TextField();
-        $field->readonly = $input['use_admin_contact'] ? true : false;
-        $field->name = 'tech_lastname';
-        $field->required = true;
-        $field->value = $input['tech_lastname'];
-        $field->error = $this->getFieldError('tech_lastname');
-        $form->addField($field);
-
-        $field = new TextField();
-        $field->readonly = $input['use_admin_contact'] ? true : false;
-        $field->name = 'tech_organization';
-        $field->required = true;
-        $field->value = $input['tech_organization'];
-        $field->error = $this->getFieldError('tech_organization');
-        $form->addField($field);
-
-        $field = new TextField();
-        $field->readonly = $input['use_admin_contact'] ? true : false;
-        $field->name = 'tech_addressline1';
-        $field->required = true;
-        $field->value = $input['tech_addressline1'];
-        $field->error = $this->getFieldError('tech_addressline1');
-        $form->addField($field);
-
-        $field = new TextField();
-        $field->readonly = $input['use_admin_contact'] ? true : false;
-        $field->name = 'tech_phone';
-        $field->required = true;
-        $field->value = $input['tech_phone'];
-        $field->error = $this->getFieldError('tech_phone');
-        $form->addField($field);
-
-        $field = new TextField();
-        $field->readonly = $input['use_admin_contact'] ? true : false;
-        $field->name = 'tech_title';
-        $field->required = true;
-        $field->value = $input['tech_title'];
-        $field->error = $this->getFieldError('tech_title');
-        $form->addField($field);
-
-        $field = new TextField();
-        $field->readonly = $input['use_admin_contact'] ? true : false;
-        $field->name = 'tech_email';
-        $field->required = true;
-        $field->value = $input['tech_email'];
-        $field->error = $this->getFieldError('tech_email');
-        $form->addField($field);
-
-        $field = new TextField();
-        $field->readonly = $input['use_admin_contact'] ? true : false;
-        $field->name = 'tech_city';
-        $field->required = true;
-        $field->value = $input['tech_city'];
-        $field->error = $this->getFieldError('tech_city');
-        $form->addField($field);
-
-        $field = new SelectField();
-        $field->readonly = $input['use_admin_contact'] ? true : false;
-        $field->name = 'tech_country';
-        $field->required = true;
-        $field->value = $input['tech_country'];
-        $field->translateOptions = false;
-        $field->options = Countries::getInstance()->getCountriesForAddonDropdown();
-        $field->error = $this->getFieldError('tech_country');
-        $form->addField($field);
-
-        $field = new TextField();
-        $field->readonly = $input['use_admin_contact'] ? true : false;
-        $field->name = 'tech_postalcode';
-        $field->required = true;
-        $field->value = $input['tech_postalcode'];
-        $field->error = $this->getFieldError('tech_postalcode');
-        $form->addField($field);
-
-        $field = new TextField();
-        $field->readonly = $input['use_admin_contact'] ? true : false;
-        $field->name = 'tech_region';
-        $field->required = true;
-        $field->value = $input['tech_region'];
-        $field->error = $this->getFieldError('tech_region');
-        $form->addField($field);
-
         $form->addField('submit', 'addon-action', [
             'value' => 'saveItem'
         ]);
@@ -360,7 +258,6 @@ class ApiConfiguration extends AbstractController
         if ($this->checkToken()) {
             try {
                 $checkFieldsArray = [
-                    'use_admin_contact',
                     'display_csr_generator',
                     'profile_data_csr',
                     'auto_install_panel',
@@ -399,6 +296,7 @@ class ApiConfiguration extends AbstractController
             }
         }
 
+        $vars['success'] = Lang::absoluteT('changessavedsuccessfully');
         return $this->indexHTML($input, $vars);
     }
 

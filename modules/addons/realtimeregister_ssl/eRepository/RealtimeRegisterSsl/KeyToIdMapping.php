@@ -39,12 +39,4 @@ class KeyToIdMapping
             Capsule::schema()->drop(self::REALTIMEREGISTERSSL_KEY_ID_MAPPING);
         }
     }
-
-    public function updateTable($prefix = '')
-    {
-        if ($prefix && Capsule::schema()->hasTable($prefix . self::REALTIMEREGISTERSSL_KEY_ID_MAPPING)) {
-            Capsule::schema()->rename($prefix . self::REALTIMEREGISTERSSL_KEY_ID_MAPPING,
-                self::REALTIMEREGISTERSSL_KEY_ID_MAPPING);
-        }
-    }
 }
