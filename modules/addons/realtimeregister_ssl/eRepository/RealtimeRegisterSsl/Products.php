@@ -59,14 +59,6 @@ class Products
         return reset($this->products);
     }
 
-    public static function updateTable($prefix = '')
-    {
-        if ($prefix && Capsule::schema()->hasTable($prefix . self::REALTIMEREGISTERSSL_PRODUCT_BRAND)) {
-            Capsule::schema()->rename($prefix . self::REALTIMEREGISTERSSL_PRODUCT_BRAND,
-                self::REALTIMEREGISTERSSL_PRODUCT_BRAND);
-        }
-    }
-
     private function fetchAllProducts()
     {
         if ($this->products !== null) {

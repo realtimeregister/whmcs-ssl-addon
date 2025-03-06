@@ -186,6 +186,7 @@ $_LANG['stepTwoTableLabelEmail']                     = 'Email Address';
 $_LANG['dropdownDcvMethodEmail']                     = 'EMAIL';
 $_LANG['dropdownDcvMethodHttp']                      = 'HTTP';
 $_LANG['dropdownDcvMethodDns']                       = 'DNS';
+$_LANG['backToStepOne']                      = '<< Back to Step One';
 $_LANG['generateCsrModalTitle']                      = 'Generate CSR';
 $_LANG['countryLabel']                               = 'Country';
 $_LANG['stateLabel']                                 = 'State';
