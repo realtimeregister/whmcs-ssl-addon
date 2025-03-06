@@ -34,7 +34,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                     'display_csr_generator' => $params['display_csr_generator'],
                     'profile_data_csr' => $params['profile_data_csr'],
                     'auto_install_panel' => $params['auto_install_panel'],
-                    'auto_renew_invoice_one_time' => $params['auto_renew_invoice_one_time'],
                     'auto_renew_invoice_recurring' => $params['auto_renew_invoice_recurring'],
                     'send_expiration_notification_recurring' => $params['send_expiration_notification_recurring'],
                     'send_expiration_notification_one_time' => $params['send_expiration_notification_one_time'],
@@ -72,7 +71,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                     'display_csr_generator' => $params['display_csr_generator'],
                     'profile_data_csr' => $params['profile_data_csr'],
                     'auto_install_panel' => $params['auto_install_panel'],
-                    'auto_renew_invoice_one_time' => $params['auto_renew_invoice_one_time'], //
                     'auto_renew_invoice_recurring' => $params['auto_renew_invoice_recurring'],
                     'send_expiration_notification_recurring' => $params['send_expiration_notification_recurring'],
                     'send_expiration_notification_one_time' => $params['send_expiration_notification_one_time'],
@@ -110,7 +108,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->boolean('api_test');
                 $table->boolean('display_csr_generator');
                 $table->boolean('auto_install_panel');
-                $table->boolean('auto_renew_invoice_one_time');
                 $table->boolean('auto_renew_invoice_recurring');
                 $table->boolean('send_expiration_notification_recurring');
                 $table->boolean('send_expiration_notification_one_time');
@@ -134,11 +131,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
     public function updateApiConfigurationTable()
     {
         if (Capsule::schema()->hasTable($this->tableName)) {
-            if (!Capsule::schema()->hasColumn($this->tableName, 'auto_renew_invoice_one_time')) {
-                Capsule::schema()->table($this->tableName, function ($table) {
-                    $table->boolean('auto_renew_invoice_one_time');
-                });
-            }
             if (!Capsule::schema()->hasColumn($this->tableName, 'auto_renew_invoice_recurring')) {
                 Capsule::schema()->table($this->tableName, function ($table) {
                     $table->boolean('auto_renew_invoice_recurring');
@@ -283,6 +275,114 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
             if (!Capsule::schema()->hasColumn($this->tableName, 'autorenew_ordertype')) {
                 Capsule::schema()->table($this->tableName, function ($table) {
                     $table->string('autorenew_ordertype')->default('wait_for_payment');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_phone_country')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_phone_country');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_firstname')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_firstname');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_lastname')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_lastname');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_organization')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_organization');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_addressline1')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_addressline1');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_phone')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_phone');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_title')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_title');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_phone_country')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_phone_country');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_email')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_email');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_city')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_city');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_country')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_country');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_fax')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_fax');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_postalcode')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_postalcode');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'tech_region')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('tech_region');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'renew_invoice_days_reccuring')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('renew_invoice_days_reccuring');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'send_expiration_notification_reccuring')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('send_expiration_notification_reccuring');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'auto_renew_invoice_days_reccuring')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('auto_renew_invoice_days_reccuring');
+                });
+            }
+
+            if (Capsule::schema()->hasColumn($this->tableName, 'auto_renew_invoice_one_time')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('auto_renew_invoice_one_time');
                 });
             }
         }

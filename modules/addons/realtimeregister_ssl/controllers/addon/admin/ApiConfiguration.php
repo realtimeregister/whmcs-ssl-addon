@@ -261,7 +261,6 @@ class ApiConfiguration extends AbstractController
                     'display_csr_generator',
                     'profile_data_csr',
                     'auto_install_panel',
-                    'auto_renew_invoice_one_time',
                     'auto_renew_invoice_recurring',
                     'send_expiration_notification_recurring',
                     'send_expiration_notification_one_time',
@@ -281,9 +280,6 @@ class ApiConfiguration extends AbstractController
                 }
                 if (!$input['auto_renew_invoice_recurring']) {
                     $input['renew_invoice_days_recurring'] = null;
-                }
-                if (!$input['auto_renew_invoice_one_time']) {
-                    $input['renew_invoice_days_one_time'] = null;
                 }
                 if (!$input['display_csr_generator']) {
                     $input['default_csr_generator_country'] = null;
