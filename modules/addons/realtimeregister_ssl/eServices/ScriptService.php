@@ -17,6 +17,9 @@ class ScriptService
     public const STEP_ONE_BASE = 'scripts/stepOneBase';
     public const ORDER_TYPE = 'scripts/orderType';
     public const GENERATE_CSR_MODAL = 'scripts/generateCsrModal';
+    public const CSR_MODAL = 'scripts/csrModal';
+    public const PRE_ORDER_FILL = 'scripts/preOrderFill';
+
 
     public static function getWebServerTypeScript()
     {
@@ -33,7 +36,7 @@ class ScriptService
                 'brand' => json_encode($brand),
                 'fillVars' => addslashes(json_encode($fillVars)),
                 'domains' => $domains,
-                'auto_install_panel' => $auto_install_panel
+                'auto_install_panel' => $auto_install_panel,
             ]
         );
     }
@@ -49,8 +52,8 @@ class ScriptService
         $serviceId,
         $fillVarsJSON,
         $countriesForGenerateCsrForm,
-        $vars = []
-    ) {
+        $vars = [])
+    {
         $csrData = [];
         $service = new Service($serviceId);
         $client = new Client($service->clientID);
@@ -65,10 +68,13 @@ class ScriptService
 
         return TemplateService::buildTemplate(self::GENERATE_CSR_MODAL, [
             'fillVars' => addslashes($fillVarsJSON),
-            'countries'=> json_encode($countriesForGenerateCsrForm),
             'vars' => $vars,
-            'csrWithData' => true,
-            'csrData' => $csrData
+            'csrModal' => TemplateService::buildTemplate(self::CSR_MODAL, [
+                'fillVars' => addslashes($fillVarsJSON),
+                'countries' => $countriesForGenerateCsrForm,
+                'vars' => $vars,
+                'csrData' => $csrData,
+            ])
         ]);
     }
 

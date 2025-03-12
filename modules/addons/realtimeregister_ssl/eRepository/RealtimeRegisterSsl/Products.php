@@ -59,6 +59,20 @@ class Products
         return reset($this->products);
     }
 
+    public function getProductByName(string $productName)
+    {
+        $this->fetchAllProducts();
+
+        /** @var Product $product */
+        foreach ($this->products as $product) {
+            if ($product->product == $productName) {
+                return $product;
+            }
+        }
+
+        return reset($this->products);
+    }
+
     private function fetchAllProducts()
     {
         if ($this->products !== null) {
@@ -110,8 +124,7 @@ class Products
             }
             $i +=10;
 
-            $total = $apiProducts->pagination->total;
-            if ($total < $i) {
+            if ($apiProducts->pagination->total < $i) {
                 break;
             }
         }

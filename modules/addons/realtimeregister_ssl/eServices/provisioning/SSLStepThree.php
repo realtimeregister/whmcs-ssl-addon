@@ -42,9 +42,9 @@ class SSLStepThree
      */
     private $apiProduct;
 
-    public function __construct(&$params)
+    public function __construct($params)
     {
-        $this->p = &$params;
+        $this->p = array_merge($_POST, $params);
         if (!isset($this->p['model'])) {
             $this->p['model'] = \WHMCS\Service\Service::find($this->p['serviceid']);
         }
@@ -56,23 +56,24 @@ class SSLStepThree
     {
         try {
             SansDomains::decodeSanAprroverEmailsAndMethods($_POST);
-            $this->setMainDomainDcvMethod($_POST);
-            $this->setSansDomainsDcvMethod($_POST);
+            $this->setMainDomainDcvMethod();
+            $this->setSansDomainsDcvMethod();
             $this->SSLStepThree();
         } catch (Exception $ex) {
-            $this->redirectToStepOne($ex->getMessage());
+            //$this->redirectToStepOne($ex->getMessage());
+            throw $ex;
         }
     }
 
-    private function setMainDomainDcvMethod($post): void
+    private function setMainDomainDcvMethod(): void
     {
-        $this->p['fields']['dcv_method'] = $post['dcvmethodMainDomain'];
+        $this->p['fields']['dcv_method'] = $this->p['dcvmethodMainDomain'];
     }
 
-    private function setSansDomainsDcvMethod($post): void
+    private function setSansDomainsDcvMethod(): void
     {
         if (isset($post['dcvmethod']) && is_array($post['dcvmethod'])) {
-            $this->p['sansDomainsDcvMethod'] = $post['dcvmethod'];
+            $this->p['sansDomainsDcvMethod'] = $this->p['dcvmethod'];
         }
     }
 
@@ -175,11 +176,11 @@ class SSLStepThree
 
         }
 
-        if ($_POST['dcvmethodMainDomain'] === 'EMAIL') {
+        if ($this->p['dcvmethodMainDomain'] === 'EMAIL') {
             $order['dcv'][] = [
                 'commonName' => $csrDecode['commonName'],
-                'type' => $_POST['dcvmethodMainDomain'],
-                'email' => $_POST['approveremail']
+                'type' => $this->p['dcvmethodMainDomain'],
+                'email' => $this->p['approveremail']
             ];
         } else {
             $order['dcv'][] = [
@@ -241,7 +242,8 @@ class SSLStepThree
                 default:
                     $reason = $exception->getMessage();
             }
-            $this->redirectToStepOne($reason);
+            throw $exception;
+           // $this->redirectToStepOne($reason);
         }
 
         //update domain column in tblhostings
@@ -271,6 +273,8 @@ class SSLStepThree
         $this->sslConfig->setDcvMethod($this->p['fields']['dcv_method'] == 'http'?'FILE':$this->p['fields']['dcv_method']);
         $this->sslConfig->setProductId($this->p['configoption1']);
         $this->sslConfig->setSSLStatus($orderDetails->status);
+        $this->sslConfig->setStatus(\AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL::CONFIGURATION_SUBMITTED);
+
 
         // Gets overwritten by whmcs ioncube encoded stuff atm >:(
         $this->sslConfig->save();

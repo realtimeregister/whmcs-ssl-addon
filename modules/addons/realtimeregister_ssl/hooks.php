@@ -6,10 +6,18 @@ use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\Activator;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepThree;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwo;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwoJS;
+use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
+use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
 use AddonModule\RealtimeRegisterSsl\Loader;
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\Server;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -67,6 +75,48 @@ add_hook("ClientAreaPage",1 ,function($vars) {
     }
 });
 
+add_hook('ShoppingCartValidateProductUpdate', 1, function($params) {
+    $params['productId'] = $_SESSION['cart']['cartsummarypid'];
+    $params['dcvmethodMainDomain'] = $params['dcv'];
+    $result = (new SSLStepTwo($params))->run();
+    if ($result['error']) {
+        return [$result['error']];
+    }
+
+    $_SESSION['cart']['products'][$params['i']]['domain'] = $result['commonName'];
+
+    return [];
+});
+
+add_hook('AfterShoppingCartCheckout', 1, function($params) {
+    foreach ($params['ServiceIDs'] as $serviceId) {
+        $service = Capsule::table('tblhosting')
+            ->where('id', '=', $serviceId)
+            ->first();
+        $orderRepo = new OrderRepo();
+        $orderRepo->addOrder(
+            $service->userid,
+            $serviceId,
+            0,
+            'EMAIL',
+            'Pending Verification',
+            FlashService::getFieldsMemory($service->domain)
+        );
+    }
+});
+
+add_hook('AfterModuleCreate', 999999999999, function ($params) {
+    try {
+
+        $orderRepo = new OrderRepo();
+        $order = $orderRepo->getByServiceId($params['params']['serviceid']);
+        $sslParams = array_merge($params['params'], json_decode($order->data, true));
+        (new SSLStepThree($sslParams))->run();
+    } catch (\Exception $e) {
+        logActivity($e->getMessage());
+        throw $e;
+    }
+});
 
 add_hook('ClientAreaPage', 1, function($params) {
     new Loader();
@@ -77,22 +127,29 @@ add_hook('ClientAreaPage', 1, function($params) {
         global $smarty;
         switch ($params['templatefile']) {
             case 'configureproduct':
-                $product = \WHMCS\Database\Capsule::table('tblproducts')->where('id', $params['productinfo']['pid'])
-                    ->where('servertype', 'realtimeregister_ssl')->first();
-                $includedsan = $product->configoption4;
-                $includedsanwildcard = $product->configoption8;
+                $csrData = [];
+                $client = $params['client'] ?? null;
 
-                $txtincluded = '';
+                $csrData['country'] = $client->country;
+                $csrData['state'] = $client->state;
+                $csrData['locality'] = $client->city;
+                $csrData['organization'] = $client->companyname ?: '';
+                $csrData['org_unit'] = '';
+                $csrData['email'] = $client->email;
 
-                if($includedsan > 0) {
-                    $txt = sprintf (Lang::getInstance()->T('additionalSingleDomainInfo'), $includedsan);
-                    $txtincluded .= '<p>'.$txt.'</p>';
-                }
-                if($includedsanwildcard > 0) {
-                    $txt = sprintf (Lang::getInstance()->T('additionalSingleDomainWildcardInfo'), $includedsanwildcard);
-                    $txtincluded .= '<p>'.$txt.'</p>';
-                }
-                $smarty->assign('txtincluded', $txtincluded);
+                $csrModal = TemplateService::buildTemplate(ScriptService::CSR_MODAL, [
+                    'csrData' => $csrData,
+                    'countries' => Countries::getInstance()->getCountriesForAddonDropdown()
+                ]);
+                $csrModalScript = TemplateService::buildTemplate(ScriptService::GENERATE_CSR_MODAL, [
+                    'fillVars' => addslashes('[]'),
+                    'csrData' => $csrData
+                ]);
+                $preOrderScript = TemplateService::buildTemplate(ScriptService::PRE_ORDER_FILL, [
+                    'fillVars' => addslashes('[]'),
+                    'csrData' => $csrData
+                ]);
+                $smarty->assign('sslOrderIntegrationCode', $preOrderScript. $csrModal . $csrModalScript);
                 break;
             case 'configuressl-stepone':
                 if (isset($_GET['cert'])) {
@@ -147,13 +204,24 @@ add_hook('ClientAreaHeadOutput', 1, function($params)
     $show = false;
 
     if (
-        $params['filename'] === 'configuressl' && $params['loggedin'] == '1' && isset($_REQUEST['action'])
-        && $_REQUEST['action'] === 'generateCsr'
+        $params['filename'] === 'index'
     ) {
-        $GenerateCsr = new AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR($params, $_POST);
-        echo $GenerateCsr->run();
-        die();
+        if($_REQUEST['action'] === 'generateCsr') {
+            $GenerateCsr = new AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR($params, $_POST);
+            echo $GenerateCsr->run();
+            die();
+        }
+
+        if($_REQUEST['action'] === 'approverEmails') {
+            $approverEmails = (new SSLStepTwoJS($params))
+                ->fetchApprovalEmailsForSansDomains([$_REQUEST['commonName']]);
+            echo json_encode(['success' => true, 'emails' => $approverEmails]);
+            die();
+        }
+
     }
+
+
     if ($params['templatefile'] === 'clientareacancelrequest') {
         try {
             $service = Service::findOrFail($params['id']);
@@ -533,9 +601,7 @@ add_hook('InvoiceCreation', 1, function($vars) {
     }
 });
 
-
 add_hook('ClientAreaHeadOutput', 1, function($vars) {
-    $template = $vars['template'];
     return <<<HTML
     <style>
     .hidden {

@@ -6,11 +6,9 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Domains;
 use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemporary;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
-use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -19,30 +17,22 @@ use RealtimeRegister\Api\CertificatesApi;
 class SSLStepTwo
 {
     use SSLUtils;
-    private $p;
-    private $errors = [];
-    private $csrDecode = [];
+    private array $p;
+    private int $pid;
+    private array $errors = [];
+    private array $csrDecode = [];
+    private string $productName;
 
     public function __construct(&$params)
     {
-        $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
-        if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                $productsslDB = Capsule::table(
-                    Products::REALTIMEREGISTERSSL_PRODUCT_BRAND
-                )->where('pid', KeyToIdMapping::getIdByKey($params['configoption1']))->first();
-                if (isset($productsslDB->data)) {
-                    $productssl['product'] = json_decode($productsslDB->data, true);
-                }
-            }
-        }
-
-        if (isset($productssl['product_san_wildcard']) && $productssl['product_san_wildcard'] == 'yes') {
-            $this->additional_san_validation[] = $params['configoption1'];
-        }
-
         $this->p = &$params;
+        $this->pid = $params['productId'] ?: (new Service($this->p['serviceid']))->productID;
+        $this->productName = $params[ConfigOptions::API_PRODUCT_ID] ?:
+            Capsule::table("tblproducts")
+                ->select(['configoption1'])
+                ->where('id', '=', $this->pid)
+                ->first()
+                ->configoption1;
     }
 
     public function run()
@@ -57,17 +47,14 @@ class SSLStepTwo
             return ['error' => $this->errorsToWhmcsError()];
         }
 
-        $service = new Service($this->p['serviceid']);
-        $product = new Product($service->productID);
-
         $productssl = false;
         $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
             if (Capsule::schema()->hasColumn(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
                 $productsslDB = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)
-                    ->where('pid', $product->id)->first();
+                    ->where('pid_identifier', $this->productName)->first();
                 if (isset($productsslDB->data)) {
-                    $productssl['product'] = json_decode($productsslDB->data, true);
+                    $productssl = json_decode($productsslDB->data, true);
                 }
             }
         }
@@ -75,14 +62,14 @@ class SSLStepTwo
         if (!$productssl) {
             /** @var CertificatesApi $certificatesApi */
             $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-            $productssl = $certificatesApi->getProduct($product->configuration()->text_name);
+            $productssl = $certificatesApi->getProduct($this->productName)->toArray();
         }
         $validationMethods = ['email', 'dns', 'file'];
 
         if (empty($this->csrDecode)) {
             // Use server to generate csr..
             $this->csrDecode = ApiProvider::getInstance()->getApi(CertificatesApi::class)
-                ->decodeCsr(trim(rtrim($_POST['csr'])));
+                ->decodeCsr(trim($_POST['csr']));
         }
         $decodedCSR = $this->csrDecode;
 
@@ -105,10 +92,11 @@ class SSLStepTwo
         $_SESSION['approveremails'] = $approveremails;
 
         return [
+            'commonName' => $mainDomain,
             'approveremails' => 'loading...',
             'approveremails2' => $approveremails,
             'approvalmethods' => $validationMethods,
-            'brand' => $productssl->brand
+            'brand' => $productssl['brand']
         ];
     }
 
@@ -121,12 +109,8 @@ class SSLStepTwo
     {
         SSLTemporary::getInstance()->setByParams($this->p);
 
+        $this->validateCSR();
         $this->storeFieldsAutoFill();
-
-        if ($this->p['producttype'] != 'hostingaccount') {
-            $this->validateCSR();
-        }
-
         $this->validateSansDomains();
         $this->validateSansDomainsWildcard();
 
@@ -164,8 +148,6 @@ class SSLStepTwo
         $sansDomains = $this->p['fields']['sans_domains'];
         $sansDomains = SansDomains::parseDomains($sansDomains);
 
-        $apiProductId = $this->p[ConfigOptions::API_PRODUCT_ID];
-
         $invalidDomains = Domains::getInvalidDomains($sansDomains);
 
         if (count($invalidDomains)) {
@@ -173,7 +155,7 @@ class SSLStepTwo
         }
 
         $productBrandRepository = Products::getInstance();
-        $productBrand = $productBrandRepository->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
+        $productBrand = $productBrandRepository->getProductByName($this->productName);
 
         $commonName = $this->csrDecode['commonName'];
         $sanCount = $this->getSanDomainCount($sansDomains, $commonName, $productBrand);
@@ -187,7 +169,7 @@ class SSLStepTwo
 
     private function validateCSR()
     {
-        $csr = trim(rtrim($this->p['csr']));
+        $csr = trim($this->p['csr']);
 
         $this->csrDecode = ApiProvider::getInstance()->getApi(CertificatesApi::class)->decodeCsr($csr);
         $decodedCSR = $this->csrDecode;
@@ -197,9 +179,9 @@ class SSLStepTwo
         if ($checkTable) {
             if (Capsule::schema()->hasColumn(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
                 $productsslDB = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)
-                    ->where('pid', KeyToIdMapping::getIdByKey($this->p['configoption1']))->first();
+                    ->where('pid_identifier', $this->productName)->first();
                 if (isset($productsslDB->data)) {
-                    $productssl['product'] = json_decode($productsslDB->data, true);
+                    $productssl = json_decode($productsslDB->data, true);
                 }
             }
         }
@@ -211,11 +193,8 @@ class SSLStepTwo
                 ->toArray();
         }
 
-        if ($productssl['product']['wildcard_enabled']) {
-            if (
-                strpos($decodedCSR['csrResult']['CN'], '*.') !== false
-                || strpos($decodedCSR['csrResult']['dnsName(s)'][0], '*.') !== false
-            ) {
+        if ($productssl['certificateType'] === 'WILDCARD') {
+            if (str_contains($decodedCSR['csrResult']['CN'], '*.')) {
                 return true;
             } else {
                 if (isset($decodedCSR['csrResult']['errorMessage'])) {
@@ -257,6 +236,8 @@ class SSLStepTwo
             'privateKey',
             'custom-hostname',
             'step-type-data-domain',
+            'dcvmethodMainDomain',
+            'approveremail'
         ];
 
         $additional = [
@@ -278,7 +259,11 @@ class SSLStepTwo
             $fields[sprintf('fields[%s]', $value)] = $this->p[$value];
         }
 
-        FlashService::setFieldsMemory($_GET['cert'], $fields);
+        if ($_GET['cert']) {
+            FlashService::setFieldsMemory($_GET['cert'], $fields);
+        } else {
+            FlashService::setFieldsMemory($this->csrDecode['commonName'], $fields);
+        }
     }
 
     private function errorsToWhmcsError()

@@ -46,6 +46,7 @@ class FlashService
 
     public static function set($key, $message)
     {
+        //dd($key);
         $_SESSION[$key] = $message;
     }
 
