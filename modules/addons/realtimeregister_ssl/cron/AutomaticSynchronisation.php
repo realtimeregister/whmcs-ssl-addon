@@ -41,7 +41,7 @@ class AutomaticSynchronisation extends BaseTask
                     continue;
                 }
 
-                $configdata = json_decode($sslService->configdata, true);
+                $configdata = json_decode(json_encode($sslService->configdata), true);
                 if (!empty($configdata['domain'])) {
                     Capsule::table('tblhosting')->where('id', $serviceID)->update(['domain' => $configdata['domain']]);
                 }
@@ -66,7 +66,8 @@ class AutomaticSynchronisation extends BaseTask
                 $product = (array)Capsule::table('tblproducts')->where('servertype', 'realtimeregister_ssl')
                     ->where('id', $service['packageid'])->first();
 
-                if (isset($product['configoption7']) && !empty($product['configoption7'])
+                if (
+                    isset($product['configoption7']) && !empty($product['configoption7'])
                     && $service['billingcycle'] == 'One Time'
                 ) {
                     Capsule::table('tblhosting')->where('id', $serviceID)
@@ -93,7 +94,7 @@ class AutomaticSynchronisation extends BaseTask
                     }
 
                     //set ssl certificate as terminated if expired
-                    if (strtotime($sslOrder->expiryDate) < strtotime(date('Y-m-d'))) {
+                    if ($sslOrder->expiryDate->getTimestamp() < date('Y-m-d')) {
                         $this->setSSLServiceAsTerminated($serviceID);
                     }
 
@@ -103,12 +104,19 @@ class AutomaticSynchronisation extends BaseTask
                 } elseif ($order->status === ProcessStatusEnum::STATUS_SUSPENDED) {
                     $customerNotified = $sslService->getConfigdataKey('customer_notified');
 
-                    // If the status is suspended, we need some more data of the customer, so we send this person an email
+                    /**
+                     * If the status is suspended, we need some more data of the customer, so we send this person
+                     * an email
+                     */
                     if (!$customerNotified) {
-                        sendMessage(EmailTemplateService::VALIDATION_INFORMATION_TEMPLATE_ID, $sslService->getServiceId(), [
-                            'domain' => $sslService->getDomain(),
-                            'sslConfig' => $sslService->getConfigData()
-                        ]);
+                        sendMessage(
+                            EmailTemplateService::VALIDATION_INFORMATION_TEMPLATE_ID,
+                            $sslService->getServiceId(),
+                            [
+                                'domain' => $sslService->getDomain(),
+                                'sslConfig' => $sslService->getConfigData()
+                            ]
+                        );
 
                         // We don't want to spam users all the time, just once is enough for now..
                         $sslService->setConfigdataKey('customer_notified', new \DateTime());
@@ -189,7 +197,8 @@ class AutomaticSynchronisation extends BaseTask
             $service->save();
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register SSL WHMCS: Service #" . $serviceID . " nextduedate set to " . $date . " and nextinvoicedate to" . $nextinvoicedate
+                "Realtime Register SSL WHMCS: Service #" . $serviceID . " nextduedate set to "
+                . $date . " and nextinvoicedate to" . $nextinvoicedate
             );
         }
     }

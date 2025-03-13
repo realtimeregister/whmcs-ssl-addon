@@ -44,7 +44,9 @@ class PriceUpdater extends BaseTask
                     }
                     // load saved api price
                     $apiProduct = $apiProducts->getProduct(KeyToIdMapping::getIdByKey($product->{C::API_PRODUCT_ID}));
-                    $apiPrice = $productPrice->loadSavedPriceData(KeyToIdMapping::getIdByKey($product->{C::API_PRODUCT_ID}));
+                    $apiPrice = $productPrice->loadSavedPriceData(
+                        KeyToIdMapping::getIdByKey($product->{C::API_PRODUCT_ID})
+                    );
 
                     //generate new price
                     $this->generateNewPricesBasedOnAPI($apiPrice, $apiProduct, $product->id);
@@ -135,7 +137,7 @@ class PriceUpdater extends BaseTask
             case 24:
                 $periodString = 'biennially';
                 break;
-            case 36:;
+            case 36:
                 $periodString = 'triennially';
                 break;
             default:
@@ -166,7 +168,7 @@ class PriceUpdater extends BaseTask
             Capsule::table("tblpricing")->where('id', '=', $currentPrice->id)
                 ->update([$periodString => $newPrice * $currency->rate * $multiplier]);
 
-            if ($periodString === 'annually' && floatval($currentPrice->monthly) > 0.00 ) {
+            if ($periodString === 'annually' && floatval($currentPrice->monthly) > 0.00) {
                 Capsule::table("tblpricing")->where('id', '=', $currentPrice->id)
                     ->update(['monthly' => $newPrice * $currency->rate * $multiplier]);
             }

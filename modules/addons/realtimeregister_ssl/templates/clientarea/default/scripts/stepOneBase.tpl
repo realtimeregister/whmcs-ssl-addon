@@ -1,7 +1,7 @@
 <div id="divhideme" style="display: none"></div>
 <script type="text/javascript">
     $(document).ready(function () {
-        {if $domains}
+{*        {if $domains}*}
             const alertInfo = $('.alert-info').first();
 
             $('<p class="auto_install_warning hidden"><small>{$ADDONLANG->T('csrReadOnly')}</small></p>')
@@ -85,7 +85,7 @@
                 $('input[name="csr-type"][value="1"]').attr('checked', 'checked')
             }
             $('input[name="csr-type"]:checked').trigger('change');
-        {/if}
+{*        {/if}*}
 
         const brand = JSON.parse('{$brand}');
         $('textarea[name="csr"]').closest('.form-group')

@@ -22,9 +22,11 @@ class CertificateDetailsUpdater extends BaseTask
     public function __invoke()
     {
         if ($this->enabledTask('cron_certificate_details_updater')) {
-            logActivity("Realtime Register SSL: Certificate details updater");
+            logActivity('Realtime Register SSL: Certificate details updater');
 
-            Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Details Updating started.");
+            Whmcs::savelogActivityRealtimeRegisterSsl(
+                'Realtime Register SSL WHMCS: Certificate Details Updating started.'
+            );
 
             $this->sslRepo = new SSLRepo();
 

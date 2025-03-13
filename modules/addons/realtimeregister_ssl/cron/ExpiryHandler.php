@@ -72,21 +72,24 @@ class ExpiryHandler extends BaseTask
                     continue;
                 }
 
-                if (in_array($daysLeft, self::getExpiryMailRange($renewWithinRecurring))
+                if (
+                    in_array($daysLeft, self::getExpiryMailRange($renewWithinRecurring))
                     && $srv->billingcycle != 'One Time'
-                    && $send_expiration_notification_recurring) {
+                    && $send_expiration_notification_recurring
+                ) {
                     $emailSendsCount += $this->sendExpireNotifyEmail($srv->id, $daysLeft);
                 }
 
-                if (in_array($daysLeft, self::getExpiryMailRange($renewWithinOnetime))
+                if (
+                    in_array($daysLeft, self::getExpiryMailRange($renewWithinOnetime))
                     && $srv->billingcycle == 'One Time'
-                    && $send_expiration_notification_one_time) {
+                    && $send_expiration_notification_one_time
+                ) {
                     $emailSendsCount += $this->sendExpireNotifyEmail($srv->id, $daysLeft);
                 }
 
                 // Handle auto-renew based on settings
-                if ($daysLeft < $renewWithinRecurring
-                    && $srv->billingcycle != 'One Time') {
+                if ($daysLeft < $renewWithinRecurring && $srv->billingcycle != 'One Time') {
                     $this->handleAutoRenew($srv, $product, $createAutoInvoice, $autoRenewSetting);
                 }
             }
@@ -162,7 +165,8 @@ class ExpiryHandler extends BaseTask
         $resultSuccess = $results['result'] == 'success';
         if (!$resultSuccess) {
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                'Realtime Register SSL WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message']
+                'Realtime Register SSL WHMCS Notifier: Error while sending customer notifications (service '
+                . $serviceId . '): ' . $results['message']
             );
         }
         return $resultSuccess;
@@ -185,7 +189,8 @@ class ExpiryHandler extends BaseTask
         $resultSuccess = $results['result'] == 'success';
         if (!$resultSuccess) {
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                'Realtime Register SSL WHMCS Notifier: Error while sending customer notifications (service ' . $serviceId . '): ' . $results['message']
+                'Realtime Register SSL WHMCS Notifier: Error while sending customer notifications (service '
+                . $serviceId . '): ' . $results['message']
             );
         }
         return $resultSuccess;

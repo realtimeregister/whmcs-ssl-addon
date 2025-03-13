@@ -85,7 +85,8 @@ class CertificateSender extends BaseTask
             $this->output("messages")->write($emailSendsCount);
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register SSL WHMCS: Certificate Sender completed. The number of messages sent: " . $emailSendsCount
+                'Realtime Register SSL WHMCS: Certificate Sender completed. The number of messages sent: '
+                . $emailSendsCount
             );
             return $this;
         }

@@ -70,6 +70,7 @@ $_LANG['serverCA']['home']['downloadca']                         = 'Download Int
 $_LANG['serverCA']['home']['downloadcrt']                        = 'Download Certificate';
 $_LANG['serverCA']['home']['downloadcsr']                        = 'Download CSR';
 $_LANG['serverCA']['home']['downloadpem']                        = 'Download PEM';
+$_LANG['serverCA']['home']['downloadbundle'] = 'Download Bundle';
 $_LANG['serverCA']['home']['orderNotActiveError']                = 'Can not send certificate. Order status is different than active.';
 $_LANG['serverCA']['home']['CACodeEmptyError']                   = 'An error occurred. Certificate body is empty.';
 $_LANG['serverCA']['home']['sendCertificateSuccess']             = 'The certificate has been sent successfully.';

@@ -56,7 +56,9 @@ class CertificateStatisticsLoader extends BaseTask
 
                 $this->setSSLCertificateStatus($service->id, $apiOrder->status);
             }
-            Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Stats Loader completed.");
+            Whmcs::savelogActivityRealtimeRegisterSsl(
+                'Realtime Register SSL WHMCS: Certificate Stats Loader completed.'
+            );
         }
     }
 

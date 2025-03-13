@@ -298,7 +298,7 @@ class home extends AbstractController
             }
 
             if ($_GET['downloadcsr'] == '1' && !empty($certificateDetails['csr'])) {
-                header('Content-Type: application/octet-stream');
+                header('Content-Type: application/pkcs10');
                 header('Content-Disposition: attachment; filename=' . $filenameCsr . '.csr');
                 header('Expires: 0');
                 header('Cache-Control: must-revalidate');
@@ -307,7 +307,7 @@ class home extends AbstractController
                 exit;
             }
             if ($_GET['downloadcrt'] == '1' && !empty($certificateDetails['crt'])) {
-                header('Content-Type: application/octet-stream');
+                header('Content-Type: application/x-x509-user-cert');
                 header('Content-Disposition: attachment; filename=' . $filenameCrt . '.crt');
                 header('Expires: 0');
                 header('Cache-Control: must-revalidate');
@@ -316,13 +316,21 @@ class home extends AbstractController
                 exit;
             }
             if ($_GET['downloadca'] == '1' && !empty($certificateDetails['ca'])) {
-                header('Content-Type: application/octet-stream');
+                header('Content-Type: application/x-x509-ca-cert');
                 header('Content-Disposition: attachment; filename=' . $filenameCa . '.ca');
                 header('Expires: 0');
                 header('Cache-Control: must-revalidate');
                 header('Pragma: public');
                 print $certificateDetails['ca'];
                 exit;
+            }
+            if ($_GET['downloadbundle'] == '1' && !empty($certificateDetails['bundle'])) {
+                header('Content-Type: application/zip');
+                header('Content-Disposition: attachment; filename=' . $filenameCa . '.zip');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                print base64_decode($certificateDetails['bundle']);
             }
             if (
                 $_GET['downloadpem'] == '1' && !empty($certificateDetails['crt']) && !empty($certificateDetails['ca'])
@@ -344,7 +352,7 @@ class home extends AbstractController
                 $pemfile .= $certificateDetails['crt'] . "\n";
                 $pemfile .= $certificateDetails['ca'];
 
-                header('Content-Type: application/octet-stream');
+                header('Content-Type: application/x-pem-file');
                 header('Content-Disposition: attachment; filename=' . $filenameCa . '.pem');
                 header('Expires: 0');
                 header('Cache-Control: must-revalidate');
@@ -371,6 +379,10 @@ class home extends AbstractController
 
             if (!empty($certificateDetails['crt']) && !empty($certificateDetails['ca'])) {
                 $vars['downloadpem'] = $vars['actual_link'] . '&downloadpem=1';
+            }
+
+            if (!empty($certificateDetails['bundle']) && !empty($certificateDetails['ca'])) {
+                $vars['downloadbundle'] = $vars['actual_link'] . '&downloadbundle=1';
             }
 
             if (!empty($vars['approver_method']['http'])) {
