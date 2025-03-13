@@ -1,29 +1,10 @@
 <div class="form-group">
     <label for="csrInput" class="d-block">CSR</label>
-    <textarea name="csr" id="csrInput" class="d-block form-control">
------BEGIN CERTIFICATE REQUEST-----
-MIICzTCCAbUCAQAwgYcxFDASBgNVBAMMC2F3ZGF3ZHcuY29tMQswCQYDVQQGEwJU
-RzERMA8GA1UECAwIQXJrYW5zYXMxCjAIBgNVBAcMAWExIDAeBgkqhkiG9w0BCQEW
-EXRlc3QyQGV4YW1wbGUuY29tMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0
-eSBMdGQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDN5bCpfA/15Fx0
-J5+dJETk+5jZ0N3zGE8ubmw/ME1i+/3/yEWTSUuIXy7vk61kfOJaWajqu+Zy69db
-YMDrQ8UKXVNezMn+teXvPgH2ZSH92H1HLwqjjy6h0LyFLYEikqFi8oY1lgFXrMv1
-n0DIdDnDBNsKgoRSApuFz6gvzvtltx42JUWis1hY4kKfFz+pwrbKpmL5xbDanU7E
-Y9g2buR8cu2Lwu+p9cHPJZ+ro2VsUpL01hNzToXEdTv3puYPv4pn85n0FpI1HOoB
-uO0ViAp45LFI1A0UzLpuZ+lUAIQTYyQOfiKd1NPDM6j6DwETRV+vD50xQakw8gBl
-VUaGJCR7AgMBAAGgADANBgkqhkiG9w0BAQUFAAOCAQEAW6jvcWGUX9wfiSEp0w+f
-KfgCLWGwY/q8r5Hi5AO93FI9Gb0O00Ke3ypJPovSY7WFwYbkObjVHygSdO+4mIbJ
-k8b4fTEnyMcRWDjy22SP0TNoGTuer8ecFcIEj/RbnNerRiYctTWxFBWpBRBH7Kh7
-gL+IOLgk7OktrpE+nuY6z1es/w1CTwjZiiRNZ4zrRlXF/G1mUhLeQ0Aw9/FkGqPn
-C1AXxv/XJ1sIuIaKmAjrVj57vSy837dNVXHEnYR1ZMwZZ6qDYU5EBWLTIC+VKAs1
-UgE9H8dKG9s6iVgt3ozfDXMMohUhOSDTxfvEBmVPp+YhC8XXC0PWiiWj9qZFgePS
-vw==
------END CERTIFICATE REQUEST-----
-                            </textarea>
+    <textarea name="csr" id="csrInput" class="d-block form-control">{$csrData['csr']}</textarea>
     <button type="button" id="generateCsrBtn" class="btn btn-default d-block">Generate CSR</button>
     <label for="dcv">DCV</label>
     <select name="dcv" id="dcv" class="form-control">
-        <option value="EMAIL">E-Mail</option>
+        <option value="EMAIL">E-mail</option>
         <option value="HTTP">HTTP</option>
         <option value="DNS">DNS</option>
     </select>
@@ -31,9 +12,77 @@ vw==
         <label for="approveremail">Approver E-mail</label>
         <select id="approveremail" name="approveremail" class="form-control"></select>
     </div>
+    {if $sanOptionConfigId gt 0}
+        <label for="san">
+            SANs (separated by newlines)
+        </label>
+        <textarea id="san" name="san" class="form-control">{$csrData['san']}</textarea>
+    {/if}
+
+    {if $sanOptionWildcardConfigId gt 0}
+        <label for="wildcardsan">
+            Wildcard SANs (separated by newlines)
+        </label>
+        <textarea id="wildcardsan" name="wildcardsan" class="form-control">{$csrData['wildcardSan']}</textarea>
+    {/if}
+
+    <h3>
+        Approver
+    </h3>
+    <div class="form-group">
+        <fieldset class="pt-3">
+            <label for="inputFirstName">First Name</label>
+            <input type="text" class="form-control" name="firstname" id="inputFirstName" value="{$csrData['firstName']}">
+
+            <label for="inputLastName">Last Name</label>
+            <input type="text" class="form-control" name="lastname" id="inputLastName" value="{$csrData['lastName']}">
+
+            <label for="inputOrgName">Organization Name</label>
+            <input type="text" class="form-control" name="orgname" id="inputOrgName" value="{$csrData['organization']}">
+
+            <label for="inputJobTitle">Job Title</label>
+            <input type="text" class="form-control" name="jobtitle" id="inputJobTitle" value="{$csrData['jobTitle']}">
+
+            <label for="inputEmail">Email Address</label>
+            <input type="text" class="form-control" name="email" id="inputEmail" value="{$csrData['email']}">
+
+            <label for="inputAddress1">Address 1</label>
+            <input type="text" class="form-control" name="address1" id="inputAddress1" value="{$csrData['addressLine']}">
+
+            <label class="" for="inputCity">City</label>
+            <input type="text" class="form-control" name="city" id="inputCity" value="{$csrData['locality']}">
+
+            <label for="inputState">State/Region</label>
+            <input type="text" class="form-control" name="state" id="inputState" value="{$csrData['state']}">
+
+            <label for="inputPostcode">Zip Code</label>
+            <input type="text" class="form-control" name="postcode" id="inputPostcode" value="{$csrData['postalCode']}">
+
+            <label for="inputCountry">Country</label>
+            <select id="inputCountry" name="country" class="form-control">
+                {foreach $countries as $value => $name}
+                    <option value="{$value}" {if $value == $csrData['country']}selected=''{/if}>
+                        {$name}
+                    </option>
+                {/foreach}
+            </select>
+            <label for="voice">Phone Number</label>
+            <input type="text" class="form-control" name="voice" id="voice" value="{$csrData['phoneNumber']}">
+        </fieldset>
+    </div>
 </div>
+<hr/>
 <script>
-    $(function() {
+    $(function () {
+        const includedSan = {$includedSan}
+        const sanOptionConfigId = {$sanOptionConfigId};
+        const includedWildcardSan = {$includedSanWildcard}
+        const sanOptionWildcardConfigId = {$sanOptionWildcardConfigId}
+
+        {literal}
+        const sanSlider = $(`#inputConfigOption${sanOptionConfigId}`).data('ionRangeSlider');
+        const wildcardSanSlider = $(`#inputConfigOption${sanOptionWildcardConfigId}`).data('ionRangeSlider');
+
         $('input[name="CN"]').on('change', e => {
             const token = $('input[name="token"]').val();
             const commonName = e.target.value;
@@ -47,12 +96,10 @@ vw==
                 success: function (ret) {
                     const data = JSON.parse(ret);
                     if (data.success) {
-                        {literal}
                         data.emails[commonName].forEach(email =>
                             $('select[name="approveremail"]')
                                 .append(`<option value ='${email}'>${email}</option>`)
                         )
-                        {/literal}
                     }
                 },
                 error: function (e) {
@@ -68,5 +115,31 @@ vw==
                 $('#approveremails').hide();
             }
         })
+
+        $('textarea[name="san"]').on('change', e => {
+            const sanDomains = e.target.value.split('\n');
+            const count = Math.max(sanDomains.length - includedSan, 0)
+            sanSlider.update({
+                from: count,
+                from_min: count,
+                from_max: count
+            });
+            recalctotals();
+        }).change();
+
+        $('textarea[name="wildcardsan"]').on('change', e => {
+            const wildcardSanDomains = e.target.value.split('\n');
+            const count = Math.max(wildcardSanDomains.length - includedWildcardSan, 0)
+            wildcardSanSlider.update({
+                from: count,
+                from_min: count,
+                from_max: count
+            });
+            recalctotals();
+        }).change();
+
+        sanSlider.change();
+        wildcardSanSlider.change();
+        {/literal}
     });
 </script>

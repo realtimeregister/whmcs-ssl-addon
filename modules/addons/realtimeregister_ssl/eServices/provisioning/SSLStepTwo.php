@@ -23,16 +23,11 @@ class SSLStepTwo
     private array $csrDecode = [];
     private string $productName;
 
-    public function __construct(&$params)
+    public function __construct($params)
     {
-        $this->p = &$params;
+        $this->p = $params;
         $this->pid = $params['productId'] ?: (new Service($this->p['serviceid']))->productID;
-        $this->productName = $params[ConfigOptions::API_PRODUCT_ID] ?:
-            Capsule::table("tblproducts")
-                ->select(['configoption1'])
-                ->where('id', '=', $this->pid)
-                ->first()
-                ->configoption1;
+        $this->productName = $params[ConfigOptions::API_PRODUCT_ID];
     }
 
     public function run()
@@ -123,8 +118,7 @@ class SSLStepTwo
 
     private function validateSansDomainsWildcard()
     {
-        $sansDomainsWildcard = $this->p['fields']['wildcard_san'];
-        $sansDomainsWildcard = SansDomains::parseDomains($sansDomainsWildcard);
+        $sansDomainsWildcard = SansDomains::parseDomains($this->p['fields']['wildcard_san']);
 
         foreach ($sansDomainsWildcard as $domain) {
             $check = substr($domain, 0, 2);
@@ -136,6 +130,7 @@ class SSLStepTwo
                 throw new Exception('SAN\'s Wildcard are incorrect');
             }
         }
+
 
         $sansLimit = $this->getSansLimitWildcard($this->p);
         if (count($sansDomainsWildcard) > $sansLimit) {
@@ -242,6 +237,7 @@ class SSLStepTwo
 
         $additional = [
             'sans_domains',
+            'wildcard_san',
             'org_name',
             'org_coc',
             'org_addressline1',
@@ -256,7 +252,7 @@ class SSLStepTwo
         }
 
         foreach ($additional as $value) {
-            $fields[sprintf('fields[%s]', $value)] = $this->p[$value];
+            $fields[sprintf('fields[%s]', $value)] = $this->p[$value] ?? $this->p['fields'][$value];
         }
 
         if ($_GET['cert']) {

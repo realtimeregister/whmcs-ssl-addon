@@ -18,7 +18,7 @@ class SansDomains
         return array_unique($exSansDomains);
     }
     
-    public static function decodeSanAprroverEmailsAndMethods(&$post)
+    public static function decodeSanApproverEmailsAndMethods(&$post)
     {
         if (isset($post['dcvmethod'])) {
             $newDcvMethodArray = [];
@@ -34,7 +34,7 @@ class SansDomains
         if (isset($post['approveremails'])) {
             $newApproverEmailsArray = [];
             foreach($post['approveremails'] as $domain => $method) {
-                if (strpos($domain, '___') !== false) {
+                if (str_contains($domain, '___')) {
                     $domain = str_replace('___', '*', $domain);
                 }
                 $newApproverEmailsArray[$domain] = $method;

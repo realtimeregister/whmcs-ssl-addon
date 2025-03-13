@@ -5,7 +5,6 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Domains;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
-use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use Exception;
 
 class GenerateCSR
@@ -142,8 +141,6 @@ class GenerateCSR
             if ($sslService) {
                 $sslService->setConfigdataKey('private_key', encrypt($privKey));
                 $sslService->save();
-            } else {
-                FlashService::set('privateKey', encrypt($privKey));
             }
         } catch (Exception $ex) {
             throw new Exception('csrCodeGeneraterFailed');

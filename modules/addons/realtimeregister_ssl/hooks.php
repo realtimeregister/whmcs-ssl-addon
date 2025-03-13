@@ -11,14 +11,17 @@ use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\Activator;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepThree;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwo;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLStepTwoJS;
 use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
 use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
 use AddonModule\RealtimeRegisterSsl\Loader;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\Server;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use WHMCS\Service\Service;
@@ -76,14 +79,33 @@ add_hook("ClientAreaPage",1 ,function($vars) {
 });
 
 add_hook('ShoppingCartValidateProductUpdate', 1, function($params) {
-    $params['productId'] = $_SESSION['cart']['cartsummarypid'];
-    $params['dcvmethodMainDomain'] = $params['dcv'];
-    $result = (new SSLStepTwo($params))->run();
-    if ($result['error']) {
-        return [$result['error']];
-    }
+    if ($params['csr']) {
+        Server::I();
+        $productId = $_SESSION['cart']['cartsummarypid'];
+        $params['productId'] = $productId;
+        $product = new Product($productId);
+        $configOptions = $product->configuration()->getConfigOptions();
+        $params['dcvmethodMainDomain'] = $params['dcv'];
+        $params['fields']['sans_domains'] = $params['san'];
+        $params['fields']['wildcard_san'] = $params['wildcardsan'];
+        $params['phonenumber'] = $params['voice'];
 
-    $_SESSION['cart']['products'][$params['i']]['domain'] = $result['commonName'];
+        $sanConfigOptionId = ConfigurableOptionService::getForProduct($productId)[0]?->id ?? 0;
+        $params['configoptions'][ConfigOptions::OPTION_SANS_COUNT]
+            = $_SESSION['cart']['products'][$params['i']]['configoptions'][$sanConfigOptionId] ?? 0;
+
+        $sanConfigOptionWildcardId = ConfigurableOptionService::getForProductWildcard($productId)[0]->id ?? 0;
+        $params['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT]
+            = $_SESSION['cart']['products'][$params['i']]['configoptions'][$sanConfigOptionWildcardId] ?? 0;
+
+        $result = (new SSLStepTwo(array_merge($configOptions, $params)))->run();
+
+        if ($result['error']) {
+            return [$result['error']];
+        }
+
+        $_SESSION['cart']['products'][$params['i']]['domain'] = $result['commonName'];
+    }
 
     return [];
 });
@@ -93,28 +115,45 @@ add_hook('AfterShoppingCartCheckout', 1, function($params) {
         $service = Capsule::table('tblhosting')
             ->where('id', '=', $serviceId)
             ->first();
-        $orderRepo = new OrderRepo();
-        $orderRepo->addOrder(
-            $service->userid,
-            $serviceId,
-            0,
-            'EMAIL',
-            'Pending Verification',
-            FlashService::getFieldsMemory($service->domain)
-        );
+        $preFilledOrder = FlashService::getFieldsMemory($service->domain);
+        if (!empty($preFilledOrder)) {
+            $orderRepo = new OrderRepo();
+            $orderRepo->addOrder(
+                $service->userid,
+                $serviceId,
+                0,
+                'EMAIL',
+                'Pending Verification',
+                FlashService::getFieldsMemory($service->domain)
+            );
+            FlashService::deleteFieldsMemory($service->domain);
+        }
     }
 });
 
 add_hook('AfterModuleCreate', 999999999999, function ($params) {
-    try {
-
-        $orderRepo = new OrderRepo();
-        $order = $orderRepo->getByServiceId($params['params']['serviceid']);
-        $sslParams = array_merge($params['params'], json_decode($order->data, true));
-        (new SSLStepThree($sslParams))->run();
-    } catch (\Exception $e) {
-        logActivity($e->getMessage());
-        throw $e;
+    $orderRepo = new OrderRepo();
+    $order = $orderRepo->getByServiceId($params['params']['serviceid']);
+    if($order) {
+        $logs = new LogsRepo();
+        $orderParams = $params['params'];
+        try {
+            $orderData = json_decode($order->data, true);
+            foreach (explode(PHP_EOL, $orderData['fields[sans_domains]']) ?? [] as $sanDomain) {
+                $orderParams['dcvmethod'][$sanDomain] = $orderData['dcvmethodMainDomain'];
+                $orderParams['approveremails'][$sanDomain] = $orderData['approveremail'];
+            }
+            foreach (explode(PHP_EOL, $orderData['fields[wildcard_san]']) ?? [] as $wildcardSanDomain) {
+                $orderParams['dcvmethod'][$wildcardSanDomain] = $orderData['dcvmethodMainDomain'];
+                $orderParams['approveremails'][$wildcardSanDomain] = $orderData['approveremail'];
+            }
+            $orderParams['noRedirect'] = true;
+            $sslParams = array_merge($orderParams, $orderData);
+            (new SSLStepThree($sslParams))->run();
+        } catch (\Exception $e) {
+            $logs->addLog($order->client_id, $order->service_id, 'error', $e->getMessage());
+            throw $e;
+        }
     }
 });
 
@@ -127,28 +166,45 @@ add_hook('ClientAreaPage', 1, function($params) {
         global $smarty;
         switch ($params['templatefile']) {
             case 'configureproduct':
-                $csrData = [];
-                $client = $params['client'] ?? null;
+                $productId = $params['productinfo']['pid'];
+                $product = Capsule::table('tblproducts')
+                    ->where('id', '=', $productId)
+                    ->first();
 
-                $csrData['country'] = $client->country;
-                $csrData['state'] = $client->state;
-                $csrData['locality'] = $client->city;
-                $csrData['organization'] = $client->companyname ?: '';
-                $csrData['org_unit'] = '';
-                $csrData['email'] = $client->email;
+                $currentDomain = $_SESSION['cart']['products'][$_GET['i']]['domain'];
+                $csrData = FlashService::parseSavedData($params['client'], $currentDomain);
 
                 $csrModal = TemplateService::buildTemplate(ScriptService::CSR_MODAL, [
                     'csrData' => $csrData,
                     'countries' => Countries::getInstance()->getCountriesForAddonDropdown()
                 ]);
                 $csrModalScript = TemplateService::buildTemplate(ScriptService::GENERATE_CSR_MODAL, [
-                    'fillVars' => addslashes('[]'),
+                    'fillVars' => addslashes(json_encode($csrData)),
                     'csrData' => $csrData
                 ]);
-                $preOrderScript = TemplateService::buildTemplate(ScriptService::PRE_ORDER_FILL, [
-                    'fillVars' => addslashes('[]'),
-                    'csrData' => $csrData
-                ]);
+
+                $preOrderVars = [
+                    'csrData' => $csrData,
+                    'sanOptionConfigId' => -1,
+                    'includedSan' => -1,
+                    'sanOptionWildcardConfigId' => -1,
+                    'includedSanWildcard' => -1
+                ];
+
+                $sanOption = ConfigurableOptionService::getForProduct($productId)[0];
+                if ($sanOption) {
+                    $preOrderVars['sanOptionConfigId'] = $sanOption->id;
+                    $preOrderVars['includedSan'] = $product->{ConfigOptions::PRODUCT_INCLUDED_SANS};
+                }
+
+                $sanOptionWildcard = ConfigurableOptionService::getForProductWildcard($productId)[0];
+                if ($sanOptionWildcard) {
+                    $preOrderVars['sanOptionWildcardConfigId'] = $sanOptionWildcard->id;
+                    $preOrderVars['includedSanWildcard'] = $product->{ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD};
+                }
+
+                $preOrderScript = TemplateService::buildTemplate(ScriptService::PRE_ORDER_FILL, $preOrderVars);
+
                 $smarty->assign('sslOrderIntegrationCode', $preOrderScript. $csrModal . $csrModalScript);
                 break;
             case 'configuressl-stepone':

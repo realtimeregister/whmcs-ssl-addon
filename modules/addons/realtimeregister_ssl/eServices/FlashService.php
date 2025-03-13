@@ -42,11 +42,15 @@ class FlashService
                 return $field['value'];
             }
         }
+        return [];
+    }
+
+    public static function deleteFieldsMemory($md5) {
+        unset($_SESSION[self::AUTO_FILL . '_' . $md5]);
     }
 
     public static function set($key, $message)
     {
-        //dd($key);
         $_SESSION[$key] = $message;
     }
 
@@ -60,5 +64,32 @@ class FlashService
     public static function get($key)
     {
         return $_SESSION[$key];
+    }
+
+    public static function parseSavedData($client, $domain): array
+    {
+        $savedData = $domain ? self::getFieldsMemory($domain) : $client?->toArray() ?? [];
+        $csrData['firstName'] = $savedData['firstname'] ;
+        $csrData['lastName'] = $savedData['lastname'];
+        $csrData['phoneNumber'] = $savedData['phonenumber'];
+        $csrData['postalCode'] = $savedData['postcode'];
+        $csrData['addressLine'] = $savedData['address1'];
+        $csrData['country'] = $savedData['country'];
+        $csrData['state'] = $savedData['state'];
+        $csrData['locality'] = $savedData['city'];
+        $csrData['organization'] = $savedData['companyname'] ?? $savedData['orngame'] ?? '';
+        $csrData['email'] = $savedData['email'];
+        $csrData['privateKey'] = $savedData['privateKey'];
+
+        if($savedData['csr']) {
+            $csrData['csr'] = $savedData['csr'];
+        } else {
+            $csrData['csr'] = "-----BEGIN CERTIFICATE REQUEST-----\n\n-----END CERTIFICATE REQUEST-----";
+        }
+
+        $csrData['san'] = $savedData['fields[sans_domains]'];
+        $csrData['wildcardSan'] = $savedData['fields[wildcard_san]'];
+
+        return $csrData;
     }
 }

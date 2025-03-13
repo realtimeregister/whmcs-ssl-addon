@@ -55,7 +55,7 @@ class SSLStepThree
     public function run()
     {
         try {
-            SansDomains::decodeSanAprroverEmailsAndMethods($_POST);
+            SansDomains::decodeSanApproverEmailsAndMethods($this->p);
             $this->setMainDomainDcvMethod();
             $this->setSansDomainsDcvMethod();
             $this->SSLStepThree();
@@ -72,8 +72,13 @@ class SSLStepThree
 
     private function setSansDomainsDcvMethod(): void
     {
-        if (isset($post['dcvmethod']) && is_array($post['dcvmethod'])) {
-            $this->p['sansDomainsDcvMethod'] = $this->p['dcvmethod'];
+        $this->p['sansDomainsDcvMethod'] = [];
+        foreach ($this->p['dcvmethod'] ?? [] as $domain => $dcvMethod) {
+            $this->p['sansDomainsDcvMethod'][] = [
+                "commonName" => $domain,
+                "type" => $dcvMethod,
+                "email" => $this->p['approveremails'][$domain]
+            ];
         }
     }
 
@@ -106,10 +111,6 @@ class SSLStepThree
 
     private function orderCertificate()
     {
-        if (isset($_POST['approveremail']) && $_POST['approveremail'] == 'defaultemail@defaultemail.com') {
-            unset($_POST['approveremail']);
-        }
-
         if (!empty($this->p[ConfigOptions::API_PRODUCT_ID])) {
             $apiRepo = new Products();
             $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($this->p[ConfigOptions::API_PRODUCT_ID]));
@@ -146,52 +147,20 @@ class SSLStepThree
             foreach ($sansDomains as $sansDomain) {
                 $order['san'][] = $sansDomain;
             }
-            //if entered san is the same as main domain
-            if (is_array($_POST['approveremails'])) {
-                if (count($sansDomains) != count($_POST['approveremails'])) {
-                    foreach ($sansDomains as $key => $domain) {
-                        if ($csrDecode['commonName'] == $domain) {
-                            unset($sansDomains[$key]);
-                        }
-                    }
-                }
-            }
 
-            if (!empty($sanDcvMethods = $this->getSansDomainsValidationMethods())) {
-                $i = 0;
-                foreach ($_POST['approveremails'] as $approverDomain => $approveremail) {
-                    if ($sanDcvMethods[$i] != 'EMAIL') {
-                        $order['dcv'][] = [
-                            'commonName' => $approverDomain,
-                            'type' => (strtoupper($sanDcvMethods[$i]) === 'HTTP' ? 'FILE' : strtoupper($sanDcvMethods[$i]))
-
-                    ];
-                    } else {
-                        $order['dcv'][] =
-                            ['commonName' => $approverDomain, 'type' => 'EMAIL', 'email' => $approveremail];
-                    }
-                    $i++;
-                }
-            }
-
+            $order['dcv'] = $this->p['sansDomainsDcvMethod'];
         }
 
-        if ($this->p['dcvmethodMainDomain'] === 'EMAIL') {
-            $order['dcv'][] = [
-                'commonName' => $csrDecode['commonName'],
-                'type' => $this->p['dcvmethodMainDomain'],
-                'email' => $this->p['approveremail']
-            ];
-        } else {
-            $order['dcv'][] = [
-                'commonName' => $csrDecode['commonName'],
-                'type' => (strtoupper($_POST['dcvmethodMainDomain']) === 'HTTP' ? 'FILE' : strtoupper($_POST['dcvmethodMainDomain']))
-            ];
-        }
+        $order['dcv'][] = [
+            'commonName' => $csrDecode['commonName'],
+            'type' => $this->p['dcvmethodMainDomain'],
+            'email' => $this->p['approveremail'] ?? null
+        ];
 
         if ($this->p['fields']['org_division'] !== '') {
             $order['department'] = $this->p['fields']['org_division'];
         }
+
         $logs = new LogsRepo();
 
         try {
@@ -202,7 +171,7 @@ class SSLStepThree
                     $order['product'],
                     $order['period'],
                     $order['csr'],
-                    $order['san'],
+                    empty($order['san']) ? null : $order['san'],
                     $order['organization'],
                     $order['department'],
                     $order['address'],
@@ -242,8 +211,11 @@ class SSLStepThree
                 default:
                     $reason = $exception->getMessage();
             }
-            throw $exception;
-           // $this->redirectToStepOne($reason);
+            if ($this->p['noRedirect']) {
+                throw $exception;
+            }
+
+            $this->redirectToStepOne($reason);
         }
 
         //update domain column in tblhostings
@@ -285,7 +257,9 @@ class SSLStepThree
         FlashService::set('REALTIMEREGISTERSSL_WHMCS_SERVICE_TO_ACTIVE', $this->p['serviceid']);
         Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $csrDecode['commonName']);
 
-        $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->first();
+        $sslOrder = Capsule::table('tblsslorders')
+            ->where('serviceid', $this->p['serviceid'])
+            ->first();
         $orderRepo = new OrderRepo();
         $orderRepo->addOrder(
             $this->p['userid'],
@@ -298,15 +272,6 @@ class SSLStepThree
 
         $logs->addLog($this->p['userid'], $this->p['serviceid'], 'success', 'The order has been placed.');
         $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? []);
-    }
-
-    private function getSansDomainsValidationMethods()
-    {
-        $data = [];
-        foreach ($this->p['sansDomainsDcvMethod'] as $newMethod) {
-            $data[] = $newMethod;
-        }
-        return $data;
     }
 
     private function redirectToStepOne($error = null)
