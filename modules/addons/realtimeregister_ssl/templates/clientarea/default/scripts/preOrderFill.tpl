@@ -73,15 +73,6 @@
 </div>
 <hr/>
 <script>
-
-    function debounce(func, timeout = 100){
-        let timer;
-        return () => {
-            clearTimeout(timer);
-            timer = setTimeout(() => func(), timeout);
-        };
-    }
-
     function initPreOrderFill() {
         const sanOptionConfigId = {$sanOptionConfigId};
         const includedSan = {$includedSan}
