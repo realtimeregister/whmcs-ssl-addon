@@ -73,7 +73,6 @@
 </div>
 <hr/>
 <script>
-    let sanInput
 
     function debounce(func, timeout = 100){
         let timer;
@@ -84,15 +83,13 @@
     }
 
     function initPreOrderFill() {
-        console.log("init");
         const sanOptionConfigId = {$sanOptionConfigId};
         const includedSan = {$includedSan}
         const includedWildcardSan = {$includedSanWildcard}
         const sanOptionWildcardConfigId = {$sanOptionWildcardConfigId}
 
         {literal}
-        sanInput = $(`#inputConfigOption${sanOptionConfigId}`);
-        const sanSlider = sanInput.data('ionRangeSlider');
+        const sanSlider = $(`#inputConfigOption${sanOptionConfigId}`).data('ionRangeSlider');
         const wildcardSanSlider = $(`#inputConfigOption${sanOptionWildcardConfigId}`).data('ionRangeSlider');
 
 
