@@ -421,6 +421,7 @@ class Configuration extends AbstractConfiguration
         (new OrdersRepo())->updateOrdersTable();
         self::renameSSLOrderStatuses();
         self::updateProductPricing();
+        self::installTasks();
     }
 
     static function renameSSLOrderStatuses()
@@ -435,6 +436,29 @@ class Configuration extends AbstractConfiguration
             $sslOrder->save();
         }
     }
+
+    static function installTasks()
+    {
+        /**
+         * We now run our crontasks via the cron setup of WHMCS tasks,
+         * these can all be disabled via the admin
+         */
+        global $CONFIG;
+
+        require_once __DIR__ . DS . 'Loader.php';
+        new Loader();
+
+        \AddonModule\RealtimeRegisterSsl\cron\AutomaticSynchronisation::register();
+        \AddonModule\RealtimeRegisterSsl\cron\ProcessingOrders::register();
+        \AddonModule\RealtimeRegisterSsl\cron\DailyStatusUpdater::register();
+        \AddonModule\RealtimeRegisterSsl\cron\CertificateStatisticsLoader::register();
+        \AddonModule\RealtimeRegisterSsl\cron\ExpiryHandler::register();
+        \AddonModule\RealtimeRegisterSsl\cron\CertificateSender::register();
+        \AddonModule\RealtimeRegisterSsl\cron\PriceUpdater::register();
+        \AddonModule\RealtimeRegisterSsl\cron\CertificateDetailsUpdater::register();
+        \AddonModule\RealtimeRegisterSsl\cron\InstallCertificates::register();
+    }
+
 
     public function getAuthor()
     {
