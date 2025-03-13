@@ -73,15 +73,28 @@
 </div>
 <hr/>
 <script>
-    $(function () {
-        const includedSan = {$includedSan}
+    let sanInput
+
+    function debounce(func, timeout = 100){
+        let timer;
+        return () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(), timeout);
+        };
+    }
+
+    function initPreOrderFill() {
+        console.log("init");
         const sanOptionConfigId = {$sanOptionConfigId};
+        const includedSan = {$includedSan}
         const includedWildcardSan = {$includedSanWildcard}
         const sanOptionWildcardConfigId = {$sanOptionWildcardConfigId}
 
         {literal}
-        const sanSlider = $(`#inputConfigOption${sanOptionConfigId}`).data('ionRangeSlider');
+        sanInput = $(`#inputConfigOption${sanOptionConfigId}`);
+        const sanSlider = sanInput.data('ionRangeSlider');
         const wildcardSanSlider = $(`#inputConfigOption${sanOptionWildcardConfigId}`).data('ionRangeSlider');
+
 
         $('input[name="CN"]').on('change', e => {
             const token = $('input[name="token"]').val();
@@ -117,7 +130,7 @@
         })
 
         $('textarea[name="san"]').on('change', e => {
-            const sanDomains = e.target.value.split('\n');
+            const sanDomains = e.target.value.split('\n').filter(Boolean);
             const count = Math.max(sanDomains.length - includedSan, 0)
             sanSlider.update({
                 from: count,
@@ -128,7 +141,7 @@
         }).change();
 
         $('textarea[name="wildcardsan"]').on('change', e => {
-            const wildcardSanDomains = e.target.value.split('\n');
+            const wildcardSanDomains = e.target.value.split('\n').filter(Boolean);
             const count = Math.max(wildcardSanDomains.length - includedWildcardSan, 0)
             wildcardSanSlider.update({
                 from: count,
@@ -138,8 +151,18 @@
             recalctotals();
         }).change();
 
-        sanSlider.change();
-        wildcardSanSlider.change();
-        {/literal}
+    }
+
+    $(function () {
+        initPreOrderFill();
+
+        const mutationObserver = new MutationObserver(function (e) {
+            initPreOrderFill();
+        });
+
+        $('#productConfigurableOptions').each(function () {
+            mutationObserver.observe(this, {childList: true});
+        })
     });
+    {/literal}
 </script>

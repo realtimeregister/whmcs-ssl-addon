@@ -179,12 +179,10 @@ add_hook('ClientAreaPage', 1, function($params) {
                     'countries' => Countries::getInstance()->getCountriesForAddonDropdown()
                 ]);
                 $csrModalScript = TemplateService::buildTemplate(ScriptService::GENERATE_CSR_MODAL, [
-                    'fillVars' => addslashes(json_encode($csrData)),
-                    'csrData' => $csrData
+                    'fillVars' => addslashes(json_encode($csrData))
                 ]);
 
                 $preOrderVars = [
-                    'csrData' => $csrData,
                     'sanOptionConfigId' => -1,
                     'includedSan' => -1,
                     'sanOptionWildcardConfigId' => -1,
@@ -212,7 +210,7 @@ add_hook('ClientAreaPage', 1, function($params) {
                     $r = \WHMCS\Database\Capsule::table('tblsslorders')->where(\WHMCS\Database\Capsule::raw(
                         'md5(id)'), '=', $_GET['cert']
                     )->first();
-                    if ($r && $r->module == Server::I()->configuration()->systemName) {
+                    if ($r?->module == Server::I()->configuration()->systemName) {
                         $smarty->assign('customBackToServiceButton', true);
                         $smarty->assign('customBackToServiceButtonLang', Lang::T('addonCA', 'customBackToServiceButtonLang'));
                     }
