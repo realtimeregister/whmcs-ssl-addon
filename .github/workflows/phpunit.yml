@@ -20,7 +20,7 @@ jobs:
           TEST_NAME: WHMCS
         with:
           version: 11.5
-          php_version: 8.1
+          php_version: 8.2
           bootstrap: modules/addons/realtimeregister_ssl/vendor/autoload.php
           configuration: modules/addons/realtimeregister_ssl/phpunit.xml.dist
           args: --coverage-text
