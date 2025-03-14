@@ -139,11 +139,11 @@ add_hook('AfterModuleCreate', 999999999999, function ($params) {
         $orderParams = $params['params'];
         try {
             $orderData = json_decode($order->data, true);
-            foreach (explode(PHP_EOL, $orderData['fields[sans_domains]']) ?? [] as $sanDomain) {
+            foreach (explode(PHP_EOL, $orderData['fields[sans_domains]'] ?? '') as $sanDomain) {
                 $orderParams['dcvmethod'][$sanDomain] = $orderData['dcvmethodMainDomain'];
                 $orderParams['approveremails'][$sanDomain] = $orderData['approveremail'];
             }
-            foreach (explode(PHP_EOL, $orderData['fields[wildcard_san]']) ?? [] as $wildcardSanDomain) {
+            foreach (explode(PHP_EOL, $orderData['fields[wildcard_san]'] ?? '') as $wildcardSanDomain) {
                 $orderParams['dcvmethod'][$wildcardSanDomain] = $orderData['dcvmethodMainDomain'];
                 $orderParams['approveremails'][$wildcardSanDomain] = $orderData['approveremail'];
             }
@@ -152,7 +152,6 @@ add_hook('AfterModuleCreate', 999999999999, function ($params) {
             (new SSLStepThree($sslParams))->run();
         } catch (\Exception $e) {
             $logs->addLog($order->client_id, $order->service_id, 'error', $e->getMessage());
-            throw $e;
         }
     }
 });
