@@ -399,14 +399,6 @@ class home extends AbstractController
         ];
     }
 
-    public function testHTML($input, $vars = [])
-    {
-        return [
-            'tpl' => 'test',
-            'vars' => $vars
-        ];
-    }
-
     public function renewJSON($input, $vars = [])
     {
         try {
