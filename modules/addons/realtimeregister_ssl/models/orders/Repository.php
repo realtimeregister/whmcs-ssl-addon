@@ -107,6 +107,22 @@ class Repository extends MainRepository
 
     public function addOrder($clientId, $serviceId, $sslOrderId, $verificationMethod, $status, $data)
     {
+        $currentOrder = Capsule::table($this->tableName)
+            ->where('service_id', '=', $serviceId)
+            ->first();
+        if ($currentOrder) {
+            Capsule::table($this->tableName)
+                ->where('id', '=', $currentOrder->id)
+                ->update([
+                    'ssl_order_id' => $sslOrderId,
+                    'verification_method' => $verificationMethod,
+                    'status' => $status,
+                    'data' => json_encode($data),
+                    'date' => date('Y-m-d H:i:s')
+                ]);
+
+            return;
+        }
         Capsule::table($this->tableName)->insert([
             'client_id' => $clientId,
             'service_id' => $serviceId,

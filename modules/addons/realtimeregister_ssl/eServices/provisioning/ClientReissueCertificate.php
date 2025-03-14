@@ -76,7 +76,7 @@ class ClientReissueCertificate
 
     public function run()
     {
-        SansDomains::decodeSanAprroverEmailsAndMethods($_POST);
+        SansDomains::decodeSanApproverEmailsAndMethods($_POST);
         $this->setMainDomainDcvMethod($_POST);
         $this->setSansDomainsDcvMethod($_POST);
         return $this->reissueController();

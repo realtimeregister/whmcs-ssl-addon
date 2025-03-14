@@ -138,8 +138,10 @@ class GenerateCSR
             $sslRepo = new SSL();
 
             $sslService = $sslRepo->getByServiceId((int)$serviceid);
-            $sslService->setConfigdataKey('private_key', encrypt($privKey));
-            $sslService->save();
+            if ($sslService) {
+                $sslService->setConfigdataKey('private_key', encrypt($privKey));
+                $sslService->save();
+            }
         } catch (Exception $ex) {
             throw new Exception('csrCodeGeneraterFailed');
         }

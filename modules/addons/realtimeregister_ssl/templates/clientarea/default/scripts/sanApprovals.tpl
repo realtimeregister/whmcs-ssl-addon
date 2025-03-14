@@ -3,7 +3,6 @@
 <script type="text/javascript">
     $(function () {
         const fillVars = JSON.parse('{$fillVars}');
-        const disabledValidationMethods = JSON.parse('{$disabledValidationMethods}');
 
         var mainDomainDcvMethod = '';
         for (var i = 0; i < fillVars.length; i++) {
@@ -16,7 +15,7 @@
             const backButton = $('#btnOrderBack');
 
             backButton.insertBefore('#btnOrderContinue')
-            backButton.click(() => {
+            backButton.on('click', () => {
                 const cert = (new URLSearchParams(window.location.search)).get('cert');
                 const token = $('input[name="token"]').val();
                 const serviceUrl = 'configuressl.php?cert=' + cert + '&step=3';
@@ -62,17 +61,10 @@
             return tableBegin + body + tableEnd;
         }
 
-        function ValidateIPaddress(ipaddress) {
-        if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)) {
-                return true;
-            }
-            return false;
-        }
-
-        var checkwildcard = false;
+        let checkwildcard = false;
 
         function replaceRadioInputs(sanEmails) {
-            var template = $('input[value="Array"]').closest('.row'),
+            let template = $('input[value="Array"]').closest('.row'),
                     selectEmailHtml = '',
                     fullHtml = '',
                     partHtml = '',
@@ -100,18 +92,14 @@
                 }
 
                 selectDcvMethod = '<div class="form-group"><select style="width:65%;" type="text" name="selectName" class="form-control">';
-                selectDcvMethod +='<option value="EMAIL">'+'{$ADDONLANG->T('dropdownDcvMethodEmail')}'+'</option>';
+                selectDcvMethod += '<option value="EMAIL">'+'{$ADDONLANG->T('dropdownDcvMethodEmail')}'+'</option>';
                 selectDcvMethod += '<option value="HTTP">'+'{$ADDONLANG->T('dropdownDcvMethodHttp')}'+'</option>';
                 selectDcvMethod += '<option value="DNS">'+'{$ADDONLANG->T('dropdownDcvMethodDns')}'+'</option>';
 
                 selectDcvMethod += '</select>';
 
-
                 partHtml = partHtml + selectDcvMethod.replace('name="selectName"', getNameForSelectMethod(x, domain));
                 selectEmailHtml = selectBegin.replace('name="selectName"', getNameForSelectEmail(x, domain));
-
-                if(jQuery.inArray('email', disabledValidationMethods) >= 0)
-                    selectEmailHtml = selectEmailHtml.replace(getNameForSelectEmail(x, domain) + ' class="form-control"', getNameForSelectEmail(x, domain) + ' class="form-control hidden"');
 
                 for (var i = 0; i < emails.length; i++) {
                     selectEmailHtml = selectEmailHtml +  getSelectHtml(emails[i], i === 0);
@@ -143,7 +131,7 @@
             $('select[name="dcvmethodMainDomain"] option[value="HTTP"]').remove();
         }
 
-        $('body').on('change','select[name^="dcvmethod"]', function() {
+        $('select[name^="dcvmethod"]').on('change', function() {
             const method = this.value;
             const selectName = this.name;
             let domain = selectName.replace('dcvmethod', '');
@@ -168,14 +156,6 @@
             }
 
         });
-
-        if(jQuery.inArray('email', disabledValidationMethods) >= 0)
-        {
-            $('#selectDcvMethodsTable').find('th:eq(2)').text('');
-            //replace page langs if email method disabled
-            $('#selectDcvMethodsTable').closest('form').find('h2:first').text('{$ADDONLANG->T('sslcertSelectVerificationMethodTitle')}');
-            $('#selectDcvMethodsTable').closest('form').find('p:first').text('{$ADDONLANG->T('sslcertSelectVerificationMethodDescription')}');
-        }
 
         if (!$('select[name="approveremail"] option').length)
         {

@@ -607,8 +607,6 @@
                     JSONParser.request('getSingleDiscountRule', {rule_id: rule_id}, function (data) {
                         if (data) {
 
-                            console.log(data);
-
                             const clientOptionHTML = '<option value="" selected="">#' + data.client.id + ' ' + data.client.name + '</option>';
                             modal.find('select[name="client"]').html(clientOptionHTML);
 

@@ -1,4 +1,6 @@
-<div id="divhideme" style="display: none"></div>
+<div id="divhideme" style="display: none">
+
+</div>
 <script type="text/javascript">
     $(document).ready(function () {
         {if $domains}
@@ -129,3 +131,4 @@
         });
     });
 </script>
+

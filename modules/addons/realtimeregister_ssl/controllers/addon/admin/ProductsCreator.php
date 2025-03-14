@@ -169,7 +169,7 @@ class ProductsCreator extends AbstractController
         // The prices are sometimes not imported yet, so we force an import when there is no data
         ConfigurableOptionService::loadPrices($priceRepo, $apiProductId);
 
-        $pricing = [
+        $basePricing = [
             'relid' => $productId,
             'msetupfee' => '0.00',
             'qsetupfee' => '0.00',
@@ -195,22 +195,27 @@ class ProductsCreator extends AbstractController
             switch ($period) {
                 case 12:
                     if ($payType === BillingCycle::ONE_TIME) {
-                        $pricing[BillingCycle::MONTHLY] = $basePrice;
+                        $basePricing[BillingCycle::MONTHLY] = $basePrice;
                     }
-                    $pricing[BillingCycle::ANNUALLY] = $basePrice;
+                    $basePricing[BillingCycle::ANNUALLY] = $basePrice;
                     break;
                 case 24:
-                    $pricing[BillingCycle::BIENNIALLY] = $basePrice;
+                    $basePricing[BillingCycle::BIENNIALLY] = $basePrice;
                     break;
                 case 36:
-                    $pricing[BillingCycle::TRIENNIALLY] = $basePrice;
+                    $basePricing[BillingCycle::TRIENNIALLY] = $basePrice;
                     break;
                 default:
                     break;
             }
         }
 
+
+
+
         foreach ($currencies as $currency) {
+            $pricing = $basePricing;
+
             $pricing['currency'] = $currency->id;
             $pricing[BillingCycle::MONTHLY] = $pricing[BillingCycle::MONTHLY] === -1.00
                 ? $pricing[BillingCycle::MONTHLY]
