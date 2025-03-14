@@ -81,6 +81,7 @@ $_LANG['addonAA']['apiConfiguration']['item']['autorenew_ordertype']['label']   
 $_LANG['addonAA']['apiConfiguration']['item']['autorenew_ordertype']['options']['renew_always']                              = 'Always renew';
 $_LANG['addonAA']['apiConfiguration']['item']['autorenew_ordertype']['options']['wait_for_payment']                              = 'Wait for payment';
 $_LANG['addonAA']['apiConfiguration']['item']['tech_region']['label']                                  = 'State/Region';
+$_LANG['addonAA']['crons']['setupConfFirst'] = 'Can not save cron settings, setup configuration first.';
 
 
 $_LANG['addonAA']['apiConfiguration']['item']['automatic_processing_of_renewal_orders']['label']                  = '';

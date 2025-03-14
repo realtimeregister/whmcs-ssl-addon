@@ -296,6 +296,7 @@ class ApiConfiguration extends AbstractController
                 $apiConfigRepo->setConfiguration(array_merge($crons, $input));
             } catch (Exception $ex) {
                 $vars['formError'] = Lang::T('messages', $ex->getMessage());
+                return $this->indexHTML($input, $vars);
             }
         }
 
