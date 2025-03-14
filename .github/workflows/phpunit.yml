@@ -21,6 +21,6 @@ jobs:
         with:
           version: 11.5
           php_version: 8.2
-          bootstrap: modules/addons/realtimeregister_ssl/vendor/autoload.php
+          bootstrap: modules/addons/realtimeregister_ssl/tests/_bootstrap.php
           configuration: modules/addons/realtimeregister_ssl/phpunit.xml.dist
           args: --coverage-text
