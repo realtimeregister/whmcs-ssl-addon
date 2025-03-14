@@ -221,32 +221,33 @@
                 <td class="text-left">{$ADDONLANG->T('Actions')}</td>
                 <td id="additionalActionsTd" class="text-left">
                     {if $displayRenewButton}
-                        <button type="button" id="btnRenew" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('renew')}</button>
+                        <button type="button" id="btnRenew" class="btn btn-default m-1">{$ADDONLANG->T('renew')}</button>
                     {/if}
                     {if $activationStatus !== 'ACTIVE' && $activationStatus !== 'COMPLETED' && $dcv_method === 'email'}
-                        <button type="button" id="resend-validation-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('resendValidationEmail')}</button>
+                        <button type="button" id="resend-validation-email" class="btn btn-default m-1">{$ADDONLANG->T('resendValidationEmail')}</button>
                     {/if}
                     {if ($activationStatus === 'processing' || $activationStatus === 'SUSPENDED') && $btndownload}
-                        <a href="{$btndownload}"><button type="button" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('download')}</button></a>
+                        <a href="{$btndownload}"><button type="button" class="btn btn-default m-1">{$ADDONLANG->T('download')}</button></a>
                     {/if}
 
                     {if $btnInstallCrt}
-                        <button type="button" id="installCertificate" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('installCertificateBtn')}</button>
+                        <button type="button" id="installCertificate" class="btn btn-default m-1">{$ADDONLANG->T('installCertificateBtn')}</button>
                     {/if}
 
                     {if $configurationStatus != 'Awaiting Configuration'}
                         {if $activationStatus === 'processing' || $activationStatus === 'SUSPENDED'}
-                            <button type="button" id="btnRevalidate" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('domainvalidationmethod')}</button>
+                            <button type="button" id="btnRevalidate" class="btn btn-default m-1">{$ADDONLANG->T('domainvalidationmethod')}</button>
                         {elseif $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
-                            <a class="btn btn-default" role="button" href="" id="Action_Custom_Module_Button_Reissue_Certificate">{$ADDONLANG->T('reissueCertificate')}</a>
+                            <a class="btn btn-default m-1" role="button" href="" id="Action_Custom_Module_Button_Reissue_Certificate">{$ADDONLANG->T('reissueCertificate')}</a>
                             <button type="button" id="send-certificate-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('sendCertificate')}</button>
-                            {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadca')}</button></a>{/if}
-                            {if $downloadcrt}<a href="{$downloadcrt}"><button type="button" id="download-crt" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadcrt')}</button></a>{/if}
-                            {if $downloadcsr}<a href="{$downloadcsr}"><button type="button" id="download-csr" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadcsr')}</button></a>{/if}
-                            {if $downloadpem}<a href="{$downloadpem}"><button type="button" id="download-ca" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('downloadpem')}</button></a>{/if}
+                            {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default m-1">{$ADDONLANG->T('downloadca')}</button></a>{/if}
+                            {if $downloadcrt}<a href="{$downloadcrt}"><button type="button" id="download-crt" class="btn btn-default m-1">{$ADDONLANG->T('downloadcrt')}</button></a>{/if}
+                            {if $downloadcsr}<a href="{$downloadcsr}"><button type="button" id="download-csr" class="btn btn-default m-1">{$ADDONLANG->T('downloadcsr')}</button></a>{/if}
+                            {if $downloadpem}<a href="{$downloadpem}"><button type="button" id="download-ca" class="btn btn-default m-1">{$ADDONLANG->T('downloadpem')}</button></a>{/if}
+                            {if $downloadbundle}<a href="{$downloadbundle}"><button type="button" id="download-bundle" class="btn btn-default m-1">{$ADDONLANG->T('downloadbundle')}</button></a>{/if}
                         {/if}
                         {if $privateKey}
-                            <button type="button" id="getPrivateKey" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('getPrivateKeyBtn')}</button>
+                            <button type="button" id="getPrivateKey" class="btn btn-default m-1">{$ADDONLANG->T('getPrivateKeyBtn')}</button>
                         {/if}
                     {/if}
                 </td>

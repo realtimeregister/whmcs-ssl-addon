@@ -6,3 +6,5 @@
 
 # Thumbnails
 ._*
+
+.phpunit.result.cache

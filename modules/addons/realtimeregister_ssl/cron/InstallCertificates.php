@@ -29,7 +29,14 @@ class InstallCertificates extends BaseTask
 
                 try {
                     if ($details['domain']) {
-                        Manage::prepareDeploy($order->service_id, $details['domain'], $cert, $details['csr'], $key, $caBundle);
+                        Manage::prepareDeploy(
+                            $order->service_id,
+                            $details['domain'],
+                            $cert,
+                            $details['csr'],
+                            $key,
+                            $caBundle
+                        );
                     }
 
                     $logsRepo->addLog(

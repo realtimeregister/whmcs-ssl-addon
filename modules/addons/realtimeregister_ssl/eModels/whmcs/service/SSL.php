@@ -98,6 +98,16 @@ class SSL extends \Illuminate\Database\Eloquent\Model
         $this->setConfigdataKey('ca', $value);
     }
 
+    public function setBundle($bundle)
+    {
+        $this->setConfigdataKey('bundle', $bundle);
+    }
+
+    public function getBundle()
+    {
+        return $this->getConfigdataKey('bundle');
+    }
+
     public function getOrderStatus()
     {
         return $this->getConfigdataKey('orderStatus');

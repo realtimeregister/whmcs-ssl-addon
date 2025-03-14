@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\eHelpers\ZipFileHelper;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
@@ -16,7 +17,7 @@ use WHMCS\Database\Capsule;
 class UpdateConfigData
 {
     private SSL $sslService;
-    private $orderdata;
+    private array $orderdata;
     
     public function __construct(SSL $sslService, $orderdata = [])
     {
@@ -74,9 +75,6 @@ class UpdateConfigData
         if ($certificateResults->count() === 1) {
             /** @var CertificatesApi $certificatesApi */
             $order = $certificateResults[0];
-            $caBundle = base64_decode(
-                $certificatesApi->downloadCertificate($order->id, DownloadFormatEnum::CA_BUNDLE_FORMAT)
-            );
             $apiRepo = new Products();
 
             if (
@@ -120,7 +118,21 @@ class UpdateConfigData
 
             $sslOrder->setValidFrom($order->startDate);
             $sslOrder->setValidTill($order->expiryDate);
-            $sslOrder->setCa($caBundle);
+
+            // Get the different parts of the created certificate
+            $sslOrder->setBundle($certificatesApi->downloadCertificate($order->id, DownloadFormatEnum::ZIP_FORMAT));
+            $zipFile = base64_decode($sslOrder->getBundle());
+
+            $zipFileHelper = new ZipFileHelper($zipFile);
+            $sslDomainPrefix = str_replace('.', '_', $sslOrder->getDomain());
+            if (!$sslOrder->getDomain()) {
+                // Possible an order without a domain..
+                $directoryEntries = $zipFileHelper->getNamesOfFilesInDirectory('Linux/');
+
+                $sslDomainPrefix = substr($directoryEntries[0], 6, -10); // remove the Linux/ and .ca-bundle from the filename
+            }
+
+            $sslOrder->setCa($zipFileHelper->getFile('Linux/' . $sslDomainPrefix . '.ca-bundle'));
 
             if ($order->subscriptionEndDate) {
                 $sslOrder->setSubscriptionStarts($order->startDate);
