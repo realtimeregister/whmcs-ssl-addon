@@ -1,0 +1,26 @@
+name: Test application
+
+on: [ push ]
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Composer install --dev
+        uses: php-actions/composer@v6
+        with:
+          working_dir: "modules/addons/realtimeregister_ssl"
+
+      - name: PHPUnit
+        uses: php-actions/phpunit@master
+        env:
+          TEST_NAME: WHMCS
+        with:
+          version: 11.5
+          php_version: 8.1
+          bootstrap: modules/addons/realtimeregister_ssl/vendor/autoload.php
+          configuration: modules/addons/realtimeregister_ssl/phpunit.xml.dist
+          args: --coverage-text
