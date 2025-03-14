@@ -11,7 +11,7 @@ Free of charge SSL Addon for WHMCS to automate SSL certificate sales/distributio
 - Access to WHMCS admin area
 
 ### Releases/Downloads
-Please check the latest [Releases](https://github.com/realtimeregister/whmcs-ssl-addon/releases) and Download files.
+Please check the latest [Releases](https://github.com/realtimeregister/whmcs-ssl-addon/releases) and Download files.  
 **Note:** If you choose to download just the source code, it is necessary to run `composer install` in {your_install_directory}/modules/addons/realtimeregister_ssl/
 
 ### WIKI
