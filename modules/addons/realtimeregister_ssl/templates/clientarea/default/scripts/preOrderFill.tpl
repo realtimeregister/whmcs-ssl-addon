@@ -1,3 +1,16 @@
+{*
+    Use this template to allow a client to pre-fill all the order fields. The order will be immediately activated
+    based on the product setting. Place {$sslOrderIntegrationCode} before the following part in configureproduct.tpl
+
+    {if $customfields}
+
+        <div class="sub-heading pb-1">
+            <span class="primary-bg-color">{$LANG.orderadditionalrequiredinfo}<br><i><small>{lang key='orderForm.requiredField'}</small></i></span>
+        </div>
+     ....
+*}
+
+
 <div class="form-group">
     <label for="csrInput" class="d-block">CSR</label>
     <textarea name="csr" id="csrInput" class="d-block form-control">{$csrData['csr']}</textarea>
@@ -144,9 +157,7 @@
     $(function () {
         initPreOrderFill();
 
-        const mutationObserver = new MutationObserver(function (e) {
-            initPreOrderFill();
-        });
+        const mutationObserver = new MutationObserver(() => initPreOrderFill());
 
         $('#productConfigurableOptions').each(function () {
             mutationObserver.observe(this, {childList: true});
