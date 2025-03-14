@@ -66,12 +66,16 @@ class Crons extends AbstractController
 
                 $apiConfigRepo = new Repository();
                 $originalValues = (array)$apiConfigRepo->get();
+                if (empty($originalValues)) {
+                    $vars['formError'] = Lang::T('setupConfFirst');
+                    return $this->indexHTML($input, $vars);
+                }
                 $input = array_merge($originalValues, $input);
 
                 $apiConfigRepo->setConfiguration($input);
-
             } catch (\Exception $ex) {
-                $vars['formError'] = Lang::T('messages', $ex->getMessage());
+                $vars['formError'] = $ex->getMessage();
+                return $this->indexHTML($input, $vars);
             }
         }
         $vars['success'] = Lang::absoluteT('changessavedsuccessfully');
