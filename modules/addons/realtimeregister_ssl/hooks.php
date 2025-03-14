@@ -139,13 +139,13 @@ add_hook('AfterModuleCreate', 999999999999, function ($params) {
         $orderParams = $params['params'];
         try {
             $orderData = json_decode($order->data, true);
+            $orderParams['configdata']['fields']['sans_domains'] = $orderData['fields[sans_domains]'];
             foreach (explode(PHP_EOL, $orderData['fields[sans_domains]'] ?? '') as $sanDomain) {
                 $orderParams['dcvmethod'][$sanDomain] = $orderData['dcvmethodMainDomain'];
-                $orderParams['approveremails'][$sanDomain] = $orderData['approveremail'];
             }
+            $orderParams['configdata']['fields']['wildcard_san'] = $orderData['fields[wildcard_san]'];
             foreach (explode(PHP_EOL, $orderData['fields[wildcard_san]'] ?? '') as $wildcardSanDomain) {
                 $orderParams['dcvmethod'][$wildcardSanDomain] = $orderData['dcvmethodMainDomain'];
-                $orderParams['approveremails'][$wildcardSanDomain] = $orderData['approveremail'];
             }
             $orderParams['noRedirect'] = true;
             $sslParams = array_merge($orderParams, $orderData);

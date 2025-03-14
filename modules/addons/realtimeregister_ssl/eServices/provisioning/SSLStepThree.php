@@ -56,7 +56,6 @@ class SSLStepThree
     {
         try {
             SansDomains::decodeSanApproverEmailsAndMethods($this->p);
-            $this->setMainDomainDcvMethod();
             $this->setSansDomainsDcvMethod();
             $this->SSLStepThree();
         } catch (Exception $ex) {
@@ -65,21 +64,29 @@ class SSLStepThree
         }
     }
 
-    private function setMainDomainDcvMethod(): void
-    {
-        $this->p['fields']['dcv_method'] = $this->p['dcvmethodMainDomain'];
-    }
 
     private function setSansDomainsDcvMethod(): void
     {
         $this->p['sansDomainsDcvMethod'] = [];
         foreach ($this->p['dcvmethod'] ?? [] as $domain => $dcvMethod) {
-            $this->p['sansDomainsDcvMethod'][] = [
-                "commonName" => $domain,
-                "type" => $dcvMethod,
-                "email" => $this->p['approveremails'][$domain]
-            ];
+            if ($domain) {
+                $this->p['sansDomainsDcvMethod'][] = [
+                    "commonName" => $domain,
+                    "type" => $dcvMethod,
+                    "email" => $dcvMethod === 'EMAIL' ? $this->getApproverEmail($domain) : null
+                ];
+            }
         }
+    }
+
+    private function getApproverEmail(string $domain) {
+        if ($this->p['approveremails'][$domain]) {
+            return $this->p['approveremails'][$domain];
+        }
+
+        $emailUser = explode('@', $this->p['approveremail'])[0];
+
+        return $emailUser . '@' . preg_replace('/^\*\.|^www\./', '', $domain);
     }
 
     private function SSLStepThree()
@@ -242,7 +249,7 @@ class SSLStepThree
         $this->sslConfig->setDomain($orderDetails->identifier);
         $this->sslConfig->setOrderStatusDescription($orderDetails->status);
         $this->sslConfig->setApproverMethod($this->p['approvalmethod']);
-        $this->sslConfig->setDcvMethod($this->p['fields']['dcv_method'] == 'http'?'FILE':$this->p['fields']['dcv_method']);
+        $this->sslConfig->setDcvMethod($this->p['dcvmethodMainDomain'] == 'http'?'FILE':$this->p['dcvmethodMainDomain']);
         $this->sslConfig->setProductId($this->p['configoption1']);
         $this->sslConfig->setSSLStatus($orderDetails->status);
         $this->sslConfig->setStatus(\AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL::CONFIGURATION_SUBMITTED);
@@ -265,7 +272,7 @@ class SSLStepThree
             $this->p['userid'],
             $this->p['serviceid'],
             $sslOrder->id,
-            $this->p['fields']['dcv_method'],
+            $this->p['dcvmethodMainDomain'],
             'Pending Verification',
             array_merge((array) $this->sslConfig->configdata, $addedSSLOrder->toArray())
         );
