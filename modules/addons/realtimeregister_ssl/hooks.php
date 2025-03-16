@@ -33,6 +33,10 @@ require_once __DIR__ . '/vendor/autoload.php';
 if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
 
 add_hook("ClientAreaPage",1 ,function($vars) {
+    if (empty($_SERVER['HTTP_REFERER']) || !str_contains($_SERVER['HTTP_REFERER'], 'clientsservices.php')) {
+        return;
+    }
+
     global $CONFIG;
 
     if (isset($_GET['id'])) {
@@ -157,11 +161,20 @@ add_hook('AfterModuleCreate', 999999999999, function ($params) {
 });
 
 add_hook('ClientAreaPage', 1, function($params) {
-    new Loader();
-    $activator = new Activator();
-    $activator->run();
+    // List of valid template files that have additional processing
+    $validTemplateFiles = ['configureproduct', 'configuressl-stepone'];
+
+    // Check if the templatefile parameter exists and is in our list
+    if (!isset($params['templatefile']) || ! in_array($params['templatefile'], $validTemplateFiles)) {
+        return;
+    }
 
     if (isset($params['templatefile'])) {
+        // Load necessary classes only if a valid template file is confirmed
+        new Loader();
+        $activator = new Activator();
+        $activator->run();
+
         global $smarty;
         switch ($params['templatefile']) {
             case 'configureproduct':
@@ -221,7 +234,7 @@ add_hook('ClientAreaPage', 1, function($params) {
 
 add_hook('ClientAreaHeadOutput', 1, function($params)
 {
-    if($params['clientareaaction'] == 'services') {
+    if ($params['clientareaaction'] == 'services') {
           $services = Capsule::table('tblhosting')
                 ->select(['tblhosting.id'])
                 ->join('tblproducts', 'tblproducts.id','=', 'tblhosting.packageid')
@@ -306,7 +319,6 @@ add_hook('ClientAreaHeadOutput', 1, function($params)
 });
 add_hook('ClientLogin', 1, function($vars)
 {
-
     if (isset($_REQUEST['redirectToProductDetails'], $_REQUEST['serviceID'])
         && $_REQUEST['redirectToProductDetails'] === 'true' && is_numeric($_REQUEST['serviceID'])) {
         $ca = new WHMCS_ClientArea();
@@ -446,8 +458,7 @@ function realtimeregister_ssl_displaySSLSummaryStats($vars)
     return '';
 }
 
-add_hook('ClientAreaPage', 1, 'realtimeregister_ssl_displaySSLSummaryStats');
-add_hook('ClientAreaHeadOutput', 999999999999, 'realtimeregister_ssl_displaySSLSummaryStats');
+add_hook('ClientAreaPageHome', 1, 'realtimeregister_ssl_displaySSLSummaryStats');
 
 function realtimeregister_ssl_loadSSLSummaryCSSStyle($vars)
 {
@@ -665,134 +676,6 @@ HTML;
 
 });
 
-add_hook('InvoiceCreationPreEmail', 1, function($vars)
-{
-    //get invoice data
-    $command  = 'GetInvoice';
-    $postData = ['invoiceid' => $vars['invoiceid']];
-
-    $results = localAPI($command, $postData);
-
-    if ($results['result'] == 'success') {
-        $invoiceItem          = $results['items']['item'];
-        $userID               = $results['userid'];
-        $invoiceID            = $results['invoiceid'];
-        $newPrices            = [];
-        $itemdescriptionArray = [];
-        $itemamountArray      = [];
-        $itemtaxedArray       = [];
-
-        foreach ($invoiceItem as $item) {
-            if ($item['type'] == 'Upgrade') {
-                //check if this is config options update and get the service id
-                $itemID    = $item['id'];
-                $upgradeID = $item['relid'];
-
-                $upgradeData = \WHMCS\Database\Capsule::table('tblupgrades')
-                    ->where('id', '=', $upgradeID)
-                    ->first();
-
-                if ($upgradeData->type == 'configoptions') {
-                    $serviceID   = $upgradeData->relid;
-                    $serviceData = \WHMCS\Database\Capsule::table('tblhosting')
-                        ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
-                        ->select(
-                            'tblhosting.id',
-                            'tblhosting.orderid',
-                            'tblhosting.packageid',
-                            'tblhosting.domain',
-                            'tblhosting.nextduedate',
-                            'tblhosting.billingcycle',
-                            'tblproducts.servertype'
-                        )
-                        ->where('tblhosting.userid', '=', $userID)
-                        ->where('tblhosting.id', '=', $serviceID)
-                        ->first();
-
-                    if ($serviceData->servertype == 'realtimeregister_ssl') {
-                        $isRealtimeRegisterSslProduct = true;
-                        $upgradesData      = \WHMCS\Database\Capsule::table('tblupgrades')
-                            ->select('recurringchange', 'originalvalue')
-                            ->where('id', '=', $item['relid'])
-                            ->first();
-
-                        $configOptionID = explode('=>', $upgradesData->originalvalue)[0];
-
-                        $newPrice                      = formatCurrency(floatval($upgradesData->recurringchange));
-                        $newPrices[$configOptionID]    = $newPrice->toNumeric();
-                        $itemdescriptionArray[$itemID] = $item['description'];
-                        $itemamountArray[$itemID]      = $newPrice->toNumeric();
-                        $itemtaxedArray[$itemID]       = $item['taxed'];
-                    }
-                }
-            } elseif($item['type'] == '' && !$item['relid'] && $isRealtimeRegisterSslProduct) {
-                $promoItemID = $item['id'];
-                $description = $item['description'];
-                $promoTaxed  = $item['taxed'];
-                $tmp1        = explode(':', $description);
-                $tmp2        = explode('-', $tmp1[1]);
-                $promocode   = trim($tmp2[0]);
-
-                if (
-                    $promocode && $promocode != '' && $promocode != 'The promotion code entered does not exist'
-                    && $promoItemID != '' && !empty($newPrices)
-                ) {
-                    $promodata    = validateUpgradePromo($promocode);
-                    $itemdiscount = 0;
-
-                    foreach ($newPrices as $configid => $price ) {
-                        if (in_array($configid, $promodata['configoptions'])) {
-                            $itemdiscount += ($promodata["discounttype"] == "Percentage"
-                                ? round($price * ($promodata["value"] / 100), 2)
-                                : ($price < $promodata["value"] ? $newPrice : $promodata["value"]));
-                        }
-                    }
-
-                    $itemdescriptionArray[$promoItemID] = $description;
-                    $itemamountArray[$promoItemID]      = -1 * abs($itemdiscount);
-                    $itemtaxedArray[$promoItemID]       = $promoTaxed;
-                    $newPrices                          = [];
-                }
-            }
-        }
-
-        if (!empty($itemdescriptionArray) && !empty($itemamountArray) && !empty($itemtaxedArray)) {
-            $command2  = 'UpdateInvoice';
-            $postData2 = [
-                'invoiceid'       => $invoiceID,
-                'itemdescription' => $itemdescriptionArray,
-                'itemamount'      => $itemamountArray,
-                'itemtaxed'       => $itemtaxedArray
-            ];
-
-            $results = localAPI($command2, $postData2);
-
-            $lastOrder = \WHMCS\Database\Capsule::table('tblorders')->where('userid', $userID)
-                ->orderBy('id', 'DESC')->first();
-
-            \WHMCS\Database\Capsule::table('tblorders')->where('id', $lastOrder->id)->update([
-                'amount' => reset($itemamountArray)
-            ]);
-
-            if (!$results['result'] == 'success') {
-                logModuleCall(
-                    'realtimeregister_ssl',
-                    $command2,
-                    $postData2,
-                    $results
-                );
-            }
-        }
-    } else {
-        logModuleCall(
-            'realtimeregister_ssl',
-            $command,
-            $postData,
-            $results
-        );
-    }
-});
-
 add_hook('AdminAreaFooterOutput', 1, function($vars)
 {
     if ($vars['filename'] == 'clientsservices' && $_GET['userid'] && $_GET['id']) {
@@ -885,20 +768,3 @@ add_hook('DailyCronJob', 10, function () {
     curl_exec($ch);
     curl_close($ch);
 });
-
-
-// Setup tasks, these can be disabled via the admin
-global $CONFIG;
-
-require_once __DIR__ . DS . 'Loader.php';
-new Loader();
-
-\AddonModule\RealtimeRegisterSsl\cron\AutomaticSynchronisation::register();
-\AddonModule\RealtimeRegisterSsl\cron\ProcessingOrders::register();
-\AddonModule\RealtimeRegisterSsl\cron\DailyStatusUpdater::register();
-\AddonModule\RealtimeRegisterSsl\cron\CertificateStatisticsLoader::register();
-\AddonModule\RealtimeRegisterSsl\cron\ExpiryHandler::register();
-\AddonModule\RealtimeRegisterSsl\cron\CertificateSender::register();
-\AddonModule\RealtimeRegisterSsl\cron\PriceUpdater::register();
-\AddonModule\RealtimeRegisterSsl\cron\CertificateDetailsUpdater::register();
-\AddonModule\RealtimeRegisterSsl\cron\InstallCertificates::register();
