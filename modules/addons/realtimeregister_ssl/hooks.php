@@ -80,12 +80,9 @@ add_hook('ClientAreaPage', 1, function($params) {
     if (!isset($params['templatefile']) || ! in_array($params['templatefile'], $validTemplateFiles)) {
         return;
     }
-    // Load necessary classes only if a valid template file is confirmed
-    new Loader();
-    $activator = new Activator();
-    $activator->run();
 
     if (isset($params['templatefile'])) {
+        // Load necessary classes only if a valid template file is confirmed
         new Loader();
         $activator = new Activator();
         $activator->run();
