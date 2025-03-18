@@ -12,6 +12,7 @@ jobs:
       - name: Composer install --dev
         uses: php-actions/composer@v6
         with:
+          command: install
           working_dir: "modules/addons/realtimeregister_ssl"
 
       - name: PHPUnit
