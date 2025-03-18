@@ -25,4 +25,3 @@ jobs:
           php_extensions: zip
           bootstrap: modules/addons/realtimeregister_ssl/tests/_bootstrap.php
           configuration: modules/addons/realtimeregister_ssl/phpunit.xml.dist
-          args: --coverage-text
