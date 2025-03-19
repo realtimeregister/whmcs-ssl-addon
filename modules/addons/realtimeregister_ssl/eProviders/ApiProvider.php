@@ -30,7 +30,7 @@ class ApiProvider
         return self::$instance;
     }
 
-    public static function standalone(string $className, string $apiLogin, bool $isTest): mixed {
+    public static function standalone(string $className, string $apiLogin, bool $isTest) {
         return new $className(new AuthorizedClient(self::getUrl($isTest), $apiLogin));
     }
 
