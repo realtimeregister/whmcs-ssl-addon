@@ -1,6 +1,6 @@
 # Realtime Register WHMCS SSL Addon
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![CI](https://github.com/realtimeregister/whmcs-ssl-addon/actions/workflows/phpcs.yml/badge.svg)](https://github.com/realtimeregister/whmcs-ssl-addon/actions/workflows/phpcs.yml)
+[![CI](https://github.com/realtimeregister/whmcs-ssl-addon/actions/workflows/phpunit.yml/badge.svg)](https://github.com/realtimeregister/whmcs-ssl-addon/actions/workflows/phpunit.yml)
 
 Free of charge SSL Addon for WHMCS to automate SSL certificate sales/distribution via realtimeregister.com platform
 
