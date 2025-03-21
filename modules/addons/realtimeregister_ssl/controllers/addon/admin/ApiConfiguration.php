@@ -249,7 +249,7 @@ class ApiConfiguration extends AbstractController
         // Give an error when people forget tot install the composer packages
         if (!\Composer\InstalledVersions::isInstalled('realtimeregister/realtimeregister-php')) {
             $vars['form'] = '<div class="alert alert-danger" role="alert">You installed the source version of this module, please run ' .
-                    '<i>composer install</i> before continuing, and reload this page</div>';
+                    '<i>composer install</i> before continuing, and reload this page</div>' . $vars['form'];
         }
 
         return [
