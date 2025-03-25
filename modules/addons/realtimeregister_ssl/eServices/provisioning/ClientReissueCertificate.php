@@ -119,22 +119,6 @@ class ClientReissueCertificate
         $displayCsrGenerator = $apiConf->display_csr_generator;
         $countriesForGenerateCsrForm = Countries::getInstance()->getCountriesForAddonDropdown();
 
-        // Get selected default country for CSR Generator
-        $defaultCsrGeneratorCountry = ($displayCsrGenerator) ? $apiConf->default_csr_generator_country : '';
-        if (
-            key_exists($defaultCsrGeneratorCountry, $countriesForGenerateCsrForm) && $defaultCsrGeneratorCountry != null
-        ) {
-            // Get country name
-            $elementValue = $countriesForGenerateCsrForm[$defaultCsrGeneratorCountry];
-            // Remove country from list
-            unset($countriesForGenerateCsrForm[$defaultCsrGeneratorCountry]);
-            // Insert default country on the begin of countries list
-            $countriesForGenerateCsrForm = array_merge(
-                [$defaultCsrGeneratorCountry => $elementValue],
-                $countriesForGenerateCsrForm
-            );
-        }
-
         $this->vars['generateCsrIntegrationCode'] = ($displayCsrGenerator) ? ScriptService::getGenerateCsrModalScript(
             $this->p['serviceid'],
             json_encode([]),

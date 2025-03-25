@@ -287,9 +287,6 @@ class ApiConfiguration extends AbstractController
                 if (!$input['auto_renew_invoice_recurring']) {
                     $input['renew_invoice_days_recurring'] = null;
                 }
-                if (!$input['display_csr_generator']) {
-                    $input['default_csr_generator_country'] = null;
-                }
 
                 $apiConfigRepo = new Repository();
                 $apiConfigRepo->setConfiguration(array_merge($crons, $input));
