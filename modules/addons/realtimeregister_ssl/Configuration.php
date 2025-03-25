@@ -309,21 +309,17 @@ class Configuration extends AbstractConfiguration
 
     private static function insertHiddenFields()
     {
-        try {
-            $products = Capsule::table('tblproducts')
-                ->select(['id'])
-                ->where('servertype', '=', 'realtimeregister_ssl')
-                ->get();
-            foreach ($products as $product) {
-                if (Capsule::table('tblcustomfields')
-                        ->where('relid', '=', $product->id)
-                        ->where('fieldtype', '=', 'hidden')
-                        ->first() == null) {
-                    ConfigurableOptionService::createHiddenField($product->id);
-                }
+        $products = Capsule::table('tblproducts')
+            ->select(['id'])
+            ->where('servertype', '=', 'realtimeregister_ssl')
+            ->get();
+        foreach ($products as $product) {
+            if (Capsule::table('tblcustomfields')
+                    ->where('relid', '=', $product->id)
+                    ->where('fieldtype', '=', 'hidden')
+                    ->first() == null) {
+                ConfigurableOptionService::createHiddenField($product->id);
             }
-        } catch (\Exception $e) {
-            dd($e);
         }
     }
 
