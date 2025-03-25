@@ -4,6 +4,7 @@ use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
+use AddonModule\RealtimeRegisterSsl\eHelpers\JSInserter;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
@@ -28,9 +29,11 @@ use WHMCS\Service\Service;
 use WHMCS\View\Formatter\Price;
 use WHMCS\View\Menu\Item;
 
-require_once __DIR__ . '/vendor/autoload.php';
 
 if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
+
+require_once __DIR__ . DS . 'vendor'. DS . 'autoload.php';
+require_once __DIR__ . DS . 'Loader.php';
 
 add_hook("ClientAreaPage",1 ,function($vars) {
     if (empty($_SERVER['HTTP_REFERER']) || !str_contains($_SERVER['HTTP_REFERER'], 'clientsservices.php')) {
@@ -84,6 +87,7 @@ add_hook("ClientAreaPage",1 ,function($vars) {
 
 add_hook('ShoppingCartValidateProductUpdate', 1, function($params) {
     if ($params['csr']) {
+        new Loader();
         Server::I();
         $productId = $_SESSION['cart']['cartsummarypid'];
         $params['productId'] = $productId;
@@ -178,6 +182,10 @@ add_hook('ClientAreaPage', 1, function($params) {
         global $smarty;
         switch ($params['templatefile']) {
             case 'configureproduct':
+                if ($params['productinfo']['module'] !== 'realtimeregister_ssl') {
+                    return;
+                }
+
                 $productId = $params['productinfo']['pid'];
                 $product = Capsule::table('tblproducts')
                     ->where('id', '=', $productId)
@@ -273,6 +281,7 @@ add_hook('ClientAreaHeadOutput', 1, function($params)
         $params['filename'] === 'index'
     ) {
         if($_REQUEST['action'] === 'generateCsr') {
+            Server::I(true);
             $GenerateCsr = new AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR($params, $_POST);
             echo $GenerateCsr->run();
             die();
@@ -717,15 +726,9 @@ JS;
 });
 
 add_hook('ClientAreaHeadOutput', 2, function($vars) {
-    if($vars['template'] == 'twenty-one' && $vars['module'] == 'realtimeregister_ssl') {
-        return <<<HTML
-<script type="text/javascript">
-$(document).ready(function (){
-    $('.modal-header.panel-heading').css({'display':'block'});
-});
-</script>
-HTML;
-
+    if ($vars['templatefile'] == 'configureproduct' && $vars['productinfo']['module'] === 'realtimeregister_ssl') {
+        return JSInserter::generateScript(__DIR__ . DS . 'addonLibs' . DS . 'js' . DS . 'hideadditional.js',
+            ['template' => $vars['template']]);
     }
 });
 

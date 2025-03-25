@@ -7,6 +7,7 @@ use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
@@ -59,16 +60,16 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '0.9.5';
+    public $version = '0.9.6';
     public $tablePrefix = '';
     public $modelRegister = [];
 
     private static function updateProductPricing()
     {
         $products = Capsule::table('tblproducts')
-           ->select(['id', 'paytype'])
-           ->where('configoption1', 'LIKE', 'ssl_%')
-           ->get();
+            ->select(['id', 'paytype'])
+            ->where('configoption1', 'LIKE', 'ssl_%')
+            ->get();
         foreach ($products as $product) {
             self::updatePricing($product->id, $product->paytype);
         }
@@ -192,7 +193,7 @@ class Configuration extends AbstractConfiguration
                                 ->where('relid', '=', $configOptionSub->id)
                                 ->where('currency', '=', $price->currency)
                                 ->where('type', '=', 'configoptions')
-                                ->update(['annually' => $productPrice,  "monthly" => $paytype === 'onetime' ? $productPrice : '-1.00']);
+                                ->update(['annually' => $productPrice, "monthly" => $paytype === 'onetime' ? $productPrice : '-1.00']);
                             $newOptionName = preg_replace("/\( years\)/", "",
                                 preg_replace("/1/", "", $configOption->optionname)
                             );
@@ -257,7 +258,7 @@ class Configuration extends AbstractConfiguration
                                 ->where('relid', '=', $configOptionSub->id)
                                 ->where('currency', '=', $price->currency)
                                 ->where('type', '=', 'configoptions')
-                                ->update(['annually' => $productPrice,  "monthly" => $paytype === 'onetime' ? $productPrice : '-1.00']);
+                                ->update(['annually' => $productPrice, "monthly" => $paytype === 'onetime' ? $productPrice : '-1.00']);
                             $newOptionName = preg_replace("/\( years\)/", "",
                                 preg_replace("/1/", "", $configOption->optionname)
                             );
@@ -303,6 +304,26 @@ class Configuration extends AbstractConfiguration
                     }
                 }
             }
+        }
+    }
+
+    private static function insertHiddenFields()
+    {
+        try {
+            $products = Capsule::table('tblproducts')
+                ->select(['id'])
+                ->where('servertype', '=', 'realtimeregister_ssl')
+                ->get();
+            foreach ($products as $product) {
+                if (Capsule::table('tblcustomfields')
+                        ->where('relid', '=', $product->id)
+                        ->where('fieldtype', '=', 'hidden')
+                        ->first() == null) {
+                    ConfigurableOptionService::createHiddenField($product->id);
+                }
+            }
+        } catch (\Exception $e) {
+            dd($e);
         }
     }
 
@@ -384,6 +405,7 @@ class Configuration extends AbstractConfiguration
         EmailTemplateService::createRenewalTemplate();
         EmailTemplateService::createReissueTemplate();
         EmailTemplateService::createValidationInformationTemplate();
+        self::installTasks();
     }
 
     /**
@@ -421,6 +443,7 @@ class Configuration extends AbstractConfiguration
         (new OrdersRepo())->updateOrdersTable();
         self::renameSSLOrderStatuses();
         self::updateProductPricing();
+        self::insertHiddenFields();
         self::installTasks();
     }
 
