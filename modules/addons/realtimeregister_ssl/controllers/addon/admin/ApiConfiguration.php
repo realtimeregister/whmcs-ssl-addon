@@ -266,7 +266,6 @@ class ApiConfiguration extends AbstractController
             try {
                 $checkFieldsArray = [
                     'display_csr_generator',
-                    'profile_data_csr',
                     'auto_install_panel',
                     'auto_renew_invoice_recurring',
                     'send_expiration_notification_recurring',
