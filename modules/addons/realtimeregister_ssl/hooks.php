@@ -750,7 +750,10 @@ add_hook('DailyCronJob', 10, function () {
     ];
 
     if (strlen($apiConfiguration->api_login) > 0) {
-        $information['handle'] = explode('/', base64_decode($apiConfiguration->api_login))[0];
+        $information['handle'] = explode(
+            '/',
+            base64_decode(decrypt($apiConfiguration->api_login, $GLOBALS['cc_encryption_hash']))
+        )[0];
     }
 
     $url = 'https://realtimeregister.com/whmcs-update/realtimeregister_ssl/version';

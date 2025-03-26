@@ -380,6 +380,18 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                     $table->dropColumn('auto_renew_invoice_one_time');
                 });
             }
+
+            // Encrypt api login
+            if (Capsule::schema()->hasColumn($this->tableName, 'api_login')) {
+                $apiLogins = Capsule::table($this->tableName)->get('api_login')->pluck('api_login')->toArray();
+
+                foreach ($apiLogins as $apiLogin) {
+                    if (base64_decode($apiLogin, true) !== false && str_contains(base64_decode($apiLogin), '/')) {
+                        Capsule::table($this->tableName)->where('api_login', '=', $apiLogin)
+                            ->update(['api_login' => encrypt($apiLogin)]);
+                    }
+                }
+            }
         }
     }
 
@@ -390,3 +402,5 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
         }
     }
 }
+
+// aHlsa2V3aXRqZW5zLXRlc3QvYWRtaW46OsZPslqRnzPG8HyxwNTBNDE9XTB7TdB/YUGph+R8Pjw=
