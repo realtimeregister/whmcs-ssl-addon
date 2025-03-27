@@ -63,6 +63,17 @@ class ConfigurableOptionService
         ]);
     }
 
+    public static function createHiddenField($productId) {
+        Capsule::table('tblcustomfields')->insert(
+            [
+                'type' => 'product',
+                'fieldtype' => 'hidden',
+                'relid' => $productId,
+                'showorder' => 'on'
+            ]
+        );
+    }
+
     private static function getOptionGroup($name, $productId) : int {
         $optionGroupResult = Capsule::table('tblproductconfiggroups')
             ->select('id')

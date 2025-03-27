@@ -95,6 +95,8 @@ class ProductsCreator extends AbstractController
         $apiProduct = $this->apiProductsRepo->getProduct(KeyToIdMapping::getIdByKey($input[C::API_PRODUCT_ID]));
 
         self::insertPricing($input[C::API_PRODUCT_ID], $productData['paytype'], $newProductId, $apiProduct->getPeriods());
+        ConfigurableOptionService::createHiddenField($newProductId);
+
 
         if ($apiProduct->isSanEnabled() && $input[C::PRODUCT_ENABLE_SAN] === 'on') {
             ConfigurableOptionService::createForProduct(

@@ -2,7 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eHelpers;
 
-const PREFIX_VAR = "var ";
+const PREFIX_VAR = "const ";
 const VALUE_PLACEHOLDER = "**value";
 const VALUE_ASSIGN_DEFAULT = " = " . VALUE_PLACEHOLDER . ";";
 const VALUE_ASSIGN_STRING = " = '" . VALUE_PLACEHOLDER . "';";

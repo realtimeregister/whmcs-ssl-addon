@@ -109,7 +109,7 @@
                 json: 1,
                 success: function (ret) {
                     const data = JSON.parse(ret);
-                    if (data.success) {
+                    if (data.success && data.emails[commonName]) {
                         data.emails[commonName].forEach(email =>
                             $('select[name="approveremail"]')
                                 .append(`<option value ='${email}'>${email}</option>`)
