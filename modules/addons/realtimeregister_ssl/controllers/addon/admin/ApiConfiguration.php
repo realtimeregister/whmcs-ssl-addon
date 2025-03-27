@@ -266,7 +266,6 @@ class ApiConfiguration extends AbstractController
             try {
                 $checkFieldsArray = [
                     'display_csr_generator',
-                    'profile_data_csr',
                     'auto_install_panel',
                     'auto_renew_invoice_recurring',
                     'send_expiration_notification_recurring',
@@ -287,9 +286,6 @@ class ApiConfiguration extends AbstractController
                 }
                 if (!$input['auto_renew_invoice_recurring']) {
                     $input['renew_invoice_days_recurring'] = null;
-                }
-                if (!$input['display_csr_generator']) {
-                    $input['default_csr_generator_country'] = null;
                 }
 
                 $apiConfigRepo = new Repository();
