@@ -6,6 +6,7 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\forms\CheckboxField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\Creator;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\HiddenField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\LegendField;
+use AddonModule\RealtimeRegisterSsl\addonLibs\forms\PasswordField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\SelectField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextareaField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextField;
@@ -40,7 +41,7 @@ class ApiConfiguration extends AbstractController
         $field->value = $input['tech_phone_country'] ?: 'us';
         $form->addField($field);
 
-        $field = new TextField();
+        $field = new PasswordField();
         $field->name = 'api_login';
         $field->value = $input['api_login'];
         $field->error = $this->getFieldError('api_login');
@@ -245,7 +246,6 @@ class ApiConfiguration extends AbstractController
 
         $vars['form'] = $form->getHTML();
 
-        
         // Give an error when people forget tot install the composer packages
         if (!\Composer\InstalledVersions::isInstalled('realtimeregister/realtimeregister-php')) {
             $vars['form'] = '<div class="alert alert-danger" role="alert">You installed the source version of this module, please run ' .
@@ -288,6 +288,15 @@ class ApiConfiguration extends AbstractController
                     $input['renew_invoice_days_recurring'] = null;
                 }
 
+                // Check if we got a real key, or that it's just the fake default
+                if (str_replace('*', '', $input['api_login']) === '' || $input['api_login'] === '') {
+                    $apiConfigRepo = new Repository();
+                    $originalData = (array)$apiConfigRepo->get();
+                    $input['api_login'] = $originalData['api_login'];
+                } else {
+                    $input['api_login'] = encrypt($input['api_login']);
+                }
+
                 $apiConfigRepo = new Repository();
                 $apiConfigRepo->setConfiguration(array_merge($crons, $input));
             } catch (Exception $ex) {
@@ -302,8 +311,21 @@ class ApiConfiguration extends AbstractController
 
     public function testConnectionJSON($input = [], $vars = [])
     {
-        ApiProvider::standalone(CustomersApi::class, $input['api_login'], $input['api_test'] === 'true')
-            ->priceList(ApiProvider::parseCustomer($input['api_login']));
+        $token = $input['api_login'];
+
+        if (str_replace('*', '', $input['api_login']) === '' || $input['api_login'] === '') {
+            $apiConfigRepo = new Repository();
+            $input = (array)$apiConfigRepo->get();
+            $token = decrypt($input['api_login'], $GLOBALS['cc_encryption_hash']);
+        }
+
+        ApiProvider::standalone(
+            CustomersApi::class,
+            $token,
+            $input['api_test'] == true
+        )
+        ->priceList(ApiProvider::parseCustomer($token));
+
         return [
             'success' => Lang::T('messages', 'api_connection_success')
         ];

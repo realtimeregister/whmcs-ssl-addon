@@ -2,31 +2,20 @@
 
 namespace AddonModule\RealtimeRegisterSsl\addonLibs\forms;
 
-/**
- * Password Form Field
- *
- */
 class PasswordField extends AbstractField
 {
-    public $showPassword = false;
-    public $type    = 'password';
-    
-    static function asteriskVar($input)
-    {
-        $num = strlen($input);
-        $input = '';
+    public bool $showPassword = false;
+    public $type = 'password';
 
-        for ($i = 0; $i < $num; $i++) {
-            $input .= '*';
-        }
-        
-        return $input;
-    }
-    
-    function prepare()
+    public static function obfuscateValue(): string
     {
-        if(!$this->showPassword) {
-            self::asteriskVar($this->value);
+        return str_repeat('*', 32);
+    }
+
+    public function prepare(): void
+    {
+        if (!$this->showPassword) {
+            $this->value = self::obfuscateValue();
         }
     }
 }

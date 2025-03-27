@@ -54,8 +54,10 @@ class ApiProvider
         $apiKeyRecord = Capsule::table('REALTIMEREGISTERSSL_api_configuration')->first();
 
         $apiUrl = self::getUrl($apiKeyRecord->api_test === 1);
-        $this->api[$className] = new $className(new AuthorizedClient($apiUrl, $apiKeyRecord->api_login));
-        self::$customer = self::parseCustomer($apiKeyRecord->api_login);
+        $this->api[$className] = new $className(
+            new AuthorizedClient($apiUrl, decrypt($apiKeyRecord->api_login, $GLOBALS['cc_encryption_hash']))
+        );
+        self::$customer = self::parseCustomer(decrypt($apiKeyRecord->api_login, $GLOBALS['cc_encryption_hash']));
     }
 
     public static function parseCustomer(string $apiKey): string
