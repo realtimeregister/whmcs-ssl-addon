@@ -727,6 +727,8 @@ JS;
 
 add_hook('ClientAreaHeadOutput', 2, function($vars) {
     if ($vars['templatefile'] == 'configureproduct' && $vars['productinfo']['module'] === 'realtimeregister_ssl') {
+        require_once __DIR__ . DS . 'Loader.php';
+        new Loader();
         return JSInserter::generateScript(__DIR__ . DS . 'addonLibs' . DS . 'js' . DS . 'hideadditional.js',
             ['template' => $vars['template']]);
     }
