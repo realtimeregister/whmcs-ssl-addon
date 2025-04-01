@@ -6,7 +6,7 @@ namespace AddonModule\RealtimeRegisterSsl\addonLibs\exceptions;
  * Use for general module errors
  *
  */
-class validation extends System
+class Validation extends System
 {
     private $fields = [];
 

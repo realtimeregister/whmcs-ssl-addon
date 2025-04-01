@@ -8,7 +8,7 @@ namespace AddonModule\RealtimeRegisterSsl\addonLibs\exceptions;
  */
 class WhmcsAPI extends System
 {
-    function __construct($message, $code = 0, $previous = null)
+    public function __construct($message, $code = 0, $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
