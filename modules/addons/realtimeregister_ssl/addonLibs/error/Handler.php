@@ -1,7 +1,6 @@
 <?php
 
 namespace AddonModule\RealtimeRegisterSsl\addonLibs\error;
-use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Error Handler 
@@ -60,7 +59,7 @@ class Handler
             return true;
         }
 
-        throw new main\addonLibs\exceptions\syntaxError($message, $level, 0, $line, $file);
+        throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\SyntaxError($message, $level, 0, $line, $file);
     }
     
     public function handleShutdown()

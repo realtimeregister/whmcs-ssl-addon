@@ -1,7 +1,6 @@
 <?php
 
 namespace AddonModule\RealtimeRegisterSsl\addonLibs\models;
-use AddonModule\RealtimeRegisterSsl as main;
 
 /**
  * Description of ORMHelper
@@ -150,7 +149,7 @@ class Orm extends Base
         $tableStructure = self::getTableStructure();
 
         if (!isset($tableStructure['columns'][$property]['name'])) {
-            throw new main\addonLibs\exceptions\System("Property $property not exists");
+            throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System("Property $property not exists");
         }
         
         return $tableStructure['columns'][$property]['name'];
@@ -158,7 +157,7 @@ class Orm extends Base
     
     protected function getRawData($id, $haveToExits = true)
     {
-        $data = main\addonLibs\MySQL\Query::select(
+        $data = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::select(
             self::fieldDeclaration(),
             self::tableName(),
             [
@@ -167,7 +166,7 @@ class Orm extends Base
         )->fetch();
 
         if (empty($data) && $haveToExits) {
-            throw new main\addonLibs\exceptions\System('Unable to find '.  get_class($this).' with ID:'.$id);
+            throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System('Unable to find '.  get_class($this).' with ID:'.$id);
         }
         
         return $data;
@@ -192,7 +191,7 @@ class Orm extends Base
         }
 
         if ($this->id) {
-            main\addonLibs\MySQL\Query::update(
+            \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::update(
                 self::tableName(),
                 $data,
                 [
@@ -200,7 +199,7 @@ class Orm extends Base
                 ]
             );
         } else {
-            $this->id = main\addonLibs\MySQL\Query::insert(
+            $this->id = \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::insert(
                 self::tableName(),
                 $data
             );
@@ -210,7 +209,7 @@ class Orm extends Base
     function delete()
     {
         if ($this->id) {
-            main\addonLibs\MySQL\Query::delete(
+            \AddonModule\RealtimeRegisterSsl\addonLibs\MySQL\Query::delete(
                 self::tableName(),
                 ['id' => $this->id]
             );
@@ -234,13 +233,13 @@ class Orm extends Base
         }
 
         if ($errors) {
-            throw new main\addonLibs\exceptions\validation('validateError',$errors);
+            throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Validation('validateError',$errors);
         }
     }
     
     public static function prefixTable($table)
     {
-        return main\addonLibs\process\MainInstance::I()->configuration()->tablePrefix.$table;
+        return \AddonModule\RealtimeRegisterSsl\addonLibs\process\MainInstance::I()->configuration()->tablePrefix.$table;
     }
     
     /**
@@ -268,9 +267,9 @@ class Orm extends Base
         $structure = self::getTableStructure();
         foreach($structure['columns'] as $property => $configs) {
             if(!isset($used[$property]) && !isset($configs['notRequired'])) {
-                throw new main\addonLibs\exceptions\System(
+                throw new \AddonModule\RealtimeRegisterSsls\addonLibs\exceptions\System(
                     'Missing object property: '.$property,
-                    main\addonLibs\exceptions\Codes::MISSING_OBJECT_PROPERTY
+                    \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Codes::MISSING_OBJECT_PROPERTY
                 );
             }
         }
@@ -284,9 +283,9 @@ class Orm extends Base
                 $this->$method($v);
                 continue;
             }
-            throw new main\addonLibs\exceptions\System(
+            throw new \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System(
                 sprintf('Object property "%s" does not exist ',$k),
-                main\addonLibs\exceptions\Codes::MISSING_OBJECT_PROPERTY
+                \AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\Codes::MISSING_OBJECT_PROPERTY
             );
         }
     }
