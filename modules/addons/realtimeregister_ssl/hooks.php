@@ -119,6 +119,8 @@ add_hook('ShoppingCartValidateProductUpdate', 1, function($params) {
 });
 
 add_hook('AfterShoppingCartCheckout', 1, function($params) {
+    new Loader();
+    Addon::I(true);
     foreach ($params['ServiceIDs'] as $serviceId) {
         $service = Capsule::table('tblhosting')
             ->where('id', '=', $serviceId)
@@ -140,6 +142,9 @@ add_hook('AfterShoppingCartCheckout', 1, function($params) {
 });
 
 add_hook('AfterModuleCreate', 999999999999, function ($params) {
+    new Loader();
+    Addon::I(true);
+
     $orderRepo = new OrderRepo();
     $order = $orderRepo->getByServiceId($params['params']['serviceid']);
     if($order) {
