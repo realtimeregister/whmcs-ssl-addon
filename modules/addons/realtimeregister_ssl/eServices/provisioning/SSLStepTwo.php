@@ -189,7 +189,7 @@ class SSLStepTwo
         }
 
         if ($productssl['certificateType'] === 'WILDCARD') {
-            if (str_contains($decodedCSR['csrResult']['CN'], '*.')) {
+            if (str_contains($decodedCSR['commonName'], '*.')) {
                 return true;
             } else {
                 if (isset($decodedCSR['csrResult']['errorMessage'])) {
