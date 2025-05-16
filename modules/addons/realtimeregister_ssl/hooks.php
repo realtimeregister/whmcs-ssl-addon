@@ -282,9 +282,9 @@ add_hook('ClientAreaHeadOutput', 1, function($params)
 
     $show = false;
 
-    if (
-        $params['filename'] === 'index'
-    ) {
+
+
+    if ($params['filename'] === 'cart') {
         if($_REQUEST['action'] === 'generateCsr') {
             Server::I(true);
             $GenerateCsr = new AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR($params, $_POST);

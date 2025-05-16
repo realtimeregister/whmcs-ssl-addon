@@ -100,7 +100,7 @@
         $('input[name="CN"]').on('change', e => {
             const token = $('input[name="token"]').val();
             const commonName = e.target.value;
-            let serviceUrl = 'index.php?action=approverEmails&json=1' +
+            let serviceUrl = 'cart.php?a=confproduct&action=approverEmails&json=1' +
                 '&commonName=' + commonName +
                 '&token=' + token;
             $.ajax({
