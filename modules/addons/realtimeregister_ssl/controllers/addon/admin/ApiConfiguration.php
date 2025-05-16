@@ -312,6 +312,7 @@ class ApiConfiguration extends AbstractController
     public function testConnectionJSON($input = [], $vars = [])
     {
         $token = $input['api_login'];
+        $isTest = $input['api_test'];
 
         if (str_replace('*', '', $input['api_login']) === '' || $input['api_login'] === '') {
             $apiConfigRepo = new Repository();
@@ -322,7 +323,7 @@ class ApiConfiguration extends AbstractController
         ApiProvider::standalone(
             CustomersApi::class,
             $token,
-            $input['api_test'] == true
+            $isTest === 1 || $isTest === 'true'
         )
         ->priceList(ApiProvider::parseCustomer($token));
 

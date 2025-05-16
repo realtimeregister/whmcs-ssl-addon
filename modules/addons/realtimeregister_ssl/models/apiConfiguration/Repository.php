@@ -119,6 +119,15 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->string('rate')->nullable();
                 $table->text('custom_guide')->nullable();
                 $table->boolean('disable_email_validation');
+                $table->boolean('cron_daily')->default(true);
+                $table->boolean('cron_processing')->default(true);
+                $table->boolean('cron_synchronization')->default(true);
+                $table->boolean('cron_ssl_summary_stats')->default(true);
+                $table->boolean('cron_renewal')->default(true);
+                $table->boolean('cron_send_certificate')->default(true);
+                $table->boolean('cron_price_updater')->default(true);
+                $table->boolean('cron_certificate_details_updater')->default(true);
+                $table->boolean('cron_certificate_installer')->default(true);
             });
         }
     }
