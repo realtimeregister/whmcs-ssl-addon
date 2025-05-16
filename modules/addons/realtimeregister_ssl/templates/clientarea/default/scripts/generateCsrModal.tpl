@@ -29,7 +29,7 @@
 
         const cert = (new URLSearchParams(window.location.search)).get('cert');
         let token = $('input[name="token"]').val();
-        let serviceUrl = 'index.php?cert=' + cert + '&action=generateCsr&json=1&token=' + token,
+        let serviceUrl = 'cart.php?a=confproduct&cert=' + cert + '&action=generateCsr&json=1&token=' + token,
         generateCsrBtn = $('#generateCsrBtn'),
         generateCsrForm,
         generateCsrModal,
