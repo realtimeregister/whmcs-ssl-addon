@@ -265,7 +265,7 @@ add_hook('ClientAreaHeadOutput', 1, function($params)
         return '<script type="text/javascript">
         $(document).ready(function () {
         
-            var awaitingServicesREALTIMEREGISTERSSL = '. json_encode($awaitingServicesREALTIMEREGISTERSSL). ';
+            var awaitingServicesREALTIMEREGISTERSSL = ' . json_encode($awaitingServicesREALTIMEREGISTERSSL) . ';
 
             $("#tableServicesList tbody tr").each(function(index) {
                 var serviceid = $(this).find("td:first-child").attr("data-element-id");
@@ -282,9 +282,7 @@ add_hook('ClientAreaHeadOutput', 1, function($params)
 
     $show = false;
 
-
-
-    if ($params['filename'] === 'cart') {
+    if ($params['filename'] === 'cart' || $params['filename'] === 'index') {
         if($_REQUEST['action'] === 'generateCsr') {
             Server::I(true);
             $GenerateCsr = new AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR($params, $_POST);
