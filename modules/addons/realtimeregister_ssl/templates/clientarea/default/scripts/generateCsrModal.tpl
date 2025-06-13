@@ -172,7 +172,6 @@
                 data['doNotSaveToDatabase'] = true;
                 data['serviceID'] = serviceID;
             }
-// console.log('serviceurl:' + serviceUrl);
             $.ajax({
                 url: serviceUrl,
                 type: "POST",
