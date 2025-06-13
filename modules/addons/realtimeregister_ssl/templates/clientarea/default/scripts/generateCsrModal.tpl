@@ -29,7 +29,12 @@
 
         const cert = (new URLSearchParams(window.location.search)).get('cert');
         let token = $('input[name="token"]').val();
-        let serviceUrl = 'cart.php?a=confproduct&cert=' + cert + '&action=generateCsr&json=1&token=' + token,
+
+        let baseUrl = 'cart.php';
+        if (window.location.href.indexOf("configuressl.php")) {
+            baseUrl = 'index.php';
+        }
+        let serviceUrl = baseUrl + '?a=confproduct&cert=' + cert + '&action=generateCsr&json=1&token=' + token,
         generateCsrBtn = $('#generateCsrBtn'),
         generateCsrForm,
         generateCsrModal,
@@ -167,7 +172,6 @@
                 data['doNotSaveToDatabase'] = true;
                 data['serviceID'] = serviceID;
             }
-
             $.ajax({
                 url: serviceUrl,
                 type: "POST",

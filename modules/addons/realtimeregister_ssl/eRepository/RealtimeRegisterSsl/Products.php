@@ -13,19 +13,16 @@ class Products
     public const REALTIMEREGISTERSSL_PRODUCT_BRAND = 'REALTIMEREGISTERSSL_product_brand';
 
     /**
-     *
      * @var Products
      */
     private static $instance;
-    
+
     /**
-     *
      * @var Product[]
      */
     private $products;
-    
+
     /**
-     * 
      * @return Products
      */
     public static function getInstance()
@@ -62,8 +59,7 @@ class Products
     public function getProductByName(string $productName)
     {
         $this->fetchAllProducts();
-
-        /** @var Product $product */
+        
         foreach ($this->products as $product) {
             if ($product->product == $productName) {
                 return $product;
@@ -91,20 +87,13 @@ class Products
         }
         $checkTable = Capsule::schema()->hasTable(self::REALTIMEREGISTERSSL_PRODUCT_BRAND);
         if ($checkTable) {
-            $products = Capsule::table(self::REALTIMEREGISTERSSL_PRODUCT_BRAND)->get();
-            if (isset($products[0]->id)) {
-                $this->products = [];
-                foreach ($products as $i => $apiProduct) {
-                    $apiProduct = json_decode($apiProduct->data, true);
-                    $p = new Product();
-                    Fill::fill($p, $apiProduct);
-                    $p->pid = KeyToIdMapping::getIdByKey($apiProduct['product']);
-                    $this->products[$products[$i]->id] = $p;
-                }
-                return $this->products;
+            $products = $this->fetchAllProductsFromDatabase();
+            if ($products !== null && count($products) > 0) {
+                return $products;
             }
         }
 
+        // if the table is 'kinda empty', we refetch everything from the api
         Capsule::table(self::REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
         $this->products = [];
 
@@ -112,6 +101,7 @@ class Products
 
         /** @var CertificatesApi $certificatedApi */
         $certificatedApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+
         while ($apiProducts = $certificatedApi->listProducts(10, $i)) {
             /** @var \RealtimeRegister\Domain\Product $apiProduct */
             foreach ($apiProducts->toArray() as $apiProduct) {
@@ -122,17 +112,34 @@ class Products
                     'data' => json_encode($apiProduct)
                 ]);
             }
-            $i +=10;
+            $i += 10;
 
             if ($apiProducts->pagination->total < $i) {
                 break;
             }
         }
 
-        return $this->products;
+        return $this->fetchAllProductsFromDatabase();
     }
 
-    public static function dropTable() {
+    public static function dropTable()
+    {
         Capsule::schema()->dropIfExists(self::REALTIMEREGISTERSSL_PRODUCT_BRAND);
+    }
+
+    private function fetchAllProductsFromDatabase()
+    {
+        $products = Capsule::table(self::REALTIMEREGISTERSSL_PRODUCT_BRAND)->get();
+        if (isset($products[0]->id)) {
+            $this->products = [];
+            foreach ($products as $i => $apiProduct) {
+                $apiProduct = json_decode($apiProduct->data, true);
+                $p = new Product();
+                Fill::fill($p, $apiProduct);
+                $p->pid = KeyToIdMapping::getIdByKey($apiProduct['product']);
+                $this->products[$products[$i]->id] = $p;
+            }
+            return $this->products;
+        }
     }
 }
