@@ -28,8 +28,8 @@ class Config
     public function getConfigureSSLUrl($id, $serviceID = null)
     {
         $WHMCSUrl = \AddonModule\RealtimeRegisterSsl\eHelpers\Multibrand::getBrandData($serviceID)['systemURL'];
-       
-        return $WHMCSUrl . '/configuressl.php?cert=' . md5($id);
+
+        return rtrim($WHMCSUrl, '/') . '/configuressl.php?cert=' . md5($id);
     }
 
 
