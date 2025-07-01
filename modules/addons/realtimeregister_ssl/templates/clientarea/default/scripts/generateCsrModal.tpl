@@ -30,7 +30,7 @@
         const cert = (new URLSearchParams(window.location.search)).get('cert');
         let token = $('input[name="token"]').val();
 
-        let baseUrl = location.href.match(/.*\/(.+)\.php.*/)[0];
+        let baseUrl = location.href.match(/.*\/(.+\.php).*/)[0];
         if (baseUrl !== 'cart.php') {
             baseUrl = 'configuressl.php';
         }
