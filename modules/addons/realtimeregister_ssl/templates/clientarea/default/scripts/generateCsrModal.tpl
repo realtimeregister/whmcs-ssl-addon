@@ -30,10 +30,11 @@
         const cert = (new URLSearchParams(window.location.search)).get('cert');
         let token = $('input[name="token"]').val();
 
-        let baseUrl = 'cart.php';
-        if (window.location.href.indexOf("configuressl.php")) {
-            baseUrl = 'index.php';
+        let baseUrl = location.href.match(/.*\/(.+)\.php.*/)[0];
+        if (baseUrl !== 'cart.php') {
+            baseUrl = 'configuressl.php';
         }
+
         let serviceUrl = baseUrl + '?a=confproduct&cert=' + cert + '&action=generateCsr&json=1&token=' + token,
         generateCsrBtn = $('#generateCsrBtn'),
         generateCsrForm,
@@ -48,12 +49,12 @@
             generateCsrModal = $('#modalGenerateCsr');
             generateCsrBody = $('#modalgenerateCsrBody');
             generateCsrBody.contents()
-                .filter(function(){
-                return this.nodeType === 8;
-            })
-            .replaceWith(function(){
-                return this.data;
-            });
+                .filter(function () {
+                    return this.nodeType === 8;
+                })
+                .replaceWith(function () {
+                    return this.data;
+                });
 
             generateCsrForm = $('#modalgenerateCsrForm');
             generateCsrSubmitBtn = $('#modalgenerateCsrSubmit');
@@ -70,7 +71,7 @@
             generateCsrDangerAlert.hide();
         }
 
-        function bindModalFrogenerateCsrBtn() {
+        function bindGenerateCsrBtn() {
             generateCsrBtn.off().on('click', function () {
                  generateCsrModal.modal('show');
                 generateCsrSubmitBtn.show();
@@ -195,7 +196,7 @@
 
                         csrTextarea.val(newkey);
                         $('input[name="privateKey"]').remove();
-                        $('textarea[name="csr"]').closest('.form-group').after('<input class="form-control" type="hidden" name="privateKey" value="'+data.private_key+'" />');
+                        csrTextarea.closest('.form-group').after('<input class="form-control" type="hidden" name="privateKey" value="'+data.private_key+'" />');
                         closeModal(generateCsrModal);
                         $("label[for=inputCsr]").show();
 
@@ -213,7 +214,7 @@
             });
         }
         assignModalElements();
-        bindModalFrogenerateCsrBtn();
+        bindGenerateCsrBtn();
         validateForm();
         bindSubmitBtn();
     });
