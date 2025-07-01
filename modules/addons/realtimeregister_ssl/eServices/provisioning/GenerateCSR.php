@@ -139,7 +139,7 @@ class GenerateCSR
 
             $sslService = $sslRepo->getByServiceId((int)$serviceid);
             if ($sslService) {
-                $sslService->setConfigdataKey('private_key', encrypt($privKey));
+                $sslService->setPrivateKey(encrypt($privKey));
                 $sslService->save();
             }
         } catch (Exception $ex) {

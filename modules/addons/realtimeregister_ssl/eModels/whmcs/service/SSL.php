@@ -88,6 +88,11 @@ class SSL extends \Illuminate\Database\Eloquent\Model
         return $this->getConfigdataKey('ca');
     }
 
+    public function setPrivateKey($privateKey)
+    {
+        $this->setConfigdataKey('private_key', $privateKey);
+    }
+
     public function getPrivateKey()
     {
         return $this->getConfigdataKey('private_key');

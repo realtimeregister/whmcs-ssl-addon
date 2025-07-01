@@ -103,11 +103,7 @@ class home extends AbstractController
 
             $url = Config::getInstance()->getConfigureSSLUrl($sslService->id, $serviceId);
 
-            $vars['privateKey'] = '';
-            $privateKey = $sslService->getPrivateKey();
-            if ($privateKey) {
-                $vars['privateKey'] = $privateKey;
-            }
+            $vars['privateKey'] = $sslService->getPrivateKey() ?? '';
             $vars['san_revalidate'] = false;
 
             if ($sslService->status !== SSL::AWAITING_CONFIGURATION) {
@@ -730,7 +726,7 @@ class home extends AbstractController
         $sslService = $sslRepo->getByServiceId($input['params']['serviceid']);
         $privateKey = $sslService->getPrivateKey();
 
-        if ($privateKey = $sslService->getPrivateKey()) {
+        if ($privateKey) {
             if (!str_contains($privateKey, '-----BEGIN PRIVATE KEY-----')) {
                 $privateKey = decrypt($privateKey);
             }

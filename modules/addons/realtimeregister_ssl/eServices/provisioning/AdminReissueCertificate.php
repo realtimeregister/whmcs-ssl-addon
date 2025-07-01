@@ -110,7 +110,7 @@ class AdminReissueCertificate extends Ajax
         $this->processDcvEntries($responseData->validations?->dcv->toArray() ?? []);
 
         $sslService->setRemoteId($responseData->processId);
-        $sslService->setConfigdataKey('private_key', null);
+        $sslService->setPrivateKey(null);
         $sslService->setConfigdataKey('csr', $this->p['csr']);
         $sslService->setCrt('--placeholder--');
         $sslService->setCa(null);
