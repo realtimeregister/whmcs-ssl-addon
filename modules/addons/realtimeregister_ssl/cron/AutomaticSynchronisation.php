@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
+use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
@@ -26,6 +27,7 @@ class AutomaticSynchronisation extends BaseTask
     {
         if ($this->enabledTask('cron_synchronization')) {
             logActivity("Realtime Register SSL: Starting automatic synchronisation");
+            Addon::I();
 
             $updatedServices = [];
 

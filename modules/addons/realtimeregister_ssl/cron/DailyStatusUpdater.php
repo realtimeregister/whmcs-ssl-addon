@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
+use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -17,6 +18,7 @@ class DailyStatusUpdater extends BaseTask
     {
         if ($this->enabledTask('cron_certificate_details_updater')) {
             logActivity('Realtime Register SSL: Certificates (ssl status Completed) Data Updater started');
+            Addon::I();
 
             $sslorders = Capsule::table('tblhosting')
                 ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')

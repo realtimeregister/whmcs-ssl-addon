@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
+use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\controllers\addon\admin\ProductsCreator;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
@@ -21,6 +22,7 @@ class PriceUpdater extends BaseTask
     {
         if ($this->enabledTask('cron_price_updater')) {
             logActivity("Realtime Register SSL: Price updater started");
+            Addon::I();
 
             Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Products Price Updater started.");
 

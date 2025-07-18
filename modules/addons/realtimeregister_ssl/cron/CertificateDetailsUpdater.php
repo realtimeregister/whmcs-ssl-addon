@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
+use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
@@ -23,6 +24,7 @@ class CertificateDetailsUpdater extends BaseTask
     {
         if ($this->enabledTask('cron_certificate_details_updater')) {
             logActivity('Realtime Register SSL: Certificate details updater');
+            Addon::I();
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 'Realtime Register SSL WHMCS: Certificate Details Updating started.'

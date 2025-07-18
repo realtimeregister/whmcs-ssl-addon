@@ -60,7 +60,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '1.0.4';
+    public $version = '1.0.5';
     public $tablePrefix = '';
     public $modelRegister = [];
 
@@ -441,6 +441,15 @@ class Configuration extends AbstractConfiguration
         self::updateProductPricing();
         self::insertHiddenFields();
         self::installTasks();
+        self::updateExpiryHandlerTask();
+    }
+
+
+    static function updateExpiryHandlerTask()
+    {
+        Capsule::table('tbltask')
+            ->where('name', '=', 'Expiry Handler')
+            ->update(['frequency' => 1440]);
     }
 
     static function renameSSLOrderStatuses()
