@@ -18,7 +18,7 @@ use WHMCS\Service\Service;
 
 class ExpiryHandler extends BaseTask
 {
-    protected $defaultFrequency = 0;
+    protected $defaultFrequency = 1440;
     protected $skipDailyCron = false;
     protected $defaultPriority = 4200;
     protected $defaultDescription = 'Expiry handler, send notifications, creates invoices and renews certificates based 
