@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
+use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -18,6 +19,7 @@ class ProcessingOrders extends BaseTask
     {
         if ($this->enabledTask('cron_processing')) {
             logActivity("Realtime Register SSL: Certificates (ssl status Processing) Data Updater started");
+            Addon::I();
 
             $sslorders = Capsule::table('tblhosting')
                 ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')

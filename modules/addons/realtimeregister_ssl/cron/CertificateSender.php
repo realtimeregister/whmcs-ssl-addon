@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
+use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -22,6 +23,7 @@ class CertificateSender extends BaseTask
     {
         if ($this->enabledTask('cron_send_certificate')) {
             logActivity("Realtime Register SSL: Certificate Sender started");
+            Addon::I();
 
             Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Sender started.");
 

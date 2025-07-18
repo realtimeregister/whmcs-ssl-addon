@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
+use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
@@ -16,6 +17,7 @@ class InstallCertificates extends BaseTask
     {
         if ($this->enabledTask('cron_certificate_installer')) {
             logActivity("Realtime Register SSL: Install certificates");
+            Addon::I();
 
             $logsRepo = new LogsRepo();
 

@@ -11,6 +11,11 @@
       "homepage": "https://realtimeregister.com"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "AddonModule\\RealtimeRegisterSsl\\" : "."
+    }
+  },
   "homepage": "https://realtimeregister.com/integration/platform/modules/whmcs/",
   "require": {
     "php": "^8.1",

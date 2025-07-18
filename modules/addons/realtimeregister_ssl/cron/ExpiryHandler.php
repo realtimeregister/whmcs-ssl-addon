@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
+use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Admin;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
@@ -32,6 +33,7 @@ class ExpiryHandler extends BaseTask
     {
         if ($this->enabledTask('cron_renewal')) {
             logActivity("Realtime Register SSL: Notifier started");
+            Addon::I();
 
             $apiConf = (new ApiConfiguration())->get();
 

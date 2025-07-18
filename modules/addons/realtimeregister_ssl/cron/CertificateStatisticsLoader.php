@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
+use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
@@ -20,6 +21,7 @@ class CertificateStatisticsLoader extends BaseTask
     {
         if ($this->enabledTask('cron_ssl_summary_stats')) {
             logActivity("Realtime Register SSL: Certificate Stats Loader started");
+            Addon::I();
 
             Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Stats Loader started.");
 
