@@ -3,6 +3,15 @@
 namespace AddonModule\RealtimeRegisterSsl;
 
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractConfiguration;
+use AddonModule\RealtimeRegisterSsl\cron\AutomaticSynchronisation;
+use AddonModule\RealtimeRegisterSsl\cron\CertificateDetailsUpdater;
+use AddonModule\RealtimeRegisterSsl\cron\CertificateSender;
+use AddonModule\RealtimeRegisterSsl\cron\CertificateStatisticsLoader;
+use AddonModule\RealtimeRegisterSsl\cron\DailyStatusUpdater;
+use AddonModule\RealtimeRegisterSsl\cron\ExpiryHandler;
+use AddonModule\RealtimeRegisterSsl\cron\InstallCertificates;
+use AddonModule\RealtimeRegisterSsl\cron\PriceUpdater;
+use AddonModule\RealtimeRegisterSsl\cron\ProcessingOrders;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
@@ -55,6 +64,18 @@ class Configuration extends AbstractConfiguration
      * @var string
      */
     public $encryptHash = 'uUc1Y8cWxDOAzlq11lBwelqzo6PGMTA0dbHaKQ109psefoJgIFMOgmReKCZbpCYpDSnrtfjmCIUyplaBJaUh40auDALprOHtj1g92ZRBS6S94IbZWaeZRYkG1f81h6qLMYEOr016RurCnmodFCWdMkTqrlVBvH249gzXPduKQVXpN9hooComaRPY5jZD6s8GdfR5E_BNP3v8Ui8RrdqMPST_8quMW48LhHY88xCvSWwDNjkC2tCAaK67Id2NjzIdoNTHUMISRg81nHX8ZGcbP74mxixo_ASd8YoWnDCAs8yiT4t0PwKRO_y3C1kDo69Nxz1YYt4tY1VzOD_DFBulAA5NCJLfogroo';
+
+    public static array $tasks = [
+        AutomaticSynchronisation::class,
+        ProcessingOrders::class,
+        DailyStatusUpdater::class,
+        CertificateStatisticsLoader::class,
+        ExpiryHandler::class,
+        CertificateSender::class,
+        PriceUpdater::class,
+        CertificateDetailsUpdater::class,
+        InstallCertificates::class
+    ];
 
     /**
      * Module version
@@ -442,6 +463,7 @@ class Configuration extends AbstractConfiguration
         self::insertHiddenFields();
         self::installTasks();
         self::updateExpiryHandlerTask();
+        self::updateTaskPriority();
     }
 
 
@@ -476,15 +498,26 @@ class Configuration extends AbstractConfiguration
         require_once __DIR__ . DS . 'Loader.php';
         new Loader();
 
-        \AddonModule\RealtimeRegisterSsl\cron\AutomaticSynchronisation::register();
-        \AddonModule\RealtimeRegisterSsl\cron\ProcessingOrders::register();
-        \AddonModule\RealtimeRegisterSsl\cron\DailyStatusUpdater::register();
-        \AddonModule\RealtimeRegisterSsl\cron\CertificateStatisticsLoader::register();
-        \AddonModule\RealtimeRegisterSsl\cron\ExpiryHandler::register();
-        \AddonModule\RealtimeRegisterSsl\cron\CertificateSender::register();
-        \AddonModule\RealtimeRegisterSsl\cron\PriceUpdater::register();
-        \AddonModule\RealtimeRegisterSsl\cron\CertificateDetailsUpdater::register();
-        \AddonModule\RealtimeRegisterSsl\cron\InstallCertificates::register();
+        foreach (self::$tasks as $task) {
+            $task::register();
+        }
+    }
+
+
+    static function updateTaskPriority()
+    {
+        global $CONFIG;
+
+        require_once __DIR__ . DS . 'Loader.php';
+        new Loader();
+
+        foreach (self::$tasks as $task) {
+            $t = new $task();
+            $da = $t->getDefaultAttributes();
+            Capsule::table('tbltask')
+                ->where('class_name', '=', $t::class)
+                ->update(['priority' => $da['priority']]);
+        }
     }
 
 
