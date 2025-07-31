@@ -19,8 +19,9 @@
   "homepage": "https://realtimeregister.com/integration/platform/modules/whmcs/",
   "require": {
     "php": "^8.1",
-    "realtimeregister/realtimeregister-php": "dev-master",
-    "ext-curl": "*"
+    "realtimeregister/realtimeregister-php": "^1.1",
+    "ext-curl": "*",
+    "guzzlehttp/guzzle": "7.2.0"
   },
   "require-dev": {
     "symfony/var-dumper": "^6.4",
