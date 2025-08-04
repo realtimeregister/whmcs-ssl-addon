@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eHelpers\ZipFileHelper;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -23,23 +24,27 @@ class UpdateConfigData
     {
         $this->sslService = $sslService;
         if (empty($orderdata)) {
-            $processesApi = ApiProvider::getInstance()
-                ->getApi(ProcessesApi::class);
-            $process = $processesApi->get($sslService->getRemoteId());
+            $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+            if ($sslService->getRemoteId()) {
+                $process = $processesApi->get($sslService->getRemoteId());
 
-            if ($process->status === ProcessStatusEnum::STATUS_COMPLETED) {
-                $this->orderdata = [];
-                return;
+                if ($process->status === ProcessStatusEnum::STATUS_COMPLETED) {
+                    $this->orderdata = [];
+                    return;
+                }
+
+                $infoProcess = $processesApi->info($process->id)->toArray();
+
+                $this->orderdata = [
+                    'status' => $process->status,
+                    'dcv' => $infoProcess['validations']['dcv'],
+                    'domain' => $process->identifier
+                ];
+            } else {
+                Whmcs::savelogActivityRealtimeRegisterSsl(
+                    'We we are currently unable to update the configdata for serviceid ' . $this->sslService->getServiceId()
+                );
             }
-
-            $infoProcess = $processesApi->info($process->id)
-                ->toArray();
-
-            $this->orderdata = [
-                'status' => $process->status,
-                'dcv' => $infoProcess['validations']['dcv'],
-                'domain' => $process->identifier
-            ];
         } else {
             $this->orderdata = $orderdata;
         }
