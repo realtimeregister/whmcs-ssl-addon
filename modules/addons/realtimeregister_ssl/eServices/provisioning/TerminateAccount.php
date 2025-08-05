@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use Exception;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use RealtimeRegister\Api\CertificatesApi;
@@ -30,7 +31,7 @@ class TerminateAccount
      */
     private function terminateAccount(): void
     {
-        $ssl = new \AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL();
+        $ssl = new SSL();
         $serviceSSL = $ssl->getByServiceId($this->p['serviceid']);
         
         if (is_null($serviceSSL)) {
@@ -41,11 +42,10 @@ class TerminateAccount
             $serviceSSL->delete();
             return;
         }
-       
-        $reason = 'Order canceled for non-payment.';
+
         /** @var CertificatesApi $certficatesApi */
         $certficatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-        $certficatesApi->revokeCertificate($serviceSSL->remoteid, $reason);
+        $certficatesApi->revokeCertificate($serviceSSL->getCertificateId());
         $serviceSSL->delete();
     }
 }
