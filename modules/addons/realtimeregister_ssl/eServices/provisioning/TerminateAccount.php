@@ -6,6 +6,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use Exception;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Api\ProcessesApi;
 
 class TerminateAccount
 {
@@ -38,14 +39,23 @@ class TerminateAccount
             throw new Exception('Create has not been initialized.');
         }
         
-        if (empty($serviceSSL->remoteid) || $serviceSSL->getSSLStatus() == 'FAILED') {
+        if (empty($serviceSSL->remoteid)
+            || $serviceSSL->getSSLStatus() == 'FAILED'
+            || $serviceSSL->getSSLStatus() == 'CANCELLED') {
             $serviceSSL->delete();
             return;
         }
 
-        /** @var CertificatesApi $certficatesApi */
-        $certficatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-        $certficatesApi->revokeCertificate($serviceSSL->getCertificateId());
+        if ($serviceSSL->getCertificateId()) {
+            /** @var CertificatesApi $certficatesApi */
+            $certficatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+            $certficatesApi->revokeCertificate($serviceSSL->getCertificateId());
+        } else {
+            /** @var ProcessesApi processesApi */
+            $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+            $processesApi->delete($serviceSSL->remoteid);
+        }
+
         $serviceSSL->delete();
     }
 }
