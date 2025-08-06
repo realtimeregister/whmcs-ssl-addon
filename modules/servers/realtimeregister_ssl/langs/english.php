@@ -245,3 +245,5 @@ $_LANG['serverCA']['home']['copyToClipboard']           = 'Copy to clipboard';
 
 $_LANG['serverCA']['home']['contactSupport'] = 'Validation could not be completed, contact our support department for more information';
 $_LANG['serverCA']['home']['awaitingValidation'] = 'Awaiting validation';
+$_LANG['serverCA']['home']['failed'] = 'Failed';
+$_LANG['serverCA']['home']['cancelled'] = 'Cancelled';

@@ -27,6 +27,7 @@ use DateTimeImmutable;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Domain\Enum\ProcessStatusEnum;
 use RealtimeRegister\Domain\ResendDcvCollection;
 use WHMCS\Database\Capsule;
 
@@ -54,6 +55,7 @@ class home extends AbstractController
             $sslService = $ssl->getByServiceId($serviceId);
 
             $sslStatus = $sslService->configdata->ssl_status;
+            $vars['isEndState'] = true;
 
             if (
                 (
@@ -82,8 +84,15 @@ class home extends AbstractController
                 $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
                 $infoProcess = [];
                 $apicertdata = $processesApi->get($sslService->getRemoteId())->toArray();
-                if ($apicertdata['status'] != 'COMPLETED') {
+                if (!in_array($apicertdata['status'], [
+                    ProcessStatusEnum::STATUS_COMPLETED,
+                    ProcessStatusEnum::STATUS_FAILED,
+                    ProcessStatusEnum::STATUS_CANCELLED
+                ])) {
+                    $vars['isEndState'] = false;
                     $infoProcess = $processesApi->info($sslService->getRemoteId())->toArray();
+                } else {
+                    $vars['isEndState'] = true;
                 }
 
                 $configDataUpdate = new UpdateConfigData($sslService, [

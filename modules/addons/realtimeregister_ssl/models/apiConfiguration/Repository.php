@@ -108,7 +108,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->boolean('send_expiration_notification_one_time');
                 $table->boolean('renewal_invoice_status_unpaid');
                 $table->boolean('visible_renew_button');
-                $table->boolean('save_activity_logs');
+                $table->boolean('save_activity_logs')->default(true);
                 $table->string('autorenew_ordertype')->default('wait_for_payment');
                 $table->string('renew_invoice_days_recurring')->nullable();
                 $table->string('renew_invoice_days_one_time')->nullable();

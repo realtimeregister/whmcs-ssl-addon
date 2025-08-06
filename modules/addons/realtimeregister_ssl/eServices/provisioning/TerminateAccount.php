@@ -38,7 +38,7 @@ class TerminateAccount
             throw new Exception('Create has not been initialized.');
         }
         
-        if (empty($serviceSSL->remoteid)) {
+        if (empty($serviceSSL->remoteid) || $serviceSSL->getSSLStatus() == 'FAILED') {
             $serviceSSL->delete();
             return;
         }

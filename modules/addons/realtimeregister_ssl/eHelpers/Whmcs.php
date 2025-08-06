@@ -9,7 +9,7 @@ class Whmcs
     public static function savelogActivityRealtimeRegisterSsl($msg)
     {
         $apiConf = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
-        if (isset($apiConf->save_activity_logs) && !empty($apiConf->save_activity_logs)) {
+        if ($apiConf->save_activity_logs) {
             logActivity($msg);
         }
     }
