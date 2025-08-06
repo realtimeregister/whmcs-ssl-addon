@@ -22,11 +22,14 @@ class Repository extends MainRepository
     public function getList($limit, $offset, $orderBy = [], $search = '')
     {
         if (empty($search)) {
-            $query = Capsule::table($this->tableName)->limit($limit)->offset($offset)
+            $query = Capsule::table($this->tableName)
+                ->limit($limit)
+                ->offset($offset)
                 ->orderBy($orderBy[0], $orderBy[1]);
+
             return [
                 'results' => $query->get(),
-                'count' =>$query->count()
+                'count' => self::count()
             ];
         }
 

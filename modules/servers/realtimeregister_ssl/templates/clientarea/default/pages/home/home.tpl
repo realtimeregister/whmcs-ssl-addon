@@ -68,6 +68,10 @@
                             {else}
                                 {$ADDONLANG->T('awaitingValidation')}
                             {/if}
+                        {elseif $activationStatus === 'FAILED'}
+                            {$ADDONLANG->T('failed')}
+                        {elseif $activationStatus === 'CANCELLED'}
+                            {$ADDONLANG->T('cancelled')}
                         {else}
                             {$activationStatus|ucfirst}
                         {/if}
@@ -223,7 +227,7 @@
                     {if $displayRenewButton}
                         <button type="button" id="btnRenew" class="btn btn-default m-1">{$ADDONLANG->T('renew')}</button>
                     {/if}
-                    {if $activationStatus !== 'ACTIVE' && $activationStatus !== 'COMPLETED' && $dcv_method === 'email'}
+                    {if !$isEndState && $dcv_method === 'email'}
                         <button type="button" id="resend-validation-email" class="btn btn-default m-1">{$ADDONLANG->T('resendValidationEmail')}</button>
                     {/if}
                     {if ($activationStatus === 'processing' || $activationStatus === 'SUSPENDED') && $btndownload}
@@ -256,12 +260,6 @@
     </table>
     <script type="text/javascript">
         $(document).ready(function () {
-            {if $activationStatus !== 'ACTIVE' && $activationStatus !== 'COMPLETED'}
-                //$('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').remove();
-            {else}
-                $('#resend-validation-email').remove();
-                $('#btnChange_Approver_Email').remove();
-            {/if}
             var reissueUrl= $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').attr('href');
             $('#Action_Custom_Module_Button_Reissue_Certificate').prop('href', reissueUrl);
             $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').remove();
