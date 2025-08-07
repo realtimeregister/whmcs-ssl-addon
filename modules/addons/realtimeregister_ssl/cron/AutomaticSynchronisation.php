@@ -7,6 +7,7 @@ use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use DateTime;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
@@ -39,7 +40,7 @@ class AutomaticSynchronisation extends BaseTask
             foreach ($sslOrders as $sslService) {
                 $serviceID = $sslService->serviceid;
 
-                if (!isset($sslService->remoteid) || empty($sslService->remoteid)) {
+                if (empty($sslService->remoteid)) {
                     continue;
                 }
 
@@ -60,43 +61,29 @@ class AutomaticSynchronisation extends BaseTask
                     /** @var ProcessesApi $processesApi */
                     $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
                     $order = $processesApi->get($sslService->remoteid);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     continue;
                 }
 
-                $service = (array)Capsule::table('tblhosting')->where('id', $serviceID)->first();
-                $product = (array)Capsule::table('tblproducts')->where('servertype', 'realtimeregister_ssl')
-                    ->where('id', $service['packageid'])->first();
-
-                if (
-                    isset($product['configoption7']) && !empty($product['configoption7'])
-                    && $service['billingcycle'] == 'One Time'
-                ) {
-                    Capsule::table('tblhosting')->where('id', $serviceID)
-                        ->update(['termination_date' => $order['valid_till']]);
-                }
-
-                if ($order->status == 'expired' || $order->status == 'cancelled') {
+                if ($order->status == ProcessStatusEnum::STATUS_FAILED || ProcessStatusEnum::STATUS_CANCELLED) {
                     $this->setSSLServiceAsTerminated($serviceID);
                     $updatedServices[] = $serviceID;
+                    continue;
                 }
 
                 /** @var CertificatesApi $certificateApi */
                 $certificateApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
 
                 /** @var Certificate $sslOrder */
-                $sslOrder = $certificateApi->listCertificates(1, null, null, ['process:eq' => $order->remoteid])[0];
+                $sslOrder = $certificateApi
+                    ->listCertificates(1, null, null, ['process:eq' => $order->id])[0];
 
                 //if certificate is active
                 if ($sslOrder) {
                     //update whmcs service next due date
-                    $newNextDueDate = $sslOrder->expiryDate;
-                    if ($sslOrder->subscriptionEndDate) {
-                        $newNextDueDate = $sslOrder->subscriptionEndDate;
-                    }
-
+                    $newNextDueDate = $sslOrder->subscriptionEndDate ?? $sslOrder->expiryDate;
                     //set ssl certificate as terminated if expired
-                    if ($sslOrder->expiryDate->getTimestamp() < date('Y-m-d')) {
+                    if ($sslOrder->expiryDate < new DateTime()) {
                         $this->setSSLServiceAsTerminated($serviceID);
                     }
 
@@ -121,7 +108,7 @@ class AutomaticSynchronisation extends BaseTask
                         );
 
                         // We don't want to spam users all the time, just once is enough for now..
-                        $sslService->setConfigdataKey('customer_notified', new \DateTime());
+                        $sslService->setConfigdataKey('customer_notified', new DateTime());
                         $sslService->save();
                     }
                 }
@@ -173,19 +160,6 @@ class AutomaticSynchronisation extends BaseTask
         }
     }
 
-    private function checkServiceBillingPeriod($serviceID): bool
-    {
-        $skipPeriods = ['Monthly', 'One Time', 'Free Account'];
-        $skip = false;
-        $service = Service::find($serviceID);
-
-        if (in_array($service->billingcycle, $skipPeriods) || $service == null) {
-            $skip = true;
-        }
-
-        return $skip;
-    }
-
 
     private function updateServiceNextDueDate($serviceID, $date)
     {
@@ -194,13 +168,13 @@ class AutomaticSynchronisation extends BaseTask
             $createInvoiceDaysBefore = Capsule::table("tblconfiguration")
                 ->where('setting', 'CreateInvoiceDaysBefore')->first();
             $service->nextduedate = $date;
-            $nextinvoicedate = date('Y-m-d', strtotime("-{$createInvoiceDaysBefore->value} day", strtotime($date)));
-            $service->nextinvoicedate = $nextinvoicedate;
+            $nextInvoiceDate = date('Y-m-d', strtotime("-$createInvoiceDaysBefore->value day", $date->getTimestamp()));
+            $service->nextinvoicedate = $nextInvoiceDate;
             $service->save();
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 "Realtime Register SSL WHMCS: Service #" . $serviceID . " nextduedate set to "
-                . $date . " and nextinvoicedate to" . $nextinvoicedate
+                . date('Y-m-d', $date->getTimeStamp()) . " and nextinvoicedate to" . $nextInvoiceDate
             );
         }
     }
