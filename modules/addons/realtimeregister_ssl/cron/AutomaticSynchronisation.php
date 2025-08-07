@@ -18,7 +18,7 @@ class AutomaticSynchronisation extends BaseTask
 {
     protected $defaultFrequency = 60;
     protected $skipDailyCron = true;
-    protected $defaultPriority = 4200;
+    protected $defaultPriority = 4300;
     protected $successCountIdentifier = "synced";
     protected $successKeyword = "Certificate synchronized";
     protected $defaultName = "Certificate synchronization";
