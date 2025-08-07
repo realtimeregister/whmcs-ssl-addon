@@ -2,12 +2,15 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eHelpers\ZipFileHelper;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
 use RealtimeRegister\Domain\Enum\DownloadFormatEnum;
@@ -21,28 +24,44 @@ class UpdateConfigData
     
     public function __construct(SSL $sslService, $orderdata = [])
     {
-        $this->sslService = $sslService;
-        if (empty($orderdata)) {
-            $processesApi = ApiProvider::getInstance()
-                ->getApi(ProcessesApi::class);
-            $process = $processesApi->get($sslService->getRemoteId());
+        $this->orderdata = [];
+        try {
+            $this->sslService = $sslService;
+            if (empty($orderdata)) {
+                $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+                if ($sslService->getRemoteId()) {
+                    $process = $processesApi->get($sslService->getRemoteId());
 
-            if ($process->status === ProcessStatusEnum::STATUS_COMPLETED) {
-                $this->orderdata = [];
-                return;
+                    if ($process->status === ProcessStatusEnum::STATUS_COMPLETED) {
+                        return;
+                    }
+                    if ($process->status === ProcessStatusEnum::STATUS_FAILED
+                        || $process->status === ProcessStatusEnum::STATUS_CANCELLED) {
+                        $this->orderdata = ['failureStatus' => $process->status];
+                        return;
+                    }
+
+                    $infoProcess = $processesApi->info($process->id)->toArray();
+
+                    $this->orderdata = [
+                        'status' => $process->status,
+                        'dcv' => $infoProcess['validations']['dcv'],
+                        'domain' => $process->identifier
+                    ];
+                } else {
+                    $this->logError("No remote ID present");
+                }
+            } else {
+                $this->orderdata = $orderdata;
             }
-
-            $infoProcess = $processesApi->info($process->id)
-                ->toArray();
-
-            $this->orderdata = [
-                'status' => $process->status,
-                'dcv' => $infoProcess['validations']['dcv'],
-                'domain' => $process->identifier
-            ];
-        } else {
-            $this->orderdata = $orderdata;
+        } catch (\Exception $e) {
+            $this->logError($e->getMessage());
         }
+    }
+
+    private function logError(string $message) : void {
+        (new LogsRepo())->addLog($this->sslService->userid, $this->sslService->getServiceId(), 'error',
+            "We are currently unable to update the configdata, $message");
     }
     
     public function run()
@@ -50,13 +69,20 @@ class UpdateConfigData
         try {
             return $this->updateConfigData();
         } catch (\Exception $ex) {
+            $this->logError($ex->getMessage());
             return ['error' => $ex->getMessage()];
         }
     }
     
     public function updateConfigData()
     {
-        if (!isset($this->sslService->remoteid) || empty($this->sslService->remoteid)) {
+        if ($this->orderdata['failureStatus']) {
+            $this->sslService->setSSLStatus($this->orderdata['failureStatus']);
+            $this->sslService->save();
+            return null;
+        }
+
+        if (!$this->sslService->getRemoteId()) {
             return null;
         }
 
@@ -67,7 +93,7 @@ class UpdateConfigData
             null,
             null,
             null,
-            ['process:eq' => $this->sslService->remoteid]
+            ['process:eq' => $this->sslService->getRemoteId()]
         );
 
         $currentOrder = $orderRepo->getByServiceId($this->sslService->serviceid);
@@ -160,7 +186,7 @@ class UpdateConfigData
 
         $sslOrder = $this->sslService;
         $sslOrder->setCsr(trim($sslOrder->getCsr()));
-        $sslOrder->configdata = array_merge(json_decode($currentOrder->data, true), (array) $sslOrder->configdata);
+        $sslOrder->configdata = array_merge(json_decode($currentOrder->data ?? '{}', true), (array) $sslOrder->configdata);
         $sslOrder->setDomain($sslOrder->getDomain() ?? $this->orderdata['domain']);
 
         if (isset($this->orderdata['status'])) {

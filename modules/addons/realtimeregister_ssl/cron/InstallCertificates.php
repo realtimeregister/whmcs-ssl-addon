@@ -23,6 +23,7 @@ class InstallCertificates extends BaseTask
 
             $orderRepo = new OrderRepo();
             $orders = $orderRepo->getOrdersInstallation();
+
             foreach ($orders as $order) {
                 $details = json_decode($order->configdata, true);
                 $cert = $details['crt'];
