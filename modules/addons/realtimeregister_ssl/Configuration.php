@@ -81,7 +81,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '1.0.8';
+    public $version = '1.0.9';
     public $tablePrefix = '';
     public $modelRegister = [];
 
