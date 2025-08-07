@@ -35,7 +35,7 @@ class AutomaticSynchronisation extends BaseTask
 
             //get all completed ssl orders
             $sslOrders = $this->getSSLOrders();
-//dd($sslOrders);
+
             foreach ($sslOrders as $sslService) {
                 $serviceID = $sslService->serviceid;
 
@@ -50,7 +50,6 @@ class AutomaticSynchronisation extends BaseTask
 
                 //if service is synchronized skip it
                 if ($this->checkIfSynchronized($serviceID)) {
-                    dd('Synchronization started');
                     continue;
                 }
 
@@ -62,7 +61,6 @@ class AutomaticSynchronisation extends BaseTask
                     $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
                     $order = $processesApi->get($sslService->remoteid);
                 } catch (Exception $e) {
-                    dd($e);
                     continue;
                 }
 
@@ -88,7 +86,7 @@ class AutomaticSynchronisation extends BaseTask
 
                 /** @var Certificate $sslOrder */
                 $sslOrder = $certificateApi->listCertificates(1, null, null, ['process:eq' => $order->remoteid])[0];
-//dd($sslOrder);
+
                 //if certificate is active
                 if ($sslOrder) {
                     //update whmcs service next due date
@@ -196,11 +194,7 @@ class AutomaticSynchronisation extends BaseTask
             $createInvoiceDaysBefore = Capsule::table("tblconfiguration")
                 ->where('setting', 'CreateInvoiceDaysBefore')->first();
             $service->nextduedate = $date;
-            var_dump($service->nextduedate);
-            dump($service->nextduedate);
             $nextinvoicedate = date('Y-m-d', strtotime("-{$createInvoiceDaysBefore->value} day", strtotime($date)));
-            dd($nextinvoicedate);
-            var_dump($nextinvoicedate);
             $service->nextinvoicedate = $nextinvoicedate;
             $service->save();
 
