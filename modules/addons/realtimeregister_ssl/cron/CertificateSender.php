@@ -8,6 +8,7 @@ use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiConfigRepo;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
 
@@ -63,7 +64,7 @@ class CertificateSender extends BaseTask
                     continue;
                 }
 
-                $apiConf = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+                $apiConf = (new ApiConfigRepo())->get();
 
                 $sendCertificateTemplate = $apiConf->send_certificate_template;
                 if ($sendCertificateTemplate == null) {

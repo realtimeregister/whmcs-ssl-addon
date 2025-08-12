@@ -14,7 +14,6 @@ class Crons extends AbstractController
         'cron_daily', // DailyStatusUpdater
         'cron_processing', // ProcessingOrders
         'cron_synchronization', // AutomaticSynchronisation
-        'cron_ssl_summary_stats', // CertificateStatisticsLoader
         'cron_renewal', // ExpiryHandler
         'cron_send_certificate', // CertificateSender
         'cron_price_updater', // PriceUpdater

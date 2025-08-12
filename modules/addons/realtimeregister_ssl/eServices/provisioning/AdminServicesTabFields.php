@@ -50,42 +50,45 @@ class AdminServicesTabFields
                 throw new Exception('Order id does not exist');
             }
 
-            $return = [];
-            $return['Realtime Register SSL API Order ID'] = $sslService->remoteid;
+            $sslData = [];
+            $sslData['Realtime Register SSL API Order ID'] = $sslService->remoteid;
             $configDataUpdate = new UpdateConfigData($sslService);
             $orderDetails = $configDataUpdate->run();
+            if (!$orderDetails) {
+                return $sslData;
+            }
 
-            $return['Partner Order ID'] = $orderDetails->getPartnerOrderId() ?? '-';
-            $return['Configuration Status'] = $sslService->status;
-            $return['Domain'] = $orderDetails->getDomain();
-            $return['Order Status'] = $orderDetails->getSSLStatus();
-            $return['Approver email'] = $orderDetails->getApproverEmail() ?? 'N/A';
-            $return['Order Status Description'] = $orderDetails->getOrderStatusDescription();
+            $sslData['Partner Order ID'] = $orderDetails->getPartnerOrderId() ?? '-';
+            $sslData['Configuration Status'] = $sslService->status;
+            $sslData['Domain'] = $orderDetails->getDomain();
+            $sslData['Order Status'] = $orderDetails->getSSLStatus();
+            $sslData['Approver email'] = $orderDetails->getApproverEmail() ?? 'N/A';
+            $sslData['Order Status Description'] = $orderDetails->getOrderStatusDescription();
 
             if ($orderDetails->getSSLStatus() === 'ACTIVE' || $orderDetails->getSSLStatus() === 'COMPLETED') {
-                $return['Valid From'] = self::formatDate($orderDetails->getValidFrom());
-                $return['Expires'] = self::formatDate($orderDetails->getValidTill());
+                $sslData['Valid From'] = self::formatDate($orderDetails->getValidFrom());
+                $sslData['Expires'] = self::formatDate($orderDetails->getValidTill());
             }
 
             if ($orderDetails->getSubscriptionEnd()) {
-                $return['Subscription Starts'] = self::formatDate($orderDetails->getSubscriptionStarts());
-                $return['Subscription Ends'] = self::formatDate($orderDetails->getSubscriptionEnd());
-                $return['Reissue Before'] = $return['Expires'];
-                unset($return['Expires']);
+                $sslData['Subscription Starts'] = self::formatDate($orderDetails->getSubscriptionStarts());
+                $sslData['Subscription Ends'] = self::formatDate($orderDetails->getSubscriptionEnd());
+                $sslData['Reissue Before'] = $sslData['Expires'];
+                unset($sslData['Expires']);
             }
 
             foreach ($orderDetails->getSanDetails() as $key => $san) {
-                $return['SAN ' . ($key + 1)] = $san->san_name;
+                $sslData['SAN ' . ($key + 1)] = $san->san_name;
                 if ($san->validation_method) {
                     if ($san->validation_method === 'email') {
-                        $return['SAN ' . ($key + 1)] .= ' / ' . $san->email;
+                        $sslData['SAN ' . ($key + 1)] .= ' / ' . $san->email;
                     } else {
-                        $return['SAN ' . ($key + 1)] .= ' / ' . $san->validation_method;
+                        $sslData['SAN ' . ($key + 1)] .= ' / ' . $san->validation_method;
                     }
                 }
             }
 
-            return $return;
+            return $sslData;
         } catch (Exception $ex) {
             return ['Realtime Register SSL Error' => $ex->getMessage()];
         }
@@ -101,8 +104,6 @@ class AdminServicesTabFields
         $includedSansWildcard = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS_WILDCARD];
         $boughtSansWildcard = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_WILDCARD_COUNT];
         $sansLimitWildcard = $boughtSansWildcard + $includedSansWildcard;
-
-        require dirname(dirname(dirname(dirname(dirname(__DIR__))))) . DIRECTORY_SEPARATOR . 'configuration.php';
 
         $adminpath = 'admin';
         if (isset($customadminpath)) {

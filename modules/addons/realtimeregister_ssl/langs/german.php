@@ -14,8 +14,6 @@ $_LANG['addonAA']['crons']['cron_processing'] = 'Automatische Synchronisierung d
 
 //synchronization cron
 $_LANG['addonAA']['crons']['cron_synchronization'] = 'Automatische Synchronisierung (stündlich)';
-//summary order cron
-$_LANG['addonAA']['crons']['cron_ssl_summary_stats'] = 'Aktuellen SSL-Bestellstatus laden (alle 4 Stunden)';
 //customers notification and creating renewals
 $_LANG['addonAA']['crons']['cron_renewal'] = 'Senden Sie Kunden Benachrichtigungen über auslaufende Dienste und erstellen Sie Verlängerungsrechnungen für Dienste, die innerhalb der ausgewählten Anzahl von Tagen ablaufen (einmal täglich)';
 //customers send certificate

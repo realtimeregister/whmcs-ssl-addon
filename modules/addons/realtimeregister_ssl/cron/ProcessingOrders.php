@@ -5,7 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl\cron;
 use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
-use Illuminate\Database\Capsule\Manager as Capsule;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 
 class ProcessingOrders extends BaseTask
 {
@@ -21,19 +21,14 @@ class ProcessingOrders extends BaseTask
             logActivity("Realtime Register SSL: Certificates (ssl status Processing) Data Updater started");
             Addon::I();
 
-            $sslorders = Capsule::table('tblhosting')
-                ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
-                ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
-                ->where('tblhosting.domainstatus', 'Active')
-                ->where('tblsslorders.configdata', 'like', '%"ssl_status":"COMPLETED"%')
-                ->orWhere('tblsslorders.status', '=', SSL::CONFIGURATION_SUBMITTED)
-                ->get(['tblsslorders.*']);
+            $this->sslRepo = new SSLRepo();
+            $sslOrders = $this->getSSLOrders([SSL::CONFIGURATION_SUBMITTED]);
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 "Realtime Register SSL WHMCS: Certificates (ssl status Processing) Data Updater started."
             );
 
-            $this->checkOrdersStatus($sslorders, true);
+            $this->checkOrdersStatus($sslOrders);
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 "Realtime Register SSL WHMCS: Certificates (ssl status Processing) Data Updater completed."

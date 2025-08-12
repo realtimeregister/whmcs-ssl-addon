@@ -14,8 +14,6 @@ $_LANG['addonAA']['crons']['cron_processing'] = 'Automatisk synkronisering af be
 
 //synchronization cron
 $_LANG['addonAA']['crons']['cron_synchronization'] = 'Automatisk synkronisering (hver time)';
-//summary order cron
-$_LANG['addonAA']['crons']['cron_ssl_summary_stats'] = 'Indlæs den aktuelle SSL-ordrestatus (hver 4. time)';
 //customers notification and creating renewals
 $_LANG['addonAA']['crons']['cron_renewal'] = 'Send kunder meddelelser om udløb af tjenester og opret fornyelsesfakturaer for tjenester, der udløber inden for det valgte antal dage (en gang om dagen)';
 //customers send certificate

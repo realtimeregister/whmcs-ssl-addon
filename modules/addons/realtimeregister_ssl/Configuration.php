@@ -69,7 +69,6 @@ class Configuration extends AbstractConfiguration
         AutomaticSynchronisation::class,
         ProcessingOrders::class,
         DailyStatusUpdater::class,
-        CertificateStatisticsLoader::class,
         ExpiryHandler::class,
         CertificateSender::class,
         PriceUpdater::class,
@@ -81,7 +80,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '1.0.9';
+    public $version = '1.1.0';
     public $tablePrefix = '';
     public $modelRegister = [];
 
@@ -500,6 +499,12 @@ class Configuration extends AbstractConfiguration
 
         foreach (self::$tasks as $task) {
             $task::register();
+        }
+
+        $task = Capsule::table('tbltask')->where('name', '=', 'Certificate statistics loader')->first('id');
+        if ($task) {
+            Capsule::table('tbltask_status')->where('task_id', '=', $task->id)->delete();
+            Capsule::table('tbltask')->where('id', '=', $task->id)->delete();
         }
     }
 
