@@ -55,7 +55,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                     'cron_renewal' =>  1,
                     'cron_send_certificate' =>  1,
                     'cron_price_updater' =>  1,
-                    'cron_certificate_details_updater' =>  1,
                     'cron_certificate_installer' => 1,
                 ]);
         } else {
@@ -89,8 +88,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                     'cron_renewal' => $params['cron_renewal'],
                     'cron_send_certificate' => $params['cron_send_certificate'],
                     'cron_price_updater' => $params['cron_price_updater'],
-                    'cron_certificate_details_updater' => $params['cron_certificate_details_updater'],
-                    'cron_certificate_installer' => $params['cron_certificate_installer'],
+                    'cron_certificate_installer' => $params['cron_certificate_installer']
                 ]);
         }
     }
@@ -126,7 +124,6 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->boolean('cron_renewal')->default(true);
                 $table->boolean('cron_send_certificate')->default(true);
                 $table->boolean('cron_price_updater')->default(true);
-                $table->boolean('cron_certificate_details_updater')->default(true);
                 $table->boolean('cron_certificate_installer')->default(true);
             });
         }
@@ -400,6 +397,13 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                             ->update(['api_login' => encrypt($apiLogin)]);
                     }
                 }
+            }
+
+            // Encrypt api login
+            if (Capsule::schema()->hasColumn($this->tableName, 'cron_certificate_details_updater')) {
+                Capsule::schema()->table($this->tableName, function($table) {
+                    $table->dropColumn('cron_certificate_details_updater');
+                });
             }
         }
     }

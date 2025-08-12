@@ -5,7 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl\cron;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
-use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigs;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 
 class BaseTask extends \WHMCS\Scheduling\Task\AbstractTask
@@ -27,20 +27,17 @@ class BaseTask extends \WHMCS\Scheduling\Task\AbstractTask
         return false;
     }
 
-    protected function checkOrdersStatus($sslorders, $processingOnly = false)
+    protected function checkOrdersStatus($sslOrders)
     {
-        $cids = [];
-        foreach ($sslorders as $sslorder) {
-            $cids[] = $sslorder->remoteid;
-        }
-
-        try {
-            $configDataUpdate = new UpdateConfigs($cids, $processingOnly);
-            $configDataUpdate->run();
-        } catch (\Exception $e) {
-            Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register SSL WHMCS Products Price Updater Error: " . $e->getMessage()
-            );
+        foreach ($sslOrders as $sslorder) {
+            try {
+                $configDataUpdate = new UpdateConfigData($sslorder);
+                $configDataUpdate->run();
+            } catch (\Exception $e) {
+                Whmcs::savelogActivityRealtimeRegisterSsl(
+                    "Realtime Register SSL WHMCS task error for task '" . $this->getName() . "':" . $e->getMessage()
+                );
+            }
         }
     }
 
