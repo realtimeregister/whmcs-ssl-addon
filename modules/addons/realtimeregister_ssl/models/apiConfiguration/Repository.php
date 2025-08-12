@@ -399,7 +399,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 }
             }
 
-            // Encrypt api login
+            // Remove old cron
             if (Capsule::schema()->hasColumn($this->tableName, 'cron_certificate_details_updater')) {
                 Capsule::schema()->table($this->tableName, function($table) {
                     $table->dropColumn('cron_certificate_details_updater');
