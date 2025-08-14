@@ -67,7 +67,7 @@ class AutomaticSynchronisation extends BaseTask
                 }
 
                 if ($order->status == ProcessStatusEnum::STATUS_FAILED || ProcessStatusEnum::STATUS_CANCELLED) {
-                    $this->setSSL($serviceID);
+                    $sslService->setStatus(SSL::CANCELLED);
                     $updatedServices[] = $serviceID;
                     continue;
                 }

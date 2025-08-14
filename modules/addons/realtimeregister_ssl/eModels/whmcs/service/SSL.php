@@ -19,6 +19,7 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     public const AWAITING_CONFIGURATION = 'Awaiting Configuration';
     public const CONFIGURATION_SUBMITTED = 'Configuration Submitted';
     public const EXPIRED = 'Expired';
+    public const CANCELLED = 'Cancelled';
     public const ACTIVE = 'Active';
 
     public function scopeWhereServiceId($query, $id)
