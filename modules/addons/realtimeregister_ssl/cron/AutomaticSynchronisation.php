@@ -4,6 +4,7 @@ namespace AddonModule\RealtimeRegisterSsl\cron;
 
 use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
@@ -66,7 +67,7 @@ class AutomaticSynchronisation extends BaseTask
                 }
 
                 if ($order->status == ProcessStatusEnum::STATUS_FAILED || ProcessStatusEnum::STATUS_CANCELLED) {
-                    $this->setSSLServiceAsTerminated($serviceID);
+                    $this->setSSL($serviceID);
                     $updatedServices[] = $serviceID;
                     continue;
                 }
@@ -82,9 +83,10 @@ class AutomaticSynchronisation extends BaseTask
                 if ($sslOrder) {
                     //update whmcs service next due date
                     $newNextDueDate = $sslOrder->subscriptionEndDate ?? $sslOrder->expiryDate;
-                    //set ssl certificate as terminated if expired
+
+                    //set ssl status as expired if expired
                     if ($sslOrder->expiryDate < new DateTime()) {
-                        $this->setSSLServiceAsTerminated($serviceID);
+                        $sslService->setStatus(SSL::EXPIRED);
                     }
 
                     $this->updateServiceNextDueDate($serviceID, $newNextDueDate);
@@ -109,9 +111,9 @@ class AutomaticSynchronisation extends BaseTask
 
                         // We don't want to spam users all the time, just once is enough for now..
                         $sslService->setConfigdataKey('customer_notified', new DateTime());
-                        $sslService->save();
                     }
                 }
+                $sslService->save();
             }
             logActivity('Realtime Register SSL: Synchronization completed.');
 
@@ -146,20 +148,6 @@ class AutomaticSynchronisation extends BaseTask
         $sslService->setConfigdataKey('synchronized', date('Y-m-d'));
         $sslService->save();
     }
-
-    private function setSSLServiceAsTerminated($serviceID)
-    {
-        $service = Service::find($serviceID);
-        if (!empty($service)) {
-            $service->status = 'terminated';
-            $service->save();
-
-            Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register SSL WHMCS: Service #$serviceID set as Terminated"
-            );
-        }
-    }
-
 
     private function updateServiceNextDueDate($serviceID, $date)
     {
