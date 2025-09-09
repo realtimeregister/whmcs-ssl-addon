@@ -14,9 +14,13 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Api;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
+use Composer\InstalledVersions;
 use Exception;
 use RealtimeRegister\Api\CustomersApi;
+use RealtimeRegister\Api\ProcessesApi;
+use RealtimeRegister\Exceptions\ForbiddenException;
 use WHMCS\Database\Capsule;
 
 /*
@@ -247,15 +251,42 @@ class ApiConfiguration extends AbstractController
         $vars['form'] = $form->getHTML();
 
         // Give an error when people forget tot install the composer packages
-        if (!\Composer\InstalledVersions::isInstalled('realtimeregister/realtimeregister-php')) {
+        if (!InstalledVersions::isInstalled('realtimeregister/realtimeregister-php')) {
             $vars['form'] = '<div class="alert alert-danger" role="alert">You installed the source version of this module, please run ' .
                     '<i>composer install</i> before continuing, and reload this page</div>' . $vars['form'];
         }
+
+        if (self::isMissingProcessPermission($input)) {
+            $vars['form'] = '<div class="alert alert-danger" role="alert">This API user is missing the "VIEW_PROCESS"'.
+                ' permission. Without this permission, most functionalities will not work properly.</div>' . $vars['form'];
+        }
+
+
+
 
         return [
             'tpl' => 'api_configuration',
             'vars' => $vars
         ];
+    }
+
+    private static function isMissingProcessPermission($input) {
+        if (!$input['api_login']) {
+            return false;
+        }
+
+        $login = decrypt($input['api_login'], $GLOBALS['cc_encryption_hash']);
+
+        try {
+            ApiProvider::standalone(ProcessesApi::class, $login, $input['api_test'])
+                ->list(limit: 1);
+        } catch (ForbiddenException) {
+            return true;
+        } catch (\Exception) {
+            return false;
+        }
+
+        return false;
     }
 
     public function saveItemHTML($input, $vars = [])
