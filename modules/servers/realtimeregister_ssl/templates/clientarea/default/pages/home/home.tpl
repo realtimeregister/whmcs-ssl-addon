@@ -242,7 +242,7 @@
                         {if $activationStatus === 'processing' || $activationStatus === 'SUSPENDED'}
                             <button type="button" id="btnRevalidate" class="btn btn-default m-1">{$ADDONLANG->T('domainvalidationmethod')}</button>
                         {elseif $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
-                            <a class="btn btn-default m-1" role="button" href="" id="Action_Custom_Module_Button_Reissue_Certificate">{$ADDONLANG->T('reissueCertificate')}</a>
+                            <button class="btn btn-default m-1" role="button" id="Action_Custom_Module_Button_Reissue_Certificate">{$ADDONLANG->T('reissueCertificate')}</button>
                             <button type="button" id="send-certificate-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('sendCertificate')}</button>
                             {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default m-1">{$ADDONLANG->T('downloadca')}</button></a>{/if}
                             {if $downloadcrt}<a href="{$downloadcrt}"><button type="button" id="download-crt" class="btn btn-default m-1">{$ADDONLANG->T('downloadcrt')}</button></a>{/if}
@@ -258,13 +258,6 @@
             </tr>
         </tbody>
     </table>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var reissueUrl= $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').attr('href');
-            $('#Action_Custom_Module_Button_Reissue_Certificate').prop('href', reissueUrl);
-            $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').remove();
-        });
-    </script>
 
     <!--RENEW MODAL-->
     <div class="modal fade" id="modalRenew" role="dialog" aria-hidden="true">
@@ -303,9 +296,12 @@
         </div>
     </div>
     <script type="text/javascript">
-        $(document).ready(function () {
-
-            var serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1',
+        $(function () {
+            $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').hide();
+            $('#Action_Custom_Module_Button_Reissue_Certificate').on('click', () => {
+                $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').click()
+            })
+            let serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1',
                     renewBtn = $('#btnRenew'),
                     renewForm,
                     renewModal,
