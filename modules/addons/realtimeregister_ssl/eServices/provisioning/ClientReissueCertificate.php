@@ -307,7 +307,7 @@ class ClientReissueCertificate
             ->reissueCertificate(
                 $this->sslService->getCertificateId(),
                 $csr,
-                $sansDomains,
+                empty($sansDomains) ? null : $sansDomains,
                 $organization,
                 null,
                 $address,

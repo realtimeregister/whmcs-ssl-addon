@@ -67,8 +67,8 @@ class AdminReissueCertificate extends Ajax
             throw new Exception('An error occurred.');
         }
 
-        $sanDomains =  SansDomains::parseDomains($this->p['sanDomains']);
-        $wildcardDomains =  SansDomains::parseDomains($this->p['sanDomainsWildcard']);
+        $sanDomains = SansDomains::parseDomains($this->p['sanDomains']);
+        $wildcardDomains = SansDomains::parseDomains($this->p['sanDomainsWildcard']);
         $allSans = array_merge($sanDomains, $wildcardDomains);
 
         $productDetails = ApiProvider::getInstance()
@@ -89,7 +89,7 @@ class AdminReissueCertificate extends Ajax
              ->reissueCertificate(
                  $sslService->getCertificateId(),
                  $this->p['csr'],
-                 $allSans,
+                 empty($allSans) ? null : $allSans,
                  $orderFields['organization'],
                  null,
                  $orderFields['address'],
