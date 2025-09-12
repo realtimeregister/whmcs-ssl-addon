@@ -242,7 +242,7 @@
                         {if $activationStatus === 'processing' || $activationStatus === 'SUSPENDED'}
                             <button type="button" id="btnRevalidate" class="btn btn-default m-1">{$ADDONLANG->T('domainvalidationmethod')}</button>
                         {elseif $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
-                            <button class="btn btn-default m-1" role="button" id="Action_Custom_Module_Button_Reissue_Certificate">{$ADDONLANG->T('reissueCertificate')}</button>
+                            <a class="btn btn-default m-1" role="button" id="Action_Custom_Module_Button_Reissue_Certificate">{$ADDONLANG->T('reissueCertificate')}</a>
                             <button type="button" id="send-certificate-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('sendCertificate')}</button>
                             {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default m-1">{$ADDONLANG->T('downloadca')}</button></a>{/if}
                             {if $downloadcrt}<a href="{$downloadcrt}"><button type="button" id="download-crt" class="btn btn-default m-1">{$ADDONLANG->T('downloadcrt')}</button></a>{/if}
@@ -297,10 +297,17 @@
     </div>
     <script type="text/javascript">
         $(function () {
-            $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').hide();
-            $('#Action_Custom_Module_Button_Reissue_Certificate').on('click', () => {
-                $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').click()
-            })
+            const sidebarItem = $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate')
+            const reissueUrl = sidebarItem.attr('href');
+            if (reissueUrl !== '#') {
+                $('#Action_Custom_Module_Button_Reissue_Certificate').prop('href', reissueUrl);
+            } else {
+                $('#Action_Custom_Module_Button_Reissue_Certificate').on('click', () => {
+                    sidebarItem.click()
+                })
+            }
+            sidebarItem.hide();
+
             let serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1',
                     renewBtn = $('#btnRenew'),
                     renewForm,
