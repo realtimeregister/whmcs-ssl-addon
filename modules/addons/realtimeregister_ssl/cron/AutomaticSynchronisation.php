@@ -20,7 +20,7 @@ class AutomaticSynchronisation extends BaseTask
 {
     protected $defaultFrequency = 60;
     protected $skipDailyCron = true;
-    protected $defaultPriority = 4300;
+    protected $defaultPriority = 4200;
     protected $successCountIdentifier = "synced";
     protected $successKeyword = "Certificate synchronized";
     protected $defaultName = "Certificate synchronization";
@@ -66,9 +66,10 @@ class AutomaticSynchronisation extends BaseTask
                     continue;
                 }
 
-                if ($order->status == ProcessStatusEnum::STATUS_FAILED || ProcessStatusEnum::STATUS_CANCELLED) {
+                if ($order->status == ProcessStatusEnum::STATUS_FAILED || $order->status == ProcessStatusEnum::STATUS_CANCELLED) {
                     $sslService->setStatus(SSL::CANCELLED);
                     $updatedServices[] = $serviceID;
+                    $sslService->save();
                     continue;
                 }
 
@@ -81,15 +82,11 @@ class AutomaticSynchronisation extends BaseTask
 
                 //if certificate is active
                 if ($sslOrder) {
-                    //update whmcs service next due date
-                    $newNextDueDate = $sslOrder->subscriptionEndDate ?? $sslOrder->expiryDate;
 
                     //set ssl status as expired if expired
                     if ($sslOrder->expiryDate < new DateTime()) {
                         $sslService->setStatus(SSL::EXPIRED);
                     }
-
-                    $this->updateServiceNextDueDate($serviceID, $newNextDueDate);
 
                     $updatedServices[] = $serviceID;
                 } elseif ($order->status === ProcessStatusEnum::STATUS_SUSPENDED) {
@@ -147,23 +144,5 @@ class AutomaticSynchronisation extends BaseTask
         $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
         $sslService->setConfigdataKey('synchronized', date('Y-m-d'));
         $sslService->save();
-    }
-
-    private function updateServiceNextDueDate($serviceID, $date)
-    {
-        $service = Service::find($serviceID);
-        if (!empty($service)) {
-            $createInvoiceDaysBefore = Capsule::table("tblconfiguration")
-                ->where('setting', 'CreateInvoiceDaysBefore')->first();
-            $service->nextduedate = $date;
-            $nextInvoiceDate = date('Y-m-d', strtotime("-$createInvoiceDaysBefore->value day", $date->getTimestamp()));
-            $service->nextinvoicedate = $nextInvoiceDate;
-            $service->save();
-
-            Whmcs::savelogActivityRealtimeRegisterSsl(
-                "Realtime Register SSL WHMCS: Service #" . $serviceID . " nextduedate set to "
-                . date('Y-m-d', $date->getTimeStamp()) . " and nextinvoicedate to" . $nextInvoiceDate
-            );
-        }
     }
 }

@@ -301,7 +301,7 @@ class ClientReissueCertificate
                     '+' . $this->post['country-calling-code-phonenumber'] . '.' . $this->post['phonenumber'])
             ];
         }
-        
+
         $reissueData = ApiProvider::getInstance()
             ->getApi(CertificatesApi::class)
             ->reissueCertificate(
@@ -327,19 +327,16 @@ class ClientReissueCertificate
         $logs = new LogsRepo();
         $this->processDcvEntries($reissueData->validations?->dcv?->toArray() ?? []);
 
-        //save private key
-        if (isset($_POST['privateKey']) && $_POST['privateKey'] != null) {
-            $privKey = decrypt($_POST['privateKey']);
-            $GenerateSCR = new GenerateCSR($this->p, $_POST);
-            $GenerateSCR->savePrivateKeyToDatabase($this->p['serviceid'], $privKey);
-        }
-
         $this->sslService->setCrt('--placeholder--');
         $this->sslService->setRemoteId($reissueData->processId);
         $this->sslService->setCa(null);
         $this->sslService->status = SSL::CONFIGURATION_SUBMITTED;
         $this->sslService->setConfigdataKey('csr', $csr);
-        $this->sslService->setPrivateKey($_POST['privateKey']);
+
+        if (isset($_POST['privateKey']) && $_POST['privateKey'] != null) {
+            $this->sslService->setPrivateKey($_POST['privateKey']);
+        }
+
         $this->sslService->save();
 
         try {

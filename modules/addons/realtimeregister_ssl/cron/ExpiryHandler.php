@@ -57,11 +57,18 @@ class ExpiryHandler extends BaseTask
             foreach ($sslOrders as $sslOrder) {
                 $serviceid = $sslOrder->serviceid;
                 $srv = Capsule::table('tblhosting')->where('id', $serviceid)->first();
+                $daysLeft = false;
+                $daysReissue = false;
 
-                //get days left to expire from WHMCS
-                $daysLeft = $this->checkOrderExpiryDate(new DateTime($srv->nextduedate));
-                $daysReissue = $this->checkReissueDate($srv->id);
-
+                //get days left to expire
+                $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
+                $configData = json_decode($sslOrder->configdata);
+                if ($configData->end_date?->date) {
+                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->end_date->date));
+                    $daysReissue = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
+                } else if ($configData->valid_till?->date) {
+                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
+                }
 
                 $product = Capsule::table('tblproducts')->where('id', $srv->packageid)->first();
 
@@ -196,24 +203,5 @@ class ExpiryHandler extends BaseTask
             );
         }
         return $resultSuccess;
-    }
-
-    private function checkReissueDate($serviceid): float|bool|int
-    {
-        $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
-
-        if (!empty($sslOrder->configdata)) {
-            $configdata = json_decode($sslOrder->configdata, true);
-
-            if (!empty($configdata['end_date'])) {
-                $now = strtotime(date('Y-m-d'));
-                $end_date = strtotime($configdata['valid_till']['date']);
-                $datediff = $now - $end_date;
-
-                $nextReissue = abs(round($datediff / (60 * 60 * 24)));
-                return $nextReissue;
-            }
-        }
-        return false;
     }
 }
