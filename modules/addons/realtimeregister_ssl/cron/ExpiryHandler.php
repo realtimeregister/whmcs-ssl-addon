@@ -57,11 +57,20 @@ class ExpiryHandler extends BaseTask
             foreach ($sslOrders as $sslOrder) {
                 $serviceid = $sslOrder->serviceid;
                 $srv = Capsule::table('tblhosting')->where('id', $serviceid)->first();
+                $daysReissue = false;
+                $daysLeft = false;
 
-                //get days left to expire from WHMCS
-                $daysLeft = $this->checkOrderExpiryDate(new DateTime($srv->nextduedate));
-                $daysReissue = $this->checkReissueDate($srv->id);
-
+                //get days left to expire
+                if ($srv->billingcycle == 'One Time') {
+                    $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
+                    $configData = json_decode($sslOrder->configdata);
+                    if ($configData->valid_till?->date) {
+                        $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
+                    }
+                } else {
+                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($srv->nextduedate));
+                    $daysReissue = $this->checkReissueDate($srv->id);
+                }
 
                 $product = Capsule::table('tblproducts')->where('id', $srv->packageid)->first();
 
