@@ -70,10 +70,6 @@ class ExpiryHandler extends BaseTask
                     $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
                 }
 
-                dump($daysLeft, $daysReissue);
-
-
-
                 $product = Capsule::table('tblproducts')->where('id', $srv->packageid)->first();
 
                 if ($daysReissue == 30) {
