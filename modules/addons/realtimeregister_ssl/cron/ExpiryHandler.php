@@ -57,20 +57,16 @@ class ExpiryHandler extends BaseTask
             foreach ($sslOrders as $sslOrder) {
                 $serviceid = $sslOrder->serviceid;
                 $srv = Capsule::table('tblhosting')->where('id', $serviceid)->first();
-                $daysReissue = false;
                 $daysLeft = false;
 
                 //get days left to expire
-                if ($srv->billingcycle == 'One Time') {
-                    $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
-                    $configData = json_decode($sslOrder->configdata);
-                    if ($configData->valid_till?->date) {
-                        $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
-                    }
-                } else {
-                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($srv->nextduedate));
-                    $daysReissue = $this->checkReissueDate($srv->id);
+                $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
+                $configData = json_decode($sslOrder->configdata);
+                if ($configData->valid_till?->date) {
+                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
                 }
+
+                $daysReissue = $this->checkReissueDate($configData);
 
                 $product = Capsule::table('tblproducts')->where('id', $srv->packageid)->first();
 
@@ -207,21 +203,15 @@ class ExpiryHandler extends BaseTask
         return $resultSuccess;
     }
 
-    private function checkReissueDate($serviceid): float|bool|int
+    private function checkReissueDate($configData): float|bool|int
     {
-        $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
+        if (!empty($configData->end_date)) {
+            $now = strtotime(date('Y-m-d'));
+            $end_date = strtotime($configData->valid_till->date);
+            $datediff = $end_date - $now;
 
-        if (!empty($sslOrder->configdata)) {
-            $configdata = json_decode($sslOrder->configdata, true);
-
-            if (!empty($configdata['end_date'])) {
-                $now = strtotime(date('Y-m-d'));
-                $end_date = strtotime($configdata['valid_till']['date']);
-                $datediff = $now - $end_date;
-
-                $nextReissue = abs(round($datediff / (60 * 60 * 24)));
-                return $nextReissue;
-            }
+            $nextReissue = round($datediff / (60 * 60 * 24));
+            return $nextReissue;
         }
         return false;
     }
