@@ -67,7 +67,7 @@ class ExpiryHandler extends BaseTask
                     $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->end_date->date));
                     $daysReissue = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
                 } else if ($configData->valid_till?->date) {
-                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->end_date->date));
+                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
                 }
 
                 dump($daysLeft, $daysReissue);
