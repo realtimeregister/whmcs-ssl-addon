@@ -64,10 +64,10 @@ class ExpiryHandler extends BaseTask
                 $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
                 $configData = json_decode($sslOrder->configdata);
                 if ($configData->end_date?->date) {
-                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->end_date?->date));
-                    $daysReissue = $this->checkOrderExpiryDate(new DateTime($configData->valid_till?->date));
+                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->end_date->date));
+                    $daysReissue = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
                 } else if ($configData->valid_till?->date) {
-                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->end_date?->date));
+                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->end_date->date));
                 }
 
                 dump($daysLeft, $daysReissue);
