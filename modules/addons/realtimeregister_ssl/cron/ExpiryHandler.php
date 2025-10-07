@@ -58,15 +58,21 @@ class ExpiryHandler extends BaseTask
                 $serviceid = $sslOrder->serviceid;
                 $srv = Capsule::table('tblhosting')->where('id', $serviceid)->first();
                 $daysLeft = false;
+                $daysReissue = false;
 
                 //get days left to expire
                 $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
                 $configData = json_decode($sslOrder->configdata);
-                if ($configData->valid_till?->date) {
-                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
+                if ($configData->end_date?->date) {
+                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->end_date?->date));
+                    $daysReissue = $this->checkOrderExpiryDate(new DateTime($configData->valid_till?->date));
+                } else if ($configData->valid_till?->date) {
+                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->end_date?->date));
                 }
 
-                $daysReissue = $this->checkReissueDate($configData);
+                dump($daysLeft, $daysReissue);
+
+
 
                 $product = Capsule::table('tblproducts')->where('id', $srv->packageid)->first();
 
@@ -201,18 +207,5 @@ class ExpiryHandler extends BaseTask
             );
         }
         return $resultSuccess;
-    }
-
-    private function checkReissueDate($configData): float|bool|int
-    {
-        if (!empty($configData->end_date)) {
-            $now = strtotime(date('Y-m-d'));
-            $end_date = strtotime($configData->valid_till->date);
-            $datediff = $end_date - $now;
-
-            $nextReissue = round($datediff / (60 * 60 * 24));
-            return $nextReissue;
-        }
-        return false;
     }
 }
