@@ -67,7 +67,7 @@ class Invoice
     {
         $service = Capsule::table(self::INVOICE_INFOS_TABLE_NAME)
             ->where('service_id', '=', $serviceId)
-            ->get();
+            ->first();
 
         if ($service != null) {
             $invoice = Capsule::table('tblinvoices')
@@ -189,7 +189,7 @@ class Invoice
         $billingCycle = $service->billingcycle;
         $pricing = get_query_val(
             "tblpricing",
-            $billingCycle,
+            $billingCycle == 'One Time' ? 'monthly' : strtolower($billingCycle),
             [
                 "type" => "product",
                 "currency" => $clientCurrencyID,
@@ -197,7 +197,7 @@ class Invoice
             ]
         );
 
-        if ($pricing == "-1.00") {
+        if ($pricing == "-1.00" || $pricing === null) {
             throw new \Exception("Pricing not available for period");
         }
 
