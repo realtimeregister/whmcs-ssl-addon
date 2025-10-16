@@ -67,7 +67,7 @@ class Invoice
     {
         $service = Capsule::table(self::INVOICE_INFOS_TABLE_NAME)
             ->where('service_id', '=', $serviceId)
-            ->get();
+            ->first();
 
         if ($service != null) {
             $invoice = Capsule::table('tblinvoices')
@@ -187,9 +187,10 @@ class Invoice
         $configOptions = $this->getConfigOptions($service);
         $clientCurrencyID = $this->getClientCurrencyID($service->userid);
         $billingCycle = $service->billingcycle;
+        $billingCycleQuery = 'One Time' ? 'monthly' : strtolower($billingCycle);
         $pricing = get_query_val(
             "tblpricing",
-            $billingCycle,
+            $billingCycleQuery,
             [
                 "type" => "product",
                 "currency" => $clientCurrencyID,
@@ -197,7 +198,7 @@ class Invoice
             ]
         );
 
-        if ($pricing == "-1.00") {
+        if ($pricing == "-1.00" || $pricing === null) {
             throw new \Exception("Pricing not available for period");
         }
 
@@ -233,7 +234,7 @@ class Invoice
         if ($boughtSans > 0) {
             $qtyprice = get_query_val(
                 "tblpricing",
-                $billingCycle,
+                $billingCycleQuery,
                 [
                     "type" => "configoptions",
                     "currency" => $clientCurrencyID,
@@ -257,7 +258,7 @@ class Invoice
         if ($boughtSansWildcard > 0) {
             $qtyprice = get_query_val(
                 "tblpricing",
-                $billingCycle,
+                $billingCycleQuery,
                 ["type" => "configoptions",
                     "currency" => $clientCurrencyID,
                     "relid" => $configOptions['wildcard']['configOptionID']
