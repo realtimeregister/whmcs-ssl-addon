@@ -140,6 +140,13 @@ class Repository extends MainRepository
         }
     }
 
+    public function updateConfigdataAttribute(int $serviceId, string $configdata): void
+    {
+        Capsule::table($this->tableName)->where('service_id', $serviceId)->update([
+            'configdata' => $configdata
+        ]);
+    }
+
     public function updateStatusById($id, $status)
     {
         Capsule::table($this->tableName)->where('id', $id)->update([

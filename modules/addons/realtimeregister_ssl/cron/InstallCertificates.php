@@ -29,7 +29,9 @@ class InstallCertificates extends BaseTask
                 $details = json_decode($order->configdata, true);
                 // We don't want to continue trying installing the certificate if it has been tried more than 5 times
                 if (array_key_exists('tries_to_install', $details) && $details['tries_to_install'] >= 5) {
-                    $orderRepo->updateStatus($order->service_id, SSL::FAILED_INSTALLATION);
+                    /** @var SSL $sslOrder */
+                    $sslOrder = SSL::getWhere(['serviceid' => $details['serviceid']])->first();
+                    $sslOrder->setStatus(SSL::FAILED_INSTALLATION);
                     continue;
                 }
                 $cert = $details['crt'];
@@ -69,8 +71,7 @@ class InstallCertificates extends BaseTask
                         $details['tries_to_install']++;
                     }
 
-                    $order->setConfigdataAttribute($details);
-                    $order->save();
+                    $orderRepo->updateConfigdataAttribute($order->service_id, json_encode($details));
                 }
             }
         }
