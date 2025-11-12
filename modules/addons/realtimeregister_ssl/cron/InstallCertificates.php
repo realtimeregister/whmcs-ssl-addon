@@ -30,7 +30,7 @@ class InstallCertificates extends BaseTask
                 // We don't want to continue trying installing the certificate if it has been tried more than 5 times
                 if (array_key_exists('tries_to_install', $details) && $details['tries_to_install'] >= 5) {
                     /** @var SSL $sslOrder */
-                    $sslOrder = SSL::getWhere(['serviceid' => $details['serviceid']])->first();
+                    $sslOrder = SSL::getWhere(['serviceid' => $order->service_id])->first();
                     $sslOrder->setStatus(SSL::FAILED_INSTALLATION);
                     continue;
                 }
