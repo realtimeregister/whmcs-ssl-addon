@@ -5,7 +5,8 @@ namespace AddonModule\RealtimeRegisterSsl\eModels\whmcs;
 class EmailTemplate extends \Illuminate\Database\Eloquent\Model
 {
     public $timestamps = false;
-    protected $table   = 'tblemailtemplates';
+    public const TABLE_NAME = 'tblemailtemplates';
+    protected $table = self::TABLE_NAME;
 
     public function scopeWhereName($query, $name)
     {
