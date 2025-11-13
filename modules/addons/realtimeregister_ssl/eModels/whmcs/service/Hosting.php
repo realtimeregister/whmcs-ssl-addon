@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Hosting extends Model
 {
-    protected $table = 'tblhosting';
+    public const TABLE_NAME = 'tblhosting';
+    protected $table = self::TABLE_NAME;
     public $timestamps = false;
 
     /** used to be getcPanelServices */

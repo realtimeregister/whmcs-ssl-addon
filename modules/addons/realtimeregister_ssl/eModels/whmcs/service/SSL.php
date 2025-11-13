@@ -12,11 +12,13 @@ use stdClass;
  */
 class SSL extends \Illuminate\Database\Eloquent\Model
 {
-    public $timestamps = false;
-    protected $table = 'tblsslorders';
+    public const TABLE_NAME = 'tblsslorders';
+    protected $table = self::TABLE_NAME;
 
+    public $timestamps = false;
     public const PENDING_INSTALLATION = 'Pending Installation';
     public const AWAITING_CONFIGURATION = 'Awaiting Configuration';
+    public const FAILED_INSTALLATION = 'Failed Installation';
     public const CONFIGURATION_SUBMITTED = 'Configuration Submitted';
     public const EXPIRED = 'Expired';
     public const CANCELLED = 'Cancelled';
