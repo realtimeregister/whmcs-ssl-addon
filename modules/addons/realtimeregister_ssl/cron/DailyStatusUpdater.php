@@ -6,7 +6,6 @@ use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
-use Illuminate\Database\Capsule\Manager as Capsule;
 
 class DailyStatusUpdater extends BaseTask
 {
@@ -22,7 +21,9 @@ class DailyStatusUpdater extends BaseTask
             Addon::I();
 
             $this->sslRepo = new SSLRepo();
-            $sslOrders = $this->getSSLOrders([SSL::PENDING_INSTALLATION, SSL::ACTIVE, SSL::CONFIGURATION_SUBMITTED]);
+            $sslOrders = $this->getSSLOrders(
+                [SSL::PENDING_INSTALLATION, SSL::ACTIVE, SSL::CONFIGURATION_SUBMITTED, SSL::FAILED_INSTALLATION]
+            );
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 "Realtime Register SSL WHMCS: Certificates (ssl status Completed) Data Updater started."

@@ -19,7 +19,7 @@ class InstallCertificates extends BaseTask
     public function __invoke()
     {
         if ($this->enabledTask('cron_certificate_installer')) {
-            logActivity("Realtime Register SSL: Install certificatesz");
+            logActivity("Realtime Register SSL: Install certificates");
             Addon::I();
 
             $logsRepo = new LogsRepo();
