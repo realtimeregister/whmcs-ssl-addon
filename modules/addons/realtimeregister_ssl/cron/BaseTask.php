@@ -41,8 +41,9 @@ class BaseTask extends \WHMCS\Scheduling\Task\AbstractTask
         }
     }
 
-    protected function getSSLOrders($status = [SSL::CONFIGURATION_SUBMITTED, SSL::PENDING_INSTALLATION, SSL::ACTIVE])
-    {
+    protected function getSSLOrders(
+        $status = [SSL::CONFIGURATION_SUBMITTED, SSL::PENDING_INSTALLATION, SSL::ACTIVE, SSL::FAILED_INSTALLATION]
+    ) {
         return $this->sslRepo->getOrdersWithStatus($status);
     }
 }

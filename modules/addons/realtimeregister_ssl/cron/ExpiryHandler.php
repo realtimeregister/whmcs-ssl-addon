@@ -49,7 +49,7 @@ class ExpiryHandler extends BaseTask
             $this->sslRepo = new SSLRepo();
 
             //get all completed ssl orders
-            $sslOrders = $this->getSSLOrders([SSL::PENDING_INSTALLATION, SSL::ACTIVE]);
+            $sslOrders = $this->getSSLOrders([SSL::PENDING_INSTALLATION, SSL::ACTIVE, SSL::FAILED_INSTALLATION]);
 
             $emailSendsCount = 0;
             $emailSendsCountReissue = 0;
