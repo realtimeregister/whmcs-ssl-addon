@@ -21,9 +21,7 @@ class DailyStatusUpdater extends BaseTask
             Addon::I();
 
             $this->sslRepo = new SSLRepo();
-            $sslOrders = $this->getSSLOrders(
-                [SSL::PENDING_INSTALLATION, SSL::ACTIVE, SSL::CONFIGURATION_SUBMITTED, SSL::FAILED_INSTALLATION]
-            );
+            $sslOrders = $this->getSSLOrders();
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 "Realtime Register SSL WHMCS: Certificates (ssl status Completed) Data Updater started."
