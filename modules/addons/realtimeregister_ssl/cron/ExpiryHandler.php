@@ -14,6 +14,7 @@ use AddonModule\RealtimeRegisterSsl\eServices\provisioning\Renew;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiConfiguration;
 use DateTime;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Support\Facades\Date;
 use WHMCS\Service\Service;
 
 class ExpiryHandler extends BaseTask
@@ -55,13 +56,13 @@ class ExpiryHandler extends BaseTask
             $emailSendsCountReissue = 0;
 
             foreach ($sslOrders as $sslOrder) {
-                $serviceid = $sslOrder->serviceid;
-                $srv = Capsule::table('tblhosting')->where('id', $serviceid)->first();
-                $daysLeft = false;
-                $daysReissue = false;
+                $serviceId = $sslOrder->serviceid;
+                $service = Capsule::table('tblhosting')->where('id', $serviceId)->first();
+                $daysLeft = -1;
+                $daysReissue = -1;
 
                 //get days left to expire
-                $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceid)->first();
+                $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
                 $configData = json_decode($sslOrder->configdata);
                 if ($configData->end_date?->date) {
                     $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->end_date->date));
@@ -70,11 +71,11 @@ class ExpiryHandler extends BaseTask
                     $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
                 }
 
-                $product = Capsule::table('tblproducts')->where('id', $srv->packageid)->first();
+                $product = Capsule::table('tblproducts')->where('id', $service->packageid)->first();
 
                 if ($daysReissue == 30) {
                     // send email
-                    $emailSendsCountReissue += $this->sendReissueNotifyEmail($serviceid);
+                    $emailSendsCountReissue += $this->sendReissueNotifyEmail($serviceId);
                 }
 
                 if ($daysLeft < 0) {
@@ -83,23 +84,23 @@ class ExpiryHandler extends BaseTask
 
                 if (
                     in_array($daysLeft, self::getExpiryMailRange($renewWithinRecurring))
-                    && $srv->billingcycle != 'One Time'
+                    && $service->billingcycle != 'One Time'
                     && $send_expiration_notification_recurring
                 ) {
-                    $emailSendsCount += $this->sendExpireNotifyEmail($srv->id, $daysLeft);
+                    $emailSendsCount += $this->sendExpireNotifyEmail($serviceId, $daysLeft);
                 }
 
                 if (
                     in_array($daysLeft, self::getExpiryMailRange($renewWithinOnetime))
-                    && $srv->billingcycle == 'One Time'
+                    && $service->billingcycle == 'One Time'
                     && $send_expiration_notification_one_time
                 ) {
-                    $emailSendsCount += $this->sendExpireNotifyEmail($srv->id, $daysLeft);
+                    $emailSendsCount += $this->sendExpireNotifyEmail($serviceId, $daysLeft);
                 }
 
                 // Handle auto-renew based on settings
-                if ($daysLeft < $renewWithinRecurring && $srv->billingcycle != 'One Time') {
-                    $this->handleAutoRenew($srv, $product, $createAutoInvoice, $autoRenewSetting);
+                if ($daysLeft < $renewWithinRecurring && $service->billingcycle != 'One Time') {
+                    $this->handleAutoRenew($service, $product, $createAutoInvoice, $autoRenewSetting);
                 }
             }
 
@@ -145,11 +146,11 @@ class ExpiryHandler extends BaseTask
         }
     }
 
-    private function checkOrderExpiryDate($expiryDate): int
+    private function checkOrderExpiryDate(DateTime $expiryDate): int
     {
         $today = new DateTime();
 
-        $diff = $expiryDate->diff($today, false);
+        $diff = $expiryDate->diff($today);
         if ($diff->invert == 0) {
             // Date is in the past
             return -1;
