@@ -271,7 +271,7 @@ class ApiConfiguration extends AbstractController
     }
 
     private static function isMissingProcessPermission($input) {
-        if (!$input['api_login']) {
+        if (!$input['api_login'] || !is_bool($input['api_test'])) {
             return false;
         }
 
@@ -314,9 +314,6 @@ class ApiConfiguration extends AbstractController
                     } else {
                         $input[$field] = false;
                     }
-                }
-                if (!$input['auto_renew_invoice_recurring']) {
-                    $input['renew_invoice_days_recurring'] = null;
                 }
 
                 // Check if we got a real key, or that it's just the fake default
