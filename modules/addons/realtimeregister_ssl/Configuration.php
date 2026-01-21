@@ -80,7 +80,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public $version = '1.2.5';
+    public $version = '1.2.6';
     public $tablePrefix = '';
     public $modelRegister = [];
 
@@ -463,6 +463,14 @@ class Configuration extends AbstractConfiguration
         self::installTasks();
         self::updateExpiryHandlerTask();
         self::updateTaskPriority();
+        self::updateRenewConfiguration();
+    }
+
+    private static function updateRenewConfiguration()
+    {
+        Capsule::table('REALTIMEREGISTERSSL_api_configuration')
+            ->whereNull('renew_invoice_days_recurring')
+            ->update(['renew_invoice_days_recurring' => '30']);
     }
 
 
