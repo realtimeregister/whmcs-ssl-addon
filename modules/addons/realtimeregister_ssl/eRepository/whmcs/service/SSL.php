@@ -47,7 +47,6 @@ class SSL
 
     public function getOrdersWithStatus($status) {
         return Model::query()
-            ->select(['tblsslorders.*'])
             ->join('tblhosting', 'tblhosting.id', '=', 'serviceid')
             ->where('tblhosting.domainstatus', 'Active')
             ->whereIn('status', $status)
