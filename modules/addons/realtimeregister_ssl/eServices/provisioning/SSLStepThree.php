@@ -237,10 +237,7 @@ class SSLStepThree
         );
 
         $logs->addLog($this->p['userid'], $this->p['serviceid'], 'success', 'The order has been placed.');
-
-        if (!$authKey) {
-            $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? []);
-        }
+        $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? []);
 
         (new UpdateConfigData($sslService))->run();
     }
