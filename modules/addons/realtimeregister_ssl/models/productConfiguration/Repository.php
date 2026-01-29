@@ -136,7 +136,9 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
         $update['paytype']                = $params['paytype'];
         $update['autosetup']              = $params['autosetup'];
         $update[C::PRICE_AUTO_DOWNLOAD]   = $params[C::PRICE_AUTO_DOWNLOAD] ?: '0';
+        $update[C::AUTH_KEY_ENABLED]      = $params[C::AUTH_KEY_ENABLED] ?: '0';
         $update[C::COMMISSION]            = $params[C::COMMISSION] ? $params[C::COMMISSION] / 100 : '0';
+
         
         if (isset($params['issued_ssl_message']) && !empty($params['issued_ssl_message'])) {
             $update[C::OPTION_ISSUED_SSL_MESSAGE] = $params['issued_ssl_message'];

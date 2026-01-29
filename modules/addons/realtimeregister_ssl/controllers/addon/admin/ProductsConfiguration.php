@@ -9,6 +9,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMappi
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
+use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository as ConfigRepo;
 use Exception;
 
 /*
@@ -48,7 +49,7 @@ class ProductsConfiguration extends AbstractController
 
                 $vars['success'] = Lang::T('messages', 'product_saved');
             }
-            $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+            $productModel = new ConfigRepo();
             $products = $productModel->getModuleProducts();
             foreach ($products as $key => $product) {
                 try {
@@ -64,6 +65,7 @@ class ProductsConfiguration extends AbstractController
                 $apiConfig->availablePeriods = $apiProduct->getPeriods();
                 $apiConfig->isSanEnabled = $apiProduct->isSanEnabled();
                 $apiConfig->isWildcardSanEnabled = $apiProduct->isSanWildcardEnabled();
+                $apiConfig->isAuthKeyEnabled = $apiProduct->isAuthKeyEnabled();
                 $products[$key]->apiConfig = $apiConfig;
                 $products[$key]->confOption = ConfigurableOptionService::getForProduct($product->id)[0];
                 $products[$key]->confOptionWildcard = ConfigurableOptionService::getForProductWildcard($product->id)[0];
@@ -89,7 +91,7 @@ class ProductsConfiguration extends AbstractController
 
     public function saveProducts($input = [], $vars = [])
     {
-        $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $productModel = new ConfigRepo();
         if (isset($input['many-products']) && $input['many-products'] == '1') {
             $products = [];
 
@@ -113,6 +115,7 @@ class ProductsConfiguration extends AbstractController
                 if (isset($input['hidden']) && $input['hidden'] == '1') {
                     $productModel->updateProductParam($product->id, 'hidden', '0');
                 }
+
                 if (isset($input[C::PRICE_AUTO_DOWNLOAD]) && $input[C::PRICE_AUTO_DOWNLOAD] == '1') {
                     $productModel->updateProductParam(
                         $product->id,
@@ -180,7 +183,7 @@ class ProductsConfiguration extends AbstractController
         if (!empty($productId)) {
             $productId = trim($input['productId']);
 
-            $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+            $productModel = new ConfigRepo();
             if ($productModel->enableProduct($productId)) {
                 return [
                     'success' => ""
@@ -199,7 +202,7 @@ class ProductsConfiguration extends AbstractController
         if (!empty($productId)) {
             $productId = trim($input['productId']);
 
-            $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+            $productModel = new ConfigRepo();
             if ($productModel->disableProduct($productId)) {
                 return [
                     'success' => ""

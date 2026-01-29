@@ -13,6 +13,7 @@ use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
+use function Symfony\Component\Translation\t;
 
 class SSLStepTwo
 {
@@ -116,18 +117,20 @@ class SSLStepTwo
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function validateSansDomainsWildcard()
     {
         $sansDomainsWildcard = SansDomains::parseDomains($this->p['fields']['wildcard_san']);
 
         foreach ($sansDomainsWildcard as $domain) {
-            $check = substr($domain, 0, 2);
-            if ($check != '*.') {
-                throw new Exception('SAN\'s Wildcard are incorrect');
+            if (!str_starts_with($domain, "*.")) {
+                throw new Exception(Lang::T('sanWildcardIncorrect'));
             }
             $domaincheck = Domains::validateDomain(substr($domain, 2));
             if ($domaincheck !== true) {
-                throw new Exception('SAN\'s Wildcard are incorrect');
+                throw new Exception(Lang::T('sanWildcardIncorrect'));
             }
         }
 
@@ -162,6 +165,9 @@ class SSLStepTwo
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function validateCSR()
     {
         $csr = trim($this->p['csr']);
@@ -189,24 +195,13 @@ class SSLStepTwo
         }
 
         if ($productssl['certificateType'] === 'WILDCARD') {
-            if (str_contains($decodedCSR['commonName'], '*.')) {
-                return true;
-            } else {
-                if (isset($decodedCSR['csrResult']['errorMessage'])) {
-                    throw new Exception($decodedCSR['csrResult']['errorMessage']);
-                }
-
-                throw new Exception(Lang::T('incorrectCSR'));
-            }
-        }
-
-        if (isset($decodeCSR['csrResult']['errorMessage'])) {
-            if (isset($decodeCSR['csrResult']['CN']) && strpos($decodeCSR['csrResult']['CN'], '*.') !== false) {
+            if (str_starts_with($decodedCSR['commonName'], '*.')) {
                 return true;
             }
 
-            throw new Exception($decodeCSR['csrResult']['errorMessage']);
+            throw new Exception(Lang::T('incorrectCSR'));
         }
+        return true;
     }
 
     private function storeFieldsAutoFill()

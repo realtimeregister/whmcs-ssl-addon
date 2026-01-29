@@ -214,7 +214,8 @@ $_LANG['orderTypeMissing']        = 'You did not select Order Type.';
 $_LANG['incorrectCSR']            = 'Incorrect CSR';
 $_LANG['sanLimitExceeded']        = 'Exceeded limit of SAN domains';
 $_LANG['sanLimitExceededWildcard']= 'Exceeded limit of SAN Wildcard domains';
-$_LANG['incorrectSans']           = 'Folowed SAN domains are incorrect: ';
+$_LANG['sanWildcardIncorrect']    = 'Wildcard SAN are incorrect';
+$_LANG['incorrectSans']           = 'Followed SAN domains are incorrect: ';
 
 $_LANG['addonCA']['sslSummary']['title']           = 'SSL Orders Summary';
 $_LANG['addonCA']['sslSummary']['total']           = 'Total Orders';

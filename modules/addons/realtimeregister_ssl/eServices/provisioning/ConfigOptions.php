@@ -29,6 +29,7 @@ class ConfigOptions
     public const COMMISSION = 'configoption6';
     public const MONTH_ONE_TIME = 'configoption7';
     public const PRODUCT_INCLUDED_SANS_WILDCARD = 'configoption8';
+    public const AUTH_KEY_ENABLED = 'configoption9';
     public const OPTION_SANS_COUNT = 'sans_count';
     public const OPTION_SANS_WILDCARD_COUNT = 'sans_wildcard_count';
     public const OPTION_ISSUED_SSL_MESSAGE = 'configoption23';

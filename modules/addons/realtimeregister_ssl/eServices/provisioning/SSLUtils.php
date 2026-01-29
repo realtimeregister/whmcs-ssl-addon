@@ -113,12 +113,14 @@ trait SSLUtils
         return $order;
     }
 
-    public function processDcvEntries(array $dcvEntries): void {
+    public function processDcvEntries(array $dcvEntries): bool {
         $logs = new LogsRepo();
+        $success = true;
         foreach ($dcvEntries as $dcvEntry) {
             try {
                 $panel = Panel::getPanelData($dcvEntry['commonName']);
                 if (!$panel) {
+                    $success = false;
                     continue;
                 }
                 if ($dcvEntry['type'] == 'FILE') {
@@ -143,8 +145,11 @@ trait SSLUtils
                         'success',
                         'DnsControl at '.  $panel['platform']. ' for ' . $dcvEntry['commonName'] .': ' . $result['message']
                     );
+                } else {
+                    $success = false;
                 }
             } catch (\Exception $e) {
+                $success = false;
                 $logs->addLog(
                     $this->p['userid'],
                     $this->p['serviceid'],
@@ -153,5 +158,16 @@ trait SSLUtils
                 );
             }
         }
+        return $success;
+    }
+
+    public function mapDcv(?array $dcv) : ?array
+    {
+        if ($dcv === null) {
+            return null;
+        }
+        return array_map(fn($dcvEntry) => [...$dcvEntry,
+            'type' => $dcvEntry['type'] === 'HTTP' ? 'FILE' : $dcvEntry['type']],
+            $dcv);
     }
 }
