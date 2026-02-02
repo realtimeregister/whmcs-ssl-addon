@@ -10,6 +10,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Exceptions\BadRequestException;
 use WHMCS\Database\Capsule;
 
 class Renew
@@ -25,7 +26,6 @@ class Renew
     private $sslService;
 
     /**
-     *
      * @var Product
      */
     private $apiProduct;
@@ -123,13 +123,14 @@ class Renew
         $this->loadSslService();
         $this->loadApiProduct();
 
-        /** @var CertificatesApi $certificateApi */
-        $certificateApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+        $logs = new LogsRepo();
+
         $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();
         $sslData = Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->first();
         $configData = json_decode($sslData->configdata, true);
         $order = Capsule::table('REALTIMEREGISTERSSL_orders')->where('service_id', $this->p['serviceid'])->first();
         $orderDetails = json_decode($order->data, true);
+        $commonName = $orderDetails['commonName'] ?? $orderDetails['domain'];
 
         $dcv = [];
         foreach ($orderDetails['validations']['dcv'] as $validation) {
@@ -142,6 +143,12 @@ class Renew
             }
             $dcv[] = $dcvEntry;
         }
+        if (empty($dcv) && $orderDetails['dcv_method']) {
+            $dcv[] = [
+                'commonName' => $commonName,
+                'type' => $orderDetails['dcv_method'] == 'HTTP' ? 'FILE' : $orderDetails['dcv_method']
+            ];
+        }
 
         /** @var \RealtimeRegister\Domain\Product $productDetails */
         $productDetails = ApiProvider::getInstance()
@@ -149,30 +156,20 @@ class Renew
             ->getProduct($orderDetails['product_id']);
 
         $orderFields = $this->mapRequestFields($orderDetails, $productDetails);
+        $orderFields['san'] = empty($configData['san_details'])
+            ? null
+            : array_map(fn($san) => $san['san_name'], $configData['san_details']);
+        $orderFields['period'] = $this->parsePeriod($service->billingcycle);
+        $orderFields['product'] = $orderDetails['product_id'];
+        $orderFields['csr'] = $configData['csr'];
+        $orderFields['dcv'] = $dcv;
 
-        $addSSLRenewOrder = $certificateApi->renewCertificate(
-            $configData['certificateId'],
-            $this->parsePeriod($service->billingcycle),
-            $configData['csr'],
-            empty($configData['san_details'])
-                ? null
-                : array_map(fn($san) => $san['san_name'], $configData['san_details']),
-            $orderFields['organization'],
-            null,
-            $orderFields['address'],
-            $orderFields['postalCode'],
-            $orderFields['city'],
-            null,
-            $orderFields['approver']['email'],
-            $orderFields['approver'],
-            null,
-            null,
-            $dcv,
-            $orderDetails['domain'],
-            null,
-            $orderFields['state'],
-            $orderDetails['product_id']
-        );
+        $authKey = $this->p[ConfigOptions::AUTH_KEY_ENABLED];
+        if ($authKey) {
+            $authKey = $this->processAuthKeyValidation($commonName, $orderFields['product'], $orderFields['csr'], $dcv);
+        }
+
+        $addSSLRenewOrder = $this->tryOrder($configData['certificateId'], $orderFields, $commonName, $authKey);
 
         $this->sslService->setRemoteId($addSSLRenewOrder->processId);
         $this->sslService->setOrderStatusDescription("Pending");
@@ -186,8 +183,23 @@ class Renew
             ->update(['remoteid' => $addSSLRenewOrder->processId]);
         $this->loadSslService();
 
-        $configDataUpdate = new UpdateConfigData($this->sslService);
-        $configDataUpdate->run();
+        try {
+            $configDataUpdate = new UpdateConfigData($this->sslService);
+            $configDataUpdate->run();
+        } catch (\Exception $e) {
+            $logs->addLog(
+                $this->p['userid'],
+                $this->p['serviceid'],
+                'error',
+                '[' . $commonName . '] Error:' . $e->getMessage()
+            );
+        }
+
+        $logs->addLog($this->p['userid'],
+            $this->p['serviceid'],
+            'success',
+            'The renew order has been placed ' . $authKey ? ' the certificate was issued immediately.' : '.'
+        );
     }
 
     private function loadSslService()
@@ -205,5 +217,59 @@ class Renew
         $apiProductId = $this->p[ConfigOptions::API_PRODUCT_ID];
         $apiRepo = new Products();
         $this->apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($apiProductId));
+    }
+
+    private function tryOrder(int $certificateId, array $orderData, string $commonName, bool $authKey) {
+        $sslOrder = [
+            'period' => $orderData['period'],
+            'csr' => $orderData['csr'],
+            'san' => empty($orderData['san']) ? null : $orderData['san'],
+            'organization' => $orderData['organization'],
+            'department' => $orderData['department'],
+            'address' => $orderData['address'],
+            'postalCode' => $orderData['postalCode'],
+            'city' => $orderData['city'],
+            'coc' => $orderData['coc'],
+            'approver' => $orderData['approver'],
+            'country' => null,
+            'language' => null,
+            'dcv' => $orderData['dcv'],
+            'domainName' => $commonName,
+            'authKey' => $authKey,
+            'state' => $orderData['state'],
+        ];
+        return $this->sendRequest($certificateId, $sslOrder);
+    }
+
+    private function sendRequest(int $certificateId, array $sslOrder)
+    {
+        $logs = new LogsRepo();
+        try {
+            return ApiProvider::getInstance()
+                ->getApi(CertificatesApi::class)
+                ->renewCertificate($certificateId, ...$sslOrder);
+        } catch (BadRequestException $exception) {
+            $logs->addLog(
+                $this->p['userid'],
+                $this->p['serviceid'],
+                'error',
+                '[' . $sslOrder['domainName'] . '] Error:' . $exception->getMessage()
+            );
+            $decodedMessage = json_decode(str_replace('Bad Request: ', '', $exception->getMessage()), true);
+            $retry = false;
+            switch ($decodedMessage['type']) {
+                case 'ConstraintViolationException':
+                case 'ObjectExists':
+                    break;
+                default:
+                    $retry = true;
+                    break;
+            }
+
+            if ($retry && $sslOrder['authKey']) {
+                return $this->sendRequest($certificateId, [...$sslOrder, 'authKey' => false]);
+            }
+            throw $exception;
+        }
     }
 }

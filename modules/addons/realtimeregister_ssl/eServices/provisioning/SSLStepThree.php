@@ -236,7 +236,11 @@ class SSLStepThree
             array_merge((array) $this->sslConfig->configdata, $addedSSLOrder->toArray())
         );
 
-        $logs->addLog($this->p['userid'], $this->p['serviceid'], 'success', 'The order has been placed.');
+        $logs->addLog($this->p['userid'],
+            $this->p['serviceid'],
+            'success',
+            'The order has been placed ' . $authKey ? 'and issued immediately.' : '.'
+        );
         $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? []);
 
         (new UpdateConfigData($sslService))->run();
@@ -249,36 +253,6 @@ class SSLStepThree
         }
         header('Location: configuressl.php?cert=' . $_GET['cert']);
         die();
-    }
-
-    private function processAuthKeyValidation(string $commonName, string $product, string $csr, array $dcv): bool
-    {
-        $logs = new LogsRepo();
-        try {
-            $authKeyResponse = ApiProvider::getInstance()
-                ->getApi(CertificatesApi::class)
-                ->generateAuthKey($product, $csr);
-        } catch (\Exception $e) {
-            $logs->addLog(
-                $this->p['userid'],
-                $this->p['serviceid'],
-                'error',
-                '[' . $commonName. '] Error:' . $e->getMessage()
-            );
-            return false;
-        }
-
-        $newDcv = array_map(function ($dcvEntry) use ($authKeyResponse, $commonName) {
-            $newEntry = $dcvEntry;
-            $newEntry['commonName'] = str_replace('*.', '', $newEntry['commonName']);
-            $newEntry['dnsRecord'] = $newEntry['commonName'];
-            $newEntry['dnsType'] = 'TXT';
-            $newEntry['dnsContents'] = $authKeyResponse['authKey'];
-            $newEntry['fileContents'] = $authKeyResponse['authKey'];
-            $newEntry['fileLocation'] = $newEntry['commonName'] . '/.well-known/pki-validation/fileauth.txt';
-            return $newEntry;
-        }, $dcv);
-        return $this->processDcvEntries($newDcv);
     }
 
     private function tryOrder(array $orderData, string $commonName, bool $authKey) {

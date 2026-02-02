@@ -215,7 +215,7 @@ class home extends AbstractController
 
                     $vars['displayRenewButton'] = false;
 
-                    if (!empty($certificateDetails['end_date'])) {
+                    if (self::hasReissueWindow($certificateDetails)) {
                         $vars['subscriptionEnds'] = self::formatDate($certificateDetails['end_date']->date);
                         $daysUntilExpired = $now->diff(new \DateTime($certificateDetails['end_date']->date))
                             ->format('%a');
@@ -228,7 +228,6 @@ class home extends AbstractController
                     if (!empty($certificateDetails['begin_date'])) {
                         $vars['subscriptionStarts'] = self::formatDate($certificateDetails['begin_date']->date);
                     }
-
 
                     //service billing cycle
                     $vars['serviceBillingCycle'] = $serviceBillingCycle;
@@ -413,6 +412,12 @@ class home extends AbstractController
             'tpl' => 'home',
             'vars' => $vars
         ];
+    }
+
+    private static function hasReissueWindow(array $certificateDetails) : bool {
+        return !empty($certificateDetails['end_date'])
+        && explode($certificateDetails['end_date']->date, ' ')[0]
+            != explode($certificateDetails['valid_till']->date, ' ')[0];
     }
 
     public function renewJSON($input, $vars = [])
