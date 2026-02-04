@@ -7,7 +7,6 @@ use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
@@ -103,7 +102,7 @@ class SSLStepThree
 
     private function loadSslConfig()
     {
-        $repo = new SSL();
+        $repo = new SSLRepo();
         $this->sslConfig = $repo->getByServiceId($this->p['serviceid']);
         if (is_null($this->sslConfig)) {
             throw new Exception('Record for ssl service not exist.');
