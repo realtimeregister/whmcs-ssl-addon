@@ -21,6 +21,7 @@ use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
+use RealtimeRegister\Exceptions\BadRequestException;
 
 class ClientReissueCertificate
 {
@@ -239,7 +240,7 @@ class ClientReissueCertificate
             "type" => self::getDcvMethod($this->post['dcv_method']),
             "email" => $this->post['approveremail']
         ];
-        $csr = $this->post['csr'];
+        $csr = $orderData['csr'] = $this->post['csr'];
 
         $sansDomains = [];
 
@@ -261,38 +262,16 @@ class ClientReissueCertificate
                 }
             }
         }
-
-        $service = new Service($this->p['serviceid']);
-        $product = new Product($service->productID);
-
-        $productssl = false;
-        $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
-        if ($checkTable) {
-            if (Capsule::schema()->hasColumn(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND, 'data')) {
-                $productsslDB = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->where(
-                    'pid',
-                    $product->configuration()->text_name
-                )->first();
-                if (isset($productsslDB->data)) {
-                    $productssl['product'] = json_decode($productsslDB->data, true);
-                }
-            }
-        }
-
-        $approver = null;
-        $organization = null;
-        $address = null;
-        $postalCode = null;
-        $city = null;
-        $state = null;
+        $orderData['dcv'] = $dcv;
+        $orderData['san'] = empty($sansDomains) ? null : $sansDomains;
 
         if ($this->post['extraValidation']) {
-            $organization = $this->post['orgname'];
-            $address = $this->post['address'];
-            $postalCode = $this->post['postcode'];
-            $city = $this->post['city'];
-            $state = $this->post['state'];
-            $approver = [
+            $orderData['organization'] = $this->post['orgname'];
+            $orderData['address'] = $this->post['address'];
+            $orderData['postalCode'] = $this->post['postcode'];
+            $orderData['city'] = $this->post['city'];
+            $orderData['state'] = $this->post['state'];
+            $orderData['approver'] = [
                 "firstName" => $this->post['firstname'],
                 "lastName" => $this->post['lastname'],
                 "jobTitle" => $this->post['jobtitle'] ?: null,
@@ -302,25 +281,14 @@ class ClientReissueCertificate
             ];
         }
 
-        $reissueData = ApiProvider::getInstance()
-            ->getApi(CertificatesApi::class)
-            ->reissueCertificate(
-                $this->sslService->getCertificateId(),
-                $csr,
-                empty($sansDomains) ? null : $sansDomains,
-                $organization,
-                null,
-                $address,
-                $postalCode,
-                $city,
-                null,
-                $approver,
-                null,
-                null,
-                empty($dcv) ? null : $dcv,
-                $commonName,
-            null,
-                $state);
+        $authKey = $this->p[ConfigOptions::AUTH_KEY_ENABLED];
+        if ($authKey) {
+            $apiRepo = new Products();
+            $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($this->p[ConfigOptions::API_PRODUCT_ID]));
+            $authKey = $this->processAuthKeyValidation($commonName, $apiProduct->product, $csr, $dcv);
+        }
+
+        $reissueData = $this->tryOrder($this->sslService->getCertificateId(), $orderData, $commonName, $authKey);
 
         $this->sslService->setRemoteId($reissueData->processId);
 
@@ -352,6 +320,12 @@ class ClientReissueCertificate
             $this->sslService->setSSLStatus('SUSPENDED');
             $this->sslService->save();
         }
+
+        $logs->addLog($this->p['userid'],
+            $this->p['serviceid'],
+            'success',
+            'The reissue order has been placed ' . $authKey ? ' the certificate was issued immediately.' : '.'
+        );
 
         try {
             Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $decodedCSR['commonName'], true);
@@ -442,5 +416,57 @@ class ClientReissueCertificate
             'templatefile' => 'main',
             'vars' => ['content' => $content],
         ];
+    }
+
+    private function tryOrder(int $certificateId, array $orderData, string $commonName, bool $authKey) {
+        $sslOrder = [
+            'csr' => $orderData['csr'],
+            'san' => empty($orderData['san']) ? null : $orderData['san'],
+            'organization' => $orderData['organization'],
+            'department' => $orderData['department'],
+            'address' => $orderData['address'],
+            'postalCode' => $orderData['postalCode'],
+            'city' => $orderData['city'],
+            'coc' => $orderData['coc'],
+            'approver' => $orderData['approver'],
+            'country' => null,
+            'language' => null,
+            'dcv' => $orderData['dcv'],
+            'domainName' => $commonName,
+            'authKey' => $authKey,
+            'state' => $orderData['state'],
+        ];
+        return $this->sendRequest($certificateId, $sslOrder);
+    }
+
+    private function sendRequest(int $certificateId, array $sslOrder)
+    {
+        $logs = new LogsRepo();
+        try {
+            return ApiProvider::getInstance()
+                ->getApi(CertificatesApi::class)
+                ->reissueCertificate($certificateId, ...$sslOrder);
+        } catch (BadRequestException $exception) {
+            $logs->addLog(
+                $this->p['userid'], $this->p['serviceid'],
+                'error',
+                '[' . $sslOrder['domainName'] . '] Error:' . $exception->getMessage()
+            );
+            $decodedMessage = json_decode(str_replace('Bad Request: ', '', $exception->getMessage()), true);
+            $retry = false;
+            switch ($decodedMessage['type']) {
+                case 'ConstraintViolationException':
+                case 'ObjectExists':
+                    break;
+                default:
+                    $retry = true;
+                    break;
+            }
+
+            if ($retry && $sslOrder['authKey']) {
+                return $this->sendRequest($certificateId, [...$sslOrder, 'authKey' => false]);
+            }
+            throw $exception;
+        }
     }
 }

@@ -2,12 +2,14 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
+use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Domain\Product;
 
 trait SSLUtils
@@ -113,12 +115,44 @@ trait SSLUtils
         return $order;
     }
 
-    public function processDcvEntries(array $dcvEntries): void {
+    public function processAuthKeyValidation(string $commonName, string $product, string $csr, array $dcv): bool
+    {
         $logs = new LogsRepo();
+        try {
+            $authKeyResponse = ApiProvider::getInstance()
+                ->getApi(CertificatesApi::class)
+                ->generateAuthKey($product, $csr);
+        } catch (\Exception $e) {
+            $logs->addLog(
+                $this->p['userid'],
+                $this->p['serviceid'],
+                'error',
+                '[' . $commonName. '] Error:' . $e->getMessage()
+            );
+            return false;
+        }
+
+        $newDcv = array_map(function ($dcvEntry) use ($authKeyResponse, $commonName) {
+            $newEntry = $dcvEntry;
+            $newEntry['commonName'] = str_replace('*.', '', $newEntry['commonName']);
+            $newEntry['dnsRecord'] = $newEntry['commonName'];
+            $newEntry['dnsType'] = 'TXT';
+            $newEntry['dnsContents'] = $authKeyResponse['authKey'];
+            $newEntry['fileContents'] = $authKeyResponse['authKey'];
+            $newEntry['fileLocation'] = $newEntry['commonName'] . '/.well-known/pki-validation/fileauth.txt';
+            return $newEntry;
+        }, $dcv);
+        return $this->processDcvEntries($newDcv);
+    }
+
+    public function processDcvEntries(array $dcvEntries): bool {
+        $logs = new LogsRepo();
+        $success = true;
         foreach ($dcvEntries as $dcvEntry) {
             try {
                 $panel = Panel::getPanelData($dcvEntry['commonName']);
                 if (!$panel) {
+                    $success = false;
                     continue;
                 }
                 if ($dcvEntry['type'] == 'FILE') {
@@ -143,8 +177,11 @@ trait SSLUtils
                         'success',
                         'DnsControl at '.  $panel['platform']. ' for ' . $dcvEntry['commonName'] .': ' . $result['message']
                     );
+                } else {
+                    $success = false;
                 }
             } catch (\Exception $e) {
+                $success = false;
                 $logs->addLog(
                     $this->p['userid'],
                     $this->p['serviceid'],
@@ -153,5 +190,16 @@ trait SSLUtils
                 );
             }
         }
+        return $success;
+    }
+
+    public function mapDcv(?array $dcv) : ?array
+    {
+        if ($dcv === null) {
+            return null;
+        }
+        return array_map(fn($dcvEntry) => [...$dcvEntry,
+            'type' => $dcvEntry['type'] === 'HTTP' ? 'FILE' : $dcvEntry['type']],
+            $dcv);
     }
 }

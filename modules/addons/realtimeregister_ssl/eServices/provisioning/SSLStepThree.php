@@ -7,7 +7,7 @@ use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
@@ -18,6 +18,7 @@ use RealtimeRegister\Api\ProcessesApi;
 use RealtimeRegister\Domain\Product;
 use RealtimeRegister\Exceptions\BadRequestException;
 use WHMCS\Database\Capsule;
+use function Symfony\Component\Translation\t;
 
 class SSLStepThree
 {
@@ -84,9 +85,9 @@ class SSLStepThree
             return $this->p['approveremails'][$domain];
         }
 
-        $emailUser = explode('@', $this->p['approveremail'])[0];
-
-        return $emailUser . '@' . preg_replace('/^\*\.|^www\./', '', $domain);
+        return explode('@', $this->p['approveremail'])[0]
+            . '@'
+            . preg_replace('/^\*\.|^www\./', '', $domain);
     }
 
     private function SSLStepThree()
@@ -101,7 +102,7 @@ class SSLStepThree
 
     private function loadSslConfig()
     {
-        $repo = new SSL();
+        $repo = new SSLRepo();
         $this->sslConfig = $repo->getByServiceId($this->p['serviceid']);
         if (is_null($this->sslConfig)) {
             throw new Exception('Record for ssl service not exist.');
@@ -122,6 +123,8 @@ class SSLStepThree
             $apiRepo = new Products();
             $apiProduct = $apiRepo->getProduct(KeyToIdMapping::getIdByKey($this->p[ConfigOptions::API_PRODUCT_ID]));
         }
+
+        $authKey = $this->p[ConfigOptions::AUTH_KEY_ENABLED];
 
         $order = [];
 
@@ -163,6 +166,7 @@ class SSLStepThree
             'type' => $this->p['dcvmethodMainDomain'],
             'email' => $this->p['approveremail'] ?? null
         ];
+        $order['dcv'] = $this->mapDcv($order['dcv']);
 
         if ($this->p['fields']['org_division'] !== '') {
             $order['department'] = $this->p['fields']['org_division'];
@@ -170,60 +174,16 @@ class SSLStepThree
 
         $logs = new LogsRepo();
 
-        try {
-            $addedSSLOrder = ApiProvider::getInstance()
-                ->getApi(CertificatesApi::class)
-                ->requestCertificate(
-                    ApiProvider::getCustomer(),
-                    $order['product'],
-                    $order['period'],
-                    $order['csr'],
-                    empty($order['san']) ? null : $order['san'],
-                    $order['organization'],
-                    $order['department'],
-                    $order['address'],
-                    $order['postalCode'],
-                    $order['city'],
-                    $order['coc'],
-                    $order['approver']['email'],
-                    $order['approver'],
-                    $order['country'],
-                    null,
-                    $order['dcv'],
-                    $order['domain'],
-                    null,
-                    $order['state'],
-                );
-        } catch (BadRequestException $exception) {
-            $logs->addLog(
-                $this->p['userid'], $this->p['serviceid'],
-                'error',
-                '[' . $csrDecode['commonName'] . '] Error:' . $exception->getMessage()
+        if ($authKey) {
+            $authKey = $this->processAuthKeyValidation(
+                $csrDecode['commonName'],
+                $apiProduct->product,
+                $order['csr'],
+                $order['dcv']
             );
-            $decodedMessage = json_decode(str_replace('Bad Request: ', '', $exception->getMessage()), true);
-            switch ($decodedMessage['type']) {
-                case 'ObjectExists':
-                    $reason = 'The request already exists';
-                    break;
-                case 'ValidationError':
-                    $reason = 'Validation error: ' . $decodedMessage['message'];
-                    break;
-                case 'ConstraintViolationException':
-                    $violations = array_map(
-                        fn($violation) => 'field: '. $violation['field'] . ', message: '. $violation['message'],
-                        $decodedMessage['violations']
-                    );
-                    $reason = "Constraint Violation: <br/>" . implode("<br/>", $violations);
-                    break;
-                default:
-                    $reason = $exception->getMessage();
-            }
-            if ($this->p['noRedirect']) {
-                throw $exception;
-            }
-
-            $this->redirectToStepOne($reason);
         }
+
+        $addedSSLOrder = $this->tryOrder($order, $csrDecode['commonName'], $authKey);
 
         //update domain column in tblhostings
         $service = new Service($this->p['serviceid']);
@@ -242,7 +202,7 @@ class SSLStepThree
 
         $this->sslConfig->setRemoteId($orderDetails->id); // processid request
         $this->sslConfig->setApproverEmails($approveremails);
-
+        $this->sslConfig->setStatus(\AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL::CONFIGURATION_SUBMITTED);
         $this->sslConfig->setCrt('--placeholder--');
         $this->sslConfig->setPrivateKey($this->p['privateKey']);
         $this->sslConfig->setCsr(trim($this->p['configdata']['csr']));
@@ -252,8 +212,6 @@ class SSLStepThree
         $this->sslConfig->setDcvMethod($this->p['dcvmethodMainDomain'] == 'http'?'FILE':$this->p['dcvmethodMainDomain']);
         $this->sslConfig->setProductId($this->p['configoption1']);
         $this->sslConfig->setSSLStatus($orderDetails->status);
-        $this->sslConfig->setStatus(\AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL::CONFIGURATION_SUBMITTED);
-
 
         // Gets overwritten by whmcs ioncube encoded stuff atm >:(
         $this->sslConfig->save();
@@ -264,21 +222,27 @@ class SSLStepThree
         FlashService::set('REALTIMEREGISTERSSL_WHMCS_SERVICE_TO_ACTIVE', $this->p['serviceid']);
         Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $csrDecode['commonName']);
 
-        $sslOrder = Capsule::table('tblsslorders')
-            ->where('serviceid', $this->p['serviceid'])
-            ->first();
+        $sslRepo = new SSLRepo();
+        $sslService = $sslRepo->getByServiceId($this->p['serviceid']);
+
         $orderRepo = new OrderRepo();
         $orderRepo->addOrder(
             $this->p['userid'],
             $this->p['serviceid'],
-            $sslOrder->id,
+            $sslService->id,
             $this->p['dcvmethodMainDomain'],
             'Pending Verification',
             array_merge((array) $this->sslConfig->configdata, $addedSSLOrder->toArray())
         );
 
-        $logs->addLog($this->p['userid'], $this->p['serviceid'], 'success', 'The order has been placed.');
+        $logs->addLog($this->p['userid'],
+            $this->p['serviceid'],
+            'success',
+            'The order has been placed ' . $authKey ? 'and issued immediately.' : '.'
+        );
         $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? []);
+
+        (new UpdateConfigData($sslService))->run();
     }
 
     private function redirectToStepOne($error = null)
@@ -288,5 +252,76 @@ class SSLStepThree
         }
         header('Location: configuressl.php?cert=' . $_GET['cert']);
         die();
+    }
+
+    private function tryOrder(array $orderData, string $commonName, bool $authKey) {
+        $sslOrder = [
+            'customer' => ApiProvider::getCustomer(),
+            'product' => $orderData['product'],
+            'period' => $orderData['period'],
+            'csr' => $orderData['csr'],
+            'san' => empty($orderData['san']) ? null : $orderData['san'],
+            'organization' => $orderData['organization'],
+            'department' => $orderData['department'],
+            'address' => $orderData['address'],
+            'postalCode' => $orderData['postalCode'],
+            'city' => $orderData['city'],
+            'coc' => $orderData['coc'],
+            'saEmail' => $orderData['approver']['email'],
+            'approver' => $orderData['approver'],
+            'country' => $orderData['country'],
+            'language' => null,
+            'dcv' => $orderData['dcv'],
+            'domainName' => $commonName,
+            'authKey' => $authKey,
+            'state' => $orderData['state'],
+        ];
+        return $this->sendRequest($sslOrder);
+    }
+
+    private function sendRequest(array $sslOrder) {
+        $logs = new LogsRepo();
+        try {
+            return ApiProvider::getInstance()
+                ->getApi(CertificatesApi::class)
+                ->requestCertificate(...$sslOrder);
+        } catch (BadRequestException $exception) {
+            $logs->addLog(
+                $this->p['userid'], $this->p['serviceid'],
+                'error',
+                '[' . $sslOrder['domainName'] . '] Error:' . $exception->getMessage()
+            );
+            $decodedMessage = json_decode(str_replace('Bad Request: ', '', $exception->getMessage()), true);
+            $retry = false;
+            switch ($decodedMessage['type']) {
+                case 'ObjectExists':
+                    $reason = 'The request already exists';
+                    break;
+                case 'ValidationError':
+                    $reason = 'Validation error: ' . $decodedMessage['message'];
+                    $retry = true;
+                    break;
+                case 'ConstraintViolationException':
+                    $violations = array_map(
+                        fn($violation) => 'field: ' . $violation['field'] . ', message: ' . $violation['message'],
+                        $decodedMessage['violations']
+                    );
+                    $reason = "Constraint Violation: <br/>" . implode("<br/>", $violations);
+                    break;
+                default:
+                    $retry = true;
+                    $reason = $exception->getMessage();
+            }
+
+            if ($retry && $sslOrder['authKey']) {
+                return $this->sendRequest([...$sslOrder, 'authKey' => false]);
+            }
+
+            if ($this->p['noRedirect']) {
+                throw $exception;
+            }
+
+            $this->redirectToStepOne($reason);
+        }
     }
 }

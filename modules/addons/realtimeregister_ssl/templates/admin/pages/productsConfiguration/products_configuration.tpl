@@ -164,7 +164,6 @@
                             {if $product->apiConfig->isSanEnabled}
                                 <div class="form-group">
                                         <input type="checkbox" class="hidden" name="product[{$product->id}][configoption3]" value="on" style="margin-top: 10px;" {if $product->configoption3 === 'on'} checked {/if}{if !$product->apiConfig->isSanEnabled} disabled {/if}>
-                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-sm-2">{$ADDONLANG->T('includedSans')}</label>
@@ -218,6 +217,17 @@
                                     {/if}
                                 </div>
                             </div>
+                            {if $product->apiConfig->isAuthKeyEnabled}
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">{$ADDONLANG->T('authKey')}</label>
+                                    <div class="col-sm-10" style="padding-top: 8px;">
+                                        <input class="form-check-input addon-js-auth-key-validation"
+                                               name="product[{$product->id}][configoption9]"
+                                               data-id="{$product->id}"
+                                                {if $product->configoption9} checked="" {/if} type="checkbox" />
+                                    </div>
+                                </div>
+                            {/if}
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{$ADDONLANG->T('priceAutoDownlaod')}</label>
                                 <div class="col-sm-10" style="padding-top: 8px;">
@@ -483,29 +493,33 @@
                     }
                 }
 
-                function enableDisablePriceField(checkbox) {
+                function togglePriceField(checkbox) {
                     const productId = checkbox.data('id');
                     const checked = checkbox.is(":checked")
 
                     $('#addon-js-pricing-group-' + productId).find('input[id^="pricing_"]').prop('readonly', checked);
                 }
 
-                $('.addon-js-pricing-select').each(function () {
+                const pricingSelect = $('.addon-js-pricing-select')
+                const pricingAutoDownload = $('.addon-js-pricing-auto-download')
+
+                pricingSelect.each(function () {
                     showHidePricing($(this));
-                });
-
-                $('.addon-js-pricing-select').on('change', function () {
-                    showHidePricing($(this), true);
                     showHidePeriodSelection($(this));
+                    enableDisableAutoPriceUpdate($(this));
                 });
 
-                $('.addon-js-pricing-select').on('change', function () {
+                pricingSelect.on('change', function () {
                     showHidePricing($(this), true);
                     showHidePeriodSelection($(this));
                     enableDisableAutoPriceUpdate($(this));
                 });
-                $('.addon-js-pricing-auto-download').on('change', function () {
-                    enableDisablePriceField($(this))
+
+                pricingAutoDownload.each(function () {
+                    togglePriceField($(this));
+                });
+                pricingAutoDownload.on('change', function () {
+                    togglePriceField($(this))
                 });
             });
         {/literal}

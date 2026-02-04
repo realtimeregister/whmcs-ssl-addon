@@ -5,7 +5,6 @@ namespace AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl;
 class Product
 {
     public function isOrganizationRequired()
-
     {
         if ($this->validationType === 'ORGANIZATION_VALIDATION' || $this->validationType === 'EXTENDED_VALIDATION') {
             return true;
@@ -54,5 +53,11 @@ class Product
 
     public function getMaxPeriod() {
         return max($this->periods);
+    }
+
+    public function isAuthKeyEnabled() : bool
+    {
+        return in_array('authKey', $this->optionalFields ?? [])
+            || in_array('authKey', $this->requiredFields ?? []);
     }
 }

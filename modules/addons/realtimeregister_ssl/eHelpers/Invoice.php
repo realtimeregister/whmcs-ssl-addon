@@ -187,7 +187,8 @@ class Invoice
         $configOptions = $this->getConfigOptions($service);
         $clientCurrencyID = $this->getClientCurrencyID($service->userid);
         $billingCycle = $service->billingcycle;
-        $billingCycleQuery = 'One Time' ? 'monthly' : strtolower($billingCycle);
+        $billingCycleQuery = $billingCycle == 'One Time' ? 'monthly' : strtolower($billingCycle);
+
         $pricing = get_query_val(
             "tblpricing",
             $billingCycleQuery,
@@ -197,6 +198,7 @@ class Invoice
                 "relid" => $product->id
             ]
         );
+
 
         if ($pricing == "-1.00" || $pricing === null) {
             throw new \Exception("Pricing not available for period");

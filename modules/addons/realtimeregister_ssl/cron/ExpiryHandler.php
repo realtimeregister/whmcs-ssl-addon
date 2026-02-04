@@ -125,6 +125,10 @@ class ExpiryHandler extends BaseTask
      */
     private function handleAutoRenew($service, $product, $createAutoInvoice, $autoRenewSetting)
     {
+        if (!$product) {
+            return;
+        }
+
         try {
             $invoiceGenerator = new Invoice();
             if ($createAutoInvoice && !$invoiceGenerator->checkInvoiceAlreadyCreated($service->id)) {
@@ -134,7 +138,9 @@ class ExpiryHandler extends BaseTask
             if ($autoRenewSetting == 'renew_always') {
                 $params = ['serviceid' => $service->id,
                     'userid' => $service->userid,
-                    ConfigOptions::API_PRODUCT_ID => $product->{ConfigOptions::API_PRODUCT_ID}];
+                    ConfigOptions::API_PRODUCT_ID => $product->{ConfigOptions::API_PRODUCT_ID},
+                    ConfigOptions::AUTH_KEY_ENABLED => $product->{ConfigOptions::AUTH_KEY_ENABLED}
+                ];
                 (new Renew($params))->run();
             }
         } catch (\Exception $e) {

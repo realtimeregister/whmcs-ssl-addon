@@ -41,12 +41,15 @@ class Cpanel extends Client implements PlatformInterface
             'name' => $name,
         ];
 
+        $nameValue = substr($name,  0,-(strlen($domain)+1));
+
         if($type == "A" || $type == "AAAA") {
             $args['address'] = $value;
         } elseif($type == "CNAME") {
-            $args['name'] = substr($name,  0,-(strlen($domain)+1));
+            $args['name'] = $nameValue;
             $args['cname'] = $value;
         } elseif ($type == "TXT") {
+            $args['name'] = $nameValue;
             $args['txtdata'] = $value;
         }
 

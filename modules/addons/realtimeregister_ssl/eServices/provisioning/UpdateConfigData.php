@@ -158,7 +158,11 @@ class UpdateConfigData
                 $sslDomainPrefix = substr($directoryEntries[0], 6, -10); // remove the Linux/ and .ca-bundle from the filename
             }
 
-            $sslOrder->setCa($zipFileHelper->getFile('Linux/' . $sslDomainPrefix . '.ca-bundle'));
+            try {
+                $sslOrder->setCa($zipFileHelper->getFile('Linux/' . $sslDomainPrefix . '.ca-bundle'));
+            } catch (\Exception $e) {
+                $this->logError($e->getMessage());
+            }
 
             if ($order->subscriptionEndDate) {
                 $sslOrder->setSubscriptionStarts($order->startDate);

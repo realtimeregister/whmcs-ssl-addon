@@ -159,6 +159,7 @@ $_LANG['addonAA']['productsConfiguration']['statusDisable'] = 'Disable';
 
 $_LANG['addonAA']['productsConfiguration']['paymentType']          = 'Payment Type:';
 $_LANG['addonAA']['productsConfiguration']['priceAutoDownlaod']    = 'Price Auto Download:';
+$_LANG['addonAA']['productsConfiguration']['authKey']              = 'Auth Key Validation';
 $_LANG['addonAA']['productsConfiguration']['commission']           = 'Commission[%]:';
 $_LANG['addonAA']['productsConfiguration']['paymentTypeFree']      = 'Free';
 $_LANG['addonAA']['productsConfiguration']['paymentTypeRecurring'] = 'Recurring';
