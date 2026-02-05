@@ -198,7 +198,7 @@ class Renew
         $logs->addLog($this->p['userid'],
             $this->p['serviceid'],
             'success',
-            'The renew order has been placed ' . $authKey ? ' the certificate was issued immediately.' : '.'
+            'The renew order has been placed ' . ($authKey ? ' the certificate was issued immediately.' : '.')
         );
     }
 
