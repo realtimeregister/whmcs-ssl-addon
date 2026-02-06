@@ -66,16 +66,8 @@ class Directadmin extends Client implements PlatformInterface
 
     private function makeFileWithPath(array $file, string $dir)
     {
-        $this->makePath($dir);
-        return $this->uploadFile($file, $dir);
-    }
-
-    /**
-     * @throws FileException
-     */
-    private function makePath(string $dir)
-    {
         $this->makeDir($dir);
+        return $this->uploadFile($file, $dir);
     }
 
     /**
