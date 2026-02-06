@@ -12,11 +12,11 @@ class Client
     protected array $options = [];
     protected $fp;
 
-    private $request;
-    private $response;
-    private string $method;
-    private $postData;
-    private $http_code;
+    protected $request;
+    protected $response;
+    protected string $method;
+    protected $postData;
+    protected $http_code;
 
 
     private string $url;
@@ -51,7 +51,7 @@ class Client
         return $this;
     }
 
-    private function setOptions(string $method, $post, $content = null)
+    protected function setOptions(string $method, $post, $content = null)
     {
         $this->options = [
             CURLOPT_URL => $this->url,

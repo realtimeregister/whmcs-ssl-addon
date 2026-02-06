@@ -30,6 +30,7 @@ class Directadmin extends Client implements PlatformInterface
      */
     public function createDNSRecord(string $domain, string $name, string $value, string $type): string
     {
+        $nameValue = substr($name,  0,-(strlen($domain)+1));
         try {
             $response = $this->url([
                 $this->uri['CMD_API_DNS_CONTROL']
@@ -37,7 +38,7 @@ class Directadmin extends Client implements PlatformInterface
                 'domain' => $domain,
                 'action' => 'add',
                 'type' => $type,
-                'name' => sprintf("%s.", $name),
+                'name' => $nameValue ?: $domain . '.',
                 'value' => $value,
             ]);
         } catch (DNSException $ex) {
