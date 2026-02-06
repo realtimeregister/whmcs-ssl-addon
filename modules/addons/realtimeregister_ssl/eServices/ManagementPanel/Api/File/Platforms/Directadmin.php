@@ -4,17 +4,18 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Pla
 
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Client;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\File\Exceptions\FileException;
+use CURLFile;
 
 class Directadmin extends Client implements PlatformInterface
 {
     private int $port = 2222;
 
     private array $uri = [
-        'CMD_API_FILE_MANAGER' => "/CMD_API_FILE_MANAGER",
-        'CMD_FILE_MANAGER' => "/CMD_FILE_MANAGER",
+        'upload' => "/api/filemanager-actions/upload",
+        'mkdir' => "/api/filemanager-actions/mkdir",
     ];
 
-    private string $contentType = "Content-Type: text/plain";
+    private string $contentType = "Content-Type: application/json";
 
     private int $i = 0;
 
@@ -32,37 +33,33 @@ class Directadmin extends Client implements PlatformInterface
      */
     public function uploadFile(array $file, string $dir)
     {
+        $path = substr($dir, 0, (strlen($this->params['domain']) + 1));
         $argc = [
-            'action' => 'upload',
+            'path' => "/domains/" . $this->params['domain'] . "/public_html" . $path,
             'filename' => $file['name'],
-            "content" => $file['content'],
+            'content' => $file['content']
         ];
-        $url = [
-            'action' => 'upload',
-            'path' => "/domains/" . $this->params['domain'] . "/public_html/" . $dir,
-        ];
+
+
         try {
-            $response = $this->url([$this->uri['CMD_API_FILE_MANAGER'] . "?" . http_build_query($url)], false, true)
-                ->request('POST', $argc);
+            $response = $this->url([$this->uri['upload']], false, true)
+                ->requestMultiPart($argc);
         } catch (FileException $ex) {
             throw new FileException($ex->getMessage());
         }
-        parse_str($response, $output);
-        if (isset($output['error']) && $output['error'] == 1) {
-            if (str_contains($output['details'], "Unable to open") && $this->i == 0) {
+
+        $output = json_decode($response, true);
+        if (isset($output['reason'])) {
+            if ($this->i == 0) {
                 $this->i++;
 
-                return $this->makeFileWithPath($file, $dir);
+                return $this->makeFileWithPath($file, $argc['path']);
             } else {
-                throw new FileException($output['text'] . $output['details']);
+                throw new FileException($output['type'] . '|' . $output['reason']);
             }
         }
 
-        if ($output['error'] == 0) {
-            return "success";
-        }
-
-        return "Unknown Error";
+        return "success";
     }
 
 
@@ -77,15 +74,7 @@ class Directadmin extends Client implements PlatformInterface
      */
     private function makePath(string $dir)
     {
-        $mainDir = "";
-        $dirSplit = explode('/', $dir);
-        foreach ($dirSplit as $subDir) {
-            if ($subDir == "") {
-                continue;
-            }
-            $this->makeDir($subDir, $mainDir);
-            $mainDir .= ($mainDir == "" ? "" : "/") . $subDir;
-        }
+        $this->makeDir($dir);
     }
 
     /**
@@ -93,26 +82,92 @@ class Directadmin extends Client implements PlatformInterface
      * @return mixed
      * @throws FileException
      */
-    public function makeDir($name, string $dir)
+    public function makeDir(string $dir)
     {
-        $argc = [
-            'action' => 'folder',
-            'path' => "/domains/" . $this->params['domain'] . "/public_html/" . $dir,
-            'name' => $name,
+        $body = [
+            'path' => $dir
         ];
+
         try {
             $response = $this->url([
-                $this->uri['CMD_API_FILE_MANAGER'] . "?" . http_build_query($argc),
-            ], false, true)->request('POST', $argc);
+                $this->uri['mkdir']
+            ], false, true)->request('POST', $body);
         } catch (FileException $ex) {
             throw new FileException($ex->getMessage());
         }
-        parse_str($response, $output);
-        if (isset($output['error']) && $output['error'] == 1 && !str_contains($output['details'], "The path already exists")) {
-            throw new FileException($output['text'] . $output['details']);
+
+        $output = json_decode($response, true);
+        if (isset($output['reason']) && !str_contains($output['reason'], "already exists")) {
+            throw new FileException($output['type'] . $output['reason']);
         }
 
         return "success";
+    }
+
+    /**
+     * @throws FileException
+     */
+    protected function requestMultiPart($post = [], $content = null)
+    {
+        $curl = curl_init();
+
+        $this->method = 'POST';
+        $this->request = [];
+        $this->response = [];
+        $this->postData = (object)$post;
+
+        // Create temp file
+        $tmp = tmpfile();
+        fwrite($tmp, $post['content']);
+        rewind($tmp);
+
+        $meta = stream_get_meta_data($tmp);
+        $tmpPath = $meta['uri'];
+
+        $post = [
+            'dir' => $post['path'],
+            'file' => new CURLFile($tmpPath, 'text/plain', $post['filename']),
+            'overwrite' => true
+        ];
+
+        $this->setOptions('POST', $post, "Content-Type: multipart/form-data");
+        curl_setopt_array($curl, $this->options);
+
+        $cResponse = curl_exec($curl);
+        // Split header and body.
+        $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+        $header = substr($cResponse, 0, $header_size);
+        $body = substr($cResponse, $header_size);
+
+        // Store all for further use.
+        $this->response = [
+            'header' => $header,
+            'body' => $body,
+        ];
+
+        $info = curl_getinfo($curl);
+
+        $this->http_code = $info['http_code'];
+        $this->request['header'] = $info['request_header'];
+        $this->request = array_reverse($this->request);
+        $error = curl_error($curl);
+        curl_close($curl);
+
+        if ($this->params['debug'] == 'on') {
+            $this->debug();
+        }
+
+        fclose($tmp);
+
+        if ($cResponse) {
+            return $this->parseResponse($body);
+        }
+
+        if ($error) {
+            throw new FileException($error);
+        }
+
+        throw new FileException("Something went wrong");
     }
 
 
@@ -147,17 +202,11 @@ class Directadmin extends Client implements PlatformInterface
      */
     protected function setData($data)
     {
-        if ($data['action'] == "upload") {
-            array_unshift(
-                $this->options[CURLOPT_HTTPHEADER],
-                "X-DirectAdmin-File-Upload: yes",
-                "X-DirectAdmin-File-Name: " . $data['filename']
-            );
-
-            return $data['content'];
-        } else {
+        $this->request['data'] = $data;
+        if ($data['file']) {
             return $data;
         }
+        return json_encode((object)$data, JSON_UNESCAPED_SLASHES);
     }
 
     /**
