@@ -20,7 +20,7 @@ Please check the latest [Releases](https://github.com/realtimeregister/whmcs-ssl
 Check [WIKI](https://github.com/realtimeregister/whmcs-ssl-addon/wiki) for manuals and description of all features
 
 ### Suggestions, Bugs, Issues, New Features
-You are ofcourse welcome to send us requests for new features, suggestions, issues or any possible bugs found
+You are of course more than welcome to send us requests for new features, suggestions, issues or any possible bugs found
 [Submission form](https://github.com/realtimeregister/whmcs-ssl-addon/issues/new/choose)
 
 ### List of addon features
