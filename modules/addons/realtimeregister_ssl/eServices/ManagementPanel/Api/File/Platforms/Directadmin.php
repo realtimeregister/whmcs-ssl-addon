@@ -49,6 +49,7 @@ class Directadmin extends Client implements PlatformInterface
         }
 
         $output = json_decode($response, true);
+
         if (isset($output['reason'])) {
             if ($this->i == 0) {
                 $this->i++;
@@ -126,8 +127,8 @@ class Directadmin extends Client implements PlatformInterface
 
         $post = [
             'dir' => $post['path'],
-            'file' => new CURLFile($tmpPath, 'text/plain', $post['filename']),
-            'overwrite' => true
+            'overwrite' => true,
+            'file' => new CURLFile($tmpPath, 'text/plain', $post['filename'])
         ];
 
         $this->setOptions('POST', $post, "Content-Type: multipart/form-data");
