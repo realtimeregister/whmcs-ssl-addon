@@ -238,7 +238,7 @@ class SSLStepThree
         $logs->addLog($this->p['userid'],
             $this->p['serviceid'],
             'success',
-            'The order has been placed ' . ($authKey ? 'and issued immediately.' : '.')
+            'The order has been placed ' . ($addedSSLOrder->certificateId ? 'and issued immediately.' : '.')
         );
         $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? []);
 

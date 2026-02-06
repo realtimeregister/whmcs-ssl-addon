@@ -324,7 +324,7 @@ class ClientReissueCertificate
         $logs->addLog($this->p['userid'],
             $this->p['serviceid'],
             'success',
-            'The reissue order has been placed' . ($authKey ? ', the certificate was issued immediately.' : '.')
+            'The reissue order has been placed' . ($reissueData->certificateId ? ', the certificate was issued immediately.' : '.')
         );
 
         try {
