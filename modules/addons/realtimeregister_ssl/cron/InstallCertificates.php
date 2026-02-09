@@ -29,32 +29,33 @@ class InstallCertificates extends BaseTask
 
             foreach ($orders as $order) {
                 $details = json_decode($order->configdata, true);
-                // We don't want to continue trying installing the certificate if it has been tried more than 5 times
-                if (
-                    array_key_exists('tries_to_install', $details)
-                    && $details['tries_to_install'] >= $this->maxFailureNumber
-                ) {
-                    $sslOrder = SSL::getWhere(['serviceid' => $order->service_id])->first();
-                    Manager::table(SSL::TABLE_NAME)->where('id', $sslOrder->id)->update(
-                        ['status' => SSL::FAILED_INSTALLATION]
-                    );
-
-                    $logsRepo->addLog(
-                        $order->client_id,
-                        $order->service_id,
-                        'error',
-                        '[' . $order->domain . '] We have stopped trying to install the certificate after '
-                        . $this->maxFailureNumber . ' failures '
-                    );
-                    continue;
-                }
+//                // We don't want to continue trying installing the certificate if it has been tried more than 5 times
+//                if (
+//                    array_key_exists('tries_to_install', $details)
+//                    && $details['tries_to_install'] >= $this->maxFailureNumber
+//                ) {
+//                    $sslOrder = SSL::getWhere(['serviceid' => $order->service_id])->first();
+//                    Manager::table(SSL::TABLE_NAME)->where('id', $sslOrder->id)->update(
+//                        ['status' => SSL::FAILED_INSTALLATION]
+//                    );
+//
+//                    $logsRepo->addLog(
+//                        $order->client_id,
+//                        $order->service_id,
+//                        'error',
+//                        '[' . $order->domain . '] We have stopped trying to install the certificate after '
+//                        . $this->maxFailureNumber . ' failures '
+//                    );
+//                    continue;
+//                }
                 $cert = $details['crt'];
                 $caBundle = $details['ca'];
                 $key = decrypt($details['private_key']);
 
                 try {
                     if ($details['domain']) {
-                        Manage::prepareDeploy(
+                        $manage = new Manage($details['domain']);
+                        $manage->prepareDeploy(
                             $order->service_id,
                             $details['domain'],
                             $cert,

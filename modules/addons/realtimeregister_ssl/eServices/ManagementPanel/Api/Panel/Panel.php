@@ -39,6 +39,8 @@ class Panel
                 'server.type',
                 Capsule::raw("IF(server.type='plesk', server.username, hosting.username) AS username"),
                 Capsule::raw("IF(server.type='plesk', server.password, hosting.password) AS password"),
+                'server.username AS serveruser',
+                'server.password AS serverpass',
                 'server.port',
                 'server.secure',
             ]);
@@ -50,6 +52,8 @@ class Panel
                 'API_URL' => sprintf("%s://%s", $protocol, $result->hostname ?: $result->ipaddress),
                 'API_USER' => $result->username,
                 'API_PORT' => $result->port,
+                'SERVER_USER' => $result->serveruser,
+                'SERVER_PASS' => decrypt($result->serverpass, $GLOBALS['cc_encryption_hash']),
                 'API_PASSWORD' => decrypt($result->password, $GLOBALS['cc_encryption_hash']),
                 'platform' => $result->type,
                 'domain' => $result->domain,

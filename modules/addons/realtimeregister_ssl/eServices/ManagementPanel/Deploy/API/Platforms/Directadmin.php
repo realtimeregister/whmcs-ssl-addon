@@ -67,7 +67,7 @@ class Directadmin extends Client implements PlatformInterface
             'cacert' => $ca
         ];
         $url = $this->uri['CMD_API_SSL'] . "?" . http_build_query($argv);
-        $this->request($this->url($url), 'POST');
+        dd($this->request($this->url($url), 'POST'));
 
         return "Success";
     }

@@ -7,7 +7,8 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\P
 use GuzzleHttp\Exception\GuzzleException;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
 use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DeployException;
-use function GuzzleHttp\Psr7\build_query;
+
+use GuzzleHttp\Psr7\Query;
 
 class Cpanel extends Client implements PlatformInterface
 {
@@ -52,10 +53,10 @@ class Cpanel extends Client implements PlatformInterface
            'key' => $key
         ];
         if (isset($ca)) {
-            $args['cabundle'] = $ca;
+            $args['cab'] = $ca;
         }
 
-        $url = $this->uri['ssl_install_ssl']  . '&' . build_query($args);
+        $url = $this->uri['ssl_install_ssl']  . '&' . Query::build($args);
 
         $this->request($this->url($url));
 
@@ -64,7 +65,7 @@ class Cpanel extends Client implements PlatformInterface
 
     protected function getAuth() : array
     {
-        return [$this->args['API_USER'], $this->args['API_PASSWORD']];
+        return [$this->args['SERVER_USER'], $this->args['SERVER_PASS']];
     }
 
     protected function getBaseUrl() : string
@@ -79,10 +80,12 @@ class Cpanel extends Client implements PlatformInterface
      * @throws DeployException
      */
     protected function parseResponse(string $response) {
-        $result =  json_decode($response, true);
+        $result = json_decode($response, true);
 
         if ($result['metadata']['result'] != 1) {
             throw new DeployException($result['metadata']['reason']);
         }
+
+        return $result;
     }
 }
