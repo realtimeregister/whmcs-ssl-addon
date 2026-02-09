@@ -150,11 +150,21 @@ trait SSLUtils
         $success = true;
         foreach ($dcvEntries as $dcvEntry) {
             try {
-                $panel = Panel::getPanelData($dcvEntry['commonName']);
-                if (!$panel) {
-                    $success = false;
-                    continue;
+                $panel = false;
+                while (str_contains($dcvEntry['commonName'], ".")) {
+                    $panel = Panel::getPanelData($dcvEntry['commonName']);
+                    if ($panel) {
+                        break;
+                    }
+                    $parts = explode('.', $dcvEntry['commonName']);
+                    array_shift($parts);
+                    $dcvEntry['commonName'] = implode('.', $parts);
                 }
+
+                if (!$panel) {
+                    return false;
+                }
+
                 if ($dcvEntry['type'] == 'FILE') {
                     $result = FileControl::create(
                         [
