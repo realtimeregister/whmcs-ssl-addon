@@ -771,7 +771,8 @@ class home extends AbstractController
         $key = decrypt($details['private_key']);
         try {
             if ($details['domain']) {
-                Manage::prepareDeploy($sslService->serviceid, $details['domain'], $cert, $details['csr'], $key, $caBundle);
+                $manage = new Manage($details['domain']);
+                $manage->prepareDeploy($sslService->serviceid, $details['domain'], $cert, $details['csr'], $key, $caBundle);
             }
 
             $logsRepo->addLog(

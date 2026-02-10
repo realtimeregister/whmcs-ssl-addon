@@ -54,7 +54,8 @@ class InstallCertificates extends BaseTask
 
                 try {
                     if ($details['domain']) {
-                        Manage::prepareDeploy(
+                        $manage = new Manage($details['domain']);
+                        $manage->prepareDeploy(
                             $order->service_id,
                             $details['domain'],
                             $cert,
