@@ -134,7 +134,7 @@ class Addon extends AbstractMainDriver
         (
             'name' => self::I()->configuration()->name,
             'description' => self::I()->configuration()->description,
-            'version' => self::I()->configuration()->version,
+            'version' => Configuration::VERSION,
             'author' => self::I()->configuration()->getAuthor(),
             'fields' => self::I()->configuration()->getAddonWHMCSConfig()
         );
