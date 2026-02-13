@@ -17,6 +17,7 @@ use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLUtils;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
@@ -37,6 +38,9 @@ use WHMCS\Database\Capsule;
  */
 class home extends AbstractController
 {
+
+    use SSLUtils;
+
     public function indexHTML($input, $vars = [])
     {
         try {
@@ -760,38 +764,10 @@ class home extends AbstractController
 
     public function installCertificateJSON($input, $vars = [])
     {
-        $logsRepo = new LogsRepo();
-        $orderRepo = new OrderRepo();
         $sslRepo = new SSLRepo();
         $sslService = $sslRepo->getByServiceId($input['params']['serviceid']);
 
-        $details = (array)$sslService->configdata;
-        $cert = $details['crt'];
-        $caBundle = $details['ca'];
-        $key = decrypt($details['private_key']);
-        try {
-            if ($details['domain']) {
-                $manage = new Manage($details['domain']);
-                $manage->prepareDeploy($sslService->serviceid, $details['domain'], $cert, $details['csr'], $key, $caBundle);
-            }
-
-            $logsRepo->addLog(
-                $sslService->userid,
-                $sslService->serviceid,
-                'success',
-                'The certificate for the ' . $details['domain'] . ' domain has been installed correctly.'
-            );
-            $orderRepo->updateStatus($sslService->serviceid, 'Success');
-        } catch (Exception $e) {
-            $logsRepo->addLog(
-                $sslService->userid,
-                $sslService->serviceid,
-                'error',
-                '[' . $details['domain'] . '] Error: ' . $e->getMessage()
-            );
-            return ['success' => 0, 'message' => $e->getMessage()];
-        }
-        return ['success' => 1, 'message' => Lang::getInstance()->T('The certificate has been installed correctly')];
+        return $this->installCertificate($sslService);
     }
 
     private function createAutoInvoice($productId, $service, $jsonAction = false)
