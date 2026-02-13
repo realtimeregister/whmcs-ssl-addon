@@ -9,6 +9,7 @@
 
 <div class="panel panel-default">
     <div class="panel-body">
+        <p>Running version: {$version}</p>
         {$form} 
     </div>
 </div>

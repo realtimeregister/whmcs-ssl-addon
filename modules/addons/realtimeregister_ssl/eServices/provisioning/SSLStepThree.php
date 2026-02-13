@@ -242,7 +242,10 @@ class SSLStepThree
         );
         $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? []);
 
-        (new UpdateConfigData($sslService))->run();
+        if ($addedSSLOrder->certificateId) {
+            (new UpdateConfigData($sslService))->run();
+            $this->autoInstallCertificate($sslService);
+        }
     }
 
     private function redirectToStepOne($error = null)

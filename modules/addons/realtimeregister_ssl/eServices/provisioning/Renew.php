@@ -191,6 +191,10 @@ class Renew
             'success',
             'The renew order has been placed' . ($addSSLRenewOrder->certificateId ? ', the certificate was issued immediately.' : '.')
         );
+
+        if ($addSSLRenewOrder->certificateId) {
+            $this->autoInstallCertificate($this->sslService);
+        }
     }
 
     private function loadSslService()

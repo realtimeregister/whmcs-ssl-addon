@@ -322,6 +322,10 @@ class ClientReissueCertificate
             Invoice::insertDomainInfoIntoInvoiceItemDescription($this->p['serviceid'], $decodedCSR['commonName'], true);
         } catch (Exception $e) {
         }
+
+        if ($reissueData->certificateId) {
+            $this->autoInstallCertificate($this->sslService);
+        }
     }
 
     private static function getDcvMethod(string $dcvMethod) : string {

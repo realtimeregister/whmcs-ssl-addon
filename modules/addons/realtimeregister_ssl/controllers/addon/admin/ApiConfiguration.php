@@ -12,6 +12,7 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextareaField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\forms\TextField;
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\Configuration;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Api;
@@ -249,6 +250,7 @@ class ApiConfiguration extends AbstractController
         ]);
 
         $vars['form'] = $form->getHTML();
+        $vars['version'] = Configuration::VERSION;
 
         // Give an error when people forget tot install the composer packages
         if (!InstalledVersions::isInstalled('realtimeregister/realtimeregister-php')) {
@@ -260,9 +262,6 @@ class ApiConfiguration extends AbstractController
             $vars['form'] = '<div class="alert alert-danger" role="alert">This API user is missing the "VIEW_PROCESS"'.
                 ' permission. Without this permission, most functionalities will not work properly.</div>' . $vars['form'];
         }
-
-
-
 
         return [
             'tpl' => 'api_configuration',
