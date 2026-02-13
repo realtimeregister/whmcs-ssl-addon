@@ -2,13 +2,19 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
+use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiConfRepo;
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
+use Exception;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Domain\Product;
 
@@ -211,5 +217,45 @@ trait SSLUtils
         return array_map(fn($dcvEntry) => [...$dcvEntry,
             'type' => $dcvEntry['type'] === 'HTTP' ? 'FILE' : $dcvEntry['type']],
             $dcv);
+    }
+
+    public function autoInstallCertificate(SSL $sslService) {
+        $apiConf = (new ApiConfRepo())->get();
+        if (!$apiConf->auto_install_panel) {
+            return;
+        }
+        $this->installCertificate($sslService);
+    }
+
+    public function installCertificate(SSL $sslService) : array {
+        $logsRepo = new LogsRepo();
+        $orderRepo = new OrderRepo();
+        $details = (array) $sslService->configdata;
+        $cert = $details['crt'];
+        $caBundle = $details['ca'];
+        $key = decrypt($details['private_key']);
+        try {
+            if ($details['domain']) {
+                $manage = new Manage($details['domain']);
+                $manage->prepareDeploy($sslService->serviceid, $details['domain'], $cert, $details['csr'], $key, $caBundle);
+            }
+
+            $logsRepo->addLog(
+                $sslService->userid,
+                $sslService->serviceid,
+                'success',
+                'The certificate for the ' . $details['domain'] . ' domain has been installed correctly.'
+            );
+            $orderRepo->updateStatus($sslService->serviceid, 'Success');
+        } catch (Exception $e) {
+            $logsRepo->addLog(
+                $sslService->userid,
+                $sslService->serviceid,
+                'error',
+                '[' . $details['domain'] . '] Error: ' . $e->getMessage()
+            );
+            return ['success' => 0, 'message' => $e->getMessage()];
+        }
+        return ['success' => 1, 'message' => Lang::getInstance()->T('The certificate has been installed correctly')];
     }
 }
