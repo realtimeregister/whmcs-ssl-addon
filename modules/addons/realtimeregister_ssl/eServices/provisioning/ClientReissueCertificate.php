@@ -333,7 +333,7 @@ class ClientReissueCertificate
         }
 
         if ($reissueData->certificateId) {
-            $this->installCertificate($this->sslService);
+            $this->autoInstallCertificate($this->sslService);
         }
     }
 

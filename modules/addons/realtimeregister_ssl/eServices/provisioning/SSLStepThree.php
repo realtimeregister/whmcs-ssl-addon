@@ -244,7 +244,7 @@ class SSLStepThree
 
         if ($addedSSLOrder->certificateId) {
             (new UpdateConfigData($sslService))->run();
-            $this->installCertificate($sslService);
+            $this->autoInstallCertificate($sslService);
         }
     }
 

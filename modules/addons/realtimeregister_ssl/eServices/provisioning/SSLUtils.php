@@ -8,6 +8,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiConfRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
@@ -218,7 +219,15 @@ trait SSLUtils
             $dcv);
     }
 
-    public function installCertificate(SSL $sslService) {
+    public function autoInstallCertificate(SSL $sslService) {
+        $apiConf = (new ApiConfRepo())->get();
+        if (!$apiConf->auto_install_panel) {
+            return;
+        }
+        $this->installCertificate($sslService);
+    }
+
+    public function installCertificate(SSL $sslService) : array {
         $logsRepo = new LogsRepo();
         $orderRepo = new OrderRepo();
         $details = (array) $sslService->configdata;

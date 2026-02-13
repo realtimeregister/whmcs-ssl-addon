@@ -202,7 +202,7 @@ class Renew
         );
 
         if ($addSSLRenewOrder->certificateId) {
-            $this->installCertificate($this->sslService);
+            $this->autoInstallCertificate($this->sslService);
         }
     }
 
