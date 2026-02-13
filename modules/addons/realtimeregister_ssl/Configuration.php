@@ -80,7 +80,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public const VERSION = '1.3.4';
+    public const VERSION = '1.3.5';
     public $tablePrefix = '';
     public $modelRegister = [];
 
@@ -435,7 +435,6 @@ class Configuration extends AbstractConfiguration
         (new LogsRepo())->dropLogsTable();
         (new OrdersRepo())->dropOrdersTable();
         (new KeyToIdMapping())->dropTable();
-        (new WhmcsProducts())->dropProducts();
         Products::getInstance()::dropTable();
         EmailTemplateService::deleteConfigurationTemplate();
         EmailTemplateService::deleteCertificateTemplate();

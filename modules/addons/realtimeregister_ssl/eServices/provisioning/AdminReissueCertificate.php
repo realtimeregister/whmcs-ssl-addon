@@ -117,19 +117,8 @@ class AdminReissueCertificate extends Ajax
         $sslService->status = SSL::CONFIGURATION_SUBMITTED;
         $sslService->save();
 
-        try {
-            $configDataUpdate = new UpdateConfigData($sslService);
-            $configDataUpdate->run();
-        } catch (Exception $e) {
-            $logs->addLog(
-                $this->p['userid'],
-                $this->p['serviceid'],
-                'error',
-                '[' . $mainDomain . '] Error:' . $e->getMessage()
-            );
-            $sslService->setSSLStatus('SUSPENDED');
-            $sslService->save();
-        }
+        $configDataUpdate = new UpdateConfigData($sslService);
+        $configDataUpdate->run();
 
         $this->response(true, 'Reissue was successfully requested.');
     }
