@@ -183,22 +183,13 @@ class Renew
             ->update(['remoteid' => $addSSLRenewOrder->processId]);
         $this->loadSslService();
 
-        try {
-            $configDataUpdate = new UpdateConfigData($this->sslService);
-            $configDataUpdate->run();
-        } catch (\Exception $e) {
-            $logs->addLog(
-                $this->p['userid'],
-                $this->p['serviceid'],
-                'error',
-                '[' . $commonName . '] Error:' . $e->getMessage()
-            );
-        }
+        $configDataUpdate = new UpdateConfigData($this->sslService);
+        $configDataUpdate->run();
 
         $logs->addLog($this->p['userid'],
             $this->p['serviceid'],
             'success',
-            'The renew order has been placed ' . ($addSSLRenewOrder->certificateId ? ' the certificate was issued immediately.' : '.')
+            'The renew order has been placed' . ($addSSLRenewOrder->certificateId ? ', the certificate was issued immediately.' : '.')
         );
     }
 

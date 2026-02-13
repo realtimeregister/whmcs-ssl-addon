@@ -307,19 +307,10 @@ class ClientReissueCertificate
 
         $this->sslService->save();
 
-        try {
-            $configDataUpdate = new UpdateConfigData($this->sslService);
-            $configDataUpdate->run();
-        } catch (Exception $e) {
-            $logs->addLog(
-                $this->p['userid'],
-                $this->p['serviceid'],
-                'error',
-                '[' . $commonName . '] Error:' . $e->getMessage()
-            );
-            $this->sslService->setSSLStatus('SUSPENDED');
-            $this->sslService->save();
-        }
+        $this->sslService->setSSLStatus('SUSPENDED');
+
+        $configDataUpdate = new UpdateConfigData($this->sslService);
+        $configDataUpdate->run();
 
         $logs->addLog($this->p['userid'],
             $this->p['serviceid'],

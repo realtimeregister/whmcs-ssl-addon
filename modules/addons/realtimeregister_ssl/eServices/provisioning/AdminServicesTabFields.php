@@ -55,6 +55,9 @@ class AdminServicesTabFields
             $configDataUpdate = new UpdateConfigData($sslService);
 
             $orderDetails = $configDataUpdate->run();
+            if (is_array($orderDetails) && $orderDetails['error']) {
+                return ['Realtime Register SSL Error' => $orderDetails['error']];
+            }
             if (!$orderDetails) {
                 return $sslData;
             }
