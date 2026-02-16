@@ -29,11 +29,13 @@ class Manage
     {
         $this->panel = new \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage($domain);
         $panelData = $this->panel->getPanelData();
-        $API = sprintf("\AddonModule\RealtimeRegisterSsl\\eServices\ManagementPanel\Deploy\Api\Platforms\%s",
+        $API = sprintf("\AddonModule\RealtimeRegisterSsl\\eServices\ManagementPanel\Deploy\API\Platforms\%s",
             ucfirst($panelData['platform']));
 
         if (!class_exists($API)) {
-            throw new DeployException(sprintf("Platform `%s` not supported.", $panelData['platform']), 12);
+            throw new DeployException(
+                sprintf("Platform `%s` not supported. Can not find class '%s'", $panelData['platform'], $API),
+                12);
         }
 
         $this->api =  new $API($panelData + $options);

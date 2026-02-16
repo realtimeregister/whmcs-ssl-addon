@@ -53,21 +53,14 @@ class Directadmin extends Client implements PlatformInterface
         if (isset($output['reason'])) {
             if ($this->i == 0) {
                 $this->i++;
-
-                return $this->makeFileWithPath($file, $argc['path']);
+                $this->makeDir($argc['path']);
+                return $this->uploadFile($file, $dir);
             } else {
                 throw new FileException($output['type'] . '|' . $output['reason']);
             }
         }
 
         return "success";
-    }
-
-
-    private function makeFileWithPath(array $file, string $dir)
-    {
-        $this->makeDir($dir);
-        return $this->uploadFile($file, $dir);
     }
 
     /**
@@ -86,6 +79,7 @@ class Directadmin extends Client implements PlatformInterface
                 $this->uri['mkdir']
             ], false, true)->request('POST', $body);
         } catch (FileException $ex) {
+            dd($ex);
             throw new FileException($ex->getMessage());
         }
 
