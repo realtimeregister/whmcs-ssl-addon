@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\API;
+namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api;
 
 use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DeployException;
 
