@@ -69,7 +69,7 @@ class Plesk extends Client implements PlatformInterface
         foreach ($result as $r) {
             if ($r->id === 'realtime-register-ssl' && $r->active === true) {
                 $xml = simplexml_load_file(
-                    __DIR__ . '/../../../Deploy/API/Platforms/Module/ext-realtime-register-ssl-file-upload-helper/meta.xml'
+                    __DIR__ . '/../../../Deploy/Api/Platforms/Module/ext-realtime-register-ssl-file-upload-helper/meta.xml'
                 );
 
                 if ($r->version === (string)$xml->version && $r->release === (string)$xml->release) {
@@ -284,7 +284,7 @@ class Plesk extends Client implements PlatformInterface
     {
         // First create the file
         $tmpFile = sys_get_temp_dir() . '/' . uniqid();
-        $moduleDir = realpath(__DIR__ . '/../../../Deploy/API/Platforms/Module/ext-realtime-register-ssl-file-upload-helper');
+        $moduleDir = realpath(__DIR__ . '/../../../Deploy/Api/Platforms/Module/ext-realtime-register-ssl-file-upload-helper');
 
         $zip = new \ZipArchive();
 
