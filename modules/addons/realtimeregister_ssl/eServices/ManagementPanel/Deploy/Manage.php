@@ -29,7 +29,7 @@ class Manage
     {
         $this->panel = new \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage($domain);
         $panelData = $this->panel->getPanelData();
-        $API = sprintf("\AddonModule\RealtimeRegisterSsl\\eServices\ManagementPanel\Deploy\API\Platforms\%s",
+        $API = sprintf("\AddonModule\RealtimeRegisterSsl\\eServices\ManagementPanel\Deploy\Api\Platforms\%s",
             ucfirst($panelData['platform']));
 
         if (!class_exists($API)) {
