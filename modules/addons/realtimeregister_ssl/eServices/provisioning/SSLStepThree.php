@@ -204,7 +204,9 @@ class SSLStepThree
         $this->sslConfig->setApproverEmails($approveremails);
         $this->sslConfig->setStatus(\AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL::CONFIGURATION_SUBMITTED);
         $this->sslConfig->setCrt('--placeholder--');
-        $this->sslConfig->setPrivateKey($this->p['privateKey']);
+        if ($this->p['privateKey']) {
+            $this->sslConfig->setPrivateKey($this->p['privateKey']);
+        }
         $this->sslConfig->setCsr(trim($this->p['configdata']['csr']));
         $this->sslConfig->setDomain($orderDetails->identifier);
         $this->sslConfig->setOrderStatusDescription($orderDetails->status);
@@ -212,7 +214,6 @@ class SSLStepThree
         $this->sslConfig->setDcvMethod($this->p['dcvmethodMainDomain'] == 'http'?'FILE':$this->p['dcvmethodMainDomain']);
         $this->sslConfig->setProductId($this->p['configoption1']);
         $this->sslConfig->setSSLStatus($orderDetails->status);
-
         // Gets overwritten by whmcs ioncube encoded stuff atm >:(
         $this->sslConfig->save();
 
