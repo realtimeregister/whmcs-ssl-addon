@@ -1,6 +1,7 @@
 <?php
 
 namespace AddonModule\RealtimeRegisterSsl\addonLibs\forms;
+
 use AddonModule\RealtimeRegisterSsl as main;
 
 /**
@@ -23,9 +24,9 @@ abstract class AbstractField
     public $readonly = false;
     public $disabled = false;
     public $addIDs = false;
-    public $colWidth = 9;
-    public $buttonLabelColWidth =3;
-    public $labelcolWidth =2;
+    public $colWidth = 8;
+    public $buttonLabelColWidth = 4;
+    public $labelcolWidth = 3;
     public $continue = false;
     public $html = '';
     public $additinalClass = false;
@@ -34,54 +35,54 @@ abstract class AbstractField
     public $error;
     public $id = false;
     public $required = false;
-    
-    function __construct($params = [])
+
+    public function __construct($params = [])
     {
-        foreach($params as $name => $value) {
-            if(property_exists($this, $name)) {
+        foreach ($params as $name => $value) {
+            if (property_exists($this, $name)) {
                 $this->{$name} = $value;
             }
         }
     }
-    
-    function prepare()
+
+    public function prepare(): void
     {
     }
-    
-    function generate()
+
+    public function generate(): void
     {
         $this->prepare();
-        
+
         if ($this->addFormNameToFields && empty($this->nameAttr)) {
-            $this->nameAttr = $this->formName.'_'.$this->name;
+            $this->nameAttr = $this->formName . '_' . $this->name;
         }
-        
+
         if (empty($this->nameAttr)) {
             $this->nameAttr = $this->name;
         }
-        
+
         if (empty($this->value) && !empty($this->default)) {
             $this->value = $this->default;
         }
-        
+
         if ($this->opentag == false) {
             $this->enableLabel = false;
         }
-        
+
         \AddonModule\RealtimeRegisterSsl\addonLibs\Lang::stagCurrentContext('generateField');
-        
-        if($this->type == 'submit') {
+
+        if ($this->type == 'submit') {
             \AddonModule\RealtimeRegisterSsl\addonLibs\Lang::addToContext($this->value);
         } else {
             \AddonModule\RealtimeRegisterSsl\addonLibs\Lang::addToContext($this->name);
         }
-        
+
         $this->html = \AddonModule\RealtimeRegisterSsl\addonLibs\Smarty::I()->view(
             $this->type,
             (array)$this,
-            \AddonModule\RealtimeRegisterSsl\addonLibs\process\MainInstance::getModuleTemplatesDir().DS.'formFields'
+            \AddonModule\RealtimeRegisterSsl\addonLibs\process\MainInstance::getModuleTemplatesDir() . DS . 'formFields'
         );
-        
+
         main\addonLibs\Lang::unstagContext('generateField');
     }
 }

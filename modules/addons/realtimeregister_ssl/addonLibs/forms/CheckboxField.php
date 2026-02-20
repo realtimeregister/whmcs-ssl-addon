@@ -17,7 +17,7 @@ class CheckboxField extends AbstractField
     public $inline = false;
     
     
-    function prepare()
+    public function prepare(): void
     {
         if ($this->prepared) {
             return;

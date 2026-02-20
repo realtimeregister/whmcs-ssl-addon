@@ -51,7 +51,7 @@ class Creator
      * @param type $data
      * @throws System
      */
-    public function addField($field, $dataOrName = null, $data = [])
+    public function addField($field, $dataOrName = null, $data = []): void
     {
         if (is_string($dataOrName)) {
             $data['name'] = $dataOrName;
@@ -93,12 +93,12 @@ class Creator
         }
     }
 
-    public function anyField()
+    public function anyField(): bool
     {
         return !empty($this->fields);
     }
 
-    public function prepare()
+    public function prepare(): void
     {
         foreach ($this->fields as &$field) {
             $field->html = null;
@@ -108,12 +108,12 @@ class Creator
         }
     }
 
-    public function setIDs($id)
+    public function setIDs($id): void
     {
         $this->addIDs = $id;
     }
 
-    public function getHTML($container = 'default', $data = [])
+    public function getHTML($container = 'default', $data = []): string
     {
         main\addonLibs\Lang::stagCurrentContext('generateForm');
         main\addonLibs\Lang::addToContext($this->name);
@@ -167,7 +167,7 @@ class Creator
         return $html;
     }
 
-    public function deleteFields()
+    public function deleteFields(): void
     {
         $this->fields = [];
         $this->hidden = [];

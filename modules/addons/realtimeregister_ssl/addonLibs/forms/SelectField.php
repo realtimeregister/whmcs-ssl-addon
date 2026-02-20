@@ -17,7 +17,7 @@ class SelectField extends AbstractField
     public $select2 = false;
     public $multiple;
 
-    function prepare()
+    public function prepare(): void
     {
         if ($this->select2) {
             $this->type = 'select2';

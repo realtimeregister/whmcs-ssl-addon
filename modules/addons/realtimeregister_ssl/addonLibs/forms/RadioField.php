@@ -15,7 +15,7 @@ class RadioField extends AbstractField
     public $options;
     public $type    = 'radio';
     
-    function prepare()
+    public function prepare(): void
     {
         if (array_keys($this->options) == range(0, count($this->options) - 1)) {
             $options = [];

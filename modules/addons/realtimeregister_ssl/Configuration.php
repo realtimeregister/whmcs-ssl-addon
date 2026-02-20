@@ -6,7 +6,6 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractConfiguration;
 use AddonModule\RealtimeRegisterSsl\cron\AutomaticSynchronisation;
 use AddonModule\RealtimeRegisterSsl\cron\CertificateDetailsUpdater;
 use AddonModule\RealtimeRegisterSsl\cron\CertificateSender;
-use AddonModule\RealtimeRegisterSsl\cron\CertificateStatisticsLoader;
 use AddonModule\RealtimeRegisterSsl\cron\DailyStatusUpdater;
 use AddonModule\RealtimeRegisterSsl\cron\ExpiryHandler;
 use AddonModule\RealtimeRegisterSsl\cron\InstallCertificates;
@@ -22,7 +21,6 @@ use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
-use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository as WhmcsProducts;
 use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPriceRepo;
 use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
 use WHMCS\Database\Capsule;
@@ -84,7 +82,7 @@ class Configuration extends AbstractConfiguration
     public $tablePrefix = '';
     public $modelRegister = [];
 
-    private static function updateProductPricing()
+    private static function updateProductPricing(): void
     {
         $products = Capsule::table('tblproducts')
             ->select(['id', 'paytype'])
@@ -95,7 +93,7 @@ class Configuration extends AbstractConfiguration
         }
     }
 
-    private static function updatePricing($productId, $paytype)
+    private static function updatePricing($productId, $paytype): void
     {
         $optionGroupResult = Capsule::table('tblproductconfiggroups')
             ->select('id')
@@ -327,7 +325,7 @@ class Configuration extends AbstractConfiguration
         }
     }
 
-    private static function insertHiddenFields()
+    private static function insertHiddenFields(): void
     {
         $products = Capsule::table('tblproducts')
             ->select(['id'])
@@ -346,7 +344,7 @@ class Configuration extends AbstractConfiguration
     /**
      * Addon module visible in module
      */
-    function getAddonMenu(): array
+    public function getAddonMenu(): array
     {
         return [
             'apiConfiguration' => ['icon' => 'fa fa-key'],
@@ -361,7 +359,7 @@ class Configuration extends AbstractConfiguration
     /**
      * Addon module visible in client area
      */
-    function getClientMenu(): array
+    public function getClientMenu(): array
     {
         return [
             'Orders' => ['icon' => 'glyphicon glyphicon-home']
@@ -371,7 +369,7 @@ class Configuration extends AbstractConfiguration
     /**
      * Provisioning menu visible in admin area
      */
-    function getServerMenu(): array
+    public function getServerMenu(): array
     {
         return [
             'configuration' => ['icon' => 'glyphicon glyphicon-cog']
@@ -388,7 +386,7 @@ class Configuration extends AbstractConfiguration
      *
      * @return array
      */
-    public function getServerWHMCSConfig()
+    public function getServerWHMCSConfig(): array
     {
         return ['text_name', 'text_name2', 'checkbox_name', 'onoff', 'pass', 'some_option', 'some_option2', 'radio_field'];
     }
@@ -397,7 +395,7 @@ class Configuration extends AbstractConfiguration
      * Addon module configuration visible in admin area. This is standard WHMCS configuration
      * @return array
      */
-    public function getAddonWHMCSConfig()
+    public function getAddonWHMCSConfig(): array
     {
         return [];
     }
@@ -405,7 +403,7 @@ class Configuration extends AbstractConfiguration
     /**
      * Run When Module Install
      */
-    function activate()
+    public function activate(): void
     {
         (new APIConfigurationRepo())->createApiConfigurationTable();
         (new ProductPriceRepo())->createApiProductsPricesTable();
@@ -425,29 +423,32 @@ class Configuration extends AbstractConfiguration
     }
 
     /**
-     * Do something after module deactivate. You can status and description
+     * If requested, we delete the old configuration on disabling the module
      */
-    function deactivate()
+    public function deactivate(): void
     {
-        (new APIConfigurationRepo())->dropApiConfigurationTable();
-        (new ProductPriceRepo())->dropApiProductsPricesTable();
-        (new UserDiscountRepo())->dropUserDiscountTable();
-        (new LogsRepo())->dropLogsTable();
-        (new OrdersRepo())->dropOrdersTable();
-        (new KeyToIdMapping())->dropTable();
-        Products::getInstance()::dropTable();
-        EmailTemplateService::deleteConfigurationTemplate();
-        EmailTemplateService::deleteCertificateTemplate();
-        EmailTemplateService::deleteExpireNotificationTemplate();
-        EmailTemplateService::deleteRenewalTemplate();
-        EmailTemplateService::deleteReissueTemplate();
-        EmailTemplateService::deleteValidationInformationTemplate();
+        $apiConfiguration = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
+        if ($apiConfiguration->delete_configuration_after_module_disable) {
+            (new APIConfigurationRepo())->dropApiConfigurationTable();
+            (new ProductPriceRepo())->dropApiProductsPricesTable();
+            (new UserDiscountRepo())->dropUserDiscountTable();
+            (new LogsRepo())->dropLogsTable();
+            (new OrdersRepo())->dropOrdersTable();
+            (new KeyToIdMapping())->dropTable();
+            Products::getInstance()::dropTable();
+            EmailTemplateService::deleteConfigurationTemplate();
+            EmailTemplateService::deleteCertificateTemplate();
+            EmailTemplateService::deleteExpireNotificationTemplate();
+            EmailTemplateService::deleteRenewalTemplate();
+            EmailTemplateService::deleteReissueTemplate();
+            EmailTemplateService::deleteValidationInformationTemplate();
+        }
     }
 
     /**
      * Do something after module upgrade
      */
-    function upgrade(array $vars = [])
+    public function upgrade(array $vars = []): void
     {
         EmailTemplateService::updateConfigurationTemplate();
         EmailTemplateService::updateRenewalTemplate();
@@ -465,7 +466,7 @@ class Configuration extends AbstractConfiguration
         self::updateRenewConfiguration();
     }
 
-    private static function updateRenewConfiguration()
+    private static function updateRenewConfiguration(): void
     {
         Capsule::table('REALTIMEREGISTERSSL_api_configuration')
             ->whereNull('renew_invoice_days_recurring')
@@ -473,14 +474,14 @@ class Configuration extends AbstractConfiguration
     }
 
 
-    static function updateExpiryHandlerTask()
+    public static function updateExpiryHandlerTask(): void
     {
         Capsule::table('tbltask')
             ->where('name', '=', 'Expiry Handler')
             ->update(['frequency' => 1440]);
     }
 
-    static function renameSSLOrderStatuses()
+    public static function renameSSLOrderStatuses(): void
     {
         foreach (SSL::all() as $sslOrder) {
             if ($sslOrder->status === 'active') {
@@ -493,7 +494,7 @@ class Configuration extends AbstractConfiguration
         }
     }
 
-    static function installTasks()
+    public static function installTasks(): void
     {
         /**
          * We now run our crontasks via the cron setup of WHMCS tasks,
@@ -516,7 +517,7 @@ class Configuration extends AbstractConfiguration
     }
 
 
-    static function updateTaskPriority()
+    public static function updateTaskPriority(): void
     {
         global $CONFIG;
 
@@ -533,7 +534,7 @@ class Configuration extends AbstractConfiguration
     }
 
 
-    public function getAuthor()
+    public function getAuthor(): string
     {
         return 'Realtime Register';
     }
