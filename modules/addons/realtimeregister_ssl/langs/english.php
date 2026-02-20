@@ -40,6 +40,8 @@ $_LANG['addonAA']['apiConfiguration']['item']['summary_expires_soon_days']['labe
 $_LANG['addonAA']['apiConfiguration']['item']['summary_expires_soon_days']['description']              = 'Count SSL order in statistics if it expires in fewer or equal days than the above selection.';
 $_LANG['addonAA']['apiConfiguration']['item']['send_certificate_template']['label']                    = 'Send Certificate Email Template';
 $_LANG['addonAA']['apiConfiguration']['item']['send_certificate_template']['description']              = 'To send an SSL certificate through the chosen template, edit it and place the {$ssl_certificate} field in it.';
+$_LANG['addonAA']['apiConfiguration']['item']['delete_configuration_after_module_disable']['label']    = 'Remove configuration';
+$_LANG['addonAA']['apiConfiguration']['item']['delete_configuration_after_module_disable']['description'] = 'In order to easy disable the module and enable it again, we offer the option to keep the configuration while disabling.';
 //
 $_LANG['addonAA']['apiConfiguration']['item']['price_rate']['label']                                   = 'Rate for currency from RealtimeRegisterSSL';
 $_LANG['addonAA']['apiConfiguration']['item']['rate']['label']                                         = 'Rate';

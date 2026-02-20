@@ -3,8 +3,7 @@
 namespace AddonModule\RealtimeRegisterSsl\addonLibs\forms;
 
 /**
- * Test Form Field
- *
+ * Text Form Field
  */
 class TextField extends AbstractField
 {

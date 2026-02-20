@@ -15,7 +15,7 @@ class SelectPicker extends AbstractField
     public $addValueIfNotExits          = false;
     public $options;
     
-    function prepare()
+    public function prepare(): void
     {
         $this->type = 'selectPicker';
         if (

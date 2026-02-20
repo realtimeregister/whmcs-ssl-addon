@@ -15,7 +15,6 @@ use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
 use AddonModule\RealtimeRegisterSsl\Configuration;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Api;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use Composer\InstalledVersions;
 use Exception;
@@ -245,6 +244,13 @@ class ApiConfiguration extends AbstractController
         $field->error = $this->getFieldError('summary_expires_soon_days');
         $form->addField($field);
 
+        $field = new CheckboxField();
+        $field->name = 'delete_configuration_after_module_disable';
+        $field->options = ['delete_configuration_after_module_disable'];
+        $field->value = $input['delete_configuration_after_module_disable'] ? ['delete_configuration_after_module_disable'] : [''];
+        $field->enableDescription = true;
+        $form->addField($field);
+
         $form->addField('submit', 'addon-action', [
             'value' => 'saveItem'
         ]);
@@ -269,7 +275,8 @@ class ApiConfiguration extends AbstractController
         ];
     }
 
-    private static function isMissingProcessPermission($input) {
+    private static function isMissingProcessPermission($input)
+    {
         if (!$input['api_login'] || !is_bool($input['api_test'])) {
             return false;
         }
@@ -305,7 +312,8 @@ class ApiConfiguration extends AbstractController
                     'disable_email_validation',
                     'api_test',
                     'visible_renew_button',
-                    'save_activity_logs'
+                    'save_activity_logs',
+                    'delete_configuration_after_module_disable',
                 ];
                 foreach ($checkFieldsArray as $field) {
                     if (isset($input[$field])) {

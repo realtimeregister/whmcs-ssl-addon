@@ -56,7 +56,8 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                     'cron_price_updater' =>  1,
                     'cron_certificate_details_updater' =>  1,
                     'cron_certificate_installer' => 1,
-                ]);
+                    'delete_configuration_after_module_disable' => $params['disable_email_validation'],
+            ]);
         } else {
 
             Capsule::table($this->tableName)->update(
@@ -88,12 +89,13 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                     'cron_send_certificate' => $params['cron_send_certificate'],
                     'cron_price_updater' => $params['cron_price_updater'],
                     'cron_certificate_details_updater' => $params['cron_certificate_details_updater'],
-                    'cron_certificate_installer' => $params['cron_certificate_installer']
+                    'cron_certificate_installer' => $params['cron_certificate_installer'],
+                    'delete_configuration_after_module_disable' => $params['delete_configuration_after_module_disable'],
                 ]);
         }
     }
 
-    public function createApiConfigurationTable()
+    public function createApiConfigurationTable(): void
     {
         if (!Capsule::schema()->hasTable($this->tableName)) {
             Capsule::schema()->create($this->tableName, function ($table) {
@@ -125,11 +127,12 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->boolean('cron_send_certificate')->default(true);
                 $table->boolean('cron_price_updater')->default(true);
                 $table->boolean('cron_certificate_installer')->default(true);
+                $table->boolean('delete_configuration_after_module_disable')->default(false);
             });
         }
     }
 
-    public function updateApiConfigurationTable()
+    public function updateApiConfigurationTable(): void
     {
         if (Capsule::schema()->hasTable($this->tableName)) {
             if (!Capsule::schema()->hasColumn($this->tableName, 'auto_renew_invoice_recurring')) {
@@ -399,10 +402,16 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                     $table->dropColumn('cron_ssl_summary_stats');
                 });
             }
+
+            if (!Capsule::schema()->hasColumn($this->tableName, 'delete_configuration_after_module_disable')) {
+                Capsule::schema()->table($this->tableName, function ($table) {
+                    $table->boolean('delete_configuration_after_module_disable')->default(false);
+                });
+            }
         }
     }
 
-    public function dropApiConfigurationTable()
+    public function dropApiConfigurationTable(): void
     {
         if (Capsule::schema()->hasTable($this->tableName)) {
             Capsule::schema()->dropIfExists($this->tableName);
