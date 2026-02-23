@@ -95,7 +95,6 @@ class Products
 
         // if the table is 'kinda empty', we refetch everything from the api
         Capsule::table(self::REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
-        $this->products = [];
 
         $i = 0;
 

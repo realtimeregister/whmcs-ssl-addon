@@ -524,7 +524,7 @@
             });
         {/literal}
     </script>
-{else}
+{elseif !$formError}
     <div class="alert alert-info">
         No products found - to add go to `Products Creator` page.
     </div>

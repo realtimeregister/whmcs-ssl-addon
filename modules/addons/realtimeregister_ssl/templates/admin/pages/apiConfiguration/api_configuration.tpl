@@ -28,7 +28,7 @@
                     $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
                 } else if (data.success === false) {
                     $('#AddonAlerts>div[data-prototype="error"]').show();
-                    $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
+                    $('#AddonAlerts>div[data-prototype="error"] strong').html("Api key incorrect: "  + data.message);
                 }
             }, false);
         });

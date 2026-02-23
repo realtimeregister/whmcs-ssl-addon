@@ -11,10 +11,12 @@ use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository as ConfigRepo;
 use Exception;
+use RealtimeRegister\Exceptions\UnauthorizedException;
 
 /*
  * Base example
  */
+
 class ProductsConfiguration extends AbstractController
 {
     /**
@@ -54,10 +56,17 @@ class ProductsConfiguration extends AbstractController
             foreach ($products as $key => $product) {
                 try {
                     $apiProduct = Products::getInstance()->getProduct(KeyToIdMapping::getIdByKey($product->{C::API_PRODUCT_ID}));
-                } catch (Exception $e) {
+                } catch (UnauthorizedException $e) {
+                    $vars['formError'] = Lang::T('messages', "Invalid API key: " . $e->getMessage());
+                    return [
+                        'tpl' => 'products_configuration',
+                        'vars' => $vars
+                    ];
+                } catch (Exception) {
                     unset($products[$key]);
                     continue;
                 }
+
 
                 $apiConfig = (object)null;
                 $apiConfig->name = $apiProduct->product;
@@ -169,7 +178,8 @@ class ProductsConfiguration extends AbstractController
         return true;
     }
 
-    private function recalculatePrices($product, $commission) {
+    private function recalculatePrices($product, $commission)
+    {
         if ($product->{C::COMMISSION} == $commission) {
             return;
         }

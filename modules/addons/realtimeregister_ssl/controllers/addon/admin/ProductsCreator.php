@@ -9,10 +9,12 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMappi
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
+use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository as ProductsRepo;
 use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ApiProductPriceRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use RealtimeRegister\Exceptions\UnauthorizedException;
 use WHMCS\Product\Group;
 
 class ProductsCreator extends AbstractController
@@ -26,7 +28,7 @@ class ProductsCreator extends AbstractController
     {
         try {
             $this->apiProductsRepo = Products::getInstance();
-            $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+            $productModel = new ProductsRepo();
             $vars['currencies'] = $productModel->getAllCurrencies();
             $vars['apiProducts'] = $this->apiProductsRepo->getAllProducts();
             $vars['apiProductsCount'] = count($this->apiProductsRepo->getAllProducts());
@@ -45,6 +47,8 @@ class ProductsCreator extends AbstractController
                 $this->saveProducts($vars['currencies'], $input);
                 $vars['success'] = Lang::T('messages', 'single_product_created');
             }
+        } catch (UnauthorizedException $e) {
+            $vars['formError'] = Lang::T('messages', "Invalid API key: " . $e->getMessage());
         } catch (Exception $e) {
             $vars['formError'] = Lang::T('messages', $e->getMessage());
         }
@@ -89,7 +93,7 @@ class ProductsCreator extends AbstractController
             $productData[C::OPTION_CUSTOM_GUIDE] = $input['custom_guide'];
         }
 
-        $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $productModel = new ProductsRepo();
         $newProductId = $productModel->createNewProduct($productData);
 
         $apiProduct = $this->apiProductsRepo->getProduct(KeyToIdMapping::getIdByKey($input[C::API_PRODUCT_ID]));
@@ -131,7 +135,7 @@ class ProductsCreator extends AbstractController
         } else {
             $apiProducts = $this->apiProductsRepo->getAllProducts();
         }
-        $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $productModel = new ProductsRepo();
         $moduleProducts = $productModel->getModuleProducts('realtimeregister_ssl', $post['gid']);
         foreach ($moduleProducts as $moduleProduct) {
             $moduleProductId = KeyToIdMapping::getIdByKey($moduleProduct->configoption1);
@@ -164,7 +168,7 @@ class ProductsCreator extends AbstractController
     {
         $priceRepo = new ApiProductPriceRepo();
 
-        $productModel = new \AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository();
+        $productModel = new ProductsRepo();
         $currencies = $productModel->getAllCurrencies();
         $defaultCurrency = $currencies->filter(fn($currency) => $currency->default === 1)->first();
 
