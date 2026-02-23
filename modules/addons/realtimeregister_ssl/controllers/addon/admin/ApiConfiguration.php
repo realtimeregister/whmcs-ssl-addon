@@ -344,6 +344,9 @@ class ApiConfiguration extends AbstractController
         return $this->indexHTML($input, $vars);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testConnectionJSON($input = [], $vars = [])
     {
         $token = $input['api_login'];
@@ -355,12 +358,15 @@ class ApiConfiguration extends AbstractController
             $token = decrypt($input['api_login'], $GLOBALS['cc_encryption_hash']);
         }
 
-        ApiProvider::standalone(
-            CustomersApi::class,
-            $token,
-            $isTest === 1 || $isTest === 'true'
-        )
-        ->priceList(ApiProvider::parseCustomer($token));
+        try {
+            ApiProvider::standalone(
+                CustomersApi::class,
+                $token,
+                $isTest === 1 || $isTest === 'true'
+            )->priceList(ApiProvider::parseCustomer($token));
+        } catch (Exception $e) {
+            throw new Exception("API key incorrect: " . $e->getMessage());
+        }
 
         return [
             'success' => Lang::T('messages', 'api_connection_success')
