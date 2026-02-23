@@ -34,13 +34,14 @@ $_LANG['addonAA']['apiConfiguration']['item']['display_csr_generator']['label'] 
 $_LANG['addonAA']['apiConfiguration']['item']['auto_install_panel']['']['autoInstallPanel']         = 'Automatic certificate installation';
 $_LANG['addonAA']['apiConfiguration']['item']['display_ca_summary']['label']                           = 'Display Orders Summary';
 $_LANG['addonAA']['apiConfiguration']['item']['client_area_summary_orders']['label']                   = 'Client Area Orders Summary';
+$_LANG['addonAA']['apiConfiguration']['item']['miscellaneous']['label']                                = 'Miscellaneous';
 $_LANG['addonAA']['apiConfiguration']['item']['validation_settings']['label']                          = 'Validation Settings';
 $_LANG['addonAA']['apiConfiguration']['item']['disable_email_validation']['label']                     = 'Disable Email Validation';
 $_LANG['addonAA']['apiConfiguration']['item']['summary_expires_soon_days']['label']                    = 'Expires Soon';
 $_LANG['addonAA']['apiConfiguration']['item']['summary_expires_soon_days']['description']              = 'Count SSL order in statistics if it expires in fewer or equal days than the above selection.';
 $_LANG['addonAA']['apiConfiguration']['item']['send_certificate_template']['label']                    = 'Send Certificate Email Template';
 $_LANG['addonAA']['apiConfiguration']['item']['send_certificate_template']['description']              = 'To send an SSL certificate through the chosen template, edit it and place the {$ssl_certificate} field in it.';
-$_LANG['addonAA']['apiConfiguration']['item']['delete_configuration_after_module_disable']['label']    = 'Remove configuration';
+$_LANG['addonAA']['apiConfiguration']['item']['delete_configuration_after_module_disable']['label']    = 'Remove configuration on module disable';
 $_LANG['addonAA']['apiConfiguration']['item']['delete_configuration_after_module_disable']['description'] = 'In order to easily disable the module and enable it again, we offer the option to keep the configuration when disabling.';
 //
 $_LANG['addonAA']['apiConfiguration']['item']['price_rate']['label']                                   = 'Rate for currency from RealtimeRegisterSSL';

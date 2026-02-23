@@ -244,6 +244,10 @@ class ApiConfiguration extends AbstractController
         $field->error = $this->getFieldError('summary_expires_soon_days');
         $form->addField($field);
 
+        $field = new LegendField();
+        $field->name = 'miscellaneous';
+        $form->addField($field);
+
         $field = new CheckboxField();
         $field->name = 'delete_configuration_after_module_disable';
         $field->options = ['delete_configuration_after_module_disable'];
