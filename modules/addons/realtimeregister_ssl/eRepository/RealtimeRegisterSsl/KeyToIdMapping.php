@@ -12,10 +12,12 @@ class KeyToIdMapping
 
     public function createTable(): void
     {
-        Capsule::schema()->create(self::REALTIMEREGISTERSSL_KEY_ID_MAPPING, function ($table) {
-            $table->increments('id');
-            $table->string('identifier');
-        });
+        if (!Capsule::schema()->hasTable(self::REALTIMEREGISTERSSL_KEY_ID_MAPPING)) {
+            Capsule::schema()->create(self::REALTIMEREGISTERSSL_KEY_ID_MAPPING, function ($table) {
+                $table->increments('id');
+                $table->string('identifier');
+            });
+        }
     }
 
     public static function getIdByKey(string $key): int
