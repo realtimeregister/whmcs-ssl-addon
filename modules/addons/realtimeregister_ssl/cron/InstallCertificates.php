@@ -30,7 +30,7 @@ class InstallCertificates extends BaseTask
             foreach ($orders as $order) {
                 $details = json_decode($order->configdata, true);
                 if (!$details) {
-                    return;
+                    continue;
                 }
                 // We don't want to continue trying installing the certificate if it has been tried more than 5 times
                 if (
