@@ -38,7 +38,6 @@ class SSL
 
     /**
      * @param string $status
-     * @return Model
      */
     public function getBy($where, $realtimeregisterssl = false)
     {
@@ -49,7 +48,8 @@ class SSL
         return Model::query()
             ->select(['tblsslorders.*'])
             ->join('tblhosting', 'tblhosting.id', '=', 'serviceid')
-            ->where('tblhosting.domainstatus', 'Active')
+            ->where('tblhosting.domainstatus', '=', 'Active')
+            ->where('module', '=', 'realtimeregister_ssl')
             ->whereIn('status', $status)
             ->get();
     }
