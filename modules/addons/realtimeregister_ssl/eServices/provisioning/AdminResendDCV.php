@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Order;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository;
 use Exception;
@@ -25,40 +25,33 @@ class AdminResendDCV extends Ajax
     public function run()
     {
         try {
-            $this->adminResendApproverEmail();
+            $this->resendDcv();
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
         return 'success';
     }
 
-    private function adminResendApproverEmail(): void
+    private function resendDcv(): void
     {
-        $ssl = new SSL();
-        $serviceSSL = $ssl->getByServiceId($this->p['serviceid']);
-
-        $orderRepository = new Repository();
-        if (is_null($serviceSSL)) {
-            throw new Exception('Create has not been initialized.');
-        }
+        $sslRepo = new SSLRepo();
+        $sslService = $sslRepo->getByServiceId($this->p['serviceid']);
 
         /** @var CertificatesApi $certificatesApi */
         $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+        $configData = $sslService->configdata;
 
-        /** @var Order $result */
-        $result = Capsule::table($orderRepository->tableName)->where('service_id', $serviceSSL->serviceid)->first();
-        $data = json_decode((string)$result->data, true);
 
         $domainControlValidations = [];
-        foreach ($data['validations']['dcv'] as $validation) {
+        foreach ($configData->validations->dcv ?? [] as $validation) {
             $domainControlValidations[] = [
-                'commonName' => $validation['commonName'],
-                'type' => (strtoupper($validation['type']) === 'HTTP' ? 'FILE' : strtoupper($validation['type'])),
-                'email' => $validation['email'],
+                'commonName' => $validation->commonName,
+                'type' => (strtoupper($validation->type) === 'HTTP' ? 'FILE' : strtoupper($validation->type)),
+                'email' => $validation->email
             ];
         }
         $certificatesApi->resendDcv(
-            (int)$serviceSSL->getRemoteId(),
+            (int) $sslService->getRemoteId(),
             ResendDcvCollection::fromArray($domainControlValidations)
         );
     }
