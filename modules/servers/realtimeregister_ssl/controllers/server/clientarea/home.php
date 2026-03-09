@@ -637,9 +637,7 @@ class home extends AbstractController
 
         $newDcvMethodArray = [];
         foreach ($input['newDcvMethods'] as $domain => $method) {
-            if (strpos($domain, '___') !== false) {
-                $domain = str_replace('___', '*', $domain);
-            }
+            $domain = str_replace('___', '*', $domain);
             $newDcvMethodArray[$domain] = $method;
         }
 

@@ -96,13 +96,20 @@ class Products
         // if the table is 'kinda empty', we refetch everything from the api
         Capsule::table(self::REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
 
+        self::fetchProducts();
+
+        return $this->fetchAllProductsFromDatabase();
+    }
+
+    public static function fetchProducts() : void {
         $i = 0;
 
-        /** @var CertificatesApi $certificatedApi */
-        $certificatedApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+        /** @var CertificatesApi $certificatesApi */
+        $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
 
-        while ($apiProducts = $certificatedApi->listProducts(10, $i)) {
-            /** @var \RealtimeRegister\Domain\Product $apiProduct */
+        while ($apiProducts = $certificatesApi->listProducts(
+            10, $i, null, ["certificateType:ne" => "ACME_SUBSCRIPTION"])
+        ) {
             foreach ($apiProducts->toArray() as $apiProduct) {
                 Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
                     'pid' => KeyToIdMapping::getIdByKey($apiProduct['product']),
@@ -117,8 +124,6 @@ class Products
                 break;
             }
         }
-
-        return $this->fetchAllProductsFromDatabase();
     }
 
     public static function dropTable()

@@ -44,27 +44,7 @@ class CertificateDetailsUpdater extends BaseTask
             }
 
             Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
-
-            $certificatedApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-            $i = 0;
-            /** @var ProductCollection $apiProducts */
-            while ($apiProducts = $certificatedApi->listProducts(10, $i)) {
-                /** @var Product $apiProduct */
-                foreach ($apiProducts->toArray() as $apiProduct) {
-                    Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
-                        'pid' => KeyToIdMapping::getIdByKey($apiProduct['product']),
-                        'pid_identifier' => $apiProduct['product'],
-                        'brand' => $apiProduct['brand'],
-                        'data' => json_encode($apiProduct)
-                    ]);
-                }
-                $i += 10;
-
-                $total = $apiProducts->pagination->total;
-                if ($total < $i) {
-                    break;
-                }
-            }
+            Products::fetchProducts();
 
             $sslOrders = $this->getSSLOrders();
 
