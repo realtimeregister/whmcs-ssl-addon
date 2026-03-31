@@ -56,7 +56,8 @@ class Plesk extends Client implements PlatformInterface
 
         $urlParts = parse_url($this->params['API_URL']);
 
-        curl_setopt($ch, CURLOPT_URL, $urlParts['scheme'] . '://' . $urlParts['host'] . '/api/v2/extensions');
+        curl_setopt($ch, CURLOPT_URL,
+            $urlParts['scheme'] . '://' . $urlParts['host'] . ':' . $this->params['API_PORT'] . '/api/v2/extensions');
 
         curl_setopt($ch, CURLOPT_USERPWD, $this->params['API_USER'] . ":" . $this->params['API_PASSWORD']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -107,14 +108,15 @@ class Plesk extends Client implements PlatformInterface
      * @return mixed
      * @throws FileException
      */
-    public function uploadExtension(): string
+    public function uploadExtension() : void
     {
         $fileName = $this->createExtensionZipfile();
 
         $url = parse_url($this->params['API_URL']);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url['scheme'] . '://' . $url['host'] . ':8443' . $url['path']);
+        curl_setopt($ch, CURLOPT_URL,
+            $url['scheme'] . '://' . $url['host'] . ':' . $this->params['API_PORT'] . $url['path']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -134,17 +136,22 @@ class Plesk extends Client implements PlatformInterface
         curl_close($ch);
         if ($xml && (string)$xml->upload->result->status === 'ok') {
             $this->installExtension((string)$xml->upload->result->file);
+        } else {
+            throw new FileException('Extension upload not successful');
         }
-        throw new FileException('Extension uploaded not successful');
     }
 
-    private function installExtension(string $location)
+    /**
+     * @throws FileException
+     */
+    private function installExtension(string $location) : void
     {
         $ch = curl_init();
 
         $urlParts = parse_url($this->params['API_URL']);
 
-        curl_setopt($ch, CURLOPT_URL, $urlParts['scheme'] . '://' . $urlParts['host'] . '/api/v2/extensions');
+        curl_setopt($ch, CURLOPT_URL,
+            $urlParts['scheme'] . '://' . $urlParts['host'] . ':' . $this->params['API_PORT'] . '/api/v2/extensions');
 
         curl_setopt($ch, CURLOPT_USERPWD, $this->params['API_USER'] . ":" . $this->params['API_PASSWORD']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -152,19 +159,18 @@ class Plesk extends Client implements PlatformInterface
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'HTTP_AUTH_LOGIN: ' . $this->params['API_USER'],
             'HTTP_AUTH_PASSWD: ' . $this->params['API_PASSWORD'],
+            'Content-Type: application/json'
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
             'file' => $location
         ]));
-        $res = curl_exec($ch);
+        curl_exec($ch);
 
-        $result = json_decode($res,true);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        if ($result['status'] === 'success') {
-            return true;
+        if ($statusCode != 200 && $statusCode != 201) {
+            throw new FileException("Extension install not successful, Status code: ". $statusCode);
         }
-
-        return false;
     }
 
     /**

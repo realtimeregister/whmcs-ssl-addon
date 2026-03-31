@@ -1,20 +1,14 @@
 <span id="spanhideme"></span>
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(function () {
         $('#spanhideme').closest('tr').hide();
-
-        {if $version == '8'}
-        let tokenf = $('#frm1 input[name="token"]').val();
-
-        $('#profileContent').find('#frm1').after('<form id="loginAndRedirectForm" target="_blank" action="index.php?rp=/{$adminpath}/client/{$userid}/login" method="GET"><input type="hidden" name="token" value="' + tokenf + '" /><input type="hidden" name="goto" value="clientarea.php?action=productdetails&id=3"><input type="hidden" name="redirectToProductDetails" value="true"/><input type="hidden" name="username" value="{$email}"/><input type="hidden" name="serviceID" value="{$serviceid}"/></form>');
-        $('#loginAndRedirectForm').attr('method', 'POST');
-        {else}
-        $('#profileContent').find('#frm1').after('<form id="loginAndRedirectForm" target="_blank" action="../dologin.php?language=" action="POST"><input type="hidden" name="redirectToProductDetails" value="true"/><input type="hidden" name="username" value="{$email}"/><input type="hidden" name="serviceID" value="{$serviceid}"/></form>');
-        {/if}
+        $('#profileContent').find('#frm1').after('<form id="loginAndRedirectForm" target="_blank" ' +
+            'action="../dologin.php?language=" action="POST"><input type="hidden" ' +
+            'name="redirectToProductDetails" value="true"/><input type="hidden" name="username" value="{$email}"/>' +
+            '<input type="hidden" name="serviceID" value="{$serviceid}"/></form>'
+        );
         $('#btnManage_SSL').removeAttr('onclick');
-        $('#btnManage_SSL').on('click', function (e) {
-            //$('#modcmdbtns').css('opacity', '0.2');
-            //$('#modcmdworking').css('display', 'block').css('text-align', 'left').css('position', 'relative').css('left', '50px').css('bottom', '60px').css('z-index', '1');    
+        $('#btnManage_SSL').on('click', function () {
             $('#loginAndRedirectForm').submit();
         });
     });
