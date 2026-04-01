@@ -52,6 +52,14 @@ abstract class AbstractClient
         ];
     }
 
+    protected function isWildcard(string $domain) {
+        return str_contains($domain, '*.');
+    }
+
+    protected function getAllSubDomains(string $domain) {
+        return [];
+    }
+
     /**
      * Get user agent string
      */

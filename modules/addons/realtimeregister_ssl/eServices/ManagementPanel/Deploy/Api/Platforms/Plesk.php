@@ -6,6 +6,7 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\P
 
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
 use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DeployException;
+use GuzzleHttp\Exception\GuzzleException;
 use SimpleXMLElement;
 
 class Plesk extends Client implements PlatformInterface
@@ -41,16 +42,18 @@ class Plesk extends Client implements PlatformInterface
      * @param $ca
      * @return string
      * @throws DeployException
+     * @throws GuzzleException
      */
     public function installCertificate($domain, $key, $crt, $csr = null, $ca = null): string
     {
         $name = $domain . "_realtimeregister_ssl_autodeploy";
+        $normalizedDomain = str_replace('*.', '', $domain);
 
         $packet = [
             'certificate' => [
                 'install' => [
                     'name' => $name,
-                    'webspace' => $domain,
+                    'webspace' => $normalizedDomain,
                     'content' => [
                         'csr' => $csr,
                         'pvt' => $key,
@@ -61,17 +64,7 @@ class Plesk extends Client implements PlatformInterface
             ],
         ];
 
-        $response = $this->request(
-            $this->getBaseUrl(),
-            'POST',
-            [
-                'body' => $this->packet($packet),
-                'headers' => [
-                    "HTTP_AUTH_LOGIN" => $this->args['API_USER'],
-                    "HTTP_AUTH_PASSWD" => $this->args['API_PASSWORD']
-                ]
-            ]
-        );
+        $response = $this->sendRequest($packet);
 
         if (isset($response->certificate->install->result->status)) {
             if ((string)$response->certificate->install->result->status == 'error') {
@@ -80,43 +73,39 @@ class Plesk extends Client implements PlatformInterface
             if ((string)$response->certificate->install->result->status == 'ok') {
                 // We can now enable the certificate to the domain:
 
-                $packet = [
-                    'webspace' => [
-                        'set' => [
-                            'filter' => [
-                                'id' => $this->getSiteId($domain)
-                            ],
-                            'values' => [
-                                'hosting' => [
-                                    'vrt_hst' => [
-                                        'property' => [
-                                            'name' => 'certificate_name',
-                                            'value' => $name
+                if ($this->isWildCard($domain)) {
+                    $siteIds = $this->getAllSubDomains($normalizedDomain);
+                } else {
+                    $siteIds = [$this->getSiteId($domain)];
+                }
+
+                foreach ($siteIds as $siteId) {
+                    $packet = [
+                        'site' => [
+                            'set' => [
+                                'filter' => [
+                                    'id' => $siteId
+                                ],
+                                'values' => [
+                                    'hosting' => [
+                                        'vrt_hst' => [
+                                            'property' => [
+                                                'name' => 'certificate_name',
+                                                'value' => $name
+                                            ]
                                         ]
                                     ]
                                 ]
                             ]
                         ]
-                    ]
-                ];
+                    ];
 
-                $response = $this->request(
-                    $this->getBaseUrl(),
-                    'POST',
-                    [
-                        'body' => $this->packet($packet),
-                        'headers' => [
-                            "HTTP_AUTH_LOGIN" => $this->args['API_USER'],
-                            "HTTP_AUTH_PASSWD" => $this->args['API_PASSWORD']
-                        ]
-                    ]
-                );
-
-                return 'success';
+                    $this->sendRequest($packet);
+                }
             }
         }
 
-        return 'error';
+        return 'success';
     }
 
     protected function getBaseUrl()
@@ -152,7 +141,46 @@ class Plesk extends Client implements PlatformInterface
             ],
         ];
 
-        $response = $this->request($this->getBaseUrl(), 'POST', [
+        $response = $this->sendRequest($packet);
+
+        if (isset($response->site->get->result->status) && (string)$response->site->get->result->status == 'error') {
+            throw new DeployException((string)$response->site->get->result->errtext);
+        }
+
+        return (string)$response->site->get->result->id;
+    }
+
+    /**
+     * @throws DeployException
+     */
+    protected function getAllSubDomains(string $domain) : array {
+        $packet = [
+            'site' => [
+                'get' => [
+                    'filter' => [
+                        'parent-site-id' => $this->getSiteId($domain),
+                    ],
+                    'dataset' => [
+                        'hosting' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        $response = $this->sendRequest($packet);
+        if (isset($response->site->get->result->status) && (string)$response->site->get->result->status == 'error') {
+            throw new DeployException((string)$response->site->get->result->errtext);
+        }
+
+        $siteIds = [];
+        for ($i = 0; $i < $response->site->get->result->count(); $i++) {
+            $siteIds[] = (string) $response->site->get->result[$i]->id;
+        }
+        return $siteIds;
+    }
+
+    private function sendRequest(array $packet) : SimpleXMLElement {
+        return $this->request($this->getBaseUrl(), 'POST', [
                 'body' => $this->packet($packet),
                 'headers' => [
                     "HTTP_AUTH_LOGIN" => $this->args['API_USER'],
@@ -160,12 +188,6 @@ class Plesk extends Client implements PlatformInterface
                 ]
             ]
         );
-
-        if (isset($response->site->get->result->status) && (string)$response->site->get->result->status == 'error') {
-            throw new DeployException((string)$response->site->get->result->errtext);
-        }
-
-        return (string)$response->site->get->result->id;
     }
 
 
