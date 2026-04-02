@@ -52,7 +52,8 @@ class Repository extends MainRepository
             return true;
         }
 
-        if (isset($checkOrder->status) && $checkOrder->status == SSL::PENDING_INSTALLATION) {
+        if (isset($checkOrder->status)
+            && in_array($checkOrder->status, [SSL::PENDING_INSTALLATION, SSL::FAILED_INSTALLATION])) {
             return true;
         }
 
