@@ -128,7 +128,7 @@ class home extends AbstractController
                         $checkOrderSSL = $sslOrderRepo->checkOrdersInstallation($serviceId);
 
                         $panelData = $this->getPanelData($certificateDetails['domain']);
-                        if ($panelData && $checkOrderSSL === true) {
+                        if ($panelData) {
                             $vars['btnInstallCrt'] = true;
                         }
                     }

@@ -56,7 +56,11 @@ abstract class AbstractClient
         return str_contains($domain, '*.');
     }
 
-    protected function getAllSubDomains(string $domain) {
+    protected function normalizeDomain(string $domain) : string {
+        return str_replace('*.', '', $domain);
+    }
+
+    protected function getAllSubDomains(string $domain) : array {
         return [];
     }
 

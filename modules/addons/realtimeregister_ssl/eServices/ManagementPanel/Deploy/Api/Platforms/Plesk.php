@@ -47,7 +47,7 @@ class Plesk extends Client implements PlatformInterface
     public function installCertificate($domain, $key, $crt, $csr = null, $ca = null): string
     {
         $name = $domain . "_realtimeregister_ssl_autodeploy";
-        $normalizedDomain = str_replace('*.', '', $domain);
+        $normalizedDomain = $this->normalizeDomain($domain);
 
         $packet = [
             'certificate' => [
@@ -72,11 +72,10 @@ class Plesk extends Client implements PlatformInterface
             }
             if ((string)$response->certificate->install->result->status == 'ok') {
                 // We can now enable the certificate to the domain:
+                $siteIds = [$this->getSiteId($normalizedDomain)];
 
                 if ($this->isWildCard($domain)) {
-                    $siteIds = $this->getAllSubDomains($normalizedDomain);
-                } else {
-                    $siteIds = [$this->getSiteId($domain)];
+                    array_push($siteIds, ...$this->getAllSubDomains($normalizedDomain));
                 }
 
                 foreach ($siteIds as $siteId) {

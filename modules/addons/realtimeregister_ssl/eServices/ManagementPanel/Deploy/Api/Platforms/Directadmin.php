@@ -7,13 +7,14 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Api\P
 use GuzzleHttp\Exception\GuzzleException;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Client\Client;
 use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\DeployException;
+use http\Message\Parser;
 
 class Directadmin extends Client implements PlatformInterface
 {
     private int $port = 2222;
 
     private array $uri = [
-        'CMD_API_SSL' => "CMD_API_SSL"
+        'CMD_API_SSL' => 'CMD_API_SSL'
     ];
 
     private string $contentType = "Content-Type: text/plain";
@@ -40,7 +41,7 @@ class Directadmin extends Client implements PlatformInterface
     {
         $argv = [
             'action' => "save",
-            'domain' => $domain,
+            'domain' => $this->normalizeDomain($domain),
             'type' => "paste",
             'certificate' => $crt . "\r\n" . $key . "\r\n"
         ];
@@ -49,7 +50,7 @@ class Directadmin extends Client implements PlatformInterface
         $this->request($this->url($url), 'POST');
 
         if ($ca) {
-            return $this->installCaBundle($domain, $ca);
+            return $this->installCaBundle($this->normalizeDomain($domain), $ca);
         }
 
         return "Success";
@@ -95,18 +96,11 @@ class Directadmin extends Client implements PlatformInterface
      */
     protected function parseResponse($response) : array
     {
-        $result = [];
-        foreach (explode("&", urldecode($response)) as $responsePart) {
-            $keyValuePair = explode("=", $responsePart);
-            if ($keyValuePair[0] != "") {
-                $result[$keyValuePair[0]] = $keyValuePair[1];
-            }
-        }
-
+        parse_str(urldecode($response), $output);
         if (isset($output['error']) && $output['error'] == 1) {
             throw new DeployException($output['text'] . "\n" . $output['details']);
         }
 
-        return $result;
+        return $output;
     }
 }
