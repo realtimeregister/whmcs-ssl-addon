@@ -13,91 +13,6 @@ use RealtimeRegister\Domain\Certificate;
 class Manage
 {
     /**
-     * @param $domain
-     * @param null|Certificate $certificate
-     * @return array
-     * @throws \Exception
-     */
-    public static function getValidationStatus($domain, $certificate = null)
-    {
-        if ($certificate == null) {
-            /** @var Certificate $certificate */
-            $certificate = self::getCertificate($domain);
-        }
-        $error = null;
-        $info = $certificate->info();
-
-        $panel = new \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage($domain);
-
-        try {
-            $panelData = $panel->getPanelData();
-
-            $panelVars = [
-                'status'   => $panelData['status'],
-                'platform' => $panelData['platform'],
-                'isActive' => $panel->isPanelActive(),
-            ];
-        } catch (\Exception $e) {
-            $panelVars = [
-                'isActive' => false,
-            ];
-        }
-        try {
-            $dvcData = self::getDvcData($certificate, $panel);
-        } catch (\Exception $e) {
-            $panelVars['isActive'] = false;
-            $error = $e->getMessage();
-        }
-        if($dvcData['created'] === null) {
-            $panelVars['isActive'] = false;
-        }
-
-        return [
-            'validationStatus' => $info['status'],
-            'dvc'              => $info['dcv_type'],
-            'dvcData'          => $dvcData,
-            'panel'            => $panelVars,
-            'error'            => $error,
-        ];
-    }
-
-    public static function createValidationRequire($domain, $certificate = null)
-    {
-        if ($certificate == null) {
-            /** @var Certificate $certificate */
-            $certificate = self::getCertificate($domain);
-        }
-
-        $status = self::getValidationStatus($domain, $certificate);
-        if (!$status['panel']['isActive']) {
-            throw new SSLValidationException("Panel not active", 10);
-        }
-        if ($status['dvcData']['created']) {
-            throw new SSLValidationException("Records Already Created", 11);
-        }
-
-        $panel = new \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage($domain);
-
-        if ($status['dvc'] == "DNS") {
-            return DnsControl::generateRecord($certificate, $panel);
-        } elseif ($status['dvc'] == "FILE") {
-            return FileControl::create($certificate, $panel);
-        } elseif ($status['dvc'] == "EMAIL") {
-            return ['status' => 'success'];
-        }
-    }
-
-    public static function downloadFile($domain, $certificate = null)
-    {
-        if ($certificate == null) {
-            /** @var Certificate $certificate */
-            $certificate = self::getCertificate($domain);
-        }
-
-        FileControl::downloadFile($certificate);
-    }
-
-    /**
      * @param int $sid
      * @return array
      * @throws \Exception
@@ -201,17 +116,5 @@ class Manage
         }
 
         return $addresses;
-    }
-
-    /**
-     * @param string $domain
-     * @return \HostcontrolSSL\Service\Certificate
-     */
-    private static function getCertificate($domain)
-    {
-        $manage = new \AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Manage(['domain' => $domain]);
-
-        /** @var Certificate $certificate */
-        return $manage->service('certificate');
     }
 }

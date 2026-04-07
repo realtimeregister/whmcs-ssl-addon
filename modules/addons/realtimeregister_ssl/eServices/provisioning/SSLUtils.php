@@ -31,7 +31,8 @@ trait SSLUtils
         return $includedSans + $boughtSans;
     }
 
-    function parsePeriod($billingCycle) {
+    function parsePeriod($billingCycle)
+    {
         switch (strtolower($billingCycle)) {
             case BillingCycle::BIENNIALLY:
                 return 24;
@@ -75,7 +76,8 @@ trait SSLUtils
     /**
      * @throws \Exception
      */
-    public function mapRequestFields(array $params, Product $product) : array {
+    public function mapRequestFields(array $params, Product $product): array
+    {
         $mapping = [
             'organization' => 'orgname',
             'country' => 'country',
@@ -96,7 +98,7 @@ trait SSLUtils
             'coc' => 'org_coc'
         ];
 
-        $orgFields = ((array) $params['fields']) ?? [];
+        $orgFields = ((array)$params['fields']) ?? [];
         $order = [];
 
         foreach (array_merge($product->requiredFields ?? [], $product->optionalFields ?? []) as $value) {
@@ -133,7 +135,7 @@ trait SSLUtils
                 $this->p['userid'],
                 $this->p['serviceid'],
                 'error',
-                '[' . $commonName. '] Error:' . $e->getMessage()
+                '[' . $commonName . '] Error:' . $e->getMessage()
             );
             return false;
         }
@@ -151,25 +153,19 @@ trait SSLUtils
         return $this->processDcvEntries($newDcv);
     }
 
-    public function processDcvEntries(array $dcvEntries): bool {
+    public function processDcvEntries(array $dcvEntries): bool
+    {
         $logs = new LogsRepo();
         $success = true;
         foreach ($dcvEntries as $dcvEntry) {
             try {
-                $panel = false;
-                while (str_contains($dcvEntry['commonName'], ".")) {
-                    $panel = Panel::getPanelData($dcvEntry['commonName']);
-                    if ($panel) {
-                        break;
-                    }
-                    $parts = explode('.', $dcvEntry['commonName']);
-                    array_shift($parts);
-                    $dcvEntry['commonName'] = implode('.', $parts);
+                $panelData = $this->getPanelData($dcvEntry['commonName']);
+                if (!$panelData) {
+                    $success = false;
+                    continue;
                 }
-
-                if (!$panel) {
-                    return false;
-                }
+                $panel = $panelData['panel'];
+                $dcvEntry['commonName'] = $panelData['commonName'];
 
                 if ($dcvEntry['type'] == 'FILE') {
                     $result = FileControl::create(
@@ -183,7 +179,7 @@ trait SSLUtils
                         $this->p['userid'],
                         $this->p['serviceid'],
                         'success',
-                        'FileControl at '.  $panel['platform']. ' for ' . $dcvEntry['commonName'] .': ' . $result['message']
+                        'FileControl at ' . $panel['platform'] . ' for ' . $dcvEntry['commonName'] . ': ' . $result['message']
                     );
                 } elseif ($dcvEntry['type'] == 'DNS') {
                     $result = DnsControl::generateRecord($dcvEntry, $panel);
@@ -191,7 +187,7 @@ trait SSLUtils
                         $this->p['userid'],
                         $this->p['serviceid'],
                         'success',
-                        'DnsControl at '.  $panel['platform']. ' for ' . $dcvEntry['commonName'] .': ' . $result['message']
+                        'DnsControl at ' . $panel['platform'] . ' for ' . $dcvEntry['commonName'] . ': ' . $result['message']
                     );
                 } else {
                     $success = false;
@@ -202,14 +198,14 @@ trait SSLUtils
                     $this->p['userid'],
                     $this->p['serviceid'],
                     'error',
-                    '[' . $dcvEntry['commonName']. '] Error:' . $e->getMessage()
+                    '[' . $dcvEntry['commonName'] . '] Error:' . $e->getMessage()
                 );
             }
         }
         return $success;
     }
 
-    public function mapDcv(?array $dcv) : ?array
+    public function mapDcv(?array $dcv): ?array
     {
         if ($dcv === null) {
             return null;
@@ -219,7 +215,8 @@ trait SSLUtils
             $dcv);
     }
 
-    public function autoInstallCertificate(SSL $sslService) {
+    public function autoInstallCertificate(SSL $sslService) : void
+    {
         $apiConf = (new ApiConfRepo())->get();
         if (!$apiConf->auto_install_panel) {
             return;
@@ -227,19 +224,25 @@ trait SSLUtils
         $this->installCertificate($sslService);
     }
 
-    public function installCertificate(SSL $sslService) : array {
+    public function installCertificate(SSL $sslService): array
+    {
         $logsRepo = new LogsRepo();
         $orderRepo = new OrderRepo();
-        $details = (array) $sslService->configdata;
+        $details = (array)$sslService->configdata;
         $cert = $details['crt'];
         $caBundle = $details['ca'];
         $key = decrypt($details['private_key']);
-        try {
-            if ($details['domain']) {
-                $manage = new Manage($details['domain']);
-                $manage->prepareDeploy($sslService->serviceid, $details['domain'], $cert, $details['csr'], $key, $caBundle);
-            }
+        if (!$details['domain']) {
+            return ['success' => 0];
+        }
+        $panelData = $this->getPanelData($details['domain']);
+        if (!$panelData) {
+            return ['success' => 0, 'message' => 'Something went wrong, contact support'];
+        }
 
+        try {
+            $manage = new Manage($panelData['panel']);
+            $manage->prepareDeploy($details['domain'], $cert, $details['csr'], $key, $caBundle);
             $logsRepo->addLog(
                 $sslService->userid,
                 $sslService->serviceid,
@@ -257,5 +260,24 @@ trait SSLUtils
             return ['success' => 0, 'message' => $e->getMessage()];
         }
         return ['success' => 1, 'message' => Lang::getInstance()->T('The certificate has been installed correctly')];
+    }
+
+    public function getPanelData(string $commonName): array
+    {
+        $domain = $this->normalizeDomain($commonName);
+        while (str_contains($domain, '.')) {
+            $panel = Panel::getPanelData($domain);
+            if ($panel) {
+                return ['panel' => $panel, 'commonName' => $domain];
+            }
+            $parts = explode('.', $domain);
+            array_shift($parts);
+            $domain = implode('.', $parts);
+        }
+        return [];
+    }
+
+    public function normalizeDomain(string $commonName): string {
+        return str_replace('*.', '', $commonName);
     }
 }

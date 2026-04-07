@@ -5,6 +5,7 @@ namespace AddonModule\RealtimeRegisterSsl\cron;
 use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLUtils;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use Illuminate\Database\Capsule\Manager;
@@ -15,6 +16,8 @@ class InstallCertificates extends BaseTask
     protected $defaultPriority = 28800;
     protected $defaultName = "Install certificates";
     protected $maxFailureNumber = 5;
+
+    use SSLUtils;
 
     public function __invoke()
     {
@@ -32,6 +35,7 @@ class InstallCertificates extends BaseTask
                 if (!$details) {
                     continue;
                 }
+
                 // We don't want to continue trying installing the certificate if it has been tried more than 5 times
                 if (
                     array_key_exists('tries_to_install', $details)
@@ -54,19 +58,23 @@ class InstallCertificates extends BaseTask
                 $cert = $details['crt'];
                 $caBundle = $details['ca'];
                 $key = decrypt($details['private_key']);
+                if (!$details['domain']) {
+                    continue;
+                }
+                $panelData = $this->getPanelData($details['domain']);
+                if (!$panelData) {
+                    continue;
+                }
 
                 try {
-                    if ($details['domain']) {
-                        $manage = new Manage($details['domain']);
-                        $manage->prepareDeploy(
-                            $order->service_id,
-                            $details['domain'],
-                            $cert,
-                            $details['csr'],
-                            $key,
-                            $caBundle
-                        );
-                    }
+                    $manage = new Manage($panelData['panel']);
+                    $manage->prepareDeploy(
+                        $details['domain'],
+                        $cert,
+                        $details['csr'],
+                        $key,
+                        $caBundle
+                    );
 
                     $logsRepo->addLog(
                         $order->client_id,
