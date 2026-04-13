@@ -124,11 +124,8 @@ class home extends AbstractController
                     $certificateDetails = (array)$sslService->configdata;
 
                     if (!empty($certificateDetails['crt'])) {
-                        $sslOrderRepo = new OrderRepo();
-                        $checkOrderSSL = $sslOrderRepo->checkOrdersInstallation($serviceId);
-
                         $panelData = $this->getPanelData($certificateDetails['domain']);
-                        if ($panelData && $checkOrderSSL === true) {
+                        if ($panelData && in_array($sslService->status, SSL::ACTIONS_AVAILABLE)) {
                             $vars['btnInstallCrt'] = true;
                         }
                     }
