@@ -2,11 +2,17 @@
 <script type="text/javascript">
     $(function () {
         $('#spanhideme').closest('tr').hide();
-        $('#profileContent').find('#frm1').after('<form id="loginAndRedirectForm" target="_blank" ' +
-            'action="../dologin.php?language=" action="POST"><input type="hidden" ' +
-            'name="redirectToProductDetails" value="true"/><input type="hidden" name="username" value="{$email}"/>' +
-            '<input type="hidden" name="serviceID" value="{$serviceid}"/></form>'
-        );
+        const csrfToken = $('#frm1 input[name="token"]').val();
+
+        $('#profileContent').find('#frm1')
+            .after('<form id="loginAndRedirectForm" target="_blank" action="index.php?rp=/{$adminpath}/client/{$userid}/login" '
+        + 'method="GET"><input type="hidden" name="token" value="' + csrfToken + '" />' +
+                + '<input type="hidden" name="goto" value="clientarea.php?action=productdetails&id=3">'
+                + '<input type="hidden" name="redirectToProductDetails" value="true"/>'
+                +  '<input type="hidden" name="username" value="{$email}"/>'
+                + '<input type="hidden" name="serviceID" value="{$serviceid}"/></form>');
+        $('#loginAndRedirectForm').attr('method', 'POST');
+
         $('#btnManage_SSL').removeAttr('onclick');
         $('#btnManage_SSL').on('click', function () {
             $('#loginAndRedirectForm').submit();

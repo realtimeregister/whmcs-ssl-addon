@@ -48,12 +48,12 @@ class Repository extends MainRepository
             ->where('service_id', $serviceId)
             ->first();
 
+
         if (!isset($checkOrder->id)) {
             return true;
         }
 
-        if (isset($checkOrder->status)
-            && in_array($checkOrder->status, [SSL::PENDING_INSTALLATION, SSL::FAILED_INSTALLATION])) {
+        if (isset($checkOrder->status) && in_array($checkOrder->status, SSL::ACTIONS_AVAILABLE)) {
             return true;
         }
 

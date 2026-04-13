@@ -21,7 +21,7 @@ class AdminCustomButtonArray
             'Manage SSL' => 'SSLAdminManageSSL',
         ];
 
-        if ($sslOrder->status === SSL::PENDING_INSTALLATION || $sslOrder->status === SSL::ACTIVE) {
+        if (in_array($sslOrder->status, SSL::ACTIONS_AVAILABLE)) {
             $buttons['Resend Certificate'] = 'SSLAdminResendCertificate';
             $buttons['View Certificate'] = 'SSLAdminViewCertificate';
             $buttons['Reissue Certificate'] = 'SSLAdminReissueCertificate';

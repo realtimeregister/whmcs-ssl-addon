@@ -24,6 +24,8 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     public const CANCELLED = 'Cancelled';
     public const ACTIVE = 'Active';
 
+    public const ACTIONS_AVAILABLE = [SSL::PENDING_INSTALLATION, SSL::FAILED_INSTALLATION, SSL::ACTIVE];
+
     public function scopeWhereServiceId($query, $id)
     {
         $query->where('serviceid', '=', $id);
