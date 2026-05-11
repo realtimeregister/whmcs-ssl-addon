@@ -764,7 +764,7 @@ class home extends AbstractController
         if (!openssl_x509_check_private_key($sslService->getCrt(), $input['privateKey'])) {
             return [
                 "success" => 0,
-                'message' => Lang::getInstance()->T('Invalid private key')
+                'message' => Lang::getInstance()->T('invalidPrivateKey')
             ];
         }
         $privateKey = $input['privateKey'];
@@ -784,7 +784,7 @@ class home extends AbstractController
         if ($input['privateKey'] && !openssl_x509_check_private_key($sslService->getCrt(), $input['privateKey'])) {
             return [
                 "success" => 0,
-                'message' => Lang::getInstance()->T('Invalid private key')
+                'message' => Lang::getInstance()->T('invalidPrivateKey')
             ];
         }
 

@@ -1095,7 +1095,11 @@
         </div>
     </div>
     <script type="text/javascript">
-        function show
+        function showSuccessAlert(msg) {
+            $('#AddonAlerts>div').css('display', 'none');
+            $('#AddonAlerts>div[data-prototype="success"]').show();
+            $('#AddonAlerts>div[data-prototype="success"] strong').html(msg);
+        }
 
         function submitPrivateKeyModal() {
             const privateKey = $('textarea[name="privateKey"]').val()
@@ -1103,10 +1107,8 @@
             {literal}
             JSONParser.request('savePrivateKey',{ json: 1, privateKey }, function (data) {
                 if (data.success) {
-                    $('#AddonAlerts>div').css('display', 'none');
-                    $('#AddonAlerts>div[data-prototype="success"]').show();
-                    $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
-                    $('#modalUploadPrivateKey').modal('toggle')
+                    showSuccessAlert(data.message);
+                    $('#modalUploadPrivateKey').modal('toggle');
                 } else {
                     $('#privateKeyError').show();
                     $('#privateKeyError strong').html(data.message);
@@ -1123,10 +1125,8 @@
 
             JSONParser.request('installCertificate',{json: 1,id: serviceId, privateKey}, function (data) {
                 if (data.success) {
-                    $('#AddonAlerts>div').css('display', 'none');
+                    showSuccessAlert(data.message);
                     $('#installCertificate').find('.fa-spinner').remove();
-                    $('#AddonAlerts>div[data-prototype="success"]').show();
-                    $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
                 } else {
                     $('#installCertificate').find('.fa-spinner').remove();
                     $('#AddonAlerts>div[data-prototype="error"]').show();

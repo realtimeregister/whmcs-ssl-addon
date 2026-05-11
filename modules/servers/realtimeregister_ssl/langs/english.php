@@ -76,6 +76,8 @@ $_LANG['serverCA']['home']['orderNotActiveError']                = 'Can not send
 $_LANG['serverCA']['home']['CACodeEmptyError']                   = 'An error occurred. Certificate body is empty.';
 $_LANG['serverCA']['home']['sendCertificateSuccess']             = 'The certificate has been sent successfully.';
 $_LANG['serverCA']['home']['Approver email']                     = 'Approver email';
+$_LANG['serverCA']['home']['privateKeySaved']                    = 'Private key saved';
+$_LANG['serverCA']['home']['invalidPrivateKey']                  = 'Invalid private key';
 
 $_LANG['serverCA']['reissueCertificate'] = 'Reissue Certificate';
 $_LANG['serverCA']['contactDetails']     = 'Contact Details';
@@ -216,7 +218,7 @@ $_LANG['incorrectCSR']            = 'Incorrect CSR';
 $_LANG['sanLimitExceeded']        = 'Exceeded limit of SAN domains';
 $_LANG['sanLimitExceededWildcard']= 'Exceeded limit of SAN Wildcard domains';
 $_LANG['sanWildcardIncorrect']    = 'Wildcard SAN are incorrect';
-$_LANG['incorrectSans']           = 'Followed SAN domains are incorrect: ';
+
 
 $_LANG['addonCA']['sslSummary']['title']           = 'SSL Orders Summary';
 $_LANG['addonCA']['sslSummary']['total']           = 'Total Orders';
@@ -241,7 +243,6 @@ $_LANG['serverCA']['home']['The certificate has been installed correctly'] = 'Th
 $_LANG['serverCA']['home']['installCertificateBtn'] = 'Install Certificate';
 $_LANG['serverCA']['home']['install'] = 'Install';
 $_LANG['serverCA']['home']['upload'] = 'Upload';
-$_LANG['serverCA']['home']['privateKeySaved '] = 'Private key saved';
 
 $_LANG['csrReadOnly'] = 'If you want to use automatic certificate installation you must use the button to generate CSR.';
 
