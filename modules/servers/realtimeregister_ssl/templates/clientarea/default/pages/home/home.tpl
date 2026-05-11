@@ -1108,7 +1108,7 @@
                 if (data.success) {
                     showSuccessAlert(data.message);
                     $('#privateKeyError').hide();
-                    $('#modalUploadPrivateKey').modal('toggle');
+                    $('#modalUploadPrivateKey').modal('hide');
                 } else {
                     $('#privateKeyError').show();
                     $('#privateKeyError strong').html(data.message);
@@ -1126,7 +1126,7 @@
                 if (data.success) {
                     showSuccessAlert(data.message);
                     $('#privateKeyError').hide();
-                    $('#modalUploadPrivateKey').modal('toggle');
+                    $('#modalUploadPrivateKey').modal('hide');
                     $('#installCertificate').find('.fa-spinner').remove();
                 } else if (privateKey) {
                     $('#privateKeyError').show();
