@@ -757,10 +757,36 @@ class home extends AbstractController
         return $result;
     }
 
-    public function installCertificateJSON($input, $vars = [])
+    public function savePrivateKeyJSON($input)
     {
         $sslRepo = new SSLRepo();
         $sslService = $sslRepo->getByServiceId($input['params']['serviceid']);
+        if (!openssl_x509_check_private_key($sslService->getCrt(), $input['privateKey'])) {
+            return [
+                "success" => 0,
+                'message' => Lang::getInstance()->T('invalidPrivateKey')
+            ];
+        }
+        $privateKey = $input['privateKey'];
+        $sslService->setPrivateKey(encrypt($privateKey));
+        $sslService->save();
+        return [
+            'success' => 1,
+            'message' => Lang::getInstance()->T('privateKeySaved')
+        ];
+    }
+
+    public function installCertificateJSON($input, $vars = [])
+    {
+        $sslRepo = new SSLRepo();
+
+        $sslService = $sslRepo->getByServiceId($input['params']['serviceid']);
+        if ($input['privateKey'] && !openssl_x509_check_private_key($sslService->getCrt(), $input['privateKey'])) {
+            return [
+                "success" => 0,
+                'message' => Lang::getInstance()->T('invalidPrivateKey')
+            ];
+        }
 
         return $this->installCertificate($sslService);
     }

@@ -78,7 +78,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public const VERSION = '1.3.13';
+    public const VERSION = '1.4.0';
     public $tablePrefix = '';
     public $modelRegister = [];
 

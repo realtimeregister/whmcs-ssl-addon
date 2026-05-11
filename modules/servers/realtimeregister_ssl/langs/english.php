@@ -60,6 +60,7 @@ $_LANG['serverCA']['home']['noEmailSelectedForDomain']           = 'No email add
 $_LANG['serverCA']['home']['reloadInformation']                  = 'The page will automatically reloaded after 5 seconds.';
 $_LANG['serverCA']['home']['viewPrivateKeyModalTitle']           = 'View Private Key';
 $_LANG['serverCA']['home']['getPrivateKeyBtn']                   = 'Get Private Key';
+$_LANG['serverCA']['home']['uploadPrivateKey']                   = 'Upload Private Key';
 $_LANG['serverCA']['home']['recheckCertificateDetails']          = 'Check Certificate Details'; 
 $_LANG['serverCA']['home']['reissueCertificate']                 = 'Reissue Certificate';
 $_LANG['serverCA']['home']['Actions']                            = 'Actions';
@@ -75,6 +76,8 @@ $_LANG['serverCA']['home']['orderNotActiveError']                = 'Can not send
 $_LANG['serverCA']['home']['CACodeEmptyError']                   = 'An error occurred. Certificate body is empty.';
 $_LANG['serverCA']['home']['sendCertificateSuccess']             = 'The certificate has been sent successfully.';
 $_LANG['serverCA']['home']['Approver email']                     = 'Approver email';
+$_LANG['serverCA']['home']['privateKeySaved']                    = 'Private key saved';
+$_LANG['serverCA']['home']['invalidPrivateKey']                  = 'Invalid private key';
 
 $_LANG['serverCA']['reissueCertificate'] = 'Reissue Certificate';
 $_LANG['serverCA']['contactDetails']     = 'Contact Details';
@@ -215,7 +218,7 @@ $_LANG['incorrectCSR']            = 'Incorrect CSR';
 $_LANG['sanLimitExceeded']        = 'Exceeded limit of SAN domains';
 $_LANG['sanLimitExceededWildcard']= 'Exceeded limit of SAN Wildcard domains';
 $_LANG['sanWildcardIncorrect']    = 'Wildcard SAN are incorrect';
-$_LANG['incorrectSans']           = 'Followed SAN domains are incorrect: ';
+
 
 $_LANG['addonCA']['sslSummary']['title']           = 'SSL Orders Summary';
 $_LANG['addonCA']['sslSummary']['total']           = 'Total Orders';
@@ -238,6 +241,8 @@ $_LANG['Go to next step'] = 'Go to next step';
 $_LANG['serverCA']['home']['The certificate has been installed correctly'] = 'The certificate has been installed correctly.';
 
 $_LANG['serverCA']['home']['installCertificateBtn'] = 'Install Certificate';
+$_LANG['serverCA']['home']['install'] = 'Install';
+$_LANG['serverCA']['home']['upload'] = 'Upload';
 
 $_LANG['csrReadOnly'] = 'If you want to use automatic certificate installation you must use the button to generate CSR.';
 

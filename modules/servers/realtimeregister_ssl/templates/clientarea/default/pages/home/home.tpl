@@ -252,6 +252,8 @@
                         {/if}
                         {if $privateKey}
                             <button type="button" id="getPrivateKey" class="btn btn-default m-1">{$ADDONLANG->T('getPrivateKeyBtn')}</button>
+                        {else}
+                            <button type="button" id="uploadPrivateKey" class="btn btn-default m-1">{$ADDONLANG->T('uploadPrivateKey')}</button>
                         {/if}
                     {/if}
                 </td>
@@ -1093,6 +1095,52 @@
         </div>
     </div>
     <script type="text/javascript">
+        function showSuccessAlert(msg) {
+            $('#AddonAlerts>div').css('display', 'none');
+            $('#AddonAlerts>div[data-prototype="success"]').show();
+            $('#AddonAlerts>div[data-prototype="success"] strong').html(msg);
+        }
+
+        function submitPrivateKeyModal() {
+            const privateKey = $('textarea[name="privateKey"]').val()
+            $('#modalPrivateKeyForm').append('<i id="privateKeySpinner" class="fa fa-spinner fa-spin"></i>');
+            {literal}
+            JSONParser.request('savePrivateKey',{ json: 1, privateKey }, function (data) {
+                if (data.success) {
+                    showSuccessAlert(data.message);
+                    $('#modalUploadPrivateKey').modal('toggle');
+                } else {
+                    $('#privateKeyError').show();
+                    $('#privateKeyError strong').html(data.message);
+                }
+                $('#modalPrivateKeyForm').find('.fa-spinner').remove();
+            }, false);
+            {/literal}
+        }
+
+        function installCertificate(serviceId, privateKey) {
+            $('#installCertificate').append(' <i class="fa fa-spinner fa-spin"></i>');
+            $('#modalPrivateKeyForm').append('<i id="privateKeySpinner" class="fa fa-spinner fa-spin"></i>');
+            {literal}
+
+            JSONParser.request('installCertificate',{json: 1,id: serviceId, privateKey}, function (data) {
+                if (data.success) {
+                    showSuccessAlert(data.message);
+                    $('#installCertificate').find('.fa-spinner').remove();
+                } else {
+                    $('#installCertificate').find('.fa-spinner').remove();
+                    $('#AddonAlerts>div[data-prototype="error"]').show();
+                    $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
+                }
+                if (privateKey) {
+                    $('#modalUploadPrivateKey').modal('toggle');
+                }
+
+                $('#modalPrivateKeyForm').find('.fa-spinner').remove();
+            }, false);
+            {/literal}
+        }
+
         function getDomainEmails(serviceid = null, domain, index){
                 var brand = '{$brand}'
                 var serviceUrl = 'clientarea.php?action=productdetails&json=1&addon-action=getApprovalEmailsForDomain&brand=' + brand + '&domain=' + domain;
@@ -1205,23 +1253,32 @@
                         }
                     }, false);
                 });
+                {/literal}
+                $('#uploadPrivateKey').on('click', function() {
+                    $('#modalUploadPrivateKey').modal('toggle');
+                    $('#modalUploadPrivateKey .modal-title').text('{$ADDONLANG->T('uploadPrivateKey')}')
+                    $('#uploadPrivateKeyButton').val('{$ADDONLANG->T('upload')}')
+                    $('#modalPrivateKeyForm').off('submit').on('submit', e => {
+                        e.preventDefault();
+                        submitPrivateKeyModal();
+                    })
+                })
 
-                jQuery('#installCertificate').on("click",function(){
-
-                    $('#installCertificate').append(' <i class="fa fa-spinner fa-spin"></i>');
-                    JSONParser.request('installCertificate',{json: 1,id: serviceid}, function (data) {
-                        if (data.success == true) {
-                            $('#AddonAlerts>div').css('display', 'none');
-                            $('#installCertificate').find('.fa-spinner').remove();
-                            $('#AddonAlerts>div[data-prototype="success"]').show();
-                            $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
-                        } else if (data.success == false) {
-                            $('#installCertificate').find('.fa-spinner').remove();
-                            $('#AddonAlerts>div[data-prototype="error"]').show();
-                            $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
-                        }
-                    }, false);
+                $('#installCertificate').on("click",function() {
+                    if (!'{$privateKey}') {
+                        $('#modalUploadPrivateKey').modal('toggle');
+                        $('#modalUploadPrivateKey .modal-title').text('{$ADDONLANG->T('installCertificateBtn')}')
+                        $('#uploadPrivateKeyButton').val('{$ADDONLANG->T('install')}')
+                        $('#modalPrivateKeyForm').off('submit').on('submit', function(e) {
+                            e.preventDefault();
+                            const formData = $(this).serializeArray();
+                            installCertificate(serviceid, formData[0].value);
+                        })
+                    } else {
+                        installCertificate(serviceid);
+                    }
                 });
+                {literal}
 
                 jQuery('#reissue-order').on("click",function(){
                     JSONParser.request('reIssueOrder',{json: 1}, function (data) {
@@ -1236,13 +1293,13 @@
                 });
 
                 //for template simplicity modal header bug
-                var color = $('#modalRevalidate').find('.panel-heading').css('background-color');
+                const color = $('#modalRevalidate').find('.panel-heading').css('background-color');
                 $('#viewPrivateKey').find('.panel-heading').css('background-color', color);
             });
         {/literal}
     </script>
 
-<div class="modal fade" id="modalRecheck" role="dialog" aria-hidden="true">
+<div class="modal fade" id="modalUploadPrivateKey" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content panel panel-primary" style="width:900px;left:-25%;">
             <div class="modal-header panel-heading">
@@ -1250,70 +1307,29 @@
                     <span aria-hidden="true">&times;</span>
                     <span class="sr-only">Close</span>
                 </button>
-                <h4 class="modal-title" id="ModuleSuspendLabel">Check Certificate Details</h4>
+                <h4 class="modal-title"></h4>
             </div>
-            <div class="modal-body panel-body" id="modalRecheckBody">
-                <div class="alert alert-success hidden" id="modalRecheckSuccessAlert">
-                    <strong>Success!</strong> <span></span>
+            <div id='privateKeyError' style="display:none;" data-prototype="error">
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert"><span
+                                aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+                    <strong></strong>
                 </div>
-                <div class="alert alert-danger hidden" id="modalRecheckDangerAlert">
-                    <strong>Error!</strong> <span></span>
-                </div>
-                <div class="text-center hidden" id="modalRecheckLoading">
-                    Loading...
-                </div>
-                <div id="modalRecheckDetails">
-                    <table id="certificate_details" class="table" style="width:100%;text-align:center;">
-                        <colgroup>
-                            <col width="40%"/>
-                            <col width="60%"/>
-                        </colgroup>
-                        <tr id="configuration_status">
-                            <td class="text-left" >{$ADDONLANG->T('configurationStatus')}</td>
-                            <td class="text-left"></td>
-                        </tr>
-                        <tr id="order_status">
-                            <td class="text-left">{$ADDONLANG->T('activationStatus')}</td>
-                            <td class="text-left"></td>
-                        </tr>
-                        <tr id="valid_from">
-                            <td class="text-left">{$ADDONLANG->T('validFrom')}</td>
-                            <td class="text-left"></td>
-                        </tr>
-                        <tr id="valid_till">
-                            <td class="text-left">{$ADDONLANG->T('validTill')}</td>
-                            <td class="text-left"></td>
-                        </tr>
-                        <tr id="domain">
-                            <td class="text-left">{$ADDONLANG->T('domain')}</td>
-                            <td class="text-left"></td>
-                        </tr>
-                        <tr id="partner_order_id">
-                            <td class="text-left">{$ADDONLANG->T('Partner Order ID')}</td>
-                            <td class="text-left"></td>
-                        </tr>
-                        <tr id="sans">
-                            <td class="text-left">{$ADDONLANG->T('sans')}</td>
-                            <td id="sansTd" colspan="2" class="text-left">
-                                <table class="sansTable table table-bordered" >
-
-                                </table>
-                            </td>
-                        </tr>
-                        <tr id="crt">
-                            <td class="text-left">{$ADDONLANG->T('crt')}</td>
-                            <td class="text-left"><textarea onfocus="this.select()" rows="5" class="form-control"></textarea></td>
-                        </tr>
-                        <tr id="ca">
-                            <td class="text-left">{$ADDONLANG->T('ca_chain')}</td>
-                            <td class="text-left"><textarea onfocus="this.select()" rows="5" class="form-control"></textarea></td>
-                        </tr>
-                        <tr id="csr">
-                            <td class="text-left">{$ADDONLANG->T('csr')}</td>
-                            <td class="text-left"><textarea onfocus="this.select()" rows="5" class="form-control"></textarea></td>
-                        </tr>
-                    </table>
-                </div>
+            </div>
+            <div class="modal-body panel-body" id="modalUploadPrivateKeyBody">
+                <form class="form-horizontal"
+                      role="form"
+                      id="modalPrivateKeyForm">
+                    <div class="col-sm-12" style="padding: 25px;">
+                        <label for="privateKeyField">Private Key</label>
+                        <textarea id="privateKeyField" name="privateKey" class="form-control" rows="13"
+                                  style="overflow:auto;resize:none"></textarea>
+                    </div>
+                    <input id="uploadPrivateKeyButton"
+                           type="submit"
+                           class="btn btn-primary"
+                           style="margin-left: 25px;"/>
+                </form>
             </div>
             <div class="modal-footer panel-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">
