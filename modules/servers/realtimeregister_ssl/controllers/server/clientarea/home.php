@@ -776,7 +776,7 @@ class home extends AbstractController
         ];
     }
 
-        public function installCertificateJSON($input, $vars = [])
+    public function installCertificateJSON($input, $vars = [])
     {
         $sslRepo = new SSLRepo();
         $privateKey = $input['privateKey'];

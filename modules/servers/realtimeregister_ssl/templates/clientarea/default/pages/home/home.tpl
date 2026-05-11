@@ -1101,13 +1101,13 @@
             $('#AddonAlerts>div[data-prototype="success"] strong').html(msg);
         }
 
-        function submitPrivateKeyModal() {
-            const privateKey = $('textarea[name="privateKey"]').val()
+        function submitPrivateKeyModal(serviceId, privateKey) {
             $('#modalPrivateKeyForm').append('<i id="privateKeySpinner" class="fa fa-spinner fa-spin"></i>');
             {literal}
-            JSONParser.request('savePrivateKey',{ json: 1, privateKey }, function (data) {
+            JSONParser.request('savePrivateKey',{ json: 1, id: serviceId, privateKey }, function (data) {
                 if (data.success) {
                     showSuccessAlert(data.message);
+                    $('#privateKeyError').hide();
                     $('#modalUploadPrivateKey').modal('toggle');
                 } else {
                     $('#privateKeyError').show();
@@ -1122,18 +1122,18 @@
             $('#installCertificate').append(' <i class="fa fa-spinner fa-spin"></i>');
             $('#modalPrivateKeyForm').append('<i id="privateKeySpinner" class="fa fa-spinner fa-spin"></i>');
             {literal}
-
             JSONParser.request('installCertificate',{json: 1,id: serviceId, privateKey}, function (data) {
                 if (data.success) {
                     showSuccessAlert(data.message);
+                    $('#privateKeyError').hide();
+                    $('#modalUploadPrivateKey').modal('toggle');
                     $('#installCertificate').find('.fa-spinner').remove();
+                } else if (privateKey) {
+                    $('#privateKeyError').show();
+                    $('#privateKeyError strong').html(data.message);
                 } else {
-                    $('#installCertificate').find('.fa-spinner').remove();
                     $('#AddonAlerts>div[data-prototype="error"]').show();
                     $('#AddonAlerts>div[data-prototype="error"] strong').html(data.message);
-                }
-                if (privateKey) {
-                    $('#modalUploadPrivateKey').modal('toggle');
                 }
 
                 $('#modalPrivateKeyForm').find('.fa-spinner').remove();
@@ -1258,9 +1258,10 @@
                     $('#modalUploadPrivateKey').modal('toggle');
                     $('#modalUploadPrivateKey .modal-title').text('{$ADDONLANG->T('uploadPrivateKey')}')
                     $('#uploadPrivateKeyButton').val('{$ADDONLANG->T('upload')}')
-                    $('#modalPrivateKeyForm').off('submit').on('submit', e => {
+                    $('#modalPrivateKeyForm').off('submit').on('submit', function(e) {
                         e.preventDefault();
-                        submitPrivateKeyModal();
+                        const formData = $(this).serializeArray();
+                        submitPrivateKeyModal(serviceid, formData[0].value);
                     })
                 })
 
