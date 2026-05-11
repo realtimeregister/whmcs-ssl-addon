@@ -79,7 +79,6 @@ class Directadmin extends Client implements PlatformInterface
                 $this->uri['mkdir']
             ], false, true)->request('POST', $body);
         } catch (FileException $ex) {
-            dd($ex);
             throw new FileException($ex->getMessage());
         }
 

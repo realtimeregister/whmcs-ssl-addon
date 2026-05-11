@@ -60,6 +60,7 @@ $_LANG['serverCA']['home']['noEmailSelectedForDomain']           = 'No email add
 $_LANG['serverCA']['home']['reloadInformation']                  = 'The page will automatically reloaded after 5 seconds.';
 $_LANG['serverCA']['home']['viewPrivateKeyModalTitle']           = 'View Private Key';
 $_LANG['serverCA']['home']['getPrivateKeyBtn']                   = 'Get Private Key';
+$_LANG['serverCA']['home']['uploadPrivateKey']                   = 'Upload Private Key';
 $_LANG['serverCA']['home']['recheckCertificateDetails']          = 'Check Certificate Details'; 
 $_LANG['serverCA']['home']['reissueCertificate']                 = 'Reissue Certificate';
 $_LANG['serverCA']['home']['Actions']                            = 'Actions';
@@ -238,6 +239,9 @@ $_LANG['Go to next step'] = 'Go to next step';
 $_LANG['serverCA']['home']['The certificate has been installed correctly'] = 'The certificate has been installed correctly.';
 
 $_LANG['serverCA']['home']['installCertificateBtn'] = 'Install Certificate';
+$_LANG['serverCA']['home']['install'] = 'Install';
+$_LANG['serverCA']['home']['upload'] = 'Upload';
+$_LANG['serverCA']['home']['privateKeySaved '] = 'Private key saved';
 
 $_LANG['csrReadOnly'] = 'If you want to use automatic certificate installation you must use the button to generate CSR.';
 

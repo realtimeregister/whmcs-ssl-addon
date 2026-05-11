@@ -224,14 +224,14 @@ trait SSLUtils
         $this->installCertificate($sslService);
     }
 
-    public function installCertificate(SSL $sslService): array
+    public function installCertificate(SSL $sslService, ?string $privateKey = null): array
     {
         $logsRepo = new LogsRepo();
         $orderRepo = new OrderRepo();
         $details = (array)$sslService->configdata;
         $cert = $details['crt'];
         $caBundle = $details['ca'];
-        $key = decrypt($details['private_key']);
+        $key = $privateKey ?? decrypt($details['private_key']);
         if (!$details['domain']) {
             return ['success' => 0];
         }
