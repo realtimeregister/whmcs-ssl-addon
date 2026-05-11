@@ -776,19 +776,20 @@ class home extends AbstractController
         ];
     }
 
-    public function installCertificateJSON($input, $vars = [])
+        public function installCertificateJSON($input, $vars = [])
     {
         $sslRepo = new SSLRepo();
+        $privateKey = $input['privateKey'];
 
         $sslService = $sslRepo->getByServiceId($input['params']['serviceid']);
-        if ($input['privateKey'] && !openssl_x509_check_private_key($sslService->getCrt(), $input['privateKey'])) {
+        if ($privateKey && !openssl_x509_check_private_key($sslService->getCrt(), $privateKey)) {
             return [
                 "success" => 0,
                 'message' => Lang::getInstance()->T('invalidPrivateKey')
             ];
         }
 
-        return $this->installCertificate($sslService);
+        return $this->installCertificate($sslService, $privateKey);
     }
 
     private function createAutoInvoice($productId, $service, $jsonAction = false)
