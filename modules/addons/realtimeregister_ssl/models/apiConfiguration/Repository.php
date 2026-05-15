@@ -133,7 +133,7 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
                 $table->boolean('cron_send_certificate')->default(true);
                 $table->boolean('cron_price_updater')->default(true);
                 $table->boolean('cron_certificate_installer')->default(true);
-                $table->boolean('cron_reissue_certificate')->default(true);
+                $table->boolean('cron_reissue_certificate')->default(false);
                 $table->boolean('reissue_generate_new_csr')->default(true);
                 $table->string('reissue_days_before_expiry')->nullable();
                 $table->boolean('delete_configuration_after_module_disable')->default(false);
@@ -420,13 +420,13 @@ class Repository extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Repos
 
             if (!Capsule::schema()->hasColumn($this->tableName, 'cron_reissue_certificate')) {
                 Capsule::schema()->table($this->tableName, function ($table) {
-                    $table->boolean('cron_reissue_certificate')->default(true);
+                    $table->boolean('cron_reissue_certificate')->default(false);
                 });
             }
 
             if (!Capsule::schema()->hasColumn($this->tableName, 'reissue_generate_new_csr')) {
                 Capsule::schema()->table($this->tableName, function ($table) {
-                    $table->boolean('reissue_generate_new_csr')->default(false);
+                    $table->boolean('reissue_generate_new_csr')->default(true);
                 });
             }
 
