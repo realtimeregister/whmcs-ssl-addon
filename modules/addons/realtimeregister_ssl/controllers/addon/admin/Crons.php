@@ -18,7 +18,8 @@ class Crons extends AbstractController
         'cron_send_certificate', // CertificateSender
         'cron_price_updater', // PriceUpdater
         'cron_certificate_details_updater', // cron_certificate_details_updater
-        'cron_certificate_installer' // InstallCertificates
+        'cron_certificate_installer', // InstallCertificates
+        'cron_reissue_certificate' // ReissueCertificate
     ];
 
     /**

@@ -166,7 +166,13 @@ class Renew
 
         $authKey = $this->p[ConfigOptions::AUTH_KEY_ENABLED];
         if ($authKey) {
-            $authKey = $this->processAuthKeyValidation($commonName, $orderFields['product'], $orderFields['csr'], $dcv);
+            $authKey = $this->processAuthKeyValidation($commonName,
+                $orderFields['product'],
+                $orderFields['csr'],
+                $dcv,
+                $this->p['userid'],
+                $this->p['serviceid']
+            );
         }
 
         $addSSLRenewOrder = $this->tryOrder($configData['certificateId'], $orderFields, $commonName, $authKey);
@@ -176,7 +182,7 @@ class Renew
         $this->sslService->setSSLStatus("SUSPENDED");
         $this->sslService->save();
 
-        $this->processDcvEntries($addSSLRenewOrder->validations?->dcv?->toArray() ?? []);
+        $this->processDcvEntries($addSSLRenewOrder->validations?->dcv?->toArray() ?? [], $this->p['userid'], $this->p['serviceid']);
 
         Capsule::table('tblsslorders')
             ->where('serviceid', $this->p['serviceid'])

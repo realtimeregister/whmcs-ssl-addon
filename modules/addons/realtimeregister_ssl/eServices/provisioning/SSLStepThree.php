@@ -4,6 +4,7 @@ namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\SansDomains;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
@@ -31,7 +32,7 @@ class SSLStepThree
 
     /**
      *
-     * @var \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @var SSL
      */
     private $sslConfig;
 
@@ -179,13 +180,15 @@ class SSLStepThree
                 $csrDecode['commonName'],
                 $apiProduct->product,
                 $order['csr'],
-                $order['dcv']
+                $order['dcv'],
+                $this->p['userid'],
+                $this->p['serviceid']
             );
         }
 
         $addedSSLOrder = $this->tryOrder($order, $csrDecode['commonName'], $authKey);
 
-        //update domain column in tblhostings
+        //update domain column in tblhosting
         $service = new Service($this->p['serviceid']);
         $service->save(['domain' => $csrDecode['commonName']]);
 
@@ -202,7 +205,7 @@ class SSLStepThree
 
         $this->sslConfig->setRemoteId($orderDetails->id); // processid request
         $this->sslConfig->setApproverEmails($approveremails);
-        $this->sslConfig->setStatus(\AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL::CONFIGURATION_SUBMITTED);
+        $this->sslConfig->setStatus(SSL::CONFIGURATION_SUBMITTED);
         $this->sslConfig->setCrt('--placeholder--');
         if ($this->p['privateKey']) {
             $this->sslConfig->setPrivateKey($this->p['privateKey']);
@@ -241,7 +244,7 @@ class SSLStepThree
             'success',
             'The order has been placed ' . ($addedSSLOrder->certificateId ? 'and issued immediately.' : '.')
         );
-        $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? []);
+        $this->processDcvEntries($addedSSLOrder->validations?->dcv?->toArray() ?? [], $this->p['userid'], $this->p['serviceid']);
 
         if ($addedSSLOrder->certificateId) {
             (new UpdateConfigData($sslService))->run();

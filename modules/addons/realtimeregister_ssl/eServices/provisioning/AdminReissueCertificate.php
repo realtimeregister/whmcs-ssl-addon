@@ -10,7 +10,6 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
-use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Domain\CertificateInfoProcess;
@@ -105,9 +104,7 @@ class AdminReissueCertificate extends Ajax
                  $orderFields['state']
              );
 
-        $logs = new LogsRepo();
-
-        $this->processDcvEntries($responseData->validations?->dcv->toArray() ?? []);
+        $this->processDcvEntries($responseData->validations?->dcv->toArray() ?? [], $this->p['userid'], $this->p['serviceid']);
 
         $sslService->setRemoteId($responseData->processId);
         $sslService->setPrivateKey(null);
