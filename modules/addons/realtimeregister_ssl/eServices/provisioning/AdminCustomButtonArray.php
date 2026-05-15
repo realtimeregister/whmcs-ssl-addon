@@ -21,15 +21,7 @@ class AdminCustomButtonArray
             'Manage SSL' => 'SSLAdminManageSSL',
         ];
 
-        if (in_array($sslOrder->status, SSL::ACTIONS_AVAILABLE)) {
-            $buttons['Resend Certificate'] = 'SSLAdminResendCertificate';
-            $buttons['View Certificate'] = 'SSLAdminViewCertificate';
-            $buttons['Reissue Certificate'] = 'SSLAdminReissueCertificate';
-        }
-
         if ($sslOrder->status === SSL::CONFIGURATION_SUBMITTED) {
-            $buttons['Resend DCV'] = 'SSLAdminResendDCV';
-            $buttons['View Certificate'] = 'SSLAdminViewCertificate';
             $buttons['Refresh'] = '';
         }
 
