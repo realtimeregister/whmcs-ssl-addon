@@ -157,6 +157,33 @@ class ApiConfiguration extends AbstractController
         $form->addField($field);
 
         $field = new LegendField();
+        $field->name = 'reissue_settings';
+        $form->addField($field);
+
+        $field = new CheckboxField();
+        $field->name = 'reissue_generate_new_csr';
+        $field->options = ['reissueGenerateNewCsr'];
+        $field->value = $input['reissue_generate_new_csr'] ? ['reissueGenerateNewCsr'] : [''];
+        $field->inline = true;
+        $field->colWidth = 3;
+        $field->continue = true;
+        $field->enableDescription = true;
+        $form->addField($field);
+
+        $field = new SelectField();
+        $field->name = 'reissue_days_before_expiry';
+        $field->required = true;
+        $field->value = $input['reissue_days_before_expiry'];
+        $field->translateOptions = false;
+        $field->inline = true;
+        $field->colWidth = 2;
+        $field->continue = false;
+        $field->enableDescription = true;
+        $field->options = ['30' => '30', '21' => '21', '14' => '14', '7' => '7', '3' => '3', '1' => '1', '0' => 'Disabled'];
+        $field->error = $this->getFieldError('reissue_days_before_expiry');
+        $form->addField($field);
+
+        $field = new LegendField();
         $field->name = 'csr_generator_legend';
         $form->addField($field);
 
@@ -318,6 +345,7 @@ class ApiConfiguration extends AbstractController
                     'visible_renew_button',
                     'save_activity_logs',
                     'delete_configuration_after_module_disable',
+                    'reissue_generate_new_csr',
                 ];
                 foreach ($checkFieldsArray as $field) {
                     if (isset($input[$field])) {

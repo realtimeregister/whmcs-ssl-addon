@@ -115,6 +115,13 @@ $_LANG['addonAA']['apiConfiguration']['item']['tech_fax']['label']              
 $_LANG['addonAA']['apiConfiguration']['item']['tech_postalcode']['label']                              = 'Zip Code';
 $_LANG['addonAA']['apiConfiguration']['item']['tech_region']['label']                                  = 'State/Region';
 
+$_LANG['addonAA']['apiConfiguration']['item']['reissue_settings']['label']   = 'Automatic Reissue Settings';
+$_LANG['addonAA']['apiConfiguration']['item']['reissue_generate_new_csr']['label']   = 'Generate New CSR';
+$_LANG['addonAA']['apiConfiguration']['item']['reissue_generate_new_csr']['description']   = 'If enabled, a new CSR and private key will be generated automatically for the reissue.';
+$_LANG['addonAA']['apiConfiguration']['item']['reissue_days_before_expiry']['label']   = 'Reissue Before Expiry';
+$_LANG['addonAA']['apiConfiguration']['item']['reissue_days_before_expiry']['description']   = 'How many days before expiry the certificate should be automatically reissued.';
+$_LANG['addonAA']['apiConfiguration']['item']['cron_reissue_certificate']['label']   = 'Automatic Reissue';
+
 $_LANG['addonAA']['apiConfiguration']['item']['testConnection']['content'] = 'Test Connection';
 $_LANG['addonAA']['apiConfiguration']['item']['saveItem']['label']         = 'Save';
 $_LANG['addonAA']['pagesLabels']['label']['productsConfiguration']         = 'Products Configuration';

@@ -11,6 +11,7 @@ use AddonModule\RealtimeRegisterSsl\cron\ExpiryHandler;
 use AddonModule\RealtimeRegisterSsl\cron\InstallCertificates;
 use AddonModule\RealtimeRegisterSsl\cron\PriceUpdater;
 use AddonModule\RealtimeRegisterSsl\cron\ProcessingOrders;
+use AddonModule\RealtimeRegisterSsl\cron\ReissueCertificates;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice as InvoiceHelper;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
@@ -71,14 +72,15 @@ class Configuration extends AbstractConfiguration
         CertificateSender::class,
         PriceUpdater::class,
         CertificateDetailsUpdater::class,
-        InstallCertificates::class
+        InstallCertificates::class,
+        ReissueCertificates::class
     ];
 
     /**
      * Module version
      * @var string
      */
-    public const VERSION = '1.4.1';
+    public const VERSION = '1.5.0';
     public $tablePrefix = '';
     public $modelRegister = [];
 

@@ -216,7 +216,12 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     }
 
     public function getApproverEmail() {
-        return ((array) $this->getConfigdataKey('fields'))['approveremail'];
+        return ((array) $this->getConfigdataKey('fields'))['approveremail']
+            ?? $this->getConfigdataKey('approveremail');
+    }
+
+    public function getApproverEmails() {
+        return ((array) $this->getConfigdataKey('fields'))['approveremails'];
     }
     
     public function setSubscriptionStarts($date)

@@ -17,6 +17,7 @@ use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Domain\Product;
+use RealtimeRegister\Exceptions\BadRequestException;
 
 trait SSLUtils
 {
@@ -123,7 +124,14 @@ trait SSLUtils
         return $order;
     }
 
-    public function processAuthKeyValidation(string $commonName, string $product, string $csr, array $dcv): bool
+    public function processAuthKeyValidation(
+        string $commonName,
+        string $product,
+        string $csr,
+        array  $dcv,
+        int $clientId,
+        int $serviceId
+    ): bool
     {
         $logs = new LogsRepo();
         try {
@@ -132,8 +140,8 @@ trait SSLUtils
                 ->generateAuthKey($product, $csr);
         } catch (\Exception $e) {
             $logs->addLog(
-                $this->p['userid'],
-                $this->p['serviceid'],
+                $clientId,
+                $serviceId,
                 'error',
                 '[' . $commonName . '] Error:' . $e->getMessage()
             );
@@ -150,10 +158,10 @@ trait SSLUtils
             $newEntry['fileLocation'] = $newEntry['commonName'] . '/.well-known/pki-validation/fileauth.txt';
             return $newEntry;
         }, $dcv);
-        return $this->processDcvEntries($newDcv);
+        return $this->processDcvEntries($newDcv, $clientId, $serviceId);
     }
 
-    public function processDcvEntries(array $dcvEntries): bool
+    public function processDcvEntries(array $dcvEntries, int $clientId, int $serviceId): bool
     {
         $logs = new LogsRepo();
         $success = true;
@@ -176,16 +184,16 @@ trait SSLUtils
                         $panel
                     );
                     $logs->addLog(
-                        $this->p['userid'],
-                        $this->p['serviceid'],
+                        $clientId,
+                        $serviceId,
                         'success',
                         'FileControl at ' . $panel['platform'] . ' for ' . $dcvEntry['commonName'] . ': ' . $result['message']
                     );
                 } elseif ($dcvEntry['type'] == 'DNS') {
                     $result = DnsControl::generateRecord($dcvEntry, $panel);
                     $logs->addLog(
-                        $this->p['userid'],
-                        $this->p['serviceid'],
+                        $clientId,
+                        $serviceId,
                         'success',
                         'DnsControl at ' . $panel['platform'] . ' for ' . $dcvEntry['commonName'] . ': ' . $result['message']
                     );
@@ -195,8 +203,8 @@ trait SSLUtils
             } catch (\Exception $e) {
                 $success = false;
                 $logs->addLog(
-                    $this->p['userid'],
-                    $this->p['serviceid'],
+                    $clientId,
+                    $serviceId,
                     'error',
                     '[' . $dcvEntry['commonName'] . '] Error:' . $e->getMessage()
                 );
@@ -211,11 +219,72 @@ trait SSLUtils
             return null;
         }
         return array_map(fn($dcvEntry) => [...$dcvEntry,
-            'type' => $dcvEntry['type'] === 'HTTP' ? 'FILE' : $dcvEntry['type']],
+            'type' => $this->mapDcvType($dcvEntry['type'])],
             $dcv);
     }
 
-    public function autoInstallCertificate(SSL $sslService) : void
+    public function reissueCertificate(
+        int    $certificateId,
+        array  $orderData,
+        string $commonName,
+        bool   $authKey,
+        int    $clientId,
+        int    $serviceId
+    )
+    {
+        $sslOrder = [
+            'csr' => $orderData['csr'],
+            'san' => empty($orderData['san']) ? null : $orderData['san'],
+            'organization' => $orderData['organization'],
+            'department' => $orderData['department'],
+            'address' => $orderData['address'],
+            'postalCode' => $orderData['postalCode'],
+            'city' => $orderData['city'],
+            'coc' => $orderData['coc'],
+            'approver' => $orderData['approver'],
+            'country' => null,
+            'language' => null,
+            'dcv' => $orderData['dcv'],
+            'domainName' => $commonName,
+            'authKey' => $authKey,
+            'state' => $orderData['state'],
+        ];
+        return $this->sendRequest($certificateId, $sslOrder, $clientId, $serviceId);
+    }
+
+    private function sendRequest(int $certificateId, array $sslOrder, int $clientId, int $serviceId)
+    {
+        $logs = new LogsRepo();
+        try {
+            return ApiProvider::getInstance()
+                ->getApi(CertificatesApi::class)
+                ->reissueCertificate($certificateId, ...$sslOrder);
+        } catch (BadRequestException $exception) {
+            $logs->addLog(
+                $clientId,
+                $serviceId,
+                'error',
+                '[' . $sslOrder['domainName'] . '] Error:' . $exception->getMessage()
+            );
+            $decodedMessage = json_decode(str_replace('Bad Request: ', '', $exception->getMessage()), true);
+            $retry = false;
+            switch ($decodedMessage['type']) {
+                case 'ConstraintViolationException':
+                case 'ObjectExists':
+                    break;
+                default:
+                    $retry = true;
+                    break;
+            }
+
+            if ($retry && $sslOrder['authKey']) {
+                return $this->sendRequest($certificateId, [...$sslOrder, 'authKey' => false]);
+            }
+            throw $exception;
+        }
+    }
+
+    public function autoInstallCertificate(SSL $sslService): void
     {
         $apiConf = (new ApiConfRepo())->get();
         if (!$apiConf->auto_install_panel) {
@@ -277,7 +346,16 @@ trait SSLUtils
         return [];
     }
 
-    public function normalizeDomain(string $commonName): string {
+    public function normalizeDomain(string $commonName): string
+    {
         return str_replace('*.', '', $commonName);
+    }
+
+    public function mapDcvType($type)
+    {
+        if (strtoupper($type) === 'HTTP') {
+            return 'FILE';
+        }
+        return strtoupper($type);
     }
 }
