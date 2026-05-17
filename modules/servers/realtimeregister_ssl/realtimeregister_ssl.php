@@ -100,16 +100,6 @@ function realtimeregister_ssl_AdminCustomButtonArray($params) {
     return $adminCustomButtonArray->run();
 }
 
-function realtimeregister_ssl_SSLAdminResendDCV($params) {
-    $resendApproverEmail = new AdminResendDCV($params);
-    return $resendApproverEmail->run();
-}
-
-function realtimeregister_ssl_SSLAdminResendCertificate($params) {
-    $adminResendCertificate = new AdminResendCertificate($params);
-    return $adminResendCertificate->run();
-}
-
 /**
  * Renew an instance of a product/service.
  *
@@ -148,16 +138,6 @@ function realtimeregister_ssl_FlashErrorStepOne() {
        global $smarty;
        $smarty->assign('errormessage', $errors['errormessage']);
     }
-}
-
-if (isset($_POST['reissueModal'], $_SESSION['adminid']) && $_POST['reissueModal'] === 'yes' && $_SESSION['adminid'] ) {
-    $adminReissueCertificate = new AdminReissueCertificate($_POST);
-    $adminReissueCertificate->run();   
-}
-
-if (isset($_POST['viewModal'], $_SESSION['adminid']) && $_POST['viewModal'] === 'yes' && $_SESSION['adminid']) {
-    $adminViewCertificate = new AdminViewCertificate($_POST);
-    $adminViewCertificate->run();
 }
 
 function realtimeregister_ssl_ClientAreaCustomReissueCertificate($params)
