@@ -120,7 +120,6 @@ $_LANG['addonAA']['apiConfiguration']['item']['reissue_generate_new_csr']['label
 $_LANG['addonAA']['apiConfiguration']['item']['reissue_generate_new_csr']['description']   = 'If enabled, a new CSR and private key will be generated automatically for the reissue.';
 $_LANG['addonAA']['apiConfiguration']['item']['reissue_days_before_expiry']['label']   = 'Reissue Before Expiry';
 $_LANG['addonAA']['apiConfiguration']['item']['reissue_days_before_expiry']['description']   = 'How many days before expiry the certificate should be automatically reissued.';
-$_LANG['addonAA']['apiConfiguration']['item']['cron_reissue_certificate']['label']   = 'Automatic Reissue';
 
 $_LANG['addonAA']['apiConfiguration']['item']['testConnection']['content'] = 'Test Connection';
 $_LANG['addonAA']['apiConfiguration']['item']['saveItem']['label']         = 'Save';
@@ -401,6 +400,7 @@ $_LANG['addonAA']['orders']['table']['actions'] = 'Actions';
 $_LANG['Choose a domain'] = 'Choose a domain';
 
 $_LANG['addonAA']['crons']['cron_certificate_installer'] = 'Install certificate in your hostingpanel (once a day)';
+$_LANG['addonAA']['crons']['cron_reissue_certificate']  = 'Automatic reissuance of certificates';
 
 $_LANG['addonAA']['orders']['table']['set as verified'] = 'Set as verified';
 $_LANG['addonAA']['orders']['table']['set as installed'] = 'Set as installed';
