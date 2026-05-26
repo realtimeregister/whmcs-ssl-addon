@@ -13,15 +13,10 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
-use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
-use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLUtils;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
-use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\Server;
 use DateTimeImmutable;
@@ -415,10 +410,15 @@ class home extends AbstractController
         ];
     }
 
-    private static function hasReissueWindow(array $certificateDetails) : bool {
-        return !empty($certificateDetails['end_date'])
-        && explode($certificateDetails['end_date']->date, ' ')[0]
-            != explode($certificateDetails['valid_till']->date, ' ')[0];
+    /**
+     * @throws \DateMalformedStringException
+     */
+    private static function hasReissueWindow(array $certificateDetails) : bool
+    {
+        return $certificateDetails['end_date']?->date
+            && $certificateDetails['valid_till']?->date
+            && new DateTimeImmutable($certificateDetails['end_date']->date)
+            > new DateTimeImmutable($certificateDetails['valid_till']->date);
     }
 
     public function renewJSON($input, $vars = [])
