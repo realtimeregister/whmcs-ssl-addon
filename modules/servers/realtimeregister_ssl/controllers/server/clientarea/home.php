@@ -13,7 +13,6 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Config;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ClientRecheckCertificateDetails;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLUtils;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
