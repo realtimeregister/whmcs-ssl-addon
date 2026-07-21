@@ -3,6 +3,7 @@
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminCustomButtonArray;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminImportCertificate;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminRecheckCertificateDetails;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminReissueCertificate;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\AdminResendCertificate;
@@ -100,6 +101,11 @@ function realtimeregister_ssl_AdminCustomButtonArray($params) {
     return $adminCustomButtonArray->run();
 }
 
+function realtimeregister_ssl_SSLAdminImportCertificate($params) {
+    $adminImportCertificate = new AdminImportCertificate($params);
+    return $adminImportCertificate->run();
+}
+
 /**
  * Renew an instance of a product/service.
  *
@@ -170,5 +176,11 @@ function realtimeregister_ssl_ClientAreaCustomButtonArray()
         $lang->T('Reissue Certificate') => 'ClientAreaCustomReissueCertificate'
     ];
 }
+
+if (isset($_POST['importModal'], $_SESSION['adminid']) && $_POST['importModal'] && $_SESSION['adminid'] ) {
+    $adminImportCertificate = new AdminImportCertificate($_POST);
+    $adminImportCertificate->run();
+}
+
 add_hook('ClientAreaHeadOutput', 1, 'realtimeregister_ssl_SSLStepTwoJS');
 add_hook('ClientAreaHeadOutput', 9999999999, 'realtimeregister_ssl_FlashErrorStepOne');
