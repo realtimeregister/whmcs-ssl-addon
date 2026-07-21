@@ -15,7 +15,6 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     public const TABLE_NAME = 'tblsslorders';
     protected $table = self::TABLE_NAME;
 
-    public $timestamps = false;
     public const PENDING_INSTALLATION = 'Pending Installation';
     public const AWAITING_CONFIGURATION = 'Awaiting Configuration';
     public const FAILED_INSTALLATION = 'Failed Installation';
@@ -386,6 +385,11 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     public function setCompletionDate($date)
     {
         $this->completiondate = $date;
+    }
+
+    public function getCompletionDate()
+    {
+        return $this->completiondate;
     }
 
     public function setStatus($status)

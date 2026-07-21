@@ -11,6 +11,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 
+use DateTime;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
 use RealtimeRegister\Domain\Enum\DownloadFormatEnum;
@@ -122,7 +123,7 @@ class UpdateConfigData
 
                 if ($brandName === null) {
                     $apiProduct = $apiRepo->getProduct($order->product);
-                    $apiProduct->brand = $brandName;
+                    $brandName = $apiProduct->brand;
                 }
             }
 
@@ -135,7 +136,7 @@ class UpdateConfigData
             $sslOrder->setOrderStatusDescription($order->status);
             $sslOrder->setPartnerOrderId($order->providerId);
 
-            if ($sslOrder->status === SSL::CONFIGURATION_SUBMITTED) {
+            if ($sslOrder->status === SSL::CONFIGURATION_SUBMITTED || $sslOrder->status === SSL::AWAITING_CONFIGURATION) {
                 $sslOrder->status = SSL::PENDING_INSTALLATION;
                 $orderRepo->updateStatus($this->sslService->serviceid, SSL::PENDING_INSTALLATION);
             }
@@ -144,19 +145,15 @@ class UpdateConfigData
 
             $sslOrder->setValidFrom($order->startDate);
             $sslOrder->setValidTill($order->expiryDate);
+            $sslOrder->setDomain($order->domainName);
 
             // Get the different parts of the created certificate
             $sslOrder->setBundle($certificatesApi->downloadCertificate($order->id, DownloadFormatEnum::ZIP_FORMAT));
             $zipFile = base64_decode($sslOrder->getBundle());
 
             $zipFileHelper = new ZipFileHelper($zipFile);
-            $sslDomainPrefix = str_replace('.', '_', $sslOrder->getDomain());
-            if (!$sslOrder->getDomain()) {
-                // Possible an order without a domain..
-                $directoryEntries = $zipFileHelper->getNamesOfFilesInDirectory('Linux/');
-
-                $sslDomainPrefix = substr($directoryEntries[0], 6, -10); // remove the Linux/ and .ca-bundle from the filename
-            }
+            $directoryEntries = $zipFileHelper->getNamesOfFilesInDirectory('Linux/');
+            $sslDomainPrefix = substr($directoryEntries[0], 6, -10); // remove the Linux/ and .ca-bundle from the filename
 
             try {
                 $sslOrder->setCa($zipFileHelper->getFile('Linux/' . $sslDomainPrefix . '.ca-bundle'));
@@ -168,8 +165,6 @@ class UpdateConfigData
                 $sslOrder->setSubscriptionStarts($order->startDate);
                 $sslOrder->setSubscriptionEnds($order->subscriptionEndDate);
             }
-            
-            $sslOrder->setDomain($order->domainName);
 
             $sslOrder->setProductId($order->product);
 
@@ -182,6 +177,10 @@ class UpdateConfigData
 
             if (isset($order->san)) {
                 $sslOrder->setSanDetails(array_map(fn($sanEntry) => ["san_name" => $sanEntry], $order->san));
+            }
+
+            if ($sslOrder->getCompletionDate() == '0000-00-00 00:00:00') {
+                $sslOrder->setCompletionDate(new DateTime());
             }
 
             $sslOrder->save();

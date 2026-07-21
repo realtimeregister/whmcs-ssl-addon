@@ -25,6 +25,10 @@ class AdminCustomButtonArray
             $buttons['Refresh'] = '';
         }
 
+        if ($sslOrder->status === SSL::AWAITING_CONFIGURATION) {
+            $buttons['Import Certificate'] = 'SSLAdminImportCertificate';
+        }
+
         return $buttons;
     }
 }

@@ -53,4 +53,14 @@ class SSL
             ->whereIn('status', $status)
             ->get();
     }
+
+    public function getOrderByRemoteId($remoteId) {
+        return Model::query()
+            ->select(['tblsslorders.*'])
+            ->join('tblhosting', 'tblhosting.id', '=', 'serviceid')
+            ->where('tblhosting.domainstatus', '=', 'Active')
+            ->where('module', '=', 'realtimeregister_ssl')
+            ->where('remoteid', '=', $remoteId)
+            ->first();
+    }
 }

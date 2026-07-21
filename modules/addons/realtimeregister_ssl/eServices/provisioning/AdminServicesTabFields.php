@@ -43,7 +43,9 @@ class AdminServicesTabFields
             }
 
             if ($sslService->status === SSL::AWAITING_CONFIGURATION) {
-                return ['Configuration Status' => SSL::AWAITING_CONFIGURATION];
+                return [
+                    'Configuration Status' => SSL::AWAITING_CONFIGURATION,
+                ];
             }
 
             if (empty($sslService->remoteid)) {
