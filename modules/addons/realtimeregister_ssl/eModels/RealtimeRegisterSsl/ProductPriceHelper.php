@@ -3,49 +3,39 @@
 namespace AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl;
 
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
+use AddonModule\RealtimeRegisterSsl\models\productPrice\ProductPrice;
 
-class ProductPrice
+class ProductPriceHelper
 {
     public function saveToDatabase()
     {
-        $productPriceRepo = new \AddonModule\RealtimeRegisterSsl\models\productPrice\Repository();
-
         $period = $this->getPeriodFromName($this->product);
 
-        $productPriceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($this->getCleanProductName($this->product)))
-            ->onlyPeriod((string)$period)
-            ->onlyAction($this->action);
+        $productPrice = ProductPrice::query()
+            ->where("api_product_id", '=', KeyToIdMapping::getIdByKey($this->getCleanProductName($this->product)))
+            ->where("period", '=', (string) $period)
+            ->where("action", '=', $this->action)
+            ->first();
 
-        if (!$productPriceRepo->count()) {
-            $productPrice = new \AddonModule\RealtimeRegisterSsl\models\productPrice\ProductPrice();
-
+        if ($productPrice) {
+            $productPrice->setPrice($this->price);
+        } else {
+            $productPrice = new ProductPrice();
             $productPrice->setApiProductID(KeyToIdMapping::getIdByKey($this->getCleanProductName($this->product)));
             $productPrice->setPeriod($period);
             $productPrice->setPrice($this->price);
             $productPrice->setAction($this->action);
-            $productPrice->setCurrency($this->currency);
-
-        } else {
-            $priceRow = $productPriceRepo->fetchOne();
-
-            $productPrice = new \AddonModule\RealtimeRegisterSsl\models\productPrice\ProductPrice($priceRow->getID());
-            $productPrice->setPrice($this->price);
-            $productPrice->setCurrency($this->currency);
         }
+        $productPrice->setCurrency($this->currency);
         $productPrice->save();
     }
     
     public function loadSavedPriceData($productID = null)
     {
-        $productPriceRepo = new \AddonModule\RealtimeRegisterSsl\models\productPrice\Repository();
-       
         if ($productID !== null) {
-            $productPriceRepo->onlyApiProductID($productID);
-        } else {
-            $productPriceRepo->onlyApiProductID($this->id);
+            return ProductPrice::query()->where("api_product_id", '=', $productID);
         }
-
-        return $productPriceRepo->get();
+        return ProductPrice::query()->where("api_product_id", "=", $this->id);
     }
 
     private function getPeriodFromName(string $name): int

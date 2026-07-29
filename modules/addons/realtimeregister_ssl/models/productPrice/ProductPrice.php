@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\productPrice;
 
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -17,7 +18,8 @@ class ProductPrice extends Model
 
     public const TABLE_NAME = 'REALTIMEREGISTERSSL_api_product_prices';
     protected $table = self::TABLE_NAME;
-
+    public $timestamps = false;
+    
     public function getID()
     {
         return $this->id;
@@ -72,5 +74,26 @@ class ProductPrice extends Model
     public function setCurrency(string $currency): void
     {
         $this->currency = $currency;
+    }
+
+    public static function createApiProductsPricesTable()
+    {
+        if (!Capsule::schema()->hasTable(self::TABLE_NAME)) {
+            Capsule::schema()->create(self::TABLE_NAME, function ($table) {
+                $table->increments('id');
+                $table->integer('api_product_id');
+                $table->string('price');
+                $table->string('period');
+                $table->string("action");
+                $table->string("currency");
+            });
+        }
+    }
+
+    public static function dropApiProductsPricesTable()
+    {
+        if (Capsule::schema()->hasTable(self::TABLE_NAME)) {
+            Capsule::schema()->dropIfExists(self::TABLE_NAME);
+        }
     }
 }

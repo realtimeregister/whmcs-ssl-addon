@@ -22,7 +22,7 @@ use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APIConfigurationRepo;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
-use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ProductPriceRepo;
+use AddonModule\RealtimeRegisterSsl\models\productPrice\ProductPrice;
 use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
 use WHMCS\Database\Capsule;
 
@@ -408,7 +408,7 @@ class Configuration extends AbstractConfiguration
     public function activate(): void
     {
         (new APIConfigurationRepo())->createApiConfigurationTable();
-        (new ProductPriceRepo())->createApiProductsPricesTable();
+        ProductPrice::createApiProductsPricesTable();
         (new UserDiscountRepo())->createUserDiscountTable();
         (new LogsRepo())->createLogsTable();
         (new OrdersRepo())->createOrdersTable();
@@ -432,7 +432,7 @@ class Configuration extends AbstractConfiguration
         $apiConfiguration = (new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository())->get();
         if ($apiConfiguration->delete_configuration_after_module_disable) {
             (new APIConfigurationRepo())->dropApiConfigurationTable();
-            (new ProductPriceRepo())->dropApiProductsPricesTable();
+            ProductPrice::dropApiProductsPricesTable();
             (new UserDiscountRepo())->dropUserDiscountTable();
             (new LogsRepo())->dropLogsTable();
             (new OrdersRepo())->dropOrdersTable();
