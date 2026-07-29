@@ -164,6 +164,8 @@ $_LANG['addonAA']['productsConfiguration']['pricingInclude']       = "Prices inc
 
 $_LANG['addonAA']['productsConfiguration']['statusEnable']  = 'Enable';
 $_LANG['addonAA']['productsConfiguration']['statusDisable'] = 'Disable';
+$_LANG['addonAA']['productsConfiguration']['sslProducts']   = 'SSL Products';
+$_LANG['addonAA']['productsConfiguration']['acmeProducts']  = 'ACME Products';
 
 
 $_LANG['addonAA']['productsConfiguration']['paymentType']          = 'Payment Type:';
@@ -192,7 +194,8 @@ $_LANG['addonAA']['productsConfiguration']['save']         = 'Save';
 $_LANG['addonAA']['productsConfiguration']['messages'][''] = '';
 
 
-$_LANG['addonAA']['productsCreator']['singleProductCreator'] = 'Single Product Importer';
+$_LANG['addonAA']['productsCreator']['singleProductCreator'] = 'Product Importer';
+$_LANG['addonAA']['productsCreator']['singleAcmeProductCreator'] = 'ACME Product Importer';
 $_LANG['addonAA']['productsCreator']['realtimeRegisterSSLProduct']     = 'RealtimeRegisterSSL Product:';
 $_LANG['addonAA']['productsCreator']['productName']          = 'Product Name:';
 $_LANG['addonAA']['productsCreator']['customguide']          = 'Processing SSL message:';

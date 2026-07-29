@@ -14,18 +14,24 @@ class Product
     
     public function isSanEnabled()
     {
-        return $this->includedDomains > 1;
+        return $this->certificateType == 'ACME_SUBSCRIPTION' || $this->includedDomains > 1;
     }
     
     public function isSanWildcardEnabled()
     {
-        return $this->isSanEnabled() && in_array('WILDCARD', $this->features);
+        return $this->certificateType == 'ACME_SUBSCRIPTION' ||
+            $this->isSanEnabled() && in_array('WILDCARD', $this->features ?? []);
     }
     
     public function getPeriods()
     {
         return $this->periods;
     }
+
+    public function isAcmeProduct() {
+        return $this->certificateType === 'ACME_SUBSCRIPTION';
+    }
+
 
     public function getMaxDomains()
     {

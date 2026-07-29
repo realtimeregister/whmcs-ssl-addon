@@ -2,48 +2,21 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\productPrice;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
- * @Table(name=REALTIMEREGISTERSSL_api_product_prices)
+ * @property int id
+ * @property int api_product_id
+ * @property string|float price
+ * @property string period
+ * @property string action
+ * @property string currency
  */
-class ProductPrice extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
+class ProductPrice extends Model
 {
-    /**
-     * 
-     * @Column(id)
-     * @var integer
-     */
-    public $id;
 
-    /**
-     * 
-     * @Column(api_product_id)
-     * @var int
-     */
-    public $api_product_id;
-
-    /**
-     * @Column(varchar=32)
-     * @var string|float
-     */
-    public $price;
-
-    /**
-     * @Column(varchar=32)
-     * @var string
-     */
-    public $period;
-
-    /**
-     * @Column(varchar=32)
-     * @var string
-     */
-    public $action;
-
-    /**
-     * @Column(varchar=3)
-     * @var string
-     */
-    public $currency;
+    public const TABLE_NAME = 'REALTIMEREGISTERSSL_api_product_prices';
+    protected $table = self::TABLE_NAME;
 
     public function getID()
     {
