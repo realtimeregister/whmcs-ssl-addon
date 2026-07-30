@@ -4,6 +4,7 @@ namespace AddonModule\RealtimeRegisterSsl\controllers\server\clientarea;
 
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\controllers\server\clientarea\Traits\AcmeTrait;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
@@ -21,11 +22,11 @@ use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\Server;
 use DateTimeImmutable;
 use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
 use RealtimeRegister\Domain\Enum\ProcessStatusEnum;
 use RealtimeRegister\Domain\ResendDcvCollection;
-use WHMCS\Database\Capsule;
 
 /**
  * Description of home
@@ -35,6 +36,7 @@ class home extends AbstractController
 {
 
     use SSLUtils;
+    use AcmeTrait;
 
     public function indexHTML($input, $vars = [])
     {
@@ -52,6 +54,37 @@ class home extends AbstractController
             $userid = $input['params']['userid'];
             $ssl = new SSLRepo();
             $sslService = $ssl->getByServiceId($serviceId);
+            $product = Capsule::table('tblproducts')
+                ->where('id', (int) $input['params']['pid'])
+                ->first();
+
+            $vars['configurationURL'] = self::isAcmeProduct($product)
+                ? 'clientarea.php?action=productdetails&id=' . $serviceId . '&acmeconfig=1'
+                : Config::getInstance()->getConfigureSSLUrl($sslService->id, $serviceId);
+            $vars['productName'] = $product->name;
+            $vars['configurationStatus'] = $sslService->status;
+
+            $vars['assetsURL'] = Server::I()->getAssetsURL();
+
+
+
+            if (self::isAcmeProduct($product)) {
+                if (isset($_GET['acmeconfig']) && $_GET['acmeconfig'] == '1')
+                {
+                    return $this->acmeConfiguration($input, $product, $vars);
+                }
+                if ($sslService->status !== SSL::AWAITING_CONFIGURATION) {
+                    return $this->acmeIndex($input, $product, $sslService, $vars);
+                }
+            }
+
+            if ($sslService->status === SSL::AWAITING_CONFIGURATION)
+            {
+                return [
+                    'tpl' => 'awaiting_configuration',
+                    'vars' => $vars
+                ];
+            }
 
             $sslStatus = $sslService->configdata->ssl_status;
             $vars['isEndState'] = true;
@@ -108,8 +141,6 @@ class home extends AbstractController
             if (is_null($sslService)) {
                 throw new Exception('An error occurred please contact support');
             }
-
-            $url = Config::getInstance()->getConfigureSSLUrl($sslService->id, $serviceId);
 
             $vars['privateKey'] = $sslService->getPrivateKey() ?? '';
             $vars['san_revalidate'] = false;
@@ -253,8 +284,6 @@ class home extends AbstractController
             $vars['custom_guide'] = $apiConf->custom_guide;
             $vars['visible_renew_button'] = $apiConf->visible_renew_button;
             $vars['disabledValidationMethods'] = $disabledValidationMethods;
-            $vars['configurationStatus'] = $sslService->status;
-            $vars['configurationURL'] = $url;
             $vars['allOk'] = true;
             $vars['assetsURL'] = Server::I()->getAssetsURL();
             $vars['serviceid'] = $serviceId;
@@ -817,4 +846,5 @@ class home extends AbstractController
 
         return $invoiceGenerator->createInvoice($service, $product, $getInvoiceID);
     }
+
 }

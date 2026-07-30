@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace AddonModule\RealtimeRegisterSsl\eModels\whmcs\service;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\Eloquent\Model;
 use stdClass;
 
 /**
  * @property stdClass configdata
+ * @property string status
  */
-class SSL extends \Illuminate\Database\Eloquent\Model
+class SSL extends Model
 {
     public const TABLE_NAME = 'tblsslorders';
     protected $table = self::TABLE_NAME;
@@ -312,7 +314,7 @@ class SSL extends \Illuminate\Database\Eloquent\Model
         $this->setConfigdataKey('total_domains', $domains);
     }
 
-    public function getSSLStatus()
+    public function getSSLStatus(): string
     {
         return $this->getConfigdataKey('ssl_status');
     }
@@ -400,5 +402,17 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     public function setCertificateId($id)
     {
         $this->setConfigdataKey("certificateId", $id);
+    }
+
+    /**
+     * @param $id
+     * @return SSL|null
+     */
+    public static function getByServiceId($id) : ?SSL
+    {
+        /** @var SSL|null */
+        return self::query()
+            ->where('serviceid', '=', $id)
+            ->first();
     }
 }

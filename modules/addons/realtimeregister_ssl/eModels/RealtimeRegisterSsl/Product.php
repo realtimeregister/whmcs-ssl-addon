@@ -19,7 +19,7 @@ class Product
     
     public function isSanWildcardEnabled()
     {
-        return $this->certificateType == 'ACME_SUBSCRIPTION' ||
+        return ($this->certificateType == 'ACME_SUBSCRIPTION' && $this->validationType != 'EXTENDED_VALIDATION') ||
             $this->isSanEnabled() && in_array('WILDCARD', $this->features ?? []);
     }
     

@@ -193,11 +193,12 @@ class ProductsCreator extends AbstractController
 
         foreach ($periods as $period) {
             $price = ProductPrice::query()
+                ->where('api_product_id', '=', KeyToIdMapping::getIdByKey($productId))
                 ->where('period', '=', $period)
                 ->where('action', '=', "REQUEST")
                 ->first();
             $basePrice = $price == null
-                ? -1.00
+                ? 0.00
                 : ConfigurableOptionService::getBasePrice($currencies, $price, $defaultCurrency);
 
             switch ($period) {
