@@ -740,13 +740,6 @@ class home extends AbstractController
         return 'EMAIL';
     }
 
-    /**
-     * @throws Exception
-     */
-    private static function formatDate(string $date): string {
-        return  (new DateTimeImmutable($date))->format('Y-m-d H:i:s');
-    }
-
     public function getApprovalEmailsForDomainJSON($input, $vars = [])
     {
         $serviceId = $input['id'];

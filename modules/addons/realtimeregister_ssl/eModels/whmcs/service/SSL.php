@@ -49,8 +49,8 @@ class SSL extends Model
 
     public function setConfigdataKey($key, $value)
     {
-        $c                = (array) $this->configdata;
-        $c[$key]          = $value;
+        $c = (array)$this->configdata;
+        $c[$key] = $value;
         $this->configdata = $c;
     }
 
@@ -61,13 +61,13 @@ class SSL extends Model
 
     public function getConfigdataKey($key)
     {
-        $c = (array) $this->configdata;
+        $c = (array)$this->configdata;
         return $c[$key];
     }
 
     public function getConfigData()
     {
-        return (array) $this->configdata;
+        return (array)$this->configdata;
     }
 
     public function getCsr()
@@ -129,7 +129,7 @@ class SSL extends Model
     {
         $this->setConfigdataKey('orderStatus', $value);
     }
-    
+
     public function getOrderStatusDescription()
     {
         return $this->getConfigdataKey('order_status_description');
@@ -139,7 +139,7 @@ class SSL extends Model
     {
         $this->setConfigdataKey('order_status_description', $value);
     }
-    
+
     public function getApproverMethod()
     {
         return $this->getConfigdataKey('approver_method');
@@ -149,7 +149,7 @@ class SSL extends Model
     {
         $this->setConfigdataKey('approver_method', $value);
     }
-    
+
     public function getDcvMethod()
     {
         return $this->getConfigdataKey('dcv_method');
@@ -159,7 +159,7 @@ class SSL extends Model
     {
         $this->setConfigdataKey('dcv_method', $value);
     }
-    
+
     public function getProductId()
     {
         return $this->getConfigdataKey('product_id');
@@ -169,7 +169,7 @@ class SSL extends Model
     {
         $this->setConfigdataKey('product_id', $id);
     }
-    
+
     public function getProductBrand()
     {
         return $this->getConfigdataKey('product_brand');
@@ -197,39 +197,41 @@ class SSL extends Model
 
     public function setSansDomains($domains)
     {
-        $fields = (array) $this->getConfigdataKey('fields');
+        $fields = (array)$this->getConfigdataKey('fields');
         $fields['sans_domains'] = $domains;
         $this->setConfigdataKey('fields', $fields);
     }
 
     public function setApproverEmails($emails)
     {
-        $fields = (array) $this->getConfigdataKey('fields');
+        $fields = (array)$this->getConfigdataKey('fields');
         $fields['approveremails'] = $emails;
         $this->setConfigdataKey('fields', $fields);
     }
 
     public function setApproverEmail($email)
     {
-        $fields = (array) $this->getConfigdataKey('fields');
+        $fields = (array)$this->getConfigdataKey('fields');
         $fields['approveremail'] = $email;
         $this->setConfigdataKey('fields', $fields);
     }
 
-    public function getApproverEmail() {
-        return ((array) $this->getConfigdataKey('fields'))['approveremail']
+    public function getApproverEmail()
+    {
+        return ((array)$this->getConfigdataKey('fields'))['approveremail']
             ?? $this->getConfigdataKey('approveremail');
     }
 
-    public function getApproverEmails() {
-        return ((array) $this->getConfigdataKey('fields'))['approveremails'];
+    public function getApproverEmails()
+    {
+        return ((array)$this->getConfigdataKey('fields'))['approveremails'];
     }
-    
+
     public function setSubscriptionStarts($date)
     {
         $this->setConfigdataKey('begin_date', $date);
     }
-    
+
     public function getSubscriptionStarts()
     {
         return $this->getConfigdataKey('begin_date');
@@ -239,66 +241,67 @@ class SSL extends Model
     {
         $this->setConfigdataKey('end_date', $date);
     }
-    
+
     public function getSubscriptionEnd()
     {
         return $this->getConfigdataKey('end_date');
     }
-    
+
     public function setValidFrom($date)
     {
         $this->setConfigdataKey('valid_from', $date);
     }
-    
+
     public function getValidFrom()
     {
         return $this->getConfigdataKey('valid_from');
     }
-    
+
     public function setValidTill($date)
     {
         $this->setConfigdataKey('valid_till', $date);
     }
-    
+
     public function getDomain()
     {
         return $this->getConfigdataKey('domain');
     }
-    
+
     public function setDomain($domain)
     {
         $this->setConfigdataKey('domain', $domain);
     }
-    
+
     public function getValidTill()
     {
         return $this->getConfigdataKey('valid_till');
     }
-    
+
     public function setPartnerOrderId($id)
     {
         $this->setConfigdataKey('partner_order_id', $id);
     }
-    
+
     public function getPartnerOrderId()
     {
         return $this->getConfigdataKey('partner_order_id');
     }
-    
+
     public function getSanDetails()
     {
         return $this->getConfigdataKey('san_details');
     }
-    
+
     public function getSanDomains()
     {
         return $this->getConfigdataKey('fields');
     }
 
-    public function getCertificateId() {
+    public function getCertificateId()
+    {
         return $this->getConfigdataKey('certificateId');
     }
-    
+
     public function setSanDetails($details)
     {
         $this->setConfigdataKey('san_details', $details);
@@ -328,24 +331,24 @@ class SSL extends Model
                 $query = $query->where("$column", '=', "$value");
             }
         }
-        
+
         if ($realtimeregisterssl === true) {
             $query = Capsule::table('tblsslorders');
-            
+
             if (isset($where['serviceid']) && !empty($where['serviceid'])) {
                 $query = $query->where('serviceid', $where['serviceid']);
             }
-            
-            $query = $query->where(function($q) {
+
+            $query = $query->where(function ($q) {
                 $q->where('status', SSL::ACTIVE);
                 $q->orWhere('status', SSL::CONFIGURATION_SUBMITTED);
             });
-            
-            $query = $query->where(function($q) {
+
+            $query = $query->where(function ($q) {
                 $q->where('module', "realtimeregister_ssl");
             });
         }
-        
+
         return $query;
     }
 
@@ -406,13 +409,49 @@ class SSL extends Model
 
     /**
      * @param $id
-     * @return SSL|null
+     * @return SSL
      */
-    public static function getByServiceId($id) : ?SSL
+    public static function getByServiceId($id): SSL
     {
-        /** @var SSL|null */
+        /** @var SSL */
         return self::query()
             ->where('serviceid', '=', $id)
             ->first();
+    }
+
+    public function setAcmeCredentials(string $accountKey, string $hmacKey)
+    {
+        $this->setConfigdataKey("accountKey", encrypt($accountKey));
+        $this->setConfigdataKey("hmacKey", encrypt($hmacKey));
+    }
+
+    public function setDirectoryUrl(string $url)
+    {
+        $this->setConfigdataKey("directoryUrl", $url);
+    }
+
+    public function getAccountKey()
+    {
+        return decrypt($this->getConfigdataKey("accountKey"));
+    }
+
+    public function getHmacKey()
+    {
+        return decrypt($this->getConfigdataKey("hmacKey"));
+    }
+
+    public function getDirectoryUrl()
+    {
+        return $this->getConfigdataKey("directoryUrl");
+    }
+
+    public function setDomains(array $domains)
+    {
+        $this->setConfigdataKey("domains", $domains);
+    }
+
+    public function getDomains(): array
+    {
+        return $this->getConfigdataKey("domains");
     }
 }

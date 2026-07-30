@@ -52,7 +52,9 @@
                     }
                     const msg = payload.data?.message ?? '{$ADDONLANG->T('acmeConfigurationDone')}';
                     $('#AddonAlerts').alerts('success', msg);
-                    window.setTimeout(function () { window.location.href = 'clientarea.php?action=productdetails&id={$serviceid}'; }, 1200);
+                    setTimeout(() => {
+                        location.href = 'clientarea.php?action=productdetails&id={$serviceid}'
+                    }, 1200);
                 });
             });
         });
