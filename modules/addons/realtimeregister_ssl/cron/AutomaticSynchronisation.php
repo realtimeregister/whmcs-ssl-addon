@@ -45,6 +45,11 @@ class AutomaticSynchronisation extends BaseTask
                     continue;
                 }
 
+                if ($sslService->isAcmeProduct()) {
+                    // TODO
+                    continue;
+                }
+
                 $configdata = json_decode(json_encode($sslService->configdata), true);
                 if (!empty($configdata['domain'])) {
                     Capsule::table('tblhosting')->where('id', $serviceID)->update(['domain' => $configdata['domain']]);

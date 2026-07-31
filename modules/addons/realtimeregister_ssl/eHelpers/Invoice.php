@@ -172,9 +172,6 @@ class Invoice
 
     public function createInvoice($service, $product, $returnInvoiceID = false)
     {
-        $apiConfigRepo = new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository();
-        $input = (array)$apiConfigRepo->get();
-
         $dateFormat = 'Y-m-d';
 
         $dateInvoice = date($dateFormat);

@@ -1,6 +1,6 @@
 <script type="text/javascript" src="{$assetsURL}/js/addonLibs.js"></script>
 
-<div class="panel panel-default" style="text-align: left">
+<div class="panel panel-default addon-wrapper" style="text-align: left">
     <div class="panel-heading">
         <h2>{$productName}</h2>
     </div>
@@ -68,6 +68,20 @@
                         </table>
                     </td>
                 </tr>
+            <tr>
+                <td class="text-left"><strong>{$ADDONLANG->T('availableDomains')}</strong></td>
+                <td class="text-left">
+                    <span class="label label-default">
+                        {$ADDONLANG->T('domains')}: {$domainCount} / {$domainLimits}
+                    </span>
+                    <span class="label label-info">
+                        {$ADDONLANG->T('wildcardDomains')}: {$wildcardDomainCount} / {$wildcardLimits}
+                    </span>
+                    <span class="label label-success">
+                        {$ADDONLANG->T('totalDomains')}: {$domainCount + $wildcardDomainCount} / {$wildcardLimits + $domainLimits}
+                    </span>
+                </td>
+            </tr>
             </tbody>
         </table>
 
@@ -130,7 +144,7 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(function () {
         const serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1';
 
         function runAction(action, data, onSuccess) {
@@ -192,9 +206,9 @@
         });
 
         $('.remove-domain-btn').on('click', function () {
-            const domain = $(this).data('domain');
             if (!confirm('{$ADDONLANG->T('confirmRemoveDomain')}')) return;
 
+            const domain = $(this).data('domain');
             runAction('removeDomain', { domain });
         });
 

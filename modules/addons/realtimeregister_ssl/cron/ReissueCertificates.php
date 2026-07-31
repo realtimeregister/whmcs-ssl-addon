@@ -3,18 +3,17 @@
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
 use AddonModule\RealtimeRegisterSsl\Addon;
-use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
-use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLUtils;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiConfiguration;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use DateTime;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -203,6 +202,7 @@ class ReissueCertificates extends BaseTask
         $sslOrder->setRemoteId($reissueData->processId);
         $sslOrder->status = SSL::CONFIGURATION_SUBMITTED;
         $sslOrder->setConfigdataKey('csr', $csr);
+        $sslOrder->setCertificateSent(false);
         if ($privateKey) {
             $sslOrder->setPrivateKey($privateKey);
         }

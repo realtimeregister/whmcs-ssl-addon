@@ -8,6 +8,7 @@ use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
+use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiConfigRepo;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
@@ -37,7 +38,7 @@ class CertificateSender extends BaseTask
             foreach ($services->get() as $service) {
                 $product = $service->product();
                 //check if product is Realtime Register Ssl
-                if ($product->serverType != 'realtimeregister_ssl') {
+                if ($product->serverType != 'realtimeregister_ssl' || str_contains($product->{C::API_PRODUCT_ID}, 'acme')) {
                     continue;
                 }
 
@@ -116,7 +117,7 @@ class CertificateSender extends BaseTask
             $this->sslRepo = new SSLRepo();
         }
         $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
-        $sslService->setConfigdataKey('certificateSent', true);
+        $sslService->setCertificateSent(true);
         $sslService->save();
     }
 }

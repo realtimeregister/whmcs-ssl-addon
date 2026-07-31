@@ -283,3 +283,7 @@ $_LANG['serverCA']['home']['confirmRemoveDomain']       = 'Are you sure you want
 $_LANG['serverCA']['home']['domainRemoved']             = 'Domain removed successfully.';
 $_LANG['serverCA']['home']['acmeConfigurationDone']     = 'Configuration saved successfully.';
 $_LANG['serverCA']['home']['anErrorOccurred']           = 'An error occurred.';
+$_LANG['serverCA']['home']['availableDomains']           = 'Available domains';
+$_LANG['serverCA']['home']['domains']           = 'Domains';
+$_LANG['serverCA']['home']['wildcardDomains']           = 'Wildcard domains';
+$_LANG['serverCA']['home']['totalDomains']           = 'Total domains';

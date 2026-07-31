@@ -2,15 +2,14 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use AddonModule\RealtimeRegisterSsl\controllers\server\clientarea\Traits\AcmeTrait;
 use AddonModule\RealtimeRegisterSsl\eHelpers\ZipFileHelper;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use DateTime;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
@@ -22,12 +21,19 @@ class UpdateConfigData
 {
     private SSL $sslService;
     private array $orderdata;
+
+    use AcmeTrait;
     
     public function __construct(SSL $sslService, $orderdata = [])
     {
         $this->orderdata = [];
         try {
             $this->sslService = $sslService;
+            if ($sslService->isAcmeProduct()) {
+                $this->updateAcmeConfigData($sslService);
+                return;
+            }
+
             if (empty($orderdata)) {
                 $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
                 if ($sslService->getRemoteId()) {

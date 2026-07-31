@@ -66,14 +66,15 @@ trait AcmeTrait {
     private function acmeIndex($input, $product, SSL $sslService, $vars = [])
     {
         $domains = $sslService->getDomains();
-        list($domainLimits, $wildcardLimits) = $this->getDomainLimits($input['params']);
-
+        list($domainLimits, $wildcardLimits) = $this->getDomainLimits($input);
 
         $vars['serviceid'] = $input['params']['serviceid'];
         $vars['userid'] = $sslService->userid;
         $vars['productName'] = $product->name;
         $vars['validTill'] = self::formatDate($sslService->getValidTill()->date);
         $vars['domains'] = $domains;
+        $vars['domainCount'] = count(array_filter($domains, fn($domain) => !str_starts_with($domain, '*.')));
+        $vars['wildcardDomainCount'] = count(array_filter($domains, fn($domain) => str_starts_with($domain, '*.')));
         $vars['domainLimits'] = $domainLimits;
         $vars['wildcardLimits'] = $wildcardLimits;
         $vars['configurationStatus'] = $sslService->status;
@@ -202,29 +203,6 @@ trait AcmeTrait {
         );
 
         $this->updateAcmeConfigData($sslService);
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function showCertbotCommandJSON(array $input): array
-    {
-        $serviceId  = $input['params']['serviceid'];
-        $sslService = SSL::getByServiceId($serviceId);
-        $remoteId   = $sslService->getRemoteId();
-
-        /** @var AcmeApi $api */
-        $api = ApiProvider::getInstance()->getApi(AcmeApi::class);
-        $credentials = $api->credentials($remoteId);
-
-        $command = sprintf(
-            "certbot register \\\n  --server %s \\\n  --eab-kid %s \\\n  --eab-hmac-key %s",
-            $credentials->directoryUrl,
-            $credentials->accountKey,
-            $credentials->hmacKey
-        );
-
-        return ['command' => $command];
     }
 
     /**

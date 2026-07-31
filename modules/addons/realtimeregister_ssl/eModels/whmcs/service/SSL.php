@@ -11,6 +11,7 @@ use stdClass;
 /**
  * @property stdClass configdata
  * @property string status
+ * @property int serviceid
  */
 class SSL extends Model
 {
@@ -409,11 +410,11 @@ class SSL extends Model
 
     /**
      * @param $id
-     * @return SSL
+     * @return SSL | null
      */
-    public static function getByServiceId($id): SSL
+    public static function getByServiceId($id): ?SSL
     {
-        /** @var SSL */
+        /** @var SSL | null */
         return self::query()
             ->where('serviceid', '=', $id)
             ->first();
@@ -453,5 +454,15 @@ class SSL extends Model
     public function getDomains(): array
     {
         return $this->getConfigdataKey("domains");
+    }
+
+    public function isAcmeProduct() : bool
+    {
+        return $this->getDirectoryUrl() !== null;
+    }
+
+    public function setCertificateSent(bool $sent)
+    {
+        $this->setConfigdataKey('certificateSent', $sent);
     }
 }
