@@ -20,6 +20,7 @@ trait AcmeTrait {
      */
     private function validateDomainLimits($input, mixed $domains): mixed
     {
+        //TODO (NON_)WWW_INCLUDED
         if (count($domains) == 0) {
             throw new \InvalidArgumentException('No domains provided');
         }
@@ -60,18 +61,21 @@ trait AcmeTrait {
 
     /**
      * @throws System
+     * @throws \Exception
      */
     private function acmeIndex($input, $product, SSL $sslService, $vars = [])
     {
         $domains = $sslService->getDomains();
-        list($singleLimit, $wildcardLimits) = $this->getDomainLimits($input['params']);
+        list($domainLimits, $wildcardLimits) = $this->getDomainLimits($input['params']);
 
 
-        $vars['serviceid'] = $sslService->id;
+        $vars['serviceid'] = $input['params']['serviceid'];
         $vars['userid'] = $sslService->userid;
         $vars['productName'] = $product->name;
         $vars['validTill'] = self::formatDate($sslService->getValidTill()->date);
         $vars['domains'] = $domains;
+        $vars['domainLimits'] = $domainLimits;
+        $vars['wildcardLimits'] = $wildcardLimits;
         $vars['configurationStatus'] = $sslService->status;
         $vars['nextInvoiceDate'] = '';
         $vars['directoryUrl'] = $sslService->getDirectoryUrl();
@@ -141,6 +145,105 @@ trait AcmeTrait {
     /**
      * @throws \Exception
      */
+    public function addDomainsJSON(array $input) : void {
+        $domains = $input['domains'] ?? [];
+
+
+
+        $serviceId  = $input['params']['serviceid'];
+        $sslService = SSL::getByServiceId($serviceId);
+        $remoteId   = $sslService->getRemoteId();
+
+        /** @var AcmeApi $api */
+        $api = ApiProvider::getInstance()->getApi(AcmeApi::class);
+
+        $acmeSubscription = $api->get($remoteId);
+        $currentDomains = $acmeSubscription->domainNames;
+
+        //TODO (NON_)WWW_INCLUDED
+        $newDomains = array_unique(array_merge($acmeSubscription->domainNames, $domains));
+
+        $this->validateDomainLimits($input, $newDomains);
+
+        $api->update(
+            acmeSubscriptionId: $remoteId,
+            domainNames: $newDomains
+        );
+
+        $this->updateAcmeConfigData($sslService);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function removeDomainJSON(array $input) : void {
+        $domain = $input['domain'] ?? null;
+
+        if (empty($domain)) {
+            throw new \InvalidArgumentException('No domain provided');
+        }
+
+        $serviceId  = $input['params']['serviceid'];
+        $sslService = SSL::getByServiceId($serviceId);
+        $remoteId   = $sslService->getRemoteId();
+
+        /** @var AcmeApi $api */
+        $api = ApiProvider::getInstance()->getApi(AcmeApi::class);
+        $acmeSubscription = $api->get($remoteId);
+
+        $newDomains = array_values(array_filter($acmeSubscription->domainNames, fn($d) => $d !== $domain));
+        if (empty($newDomains)) {
+            throw new \InvalidArgumentException('Subscription needs at least one domain');
+        }
+
+        $api->update(
+            acmeSubscriptionId: $remoteId,
+            domainNames: $newDomains
+        );
+
+        $this->updateAcmeConfigData($sslService);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function showCertbotCommandJSON(array $input): array
+    {
+        $serviceId  = $input['params']['serviceid'];
+        $sslService = SSL::getByServiceId($serviceId);
+        $remoteId   = $sslService->getRemoteId();
+
+        /** @var AcmeApi $api */
+        $api = ApiProvider::getInstance()->getApi(AcmeApi::class);
+        $credentials = $api->credentials($remoteId);
+
+        $command = sprintf(
+            "certbot register \\\n  --server %s \\\n  --eab-kid %s \\\n  --eab-hmac-key %s",
+            $credentials->directoryUrl,
+            $credentials->accountKey,
+            $credentials->hmacKey
+        );
+
+        return ['command' => $command];
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function showCredentialsJSON(array $input): array
+    {
+        $type = $input['type'] ?? null;
+        $serviceId  = $input['params']['serviceid'];
+        $sslService = SSL::getByServiceId($serviceId);
+        if ($type === 'accountKey') {
+            return ['accountKey' => $sslService->getAccountKey()];
+        } else if ($type === 'hmacKey') {
+            return ['hmacKey' => $sslService->getHmacKey()];
+        }
+
+        return ['accountKey' => $sslService->getAccountKey(), 'hmacKey' => $sslService->getHmacKey()];
+    }
+
     public function updateAcmeConfigData(SSL $sslService) {
         $remoteId = $sslService->getRemoteId();
         /** @var AcmeApi $api */

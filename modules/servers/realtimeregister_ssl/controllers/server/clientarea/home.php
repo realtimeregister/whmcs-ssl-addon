@@ -47,8 +47,6 @@ class home extends AbstractController
                 return true;
             }
 
-            $disabledValidationMethods = [];
-
             $serviceId = $input['params']['serviceid'];
             $serviceBillingCycle = $input['params']['templatevars']['billingcycle'];
             $userid = $input['params']['userid'];
@@ -63,7 +61,6 @@ class home extends AbstractController
                 : Config::getInstance()->getConfigureSSLUrl($sslService->id, $serviceId);
             $vars['productName'] = $product->name;
             $vars['configurationStatus'] = $sslService->status;
-
             $vars['assetsURL'] = Server::I()->getAssetsURL();
 
 
@@ -73,6 +70,7 @@ class home extends AbstractController
                 {
                     return $this->acmeConfiguration($input, $product, $vars);
                 }
+
                 if ($sslService->status !== SSL::AWAITING_CONFIGURATION) {
                     return $this->acmeIndex($input, $product, $sslService, $vars);
                 }
@@ -259,8 +257,6 @@ class home extends AbstractController
                     //service billing cycle
                     $vars['serviceBillingCycle'] = $serviceBillingCycle;
 
-                    $disabledValidationMethods = [];
-
                     $product = new Product($input['params']['pid']);
                     $productssl = false;
                     $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
@@ -283,7 +279,6 @@ class home extends AbstractController
 
             $vars['custom_guide'] = $apiConf->custom_guide;
             $vars['visible_renew_button'] = $apiConf->visible_renew_button;
-            $vars['disabledValidationMethods'] = $disabledValidationMethods;
             $vars['allOk'] = true;
             $vars['assetsURL'] = Server::I()->getAssetsURL();
             $vars['serviceid'] = $serviceId;

@@ -85,6 +85,12 @@ class ProductsCreator extends AbstractController
             C::PRODUCT_ENABLE_SAN_WILDCARD => $input[C::PRODUCT_ENABLE_SAN_WILDCARD] ?: '',
         ];
 
+        $apiProduct = $this->apiProductsRepo->getProduct(KeyToIdMapping::getIdByKey($input[C::API_PRODUCT_ID]));
+
+        if ($apiProduct->isAcmeProduct()) {
+            $productData['configoptionsupgrade'] = 1;
+        }
+
         if (!empty($input['issued_ssl_message'])) {
             $productData[C::OPTION_ISSUED_SSL_MESSAGE] = $input['issued_ssl_message'];
         }
@@ -95,8 +101,6 @@ class ProductsCreator extends AbstractController
 
         $productModel = new ProductsRepo();
         $newProductId = $productModel->createNewProduct($productData);
-
-        $apiProduct = $this->apiProductsRepo->getProduct(KeyToIdMapping::getIdByKey($input[C::API_PRODUCT_ID]));
 
         self::insertPricing($input[C::API_PRODUCT_ID], $productData['paytype'], $newProductId, $apiProduct->getPeriods());
 

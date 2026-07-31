@@ -253,3 +253,33 @@ $_LANG['serverCA']['home']['contactSupport'] = 'Validation could not be complete
 $_LANG['serverCA']['home']['awaitingValidation'] = 'Awaiting validation';
 $_LANG['serverCA']['home']['failed'] = 'Failed';
 $_LANG['serverCA']['home']['cancelled'] = 'Cancelled';
+
+// ACME translations
+$_LANG['acmeSubscriptionConfigurationTitle']   = 'ACME Subscription Configuration';
+$_LANG['acmeSubscriptionConfigurationInfo']    = 'Use the form below to configure your ACME subscription. Enter the domains you want to include in your subscription.';
+$_LANG['acmeAddNewDomainsTitle']               = 'Add Domains';
+$_LANG['acmeAddNewDomainsDescription']         = 'Enter one domain per line. Wildcard domains should be prefixed with *.';
+$_LANG['availableDomains']                     = 'Available single domains';
+$_LANG['availableWildcards']                   = 'Available wildcard domains';
+$_LANG['acmeSubmitConfiguration']              = 'Submit Configuration';
+
+// ACME home page translations
+$_LANG['serverCA']['home']['configurationStatus']       = 'Configuration Status';
+$_LANG['serverCA']['home']['validTill']                 = 'Valid Till';
+$_LANG['serverCA']['home']['nextInvoiceDate']           = 'Next Invoice Date';
+$_LANG['serverCA']['home']['directoryUrl']              = 'Directory URL';
+$_LANG['serverCA']['home']['accountKey']                = 'Account Key';
+$_LANG['serverCA']['home']['hmacKey']                   = 'HMAC Key';
+$_LANG['serverCA']['home']['acmeDomainsLabel']          = 'Domains';
+$_LANG['serverCA']['home']['domain']                    = 'Domain';
+$_LANG['serverCA']['home']['remove']                    = 'Remove';
+$_LANG['serverCA']['home']['buyDomainSpace']            = 'Buy Domain Space';
+$_LANG['serverCA']['home']['addDomains']                = 'Add Domains';
+$_LANG['serverCA']['home']['showCertbotCommand']        = 'Show Certbot Command';
+$_LANG['serverCA']['home']['copyToClipboard']           = 'Copy to Clipboard';
+$_LANG['serverCA']['home']['cancel']                    = 'Cancel';
+$_LANG['serverCA']['home']['acmeDomainsPlaceholder']    = 'Enter one domain per line, e.g. example.com or *.example.com';
+$_LANG['serverCA']['home']['confirmRemoveDomain']       = 'Are you sure you want to remove this domain?';
+$_LANG['serverCA']['home']['domainRemoved']             = 'Domain removed successfully.';
+$_LANG['serverCA']['home']['acmeConfigurationDone']     = 'Configuration saved successfully.';
+$_LANG['serverCA']['home']['anErrorOccurred']           = 'An error occurred.';

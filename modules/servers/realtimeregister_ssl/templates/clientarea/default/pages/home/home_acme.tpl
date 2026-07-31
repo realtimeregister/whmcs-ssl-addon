@@ -15,12 +15,10 @@
                     <td class="text-left"><strong>{$ADDONLANG->T('configurationStatus')}</strong></td>
                     <td class="text-left">{$ADDONLANG->T($configurationStatus)}</td>
                 </tr>
-                {if $validTill}
                 <tr>
                     <td class="text-left"><strong>{$ADDONLANG->T('validTill')}</strong></td>
                     <td class="text-left">{$validTill}</td>
                 </tr>
-                {/if}
                 {if $nextInvoiceDate}
                 <tr>
                     <td class="text-left"><strong>{$ADDONLANG->T('nextInvoiceDate')}</strong></td>
@@ -28,18 +26,42 @@
                 </tr>
                 {/if}
                 <tr>
+                    <td class="text-left"><strong>{$ADDONLANG->T('directoryUrl')}</strong></td>
+                    <td class="text-left">{$directoryUrl}</td>
+                </tr>
+                <tr>
+                    <td class="text-left"><strong>{$ADDONLANG->T('accountKey')}</strong></td>
+                    <td class="text-left">
+                        <span id="account-key">********</span>
+                        <button type="button" class="btn btn-xs btn-default show-credential-btn" data-type="accountKey" style="margin-left: 6px;">Show</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-left"><strong>{$ADDONLANG->T('hmacKey')}</strong></td>
+                    <td class="text-left">
+                        <span id="hmac-key">********</span>
+                        <button type="button" class="btn btn-xs btn-default show-credential-btn" data-type="hmacKey" style="margin-left: 6px;">Show</button>
+                    </td>
+                </tr>
+                <tr>
                     <td class="text-left" style="vertical-align: top;"><strong>{$ADDONLANG->T('acmeDomainsLabel')}</strong></td>
                     <td class="text-left">
                         <table class="table table-condensed" style="margin-bottom: 0;">
                             <thead>
                                 <tr>
                                     <th>{$ADDONLANG->T('domain')}</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {foreach $domains as $domain}
                                 <tr>
                                     <td>{$domain}</td>
+                                    <td style="width: 1%; white-space: nowrap;">
+                                        <button type="button" class="btn btn-xs btn-danger remove-domain-btn" data-domain="{$domain}">
+                                            {$ADDONLANG->T('remove')}
+                                        </button>
+                                    </td>
                                 </tr>
                                 {/foreach}
                             </tbody>
@@ -48,5 +70,141 @@
                 </tr>
             </tbody>
         </table>
+
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-xs-12">
+                <a href="/upgrade.php?type=configoptions&id={$serviceid}" class="btn btn-primary">
+                    {$ADDONLANG->T('buyDomainSpace')}
+                </a>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addDomainsModal">
+                    {$ADDONLANG->T('addDomains')}
+                </button>
+                <button type="button" class="btn btn-default" id="showCertbotCommandBtn">
+                    {$ADDONLANG->T('showCertbotCommand')}
+                </button>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Certbot Command Modal -->
+<div class="modal fade" id="certbotCommandModal" tabindex="-1" role="dialog" aria-labelledby="certbotCommandModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="certbotCommandModalLabel">{$ADDONLANG->T('showCertbotCommand')}</h4>
+            </div>
+            <div class="modal-body">
+                <pre id="certbotCommandOutput" style="text-align: left;"></pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="copyCertbotCommandBtn">{$ADDONLANG->T('copyToClipboard')}</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$ADDONLANG->T('cancel')}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Domains Modal -->
+<div class="modal fade" id="addDomainsModal" tabindex="-1" role="dialog" aria-labelledby="addDomainsModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="addDomainsModalLabel">{$ADDONLANG->T('addDomains')}</h4>
+            </div>
+            <div class="modal-body">
+                <textarea id="addDomainsInput" rows="6" class="form-control" placeholder="{$ADDONLANG->T('acmeDomainsPlaceholder')}"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$ADDONLANG->T('cancel')}</button>
+                <button type="button" class="btn btn-primary" id="addDomainsSubmit">{$ADDONLANG->T('addDomains')}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        const serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1';
+
+        function runAction(action, data, onSuccess) {
+            data['addon-action'] = action;
+            $.post(serviceUrl, data, function (ret) {
+                ret = ret.replace("<JSONRESPONSE#", "").replace("#ENDJSONRESPONSE>", "");
+                const payload = JSON.parse(ret);
+                if (payload.result === 'error') {
+                    const errorMessage = payload.error || 'Error';
+                    $('#AddonAlerts').alerts('error', errorMessage);
+                    return;
+                }
+                const msg = payload.data?.message ?? '{$ADDONLANG->T('acmeConfigurationDone')}';
+                if (onSuccess) {
+                    onSuccess(payload);
+                    return;
+                }
+
+                $('#AddonAlerts').alerts('success', msg);
+                setTimeout(function () {
+                    location.reload();
+                }, 1200);
+            });
+        }
+
+        $('#copyCertbotCommandBtn').on('click', function () {
+            const text = $('#certbotCommandOutput').text();
+            navigator.clipboard.writeText(text).then(function () {
+                const $btn = $('#copyCertbotCommandBtn');
+                const original = $btn.text();
+                $btn.text('Copied!');
+                setTimeout(function () { $btn.text(original); }, 1500);
+            });
+        });
+
+        $('#showCertbotCommandBtn').on('click', function () {
+            $('#certbotCommandModal').modal('show');
+            runAction('showCredentials', {}, (payload) => {
+                const directoryUrl = `{$directoryUrl}`
+                {literal}
+                    $('#certbotCommandOutput').text(
+`certbot register \\
+--server ${directoryUrl} \\
+--eab-kid ${payload.data.accountKey} \\
+--eab-hmac-key ${payload.data.hmacKey}`);
+                {/literal}
+            })
+        });
+
+        $('.show-credential-btn').on('click', function () {
+            const type = $(this).data('type');
+            const targetId = type === 'accountKey' ? '#account-key' : '#hmac-key';
+            const $btn = $(this);
+
+            runAction('showCredentials', { type }, function (payload) {
+                $(targetId).text(payload.data[type]);
+                $btn.hide();
+            })
+        });
+
+        $('.remove-domain-btn').on('click', function () {
+            const domain = $(this).data('domain');
+            if (!confirm('{$ADDONLANG->T('confirmRemoveDomain')}')) return;
+
+            runAction('removeDomain', { domain });
+        });
+
+        $('#addDomainsSubmit').on('click', function () {
+            const domains = $('#addDomainsInput').val()
+                .split('\n')
+                .map(domain => domain.trim())
+                .filter(Boolean);
+
+            runAction('addDomains', { domains });
+        });
+    });
+</script>
