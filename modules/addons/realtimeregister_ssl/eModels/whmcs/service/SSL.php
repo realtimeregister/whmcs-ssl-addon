@@ -12,6 +12,7 @@ use stdClass;
  * @property stdClass configdata
  * @property string status
  * @property int serviceid
+ * @property int userid
  */
 class SSL extends Model
 {
@@ -25,8 +26,14 @@ class SSL extends Model
     public const EXPIRED = 'Expired';
     public const CANCELLED = 'Cancelled';
     public const ACTIVE = 'Active';
+    public const PENDING_ORGANIZATION_VALIDATION = 'Pending Organization Validation';
 
-    public const ACTIONS_AVAILABLE = [SSL::PENDING_INSTALLATION, SSL::FAILED_INSTALLATION, SSL::ACTIVE];
+    public const ACTIONS_AVAILABLE = [
+        SSL::PENDING_INSTALLATION,
+        SSL::PENDING_ORGANIZATION_VALIDATION,
+        SSL::FAILED_INSTALLATION,
+        SSL::ACTIVE
+    ];
 
     public function scopeWhereServiceId($query, $id)
     {

@@ -72,6 +72,7 @@ class home extends AbstractController
                 }
 
                 if ($sslService->status !== SSL::AWAITING_CONFIGURATION) {
+                    (new UpdateConfigData($sslService))->run();
                     return $this->acmeIndex($input, $product, $sslService, $vars);
                 }
             }

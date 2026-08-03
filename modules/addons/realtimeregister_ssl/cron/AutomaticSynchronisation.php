@@ -83,7 +83,7 @@ class AutomaticSynchronisation extends BaseTask
 
                 /** @var Certificate $sslOrder */
                 $sslOrder = $certificateApi
-                    ->listCertificates(1, null, null, ['process:eq' => $order->id])[0];
+                    ->listCertificates(1, null, null, ['process:eq' => $order->id])[0] ?? null;
 
                 //if certificate is active
                 if ($sslOrder) {
@@ -101,6 +101,8 @@ class AutomaticSynchronisation extends BaseTask
                      * If the status is suspended, we need some more data of the customer, so we send this person
                      * an email
                      */
+
+                    //TODO acme subscripions OV template
                     if (!$customerNotified) {
                         sendMessage(
                             EmailTemplateService::VALIDATION_INFORMATION_TEMPLATE_ID,

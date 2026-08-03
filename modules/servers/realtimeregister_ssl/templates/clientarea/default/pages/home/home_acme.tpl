@@ -69,7 +69,7 @@
                     </td>
                 </tr>
             <tr>
-                <td class="text-left"><strong>{$ADDONLANG->T('availableDomains')}</strong></td>
+                <td class="text-left"><strong>{$ADDONLANG->T('usedDomains')}</strong></td>
                 <td class="text-left">
                     <span class="label label-default">
                         {$ADDONLANG->T('domains')}: {$domainCount} / {$domainLimits}

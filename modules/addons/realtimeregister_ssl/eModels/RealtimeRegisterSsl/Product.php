@@ -2,6 +2,15 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl;
 
+/**
+ * @property string validationType
+ * @property string certificateType
+ * @property array features
+ * @property array periods
+ * @property int maxDomains
+ * @property int includedDomains
+ * @property string product
+ */
 class Product
 {
     public function isOrganizationRequired()
@@ -47,6 +56,10 @@ class Product
     {
         $periods = $this->getPeriods();
         return reset($periods);
+    }
+
+    public function getFeatures(): ?array {
+        return $this->features;
     }
     
     public function getPayType()
