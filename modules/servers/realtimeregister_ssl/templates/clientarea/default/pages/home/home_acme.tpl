@@ -71,10 +71,10 @@
             <tr>
                 <td class="text-left"><strong>{$ADDONLANG->T('usedDomains')}</strong></td>
                 <td class="text-left">
-                    <span class="label label-default">
+                    <span class="label label-default mr-1">
                         {$ADDONLANG->T('domains')}: {$domainCount} / {$domainLimits}
                     </span>
-                    <span class="label label-info">
+                    <span class="label label-info mr-1">
                         {$ADDONLANG->T('wildcardDomains')}: {$wildcardDomainCount} / {$wildcardLimits}
                     </span>
                     <span class="label label-success">
@@ -96,6 +96,9 @@
                 <button type="button" class="btn btn-default" id="showCertbotCommandBtn">
                     {$ADDONLANG->T('showCertbotCommand')}
                 </button>
+                {if $showRenewButton}
+                    <button type="button" id="btnRenew" class="btn btn-default">{$ADDONLANG->T('renew')}</button>
+                {/if}
             </div>
         </div>
     </div>
@@ -138,6 +141,42 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">{$ADDONLANG->T('cancel')}</button>
                 <button type="button" class="btn btn-primary" id="addDomainsSubmit">{$ADDONLANG->T('addDomains')}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalRenew" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content panel panel-primary">
+            <div class="modal-header panel-heading">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">{$ADDONLANG->T('Close')}</span>
+                </button>
+                <h4 class="modal-title">{$ADDONLANG->T('renewModalTitle')}</h4>
+            </div>
+            <div class="modal-body panel-body" id="modalRenewBody">
+
+                <div class="alert alert-success hidden" id="modalRenewSuccess">
+                    <strong>Success!</strong> <span></span>
+                </div>
+                <div class="alert alert-danger hidden" id="modalRenewDanger">
+                    <strong>Error!</strong> <span></span>
+                </div>
+                <form class="form-horizontal" role="form" id="modalRenewForm">
+                    <div class="col-sm-12" style="padding: 25px;">
+                        {$ADDONLANG->T('renewModalConfirmInformation')}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer panel-footer">
+                <button type="button" id="modalRenewSubmit" class="btn btn-primary">
+                    {$ADDONLANG->T('Submit')}
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    {$ADDONLANG->T('Close')}
+                </button>
             </div>
         </div>
     </div>
@@ -219,6 +258,18 @@
                 .filter(Boolean);
 
             runAction('addDomains', { domains });
+        });
+
+        $('#btnRenew').on('click', function () {
+            $('#modalRenew').modal('show');
+        });
+
+        $('#modalRenewSubmit').on('click', function () {
+            runAction('renew', {} , payload => {
+                const msg = payload.data?.message ?? '{$ADDONLANG->T('acmeConfigurationDone')}';
+                $('#AddonAlerts').alerts('success', msg);
+                setTimeout(function(){ location.replace('viewinvoice.php?id=' + payload.data.invoiceID) }, 2000);
+            });
         });
     });
 </script>

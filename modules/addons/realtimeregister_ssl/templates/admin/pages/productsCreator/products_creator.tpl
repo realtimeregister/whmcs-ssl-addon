@@ -105,7 +105,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2">{$ADDONLANG->T('productName')}</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" value="" required/>
+                    <input type="text" class="form-control" name="name" value=""/>
                 </div>
             </div>
 

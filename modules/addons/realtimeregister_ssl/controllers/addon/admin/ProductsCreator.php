@@ -100,6 +100,7 @@ class ProductsCreator extends AbstractController
         }
 
         $productModel = new ProductsRepo();
+        
         $newProductId = $productModel->createNewProduct($productData);
 
         self::insertPricing($input[C::API_PRODUCT_ID], $productData['paytype'], $newProductId, $apiProduct->getPeriods());

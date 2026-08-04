@@ -127,8 +127,9 @@ class AutomaticSynchronisation extends BaseTask
             );
 
             $this->output("synced")->write($updatedServices);
-            return $this;
         }
+
+        return $this;
     }
 
     private function checkIfSynchronized($serviceID): bool

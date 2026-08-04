@@ -44,7 +44,6 @@
                                 <textarea class="form-control addon-product-commission" name="custom_guide"></textarea>
                             </div>
                         </div>
-
                     <div class="row">
 
                         <div class="form-group">
@@ -360,9 +359,22 @@
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{$ADDONLANG->T('productName')}</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" name="product[{$product->id}][name]" value="{$product->name}">
+                                    <input type="text" class="form-control" name="product[{$product->id}][name]"
+                                           value="{$product->name}">
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <input type="hidden" name="product[{$product->id}][configoption3]"
+                                       value="on"/>
+                            </div>
+
+                            {if $product->apiConfig->isWildcardSanEnabled}
+                            <div class="form-group">
+                                <input type="hidden" name="product[{$product->id}][configoption13]"
+                                       value="on"/>
+                            </div>
+                            {/if}
 
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{$ADDONLANG->T('autoSetup')}</label>

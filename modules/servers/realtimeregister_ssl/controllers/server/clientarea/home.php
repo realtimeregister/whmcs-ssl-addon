@@ -818,20 +818,20 @@ class home extends AbstractController
 
         $product             = \WHMCS\Product\Product::where('id', '=' ,$productId)->first();
         $invoiceGenerator     = new Invoice();
-        $servicesAlreadyAdded = $invoiceGenerator->checkInvoiceAlreadyCreated($service->id);
+//        $servicesAlreadyAdded = $invoiceGenerator->checkInvoiceAlreadyCreated($service->id);
         $getInvoiceID         = false;
-        if ($jsonAction) {
-            $getInvoiceID = true;
-        }
-        $invoiceCounter = 0;
-                //have product, service
-        if ($servicesAlreadyAdded) {
-            if ($jsonAction) {
-                return [
-                    'invoiceID' => $invoiceGenerator->getLatestCreatedInvoiceInfo($service->id)['invoice_id']
-                ];
-            }
-        }
+//        if ($jsonAction) {
+//            $getInvoiceID = true;
+//        }
+//        $invoiceCounter = 0;
+//                //have product, service
+//        if ($servicesAlreadyAdded) {
+//            if ($jsonAction) {
+//                return [
+//                    'invoiceID' => $invoiceGenerator->getLatestCreatedInvoiceInfo($service->id)['invoice_id']
+//                ];
+//            }
+//        }
 
         return $invoiceGenerator->createInvoice($service, $product, $getInvoiceID);
     }

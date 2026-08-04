@@ -14,19 +14,26 @@ use RealtimeRegister\Domain\Approver;
 use RealtimeRegister\Domain\Enum\AcmeSubscriptionStatusEnum;
 use RealtimeRegister\Domain\Enum\FeatureEnum;
 
-;
-
 trait AcmeTrait
 {
+
+    private static function splitDomains (array $domains) : array {
+        $wildcardDomains = array_values(array_filter($domains, fn($domain) => str_starts_with($domain, '*.')));
+        $singleDomains = array_values(array_filter(
+            $domains, fn($domain) => !str_starts_with($domain, '*.')
+            && !in_array("*." . $domain, $wildcardDomains)));
+        return [$singleDomains, $wildcardDomains];
+    }
 
     /**
      * Validate domain limits based on product features and current domains
      *
+     * TODO: this is currently not correct if you lets say add example.com, then add *.example.com. Then it sees example2.com as free
      * @param $input
      * @param array $domains
      * @param array $currentDomains
      */
-    private function validateDomainLimits($input, array $domains, array $currentDomains = []): void
+    private function validateDomainLimits($input, array $domains, array $currentDomains = []): array
     {
         $apiProduct = (new Products())->getProduct(KeyToIdMapping::getIdByKey($input['params'][C::API_PRODUCT_ID]));
         $features = $apiProduct->getFeatures() ?? [];
@@ -35,17 +42,8 @@ trait AcmeTrait
         }
 
         list($singleLimit, $wildcardLimit) = $this->getDomainLimits($input);
-
-
-        $wildcardDomains = array_values(array_filter($domains, fn($domain) => str_starts_with($domain, '*.')));
-        $singleDomains = array_values(array_filter(
-            $domains, fn($domain) => !str_starts_with($domain, '*.')
-            && !in_array("*." . $domain, $wildcardDomains)));
-
-        $currentSingleDomains = array_values(array_filter(
-            $currentDomains, fn($domain) => !str_starts_with($domain, '*.')));
-        $currentWildcardDomains = array_values(
-                array_filter($currentDomains, fn($domain) => str_starts_with($domain, '*.')));
+        list($singleDomains, $wildcardDomains) = self::splitDomains($domains);
+        list($currentSingleDomains, $currentWildcardDomains) = self::splitDomains($currentDomains);
 
         if ($currentDomains) {
             $singleDomains = array_values(array_filter(
@@ -83,6 +81,8 @@ trait AcmeTrait
                 sprintf('Number of wildcard domains (%d) exceeds the allowed limit (%d).', $totalWildcardDomains, $wildcardLimit)
             );
         }
+
+        return array_merge($singleDomains, $wildcardDomains);
     }
 
     /**
@@ -119,7 +119,13 @@ trait AcmeTrait
         $vars['domainLimits'] = $domainLimits;
         $vars['wildcardLimits'] = $wildcardLimits;
         $vars['configurationStatus'] = $sslService->status;
-        $vars['nextInvoiceDate'] = '';
+
+        $isOneTime = strtolower($product->paytype) === 'onetime';
+        $validTill = new \DateTime($sslService->getValidTill()->date);
+        $daysUntilExpiry = (new \DateTime())->diff($validTill)->days;
+        $isExpiringSoon = $validTill > new \DateTime() && $daysUntilExpiry <= 30;
+        $vars['showRenewButton'] = $isOneTime && $isExpiringSoon;
+
         $vars['directoryUrl'] = $sslService->getDirectoryUrl();
 
         return [
@@ -171,7 +177,7 @@ trait AcmeTrait
     {
         $domains = $input['domains'] ?? [];
 
-        $this->validateDomainLimits($input, $domains);
+        //$paidNames = $this->validateDomainLimits($input, $domains);
 
         /**
          * @var AcmeApi $api

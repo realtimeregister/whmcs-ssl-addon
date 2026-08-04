@@ -21,7 +21,6 @@ use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
 use AddonModule\RealtimeRegisterSsl\Loader;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
-use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\Server;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -579,70 +578,6 @@ function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
     }
 }
 add_hook('ClientAreaSecondarySidebar', 1, 'realtimeregister_ssl_displaySSLSummaryInSidebar');
-
-function realtimeregister_ssl_overideProductPricingBasedOnDiscount($vars)
-{
-    require_once __DIR__ . DS . 'Loader.php';
-    new Loader();
-    AddonModule\RealtimeRegisterSsl\Addon::I(true);
-    //load module products
-    $products     = [];
-    $productModel = new Repository();
-    $properties = ["msetupfee", "asetupfee", "bsetupfee", "tsetupfee", "monthly", "annually", "biennially", "triennially"];
-
-    if(isset($_SESSION['uid']) && !empty($_SESSION['uid'])) {
-        $clientCurrency = getCurrency($_SESSION['uid'])['id'];
-    } else {
-        $currency = Capsule::table('tblcurrencies')->where('default', '1')->first();
-        $clientCurrency['id'] = isset($_SESSION['currency']) && !empty($_SESSION['currency']) ? $_SESSION['currency']
-            : $currency->id;
-    }
-    // get Realtime Register Ssl all products
-    foreach ($productModel->getModuleProducts() as $product) {
-        if($product->servertype != 'realtimeregister_ssl') {
-            continue;
-        }
-
-        if ($product->id == $vars['pid']) {
-            $percentage = AddonModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue($vars);
-            if (!$percentage) {
-                return [];
-            }
-
-            $configoptions = $vars['proddata']['configoptions'];
-            $discount = 0;
-
-            foreach ($configoptions as $optionId => $value) {
-                $option = ConfigurableOptionService::getConfigOptionById($optionId);
-                if (str_contains($option->optionname, 'sans')) {
-                    $optionSub = ConfigurableOptionService::getConfigOptionSubByOptionId($optionId);
-                    $pricing = Capsule::table("tblpricing")
-                        ->where("relid", "=", $optionSub->id)
-                        ->where("currency", "=", $clientCurrency)
-                        ->first();
-                    $quantity = $value;
-                } else {
-                    $pricing = Capsule::table("tblpricing")
-                        ->where("relid", "=", $value)
-                        ->where("currency", "=", $clientCurrency)
-                        ->first();
-                    $quantity = 1;
-                }
-                foreach($properties as $property) {
-                    $discount -= floatval($pricing->{$property}) * $quantity;
-                }
-            }
-
-            if ($discount) {
-                return ['recurring' => $discount / 100 * $percentage];
-            }
-        }
-    }
-
-    return [];
-}
-
-add_hook('OrderProductPricingOverride', 1, 'realtimeregister_ssl_overideProductPricingBasedOnDiscount');
 
 
 add_hook('InvoiceCreation', 1, function($vars) {

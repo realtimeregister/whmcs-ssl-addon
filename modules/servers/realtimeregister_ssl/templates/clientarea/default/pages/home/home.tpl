@@ -311,7 +311,7 @@
             sidebarItem.hide();
 
             let serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1',
-                    renewBtn = $('#btnRenew'),
+                    renewBtnrenewBtn = $('#btnRenew'),
                     renewForm,
                     renewModal,
                     renewBody,
@@ -355,7 +355,7 @@
                 renewBtn.attr('onclick', '');
             }
 
-            function bindModalFrorenewBtn() {
+            function bindModalForRenewBtn() {
                 renewBtn.off().on('click', function () {
                     renewModal.modal('show');
                     show(renewSubmitBtn);
@@ -485,7 +485,7 @@
             moveModalToBody();
             renewForm.trigger("reset");
             unbindOnClickForrenewBtn();
-            bindModalFrorenewBtn();
+            bindModalForRenewBtn();
             bindSubmitBtn();
         });
     </script>
