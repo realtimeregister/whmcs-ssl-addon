@@ -8,6 +8,7 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
+use DateTime;
 use InvalidArgumentException;
 use RealtimeRegister\Api\AcmeApi;
 use RealtimeRegister\Domain\Approver;
@@ -17,7 +18,8 @@ use RealtimeRegister\Domain\Enum\FeatureEnum;
 trait AcmeTrait
 {
 
-    private static function splitDomains (array $domains) : array {
+    private static function splitDomains(array $domains): array
+    {
         $wildcardDomains = array_values(array_filter($domains, fn($domain) => str_starts_with($domain, '*.')));
         $singleDomains = array_values(array_filter(
             $domains, fn($domain) => !str_starts_with($domain, '*.')
@@ -25,13 +27,21 @@ trait AcmeTrait
         return [$singleDomains, $wildcardDomains];
     }
 
+    private static function splitCurrentDomains(array $domains): array
+    {
+        $wildcardDomains = array_values(array_filter($domains, fn($domain) => str_starts_with($domain->domainName, '*.')));
+        $singleDomains = array_values(array_filter($domains,
+            fn($domain) => !str_starts_with($domain->domainName, '*.') && $domain->isCharged));
+        return [$singleDomains, $wildcardDomains];
+    }
+
     /**
      * Validate domain limits based on product features and current domains
      *
-     * TODO: this is currently not correct if you lets say add example.com, then add *.example.com. Then it sees example2.com as free
      * @param $input
      * @param array $domains
      * @param array $currentDomains
+     * @return array
      */
     private function validateDomainLimits($input, array $domains, array $currentDomains = []): array
     {
@@ -43,7 +53,7 @@ trait AcmeTrait
 
         list($singleLimit, $wildcardLimit) = $this->getDomainLimits($input);
         list($singleDomains, $wildcardDomains) = self::splitDomains($domains);
-        list($currentSingleDomains, $currentWildcardDomains) = self::splitDomains($currentDomains);
+        list($currentSingleDomains, $currentWildcardDomains) = self::splitCurrentDomains($currentDomains);
 
         if ($currentDomains) {
             $singleDomains = array_values(array_filter(
@@ -108,22 +118,24 @@ trait AcmeTrait
     {
         $domains = $sslService->getDomains();
         list($domainLimits, $wildcardLimits) = $this->getDomainLimits($input);
+        list($domainCount, $wildcardDomainCount) = $this->splitCurrentDomains($domains);
+
 
         $vars['serviceid'] = $input['params']['serviceid'];
         $vars['userid'] = $sslService->userid;
         $vars['productName'] = $product->name;
         $vars['validTill'] = self::formatDate($sslService->getValidTill()->date);
         $vars['domains'] = $domains;
-        $vars['domainCount'] = count(array_filter($domains, fn($domain) => !str_starts_with($domain, '*.')));
-        $vars['wildcardDomainCount'] = count(array_filter($domains, fn($domain) => str_starts_with($domain, '*.')));
+        $vars['domainCount'] = count($domainCount);
+        $vars['wildcardDomainCount'] = count($wildcardDomainCount);
         $vars['domainLimits'] = $domainLimits;
         $vars['wildcardLimits'] = $wildcardLimits;
         $vars['configurationStatus'] = $sslService->status;
 
         $isOneTime = strtolower($product->paytype) === 'onetime';
-        $validTill = new \DateTime($sslService->getValidTill()->date);
-        $daysUntilExpiry = (new \DateTime())->diff($validTill)->days;
-        $isExpiringSoon = $validTill > new \DateTime() && $daysUntilExpiry <= 30;
+        $validTill = new DateTime($sslService->getValidTill()->date);
+        $daysUntilExpiry = (new DateTime())->diff($validTill)->days;
+        $isExpiringSoon = $validTill > new DateTime() && $daysUntilExpiry <= 30;
         $vars['showRenewButton'] = $isOneTime && $isExpiringSoon;
 
         $vars['directoryUrl'] = $sslService->getDirectoryUrl();
@@ -177,7 +189,7 @@ trait AcmeTrait
     {
         $domains = $input['domains'] ?? [];
 
-        //$paidNames = $this->validateDomainLimits($input, $domains);
+        $paidNames = $this->validateDomainLimits($input, $domains);
 
         /**
          * @var AcmeApi $api
@@ -221,7 +233,7 @@ trait AcmeTrait
         $sslService->setRemoteId($response->id);
         $sslService->setAcmeCredentials($response->accountKey, $response->hmacKey);
         $sslService->setDirectoryUrl($response->directoryUrl);
-        $this->updateAcmeConfigData($sslService);
+        $this->updateAcmeConfigData($sslService, $domains, $paidNames);
 
 
         $sslService->save();
@@ -243,20 +255,16 @@ trait AcmeTrait
         $api = ApiProvider::getInstance()->getApi(AcmeApi::class);
 
         $acmeSubscription = $api->get($remoteId);
-        $currentDomains = $acmeSubscription->domainNames;
 
-        $this->validateDomainLimits($input, $domains, $currentDomains);
-
+        $paidNames = $this->validateDomainLimits($input, $domains, $sslService->getDomains());
         $newDomains = array_unique(array_merge($acmeSubscription->domainNames, $domains));
-
-        $this->validateDomainLimits($input, $newDomains);
 
         $api->update(
             acmeSubscriptionId: $remoteId,
             domainNames: $newDomains
         );
 
-        $this->updateAcmeConfigData($sslService);
+        $this->updateAcmeConfigData($sslService, $domains, $paidNames);
     }
 
     /**
@@ -288,6 +296,7 @@ trait AcmeTrait
             domainNames: $newDomains
         );
 
+        $this->removeDomain($sslService, $domain);
         $this->updateAcmeConfigData($sslService);
     }
 
@@ -308,7 +317,7 @@ trait AcmeTrait
         return ['accountKey' => $sslService->getAccountKey(), 'hmacKey' => $sslService->getHmacKey()];
     }
 
-    public function updateAcmeConfigData(SSL $sslService)
+    public function updateAcmeConfigData(SSL $sslService, $newNames = [], $paidNames = [])
     {
 
         $remoteId = $sslService->getRemoteId();
@@ -324,9 +333,41 @@ trait AcmeTrait
             $sslService->setSSLStatus(AcmeSubscriptionStatusEnum::ACTIVE);
         }
 
-        $domains = $acmeSubscription->domainNames;
-        $sslService->setDomains($domains);
         $sslService->setValidTill($acmeSubscription->expiryDate);
+        $this->addDomains($sslService, $newNames, $paidNames);
         $sslService->save();
+    }
+
+    private function addDomains(SSL $sslService, array $newNames, array $paidNames)
+    {
+        $domains = $sslService->getDomains();
+        foreach ($paidNames as $paidName) {
+            if (!in_array($paidName, array_values(array_map(fn($domain) => $domain->domainName, $domains)))) {
+                $domains[] = $this->getAcmeDomain($paidName, true);
+            }
+        }
+
+        foreach ($newNames as $newName) {
+            if (!in_array($newName, array_values(array_map(fn($domain) => $domain->domainName, $domains)))) {
+                $domains[] = $this->getAcmeDomain($newName, false);
+            }
+        }
+        $sslService->setDomains($domains);
+    }
+
+    private function getAcmeDomain(string $domainName, bool $isCharged)
+    {
+        return (object) [
+            'domainName' => $domainName,
+            'addedOn' => (new DateTime())->format('Y-m-d H:i:s'),
+            'isCharged' => $isCharged
+        ];
+    }
+
+    private function removeDomain(SSL $sslService, string $domain)
+    {
+        $domains = $sslService->getDomains();
+        $domains = array_values(array_filter($domains, fn($domainObj) => $domainObj->domainName !== $domain));
+        $sslService->setDomains($domains);
     }
 }

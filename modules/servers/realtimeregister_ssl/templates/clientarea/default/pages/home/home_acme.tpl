@@ -50,15 +50,17 @@
                             <thead>
                                 <tr>
                                     <th>{$ADDONLANG->T('domain')}</th>
+                                    <th>{$ADDONLANG->T('addedOn')}</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {foreach $domains as $domain}
                                 <tr>
-                                    <td>{$domain}</td>
+                                    <td>{$domain->domainName}</td>
+                                    <td>{$domain->addedOn}</td>
                                     <td style="width: 1%; white-space: nowrap;">
-                                        <button type="button" class="btn btn-xs btn-danger remove-domain-btn" data-domain="{$domain}">
+                                        <button type="button" class="btn btn-xs btn-danger remove-domain-btn" data-domain="{$domain->domainName}">
                                             {$ADDONLANG->T('remove')}
                                         </button>
                                     </td>

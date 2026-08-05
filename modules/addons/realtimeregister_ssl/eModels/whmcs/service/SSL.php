@@ -460,7 +460,7 @@ class SSL extends Model
 
     public function getDomains(): array
     {
-        return $this->getConfigdataKey("domains");
+        return $this->getConfigdataKey("domains") ?? [];
     }
 
     public function isAcmeProduct() : bool
@@ -472,4 +472,5 @@ class SSL extends Model
     {
         $this->setConfigdataKey('certificateSent', $sent);
     }
+
 }

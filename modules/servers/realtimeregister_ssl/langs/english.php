@@ -182,6 +182,31 @@ $_LANG['confOrganizationStateRegion'] = 'State / Region';
 
 $_LANG['anErrorOccurred'] = 'An error occurred';
 
+$_LANG['serverCA']['home']['acmeSubscriptionConfigurationTitle']  = 'ACME Subscription Configuration';
+$_LANG['serverCA']['home']['acmeSubscriptionConfigurationInfo']   = 'Use this form to configure your ACME subscription. Enter the domains you want to include and, if required, provide your organization and approver details.';
+$_LANG['serverCA']['home']['acmeAddNewDomainsTitle']              = 'Add New Domains';
+$_LANG['serverCA']['home']['acmeAddNewDomainsDescription']        = 'Enter one domain per line. Wildcard domains should be prefixed with *.';
+$_LANG['serverCA']['home']['availableDomains']                    = 'Available Domains';
+$_LANG['serverCA']['home']['availableWildcards']                  = 'Available Wildcards';
+$_LANG['serverCA']['home']['acmeDomainsLabel']                    = 'Domains';
+$_LANG['serverCA']['home']['acmeOrganizationFieldsTitle']         = 'Organization Information';
+$_LANG['serverCA']['home']['acmeOrganizationFieldsDescription']   = 'Please provide the organization details associated with this certificate.';
+$_LANG['serverCA']['home']['addressLabel']                        = 'Address';
+$_LANG['serverCA']['home']['cityLabel']                           = 'City';
+$_LANG['serverCA']['home']['postalCodeLabel']                     = 'Postal Code';
+$_LANG['serverCA']['home']['acmeApproverFieldsTitle']             = 'Approver Information';
+$_LANG['serverCA']['home']['acmeApproverFieldsDescription']       = 'Please provide the details of the person who will approve this certificate request.';
+$_LANG['serverCA']['home']['approverFirstNameLabel']              = 'First Name';
+$_LANG['serverCA']['home']['approverLastNameLabel']               = 'Last Name';
+$_LANG['serverCA']['home']['approverJobTitleLabel']               = 'Job Title';
+$_LANG['serverCA']['home']['approverEmailLabel']                  = 'Email Address';
+$_LANG['serverCA']['home']['approverVoiceLabel']                  = 'Phone Number';
+$_LANG['serverCA']['home']['acmeSubmitConfiguration']             = 'Submit Configuration';
+$_LANG['serverCA']['home']['acmeConfigurationDone']               = 'Configuration saved successfully.';
+$_LANG['serverCA']['home']['awaitingConfiguration']               = 'Awaiting Configuration';
+$_LANG['serverCA']['home']['addedOn']                             = 'Added On';
+$_LANG['serverCA']['home']['productName']                             = 'Product Name';
+
 $_LANG['sslcertSelectVerificationMethodTitle']       = 'Certificate Verification';
 $_LANG['sslcertSelectVerificationMethodDescription'] = 'You must now choose from the options below  in order to pass Domain Control Validation (DCV) process.';
 $_LANG['stepTwoTableLabelDomain']                    = 'Domain';
