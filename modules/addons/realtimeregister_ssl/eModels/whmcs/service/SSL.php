@@ -325,7 +325,7 @@ class SSL extends Model
         $this->setConfigdataKey('total_domains', $domains);
     }
 
-    public function getSSLStatus(): string
+    public function getSSLStatus(): ?string
     {
         return $this->getConfigdataKey('ssl_status');
     }

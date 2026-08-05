@@ -24,7 +24,7 @@ use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
 use AddonModule\RealtimeRegisterSsl\models\productPrice\ProductPrice;
 use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
-use WHMCS\Database\Capsule;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Configuration extends AbstractConfiguration
 {
@@ -80,9 +80,15 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public const VERSION = '1.6.0';
+    public const VERSION = '1.7.0';
     public $tablePrefix = '';
     public $modelRegister = [];
+
+    private static function updateProducts()
+    {
+        Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
+        Products::fetchProducts();
+    }
 
     private static function updateProductPricing(): void
     {
@@ -466,6 +472,7 @@ class Configuration extends AbstractConfiguration
         self::updateExpiryHandlerTask();
         self::updateTaskPriority();
         self::updateRenewConfiguration();
+        self::updateProducts();
     }
 
     private static function updateRenewConfiguration(): void
