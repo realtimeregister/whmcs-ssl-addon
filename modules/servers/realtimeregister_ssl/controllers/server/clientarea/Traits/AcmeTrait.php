@@ -257,7 +257,7 @@ trait AcmeTrait
         $acmeSubscription = $api->get($remoteId);
 
         $paidNames = $this->validateDomainLimits($input, $domains, $sslService->getDomains());
-        $newDomains = array_unique(array_merge($acmeSubscription->domainNames, $domains));
+        $newDomains = array_values(array_unique(array_merge($acmeSubscription->domainNames, $domains)));
 
         $api->update(
             acmeSubscriptionId: $remoteId,

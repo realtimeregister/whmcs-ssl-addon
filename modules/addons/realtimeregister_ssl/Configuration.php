@@ -23,7 +23,6 @@ use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as APICon
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrdersRepo;
 use AddonModule\RealtimeRegisterSsl\models\productPrice\ProductPrice;
-use AddonModule\RealtimeRegisterSsl\models\userDiscount\Repository as UserDiscountRepo;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Configuration extends AbstractConfiguration
@@ -415,7 +414,6 @@ class Configuration extends AbstractConfiguration
     {
         (new APIConfigurationRepo())->createApiConfigurationTable();
         ProductPrice::createApiProductsPricesTable();
-        (new UserDiscountRepo())->createUserDiscountTable();
         (new LogsRepo())->createLogsTable();
         (new OrdersRepo())->createOrdersTable();
         (new KeyToIdMapping())->createTable();
@@ -439,7 +437,6 @@ class Configuration extends AbstractConfiguration
         if ($apiConfiguration->delete_configuration_after_module_disable) {
             (new APIConfigurationRepo())->dropApiConfigurationTable();
             ProductPrice::dropApiProductsPricesTable();
-            (new UserDiscountRepo())->dropUserDiscountTable();
             (new LogsRepo())->dropLogsTable();
             (new OrdersRepo())->dropOrdersTable();
             (new KeyToIdMapping())->dropTable();
@@ -473,6 +470,7 @@ class Configuration extends AbstractConfiguration
         self::updateTaskPriority();
         self::updateRenewConfiguration();
         self::updateProducts();
+        Capsule::schema()->dropIfExists('REALTIMEREGISTERSSL_user_discount');
     }
 
     private static function updateRenewConfiguration(): void

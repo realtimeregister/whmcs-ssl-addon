@@ -42,7 +42,7 @@
             <table class="table table-bordered" style="margin-bottom: 10px;">
                 <tbody>
                     <tr>
-                        <td style="width: 25%;"><label for="organization">{$ADDONLANG->T('organizationLabel')}</label></td>
+                        <td style="width: 25%;"><label for="organization">{$ADDONLANG->absoluteT('clientareacompanyname')}</label></td>
                         <td><input type="text" id="organization" class="form-control" value="{$prefillOrganization}" /></td>
                     </tr>
                     <tr>
@@ -50,15 +50,15 @@
                         <td><input type="text" id="address" class="form-control" value="{$prefillAddress}" /></td>
                     </tr>
                     <tr>
-                        <td style="width: 25%;"><label for="city">{$ADDONLANG->T('cityLabel')}</label></td>
+                        <td style="width: 25%;"><label for="city">{$ADDONLANG->absoluteT('clientareacity')}</label></td>
                         <td><input type="text" id="city" class="form-control" value="{$prefillCity}" /></td>
                     </tr>
                     <tr>
-                        <td style="width: 25%;"><label for="state">{$ADDONLANG->T('stateLabel')}</label></td>
+                        <td style="width: 25%;"><label for="state">{$ADDONLANG->absoluteT('clientareastate')}</label></td>
                         <td><input type="text" id="state" class="form-control" value="{$prefillState}" /></td>
                     </tr>
                     <tr>
-                        <td style="width: 25%;"><label for="postalCode">{$ADDONLANG->T('postalCodeLabel')}</label></td>
+                        <td style="width: 25%;"><label for="postalCode">{$ADDONLANG->absoluteT('clientareapostcode')}</label></td>
                         <td><input type="text" id="postalCode" class="form-control" value="{$prefillPostalCode}" /></td>
                     </tr>
                     <tr>
@@ -77,11 +77,11 @@
             <table class="table table-bordered" style="margin-bottom: 10px;">
                 <tbody>
                     <tr>
-                        <td style="width: 25%;"><label for="approverFirstName">{$ADDONLANG->T('approverFirstNameLabel')}</label></td>
+                        <td style="width: 25%;"><label for="approverFirstName">{$ADDONLANG->absoluteT('clientareafirstname')}</label></td>
                         <td><input type="text" id="approverFirstName" class="form-control" value="{$prefillFirstName}" /></td>
                     </tr>
                     <tr>
-                        <td style="width: 25%;"><label for="approverLastName">{$ADDONLANG->T('approverLastNameLabel')}</label></td>
+                        <td style="width: 25%;"><label for="approverLastName">{$ADDONLANG->absoluteT('clientarealastname')}</label></td>
                         <td><input type="text" id="approverLastName" class="form-control" value="{$prefillLastName}" /></td>
                     </tr>
                     <tr>
@@ -89,11 +89,11 @@
                         <td><input type="text" id="approverJobTitle" class="form-control" /></td>
                     </tr>
                     <tr>
-                        <td style="width: 25%;"><label for="approverEmail">{$ADDONLANG->T('approverEmailLabel')}</label></td>
+                        <td style="width: 25%;"><label for="approverEmail">{$ADDONLANG->absoluteT('clientareaemail')}</label></td>
                         <td><input type="email" id="approverEmail" class="form-control" value="{$prefillEmail}" /></td>
                     </tr>
                     <tr>
-                        <td style="width: 25%;"><label for="approverVoice">{$ADDONLANG->T('approverVoiceLabel')}</label></td>
+                        <td style="width: 25%;"><label for="approverVoice">{$ADDONLANG->absoluteT('clientareaphonenumber')}</label></td>
                         <td><input type="text" id="approverVoice" class="form-control" /></td>
                     </tr>
                 </tbody>
