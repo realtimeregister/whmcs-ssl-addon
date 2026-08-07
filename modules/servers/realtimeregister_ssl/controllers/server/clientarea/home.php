@@ -96,7 +96,7 @@ class home extends AbstractController
 
                 $configDataUpdate = new UpdateConfigData($sslService, [
                     'status' => $process->status,
-                    'dcv' => $infoProcess['validations']['dcv'],
+                    'dcv' => $infoProcess['validations']['dcv'] ?? [],
                     'action' => $process->action
                 ]);
 

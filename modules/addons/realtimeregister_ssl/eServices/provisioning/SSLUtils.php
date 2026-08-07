@@ -3,16 +3,16 @@
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Api\Panel\Panel;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Deploy\Manage;
-use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
-use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiConfRepo;
-use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\Dns\DnsControl;
 use AddonModule\RealtimeRegisterSsl\eServices\ManagementPanel\File\FileControl;
+use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiConfRepo;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
@@ -353,6 +353,9 @@ trait SSLUtils
 
     public function mapDcvType($type)
     {
+        if ($type == null) {
+            return null;
+        }
         if (strtoupper($type) === 'HTTP') {
             return 'FILE';
         }

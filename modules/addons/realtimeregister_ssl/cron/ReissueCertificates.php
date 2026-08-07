@@ -3,18 +3,17 @@
 namespace AddonModule\RealtimeRegisterSsl\cron;
 
 use AddonModule\RealtimeRegisterSsl\Addon;
-use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
-use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\GenerateCSR;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\SSLUtils;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiConfiguration;
+use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use DateTime;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -150,6 +149,7 @@ class ReissueCertificates extends BaseTask
         ];
 
         // SANs DCV
+        $mainDcvType = $dcv[0]['type'];
         $sans = [];
         $allSans = $sslOrder->getSanDetails() ?? [];
 
@@ -157,7 +157,7 @@ class ReissueCertificates extends BaseTask
             $sans[] = $san->san_name;
             $dcv[] = [
                 'commonName' => $san->san_name,
-                'type' => $this->mapDcvType($san->method),
+                'type' => $this->mapDcvType($san->method) ?? $mainDcvType,
                 'email' => $san->email ?? $this->getApproverEmail($sslOrder, $commonName)
             ];
         }
