@@ -401,4 +401,14 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     {
         $this->setConfigdataKey("certificateId", $id);
     }
+
+    public function setStatusDetail(string $statusDetail)
+    {
+        $this->setConfigdataKey("statusDetail", $statusDetail);
+    }
+
+    public function getStatusDetail() : ?string
+    {
+        return $this->getConfigdataKey("statusDetail");
+    }
 }

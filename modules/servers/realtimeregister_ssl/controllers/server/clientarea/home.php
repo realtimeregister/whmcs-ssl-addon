@@ -82,8 +82,8 @@ class home extends AbstractController
                 /** @var ProcessesApi $processesApi */
                 $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
                 $infoProcess = [];
-                $apicertdata = $processesApi->get($sslService->getRemoteId())->toArray();
-                if (!in_array($apicertdata['status'], [
+                $process = $processesApi->get($sslService->getRemoteId());
+                if (!in_array($process->status, [
                     ProcessStatusEnum::STATUS_COMPLETED,
                     ProcessStatusEnum::STATUS_FAILED,
                     ProcessStatusEnum::STATUS_CANCELLED
@@ -95,8 +95,9 @@ class home extends AbstractController
                 }
 
                 $configDataUpdate = new UpdateConfigData($sslService, [
-                    'status' => $apicertdata['status'],
-                    'dcv' => $infoProcess['validations']['dcv']
+                    'status' => $process->status,
+                    'dcv' => $infoProcess['validations']['dcv'],
+                    'action' => $process->action
                 ]);
 
                 $configDataUpdate->run();
@@ -172,6 +173,8 @@ class home extends AbstractController
                     if (!empty($certificateDetails['domain'])) {
                         $vars['domain'] = $certificateDetails['domain'];
                     }
+
+                    $vars['statusDetail'] = $sslService->getStatusDetail();
 
                     if (!empty($certificateDetails['san_details'])) {
                         foreach ($certificateDetails['san_details'] as $san) {

@@ -2,15 +2,13 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eHelpers\ZipFileHelper;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use DateTime;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
@@ -47,6 +45,7 @@ class UpdateConfigData
                     $this->orderdata = [
                         'status' => $process->status,
                         'dcv' => $infoProcess['validations']['dcv'],
+                        'action' => $process->action,
                         'domain' => $process->identifier
                     ];
                 } else {
@@ -183,6 +182,8 @@ class UpdateConfigData
                 $sslOrder->setCompletionDate(new DateTime());
             }
 
+            $sslOrder->setStatusDetail('issued');
+
             $sslOrder->save();
             return $sslOrder;
         }
@@ -192,10 +193,20 @@ class UpdateConfigData
         $sslOrder->configdata = array_merge(json_decode($currentOrder->data ?? '{}', true), (array) $sslOrder->configdata);
         $sslOrder->setDomain($sslOrder->getDomain() ?? $this->orderdata['domain']);
 
+
+        if ($this->orderdata['action'] === 'reissue') {
+            $sslOrder->setStatusDetail('pendingReissue');
+        } elseif ($this->orderdata['action'] == 'renew') {
+            $sslOrder->setStatusDetail('pendingRenew');
+        }
+
         if (isset($this->orderdata['status'])) {
             $sslOrder->setSSLStatus($this->orderdata['status']);
             $sslOrder->setOrderStatusDescription($this->orderdata['status']);
         }
+
+        $sslOrder->setStatus(SSL::CONFIGURATION_SUBMITTED);
+
         if (isset($this->orderdata['dcv'])) {
             $this->handleDcvMethod();
         }

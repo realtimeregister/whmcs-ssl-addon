@@ -253,3 +253,7 @@ $_LANG['serverCA']['home']['contactSupport'] = 'Validation could not be complete
 $_LANG['serverCA']['home']['awaitingValidation'] = 'Awaiting validation';
 $_LANG['serverCA']['home']['failed'] = 'Failed';
 $_LANG['serverCA']['home']['cancelled'] = 'Cancelled';
+$_LANG['serverCA']['home']['statusDetail'] = 'Status Detail';
+$_LANG['serverCA']['home']['pendingRenew'] = 'Pending Renew';
+$_LANG['serverCA']['home']['pendingReissue'] = 'Pending Reissue';
+$_LANG['serverCA']['home']['issued'] = 'Issued';
