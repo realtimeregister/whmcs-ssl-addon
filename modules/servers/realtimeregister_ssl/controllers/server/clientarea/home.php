@@ -456,7 +456,7 @@ class home extends AbstractController
             $errorInvoiceExist = false;
             // TODO fix the following lines
             $service = \WHMCS\Service\Service::where('id', $input['id'])->first();
-            $result = $this->createAutoInvoice($input['params']['pid'], $service, true);
+            $result = $this->createAutoInvoice($input['params']['pid'], $service);
             if (is_array($result) && isset($result['invoiceID'])) {
                 $existInvoiceID = $result['invoiceID'];
                 $errorInvoiceExist = Lang::getInstance()->T('Related invoice already exist.');
@@ -810,7 +810,7 @@ class home extends AbstractController
         return $this->installCertificate($sslService, $privateKey);
     }
 
-    private function createAutoInvoice($productId, $service, $jsonAction = false)
+    private function createAutoInvoice($productId, $service)
     {
         if ($productId == null) {
             return null;
@@ -818,22 +818,15 @@ class home extends AbstractController
 
         $product             = \WHMCS\Product\Product::where('id', '=' ,$productId)->first();
         $invoiceGenerator     = new Invoice();
-//        $servicesAlreadyAdded = $invoiceGenerator->checkInvoiceAlreadyCreated($service->id);
-        $getInvoiceID         = false;
-//        if ($jsonAction) {
-//            $getInvoiceID = true;
-//        }
-//        $invoiceCounter = 0;
-//                //have product, service
-//        if ($servicesAlreadyAdded) {
-//            if ($jsonAction) {
-//                return [
-//                    'invoiceID' => $invoiceGenerator->getLatestCreatedInvoiceInfo($service->id)['invoice_id']
-//                ];
-//            }
-//        }
+        $servicesAlreadyAdded = $invoiceGenerator->checkInvoiceAlreadyCreated($service->id);
 
-        return $invoiceGenerator->createInvoice($service, $product, $getInvoiceID);
+        //Invoice already exists
+        if ($servicesAlreadyAdded) {
+             return [
+                 'invoiceID' => $invoiceGenerator->getLatestCreatedInvoiceInfo($service->id)['invoice_id']
+             ];
+        }
+
+        return $invoiceGenerator->createInvoice($service, $product, true);
     }
-
 }
