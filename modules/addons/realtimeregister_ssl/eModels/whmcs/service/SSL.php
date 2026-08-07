@@ -127,11 +127,6 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     {
         $this->setConfigdataKey('orderStatus', $value);
     }
-
-    public function setOrderStatusDescription($value)
-    {
-        $this->setConfigdataKey('order_status_description', $value);
-    }
     
     public function getApproverMethod()
     {

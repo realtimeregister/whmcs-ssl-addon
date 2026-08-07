@@ -127,7 +127,6 @@ class UpdateConfigData
             $sslOrder->setCrt($order->certificate);
             $sslOrder->setCsr($order->csr);
             $sslOrder->setSSLStatus($order->status);
-            $sslOrder->setOrderStatusDescription($order->status);
             $sslOrder->setPartnerOrderId($order->providerId);
 
             if ($sslOrder->status === SSL::CONFIGURATION_SUBMITTED || $sslOrder->status === SSL::AWAITING_CONFIGURATION) {
