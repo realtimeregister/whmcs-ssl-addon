@@ -178,8 +178,6 @@ class Renew
         $addSSLRenewOrder = $this->tryOrder($configData['certificateId'], $orderFields, $commonName, $authKey);
 
         $this->sslService->setRemoteId($addSSLRenewOrder->processId);
-        $this->sslService->setOrderStatusDescription("Pending");
-        $this->sslService->setSSLStatus("SUSPENDED");
         $this->sslService->save();
 
         $this->processDcvEntries($addSSLRenewOrder->validations?->dcv?->toArray() ?? [], $this->p['userid'], $this->p['serviceid']);
