@@ -128,16 +128,6 @@ class SSL extends \Illuminate\Database\Eloquent\Model
         $this->setConfigdataKey('orderStatus', $value);
     }
     
-    public function getOrderStatusDescription()
-    {
-        return $this->getConfigdataKey('order_status_description');
-    }
-
-    public function setOrderStatusDescription($value)
-    {
-        $this->setConfigdataKey('order_status_description', $value);
-    }
-    
     public function getApproverMethod()
     {
         return $this->getConfigdataKey('approver_method');
@@ -400,5 +390,15 @@ class SSL extends \Illuminate\Database\Eloquent\Model
     public function setCertificateId($id)
     {
         $this->setConfigdataKey("certificateId", $id);
+    }
+
+    public function setStatusDetail(string $statusDetail)
+    {
+        $this->setConfigdataKey("statusDetail", $statusDetail);
+    }
+
+    public function getStatusDetail() : ?string
+    {
+        return $this->getConfigdataKey("statusDetail");
     }
 }
