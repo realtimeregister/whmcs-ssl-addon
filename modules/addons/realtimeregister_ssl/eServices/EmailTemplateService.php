@@ -192,7 +192,7 @@ class EmailTemplateService
         $newTemplate->type    = 'product';
         $newTemplate->name    = self::EXPIRATION_TEMPLATE_ID;
         $newTemplate->subject = 'Service Expiration Notification - {$service_domain}';
-        $newTemplate->message = '<p>Dear {$client_name},</p><p>We would like to inform You about your service <strong>'
+        $newTemplate->message = '<p>Dear {$client_name},</p><p>We would like to inform you about your service <strong>'
             . '#{$service_id}</strong>  is going to expire in {$expireDaysLeft} days.</p><p>{$signature}</p>';
         $newTemplate->attachments  = '';
         $newTemplate->fromname  = '';

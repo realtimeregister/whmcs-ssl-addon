@@ -182,6 +182,27 @@ $_LANG['confOrganizationStateRegion'] = 'State / Region';
 
 $_LANG['anErrorOccurred'] = 'An error occurred';
 
+$_LANG['serverCA']['home']['acmeSubscriptionConfigurationTitle']  = 'ACME Subscription Configuration';
+$_LANG['serverCA']['home']['acmeSubscriptionConfigurationInfo']   = 'Use this form to configure your ACME subscription. Enter the domains you want to include and, if required, provide your organization and approver details.';
+$_LANG['serverCA']['home']['acmeAddNewDomainsTitle']              = 'Add New Domains';
+$_LANG['serverCA']['home']['acmeAddNewDomainsDescription']        = 'Enter one domain per line. Wildcard domains should be prefixed with *.';
+$_LANG['serverCA']['home']['availableDomains']                    = 'Available Domains';
+$_LANG['serverCA']['home']['availableWildcards']                  = 'Available Wildcards';
+$_LANG['serverCA']['home']['acmeDomainsLabel']                    = 'Domains';
+$_LANG['serverCA']['home']['acmeOrganizationFieldsTitle']         = 'Organization Information';
+$_LANG['serverCA']['home']['acmeOrganizationFieldsDescription']   = 'Please provide the organization details associated with this certificate.';
+$_LANG['serverCA']['home']['addressLabel']                        = 'Address';
+$_LANG['serverCA']['home']['cityLabel']                           = 'City';
+$_LANG['serverCA']['home']['postalCodeLabel']                     = 'Postal Code';
+$_LANG['serverCA']['home']['acmeApproverFieldsTitle']             = 'Approver Information';
+$_LANG['serverCA']['home']['acmeApproverFieldsDescription']       = 'Please provide the details of the person who will approve this certificate request.';
+$_LANG['serverCA']['home']['approverJobTitleLabel']               = 'Job Title';
+$_LANG['serverCA']['home']['acmeSubmitConfiguration']             = 'Submit Configuration';
+$_LANG['serverCA']['home']['acmeConfigurationDone']               = 'Configuration saved successfully.';
+$_LANG['serverCA']['home']['awaitingConfiguration']               = 'Awaiting Configuration';
+$_LANG['serverCA']['home']['addedOn']                             = 'Added On';
+$_LANG['serverCA']['home']['productName']                             = 'Product Name';
+
 $_LANG['sslcertSelectVerificationMethodTitle']       = 'Certificate Verification';
 $_LANG['sslcertSelectVerificationMethodDescription'] = 'You must now choose from the options below  in order to pass Domain Control Validation (DCV) process.';
 $_LANG['stepTwoTableLabelDomain']                    = 'Domain';
@@ -257,3 +278,45 @@ $_LANG['serverCA']['home']['statusDetail'] = 'Status Detail';
 $_LANG['serverCA']['home']['pendingRenew'] = 'Pending Renew';
 $_LANG['serverCA']['home']['pendingReissue'] = 'Pending Reissue';
 $_LANG['serverCA']['home']['issued'] = 'Issued';
+
+// ACME translations
+$_LANG['acmeSubscriptionConfigurationTitle']   = 'ACME Subscription Configuration';
+$_LANG['acmeSubscriptionConfigurationInfo']    = 'Use the form below to configure your ACME subscription. Enter the domains you want to include in your subscription.';
+$_LANG['acmeAddNewDomainsTitle']               = 'Add Domains';
+$_LANG['acmeAddNewDomainsDescription']         = 'Enter one domain per line. Wildcard domains should be prefixed with *.';
+$_LANG['availableDomains']                     = 'Available single domains';
+$_LANG['availableWildcards']                   = 'Available wildcard domains';
+$_LANG['acmeSubmitConfiguration']              = 'Submit Configuration';
+$_LANG['acmeOrganizationFieldsTitle']          = 'Organization Details';
+$_LANG['acmeOrganizationFieldsDescription']    = 'This product requires organization details for OV/EV validation.';
+$_LANG['acmeOrganizationLabel']                = 'Organization Name';
+$_LANG['acmeAddressLabel']                     = 'Address';
+$_LANG['countryLabel']                     = 'Country (2-letter code)';
+$_LANG['acmeApproverFieldsTitle']              = 'Approver Details';
+$_LANG['acmeApproverFieldsDescription']        = 'Please provide the details of the person who will approve this certificate request.';
+
+// ACME home page translations
+$_LANG['serverCA']['home']['configurationStatus']       = 'Configuration Status';
+$_LANG['serverCA']['home']['validTill']                 = 'Valid Till';
+$_LANG['serverCA']['home']['nextInvoiceDate']           = 'Next Invoice Date';
+$_LANG['serverCA']['home']['directoryUrl']              = 'Directory URL';
+$_LANG['serverCA']['home']['accountKey']                = 'Account Key';
+$_LANG['serverCA']['home']['hmacKey']                   = 'HMAC Key';
+$_LANG['serverCA']['home']['acmeDomainsLabel']          = 'Domains';
+$_LANG['serverCA']['home']['domain']                    = 'Domain';
+$_LANG['serverCA']['home']['remove']                    = 'Remove';
+$_LANG['serverCA']['home']['buyDomainSpace']            = 'Buy Domain Space';
+$_LANG['serverCA']['home']['addDomains']                = 'Add Domains';
+$_LANG['serverCA']['home']['showCertbotCommand']        = 'Show Certbot Command';
+$_LANG['serverCA']['home']['copyToClipboard']           = 'Copy to Clipboard';
+$_LANG['serverCA']['home']['cancel']                    = 'Cancel';
+$_LANG['serverCA']['home']['acmeDomainsPlaceholder']    = 'Enter one domain per line, e.g. example.com or *.example.com';
+$_LANG['serverCA']['home']['confirmRemoveDomain']       = 'Are you sure you want to remove this domain?';
+$_LANG['serverCA']['home']['domainRemoved']             = 'Domain removed successfully.';
+$_LANG['serverCA']['home']['acmeConfigurationDone']     = 'Configuration saved successfully.';
+$_LANG['serverCA']['home']['anErrorOccurred']           = 'An error occurred.';
+$_LANG['serverCA']['home']['availableDomains']           = 'Available domains';
+$_LANG['serverCA']['home']['usedDomains']           = 'Used domains';
+$_LANG['serverCA']['home']['domains']           = 'Domains';
+$_LANG['serverCA']['home']['wildcardDomains']           = 'Wildcard domains';
+$_LANG['serverCA']['home']['totalDomains']           = 'Total domains';

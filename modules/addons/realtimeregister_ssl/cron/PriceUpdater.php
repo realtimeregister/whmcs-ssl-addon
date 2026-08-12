@@ -108,7 +108,7 @@ class PriceUpdater extends BaseTask
                 ->where('relid', '=', $configOptionSub->id)
                 ->where('type', '=', 'configoptions')
                 ->get();
-            if (str_contains($configOption->optionname, ConfigOptions::OPTION_SANS_COUNT)) {
+            if (str_contains($configOption->optionname, C::OPTION_SANS_COUNT)) {
                 $configOptionSub = $configOptionSubs[0];
 
                 foreach ($periods as $period) {
@@ -117,7 +117,7 @@ class PriceUpdater extends BaseTask
                     });
                     self::generateNewPrice(array_pop($newPrice), $currentPrices, $multiplier, $period);
                 }
-            } elseif (str_contains($configOption->optionname, ConfigOptions::OPTION_SANS_WILDCARD_COUNT)) {
+            } elseif (str_contains($configOption->optionname, C::OPTION_SANS_WILDCARD_COUNT)) {
                 $configOptionSub = $configOptionSubs[0];
 
                 foreach ($periods as $period) {

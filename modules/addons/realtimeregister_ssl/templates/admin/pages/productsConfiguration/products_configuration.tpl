@@ -44,7 +44,6 @@
                                 <textarea class="form-control addon-product-commission" name="custom_guide"></textarea>
                             </div>
                         </div>
-
                     <div class="row">
 
                         <div class="form-group">
@@ -110,7 +109,16 @@
             </form>
             <! --- end new form --->
 
+            <ul class="nav nav-tabs" role="tablist" style="margin-bottom: 20px;">
+                <li role="presentation" class="active"><a href="#tab-ssl" aria-controls="tab-ssl" role="tab" data-toggle="tab">{$ADDONLANG->T('sslProducts')}</a></li>
+                <li role="presentation"><a href="#tab-acme" aria-controls="tab-acme" role="tab" data-toggle="tab">{$ADDONLANG->T('acmeProducts')}</a></li>
+            </ul>
+
+            <div class="tab-content">
+
+            <div role="tabpanel" class="tab-pane active" id="tab-ssl">
             {foreach from=$products item=product}
+                {if !$product->apiConfig->isAcme}
                 <h3 class="col-sm-12" data-toggle="collapse" href="#collapse-price-{$product->id}" aria-expanded="false" role="button">{$product->configoption1}
                     <i class="fa fa-chevron-right pull-right"></i>
                     <i class="fa fa-chevron-down pull-right"></i>
@@ -147,7 +155,6 @@
                                     <textarea class="form-control" name="product[{$product->id}][custom_guide]">{$product->configoption24}</textarea>
                                 </div>
                             </div>
-
 
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{$ADDONLANG->T('autoSetup')}</label>
@@ -257,7 +264,7 @@
                                 </div>
                             {/if}
 
-                            <div class="form-group" id="addon-js-pricing-group-{$product->id}" {if $product->paytype == 'free'}style="display: none;"{/if}>
+                            <div class="form-group" id="addon-js-pricing-group-{$product->id}">
                                 <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptionsPeriod')}</label>
                                 <div class="col-sm-10">
 
@@ -326,7 +333,129 @@
                     </table>
                     <input type="submit" name="saveProduct" class="btn btn-success" value="{$ADDONLANG->T('save')}" />
                 </form>
+                {/if}
             {/foreach}
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="tab-acme">
+            {foreach from=$products item=product}
+                {if $product->apiConfig->isAcme}
+                <h3 class="col-sm-12" data-toggle="collapse" href="#collapse-price-{$product->id}" aria-expanded="false" role="button">{$product->configoption1}
+                    <i class="fa fa-chevron-right pull-right"></i>
+                    <i class="fa fa-chevron-down pull-right"></i>
+                </h3>
+                <form id="collapse-price-{$product->id}" action="" method="post" class="save-product-form form-horizontal margin-bottom-15 col-sm-10 collapse">
+                    <table class="table table-condensed" id="product_configuration">
+                        <tr class="product-container" data-product="{$product->id}">
+                        <input type="hidden" name="product[{$product->id}][id]" value="{$product->id}"/>
+                        <td>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('realtimeRegisterSSLProduct')}</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" value="{$product->configoption1}" disabled>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('productName')}</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="product[{$product->id}][name]"
+                                           value="{$product->name}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="hidden" name="product[{$product->id}][configoption3]"
+                                       value="on"/>
+                            </div>
+
+                            {if $product->apiConfig->isWildcardSanEnabled}
+                            <div class="form-group">
+                                <input type="hidden" name="product[{$product->id}][configoption13]"
+                                       value="on"/>
+                            </div>
+                            {/if}
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('autoSetup')}</label>
+                                <div class="col-sm-10">
+                                    <select name="product[{$product->id}][autosetup]" class="form-control">
+                                        <option value="order" {if $product->autosetup == 'order'}selected=""{/if}>{$ADDONLANG->T('autoSetupOrder')}</option>
+                                        <option value="payment" {if $product->autosetup == 'payment'}selected=""{/if}>{$ADDONLANG->T('autoSetupPayment')}</option>
+                                        <option value="on" {if $product->autosetup == 'on'}selected=""{/if}>{$ADDONLANG->T('autoSetupOn')}</option>
+                                        <option value="" {if $product->autosetup == ''}selected=""{/if}>{$ADDONLANG->T('autoSetupOff')}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('status')}</label>
+                                <div class="col-sm-10">
+                                    <div class="buttons-container">
+                                        {if $product->hidden eq 0}
+                                            <button type="button" data-product-id="{$product->id}" class="btn btn-danger disable-product">{$ADDONLANG->T('statusDisable')}</button>
+                                        {else}
+                                            <button type="button" data-product-id="{$product->id}" class="btn btn-success enable-product">{$ADDONLANG->T('statusEnable')}</button>
+                                        {/if}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('paymentType')}</label>
+                                <div class="col-sm-10">
+                                    <select name="product[{$product->id}][paytype]" class="form-control addon-js-pricing-select" data-id="{$product->id}">
+                                        <option {if $product->paytype == 'recurring'}selected{/if} value="recurring">{$ADDONLANG->T('paymentTypeRecurring')}</option>
+                                        <option {if $product->paytype == 'onetime'}selected{/if} value="onetime">{$ADDONLANG->T('paymentTypeOneTime')}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('commission')}</label>
+                                <div class="col-sm-10">
+                                    {if $product->configoption6}
+                                        <input type="text" class="form-control addon-product-commission" name="product[{$product->id}][configoption6]" value="{math equation="x * y" x=$product->configoption6 y=100}" data-id="{$product->id}" {if $product->paytype == 'free'}readonly=""{/if} pattern="\d*"/>
+                                    {else}
+                                        <input type="text" class="form-control addon-product-commission" name="product[{$product->id}][configoption6]" value="" data-id="{$product->id}" {if $product->paytype == 'free'}readonly=""{/if} pattern="\d*"/>
+                                    {/if}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('priceAutoDownlaod')}</label>
+                                <div class="col-sm-10" style="padding-top: 8px;">
+                                    <input class="form-check-input addon-js-pricing-auto-download" name="product[{$product->id}][configoption5]" data-id="{$product->id}" value="1" {if $product->configoption5} checked="" {/if} {if $product->paytype == 'free'}readonly="" disabled=""{/if} type="checkbox" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptions')}</label>
+                                <div class="col-sm-10">
+                                    <a href="#" onclick="return manageconfigoptions('{$product->confOption->id}')"
+                                        class="btn btn-success">{$ADDONLANG->T('editPrices')}</a>
+                                    <small>{$ADDONLANG->T('pricingInclude')}</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{$ADDONLANG->T('configurableOptionsWildcard')}</label>
+                                <div class="col-sm-10">
+                                    <a href="#" onclick="return manageconfigoptions('{$product->confOptionWildcard->id}')"
+                                        class="btn btn-success">{$ADDONLANG->T('editPrices')}</a>
+                                    <small>{$ADDONLANG->T('pricingInclude')}</small>
+                                </div>
+                            </div>
+                        </td
+                        </tr>
+                    </table>
+                    <input type="submit" name="saveProduct" class="btn btn-success" value="{$ADDONLANG->T('save')}" />
+                </form>
+                {/if}
+            {/foreach}
+            </div>
+
+            </div>
         </div>
     </div>
     <script>
@@ -454,10 +583,7 @@
                 function showHidePricing(select) {
                     const productId = select.data('id');
                     const type = select.val();
-                    if (type === 'free') {
-                        setAsNonOneTime(select);
-                        $('#addon-js-pricing-group-' + productId).hide();
-                    } else if (type === 'onetime') {
+                    if (type === 'onetime') {
                         setAsOneTime(select, type);
                         $('#addon-js-pricing-group-' + productId).show();
                     } else {
@@ -510,7 +636,7 @@
                 });
 
                 pricingSelect.on('change', function () {
-                    showHidePricing($(this), true);
+                    showHidePricing($(this));
                     showHidePeriodSelection($(this));
                     enableDisableAutoPriceUpdate($(this));
                 });

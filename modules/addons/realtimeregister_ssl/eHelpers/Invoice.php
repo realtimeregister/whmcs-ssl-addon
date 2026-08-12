@@ -132,57 +132,11 @@ class Invoice
         return $productRepo->getProductPricing($id);
     }
 
-    protected function getProperServiceBillingCycleBasedOnProductPricing($service)
-    {
-        //get client currency
-        $clientCurrencyID = $this->getClientCurrencyID($service->userid);
-        //get product pricing
-        $productPricing = $this->getProductPricing($service->packageid);
-        foreach ($productPricing as $pricing) {
-            //check if pricing currency is clients currency and if service pricing period is setted
-            if ($pricing->currency == $clientCurrencyID && $pricing->{strtolower($service->billingcycle)} != '-1.00') {
-                return [
-                    'key' => $service->billingcycle,
-                    'price' => $pricing->{strtolower($service->billingcycle)}
-                ];
-            }
-        }
-        $highestAvailablePeriod = $highestAvailablePeriodPrice = 0;
-        foreach ($productPricing as $pricing) {
-            if ($pricing->currency == $clientCurrencyID) {
-                foreach ($pricing as $key => $priceFieldValue) {
-                    if (key_exists($key, BillingCycle::PERIODS) && $priceFieldValue != '-1.00') {
-                        $period = BillingCycle::convertStringToPeriod($key);
-
-                        if ($highestAvailablePeriod < $period) {
-                            $highestAvailablePeriod = $period;
-                            $highestAvailablePeriodPrice = $priceFieldValue;
-                        }
-                    }
-                }
-            }
-        }
-
-        // return highest available
-        return [
-            'key' => BillingCycle::convertPeriodToName($highestAvailablePeriod),
-            'price' => $highestAvailablePeriodPrice
-        ];
-    }
-
     public function createInvoice($service, $product, $returnInvoiceID = false)
     {
-        $apiConfigRepo = new \AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository();
-        $input = (array)$apiConfigRepo->get();
-
         $dateFormat = 'Y-m-d';
 
         $dateInvoice = date($dateFormat);
-        //get discount
-        $discount = Discount::getDiscountValue(
-            ['pid' => $service->packageid, 'client' => $service->userid]
-        );
-        $multiplier = ((100 - $discount) / 100);
 
         $configOptions = $this->getConfigOptions($service);
         $clientCurrencyID = $this->getClientCurrencyID($service->userid);
@@ -216,14 +170,13 @@ class Invoice
                 . ' (' . $startDate . ' - ' . $endDate . ') - Renewal';
         }
 
-        //modify item amount based on client discount
         $invoiceData = [
             'userid' => $service->userid,
             'sendinvoice' => true,
             'date' => $dateInvoice,
             'duedate' => $dateInvoice,
             'itemdescription1' => $invoiceItemDescription,
-            'itemamount1' => (float)$pricing * ((100 - $discount) / 100),
+            'itemamount1' => (float)$pricing,
             'itemtaxed1' => $product->tax
         ];
 
@@ -248,7 +201,7 @@ class Invoice
             }
             $optionname = formatCurrency($qtyprice);
             $invoiceData['itemdescription2'] = $configOptions['single']['friendlyName'] . ': ' . $boughtSans . ' x ' . $optionname;
-            $invoiceData['itemamount2'] = $qtyprice * $boughtSans * $multiplier;
+            $invoiceData['itemamount2'] = $qtyprice * $boughtSans;
             $invoiceData['itemtaxed2'] = $product->tax;
             $invoiceItemNum++;
         }
@@ -273,7 +226,7 @@ class Invoice
             $invoiceData['itemdescription' . $invoiceItemNum] = $configOptions['wildcard']['friendlyName']
                 . ': ' . $configOptions['wildcard']['boughtSans']
                 . ' x ' . $optionname;
-            $invoiceData['itemamount' . $invoiceItemNum] = $qtyprice * $configOptions['wildcard']['boughtSans'] * $multiplier;
+            $invoiceData['itemamount' . $invoiceItemNum] = $qtyprice * $configOptions['wildcard']['boughtSans'];
             $invoiceData['itemtaxed' . $invoiceItemNum] = $product->tax;
         }
 

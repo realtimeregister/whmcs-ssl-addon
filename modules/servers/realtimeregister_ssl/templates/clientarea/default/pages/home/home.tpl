@@ -263,7 +263,7 @@
                             {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default m-1">{$ADDONLANG->T('downloadca')}</button></a>{/if}
                             {if $downloadcrt}<a href="{$downloadcrt}"><button type="button" id="download-crt" class="btn btn-default m-1">{$ADDONLANG->T('downloadcrt')}</button></a>{/if}
                             {if $downloadcsr}<a href="{$downloadcsr}"><button type="button" id="download-csr" class="btn btn-default m-1">{$ADDONLANG->T('downloadcsr')}</button></a>{/if}
-                            {if $downloadpem}<a href="{$downloadpem}"><button type="button" id="download-ca" class="btn btn-default m-1">{$ADDONLANG->T('downloadpem')}</button></a>{/if}
+                            {if $downloadpem}<a href="{$downloadpem}"><button type="button" id="download-pem" class="btn btn-default m-1">{$ADDONLANG->T('downloadpem')}</button></a>{/if}
                             {if $downloadbundle}<a href="{$downloadbundle}"><button type="button" id="download-bundle" class="btn btn-default m-1">{$ADDONLANG->T('downloadbundle')}</button></a>{/if}
                         {/if}
                         {if $privateKey}
@@ -327,7 +327,7 @@
             sidebarItem.hide();
 
             let serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1',
-                    renewBtn = $('#btnRenew'),
+                    renewBtnrenewBtn = $('#btnRenew'),
                     renewForm,
                     renewModal,
                     renewBody,
@@ -371,7 +371,7 @@
                 renewBtn.attr('onclick', '');
             }
 
-            function bindModalFrorenewBtn() {
+            function bindModalForRenewBtn() {
                 renewBtn.off().on('click', function () {
                     renewModal.modal('show');
                     show(renewSubmitBtn);
@@ -501,7 +501,7 @@
             moveModalToBody();
             renewForm.trigger("reset");
             unbindOnClickForrenewBtn();
-            bindModalFrorenewBtn();
+            bindModalForRenewBtn();
             bindSubmitBtn();
         });
     </script>

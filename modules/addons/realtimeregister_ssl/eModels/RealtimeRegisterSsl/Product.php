@@ -2,6 +2,15 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl;
 
+/**
+ * @property string validationType
+ * @property string certificateType
+ * @property array features
+ * @property array periods
+ * @property int maxDomains
+ * @property int includedDomains
+ * @property string product
+ */
 class Product
 {
     public function isOrganizationRequired()
@@ -14,18 +23,24 @@ class Product
     
     public function isSanEnabled()
     {
-        return $this->includedDomains > 1;
+        return $this->certificateType == 'ACME_SUBSCRIPTION' || $this->includedDomains > 1;
     }
     
     public function isSanWildcardEnabled()
     {
-        return $this->isSanEnabled() && in_array('WILDCARD', $this->features);
+        return ($this->certificateType == 'ACME_SUBSCRIPTION' && $this->validationType != 'EXTENDED_VALIDATION') ||
+            $this->isSanEnabled() && in_array('WILDCARD', $this->features ?? []);
     }
     
     public function getPeriods()
     {
         return $this->periods;
     }
+
+    public function isAcmeProduct() {
+        return $this->certificateType === 'ACME_SUBSCRIPTION';
+    }
+
 
     public function getMaxDomains()
     {
@@ -41,6 +56,10 @@ class Product
     {
         $periods = $this->getPeriods();
         return reset($periods);
+    }
+
+    public function getFeatures(): ?array {
+        return $this->features;
     }
     
     public function getPayType()

@@ -2,49 +2,24 @@
 
 namespace AddonModule\RealtimeRegisterSsl\models\productPrice;
 
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\Eloquent\Model;
+
 /**
- * @Table(name=REALTIMEREGISTERSSL_api_product_prices)
+ * @property int id
+ * @property int api_product_id
+ * @property string|float price
+ * @property string period
+ * @property string action
+ * @property string currency
  */
-class ProductPrice extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
+class ProductPrice extends Model
 {
-    /**
-     * 
-     * @Column(id)
-     * @var integer
-     */
-    public $id;
 
-    /**
-     * 
-     * @Column(api_product_id)
-     * @var int
-     */
-    public $api_product_id;
-
-    /**
-     * @Column(varchar=32)
-     * @var string|float
-     */
-    public $price;
-
-    /**
-     * @Column(varchar=32)
-     * @var string
-     */
-    public $period;
-
-    /**
-     * @Column(varchar=32)
-     * @var string
-     */
-    public $action;
-
-    /**
-     * @Column(varchar=3)
-     * @var string
-     */
-    public $currency;
-
+    public const TABLE_NAME = 'REALTIMEREGISTERSSL_api_product_prices';
+    protected $table = self::TABLE_NAME;
+    public $timestamps = false;
+    
     public function getID()
     {
         return $this->id;
@@ -99,5 +74,26 @@ class ProductPrice extends \AddonModule\RealtimeRegisterSsl\addonLibs\models\Orm
     public function setCurrency(string $currency): void
     {
         $this->currency = $currency;
+    }
+
+    public static function createApiProductsPricesTable()
+    {
+        if (!Capsule::schema()->hasTable(self::TABLE_NAME)) {
+            Capsule::schema()->create(self::TABLE_NAME, function ($table) {
+                $table->increments('id');
+                $table->integer('api_product_id');
+                $table->string('price');
+                $table->string('period');
+                $table->string("action");
+                $table->string("currency");
+            });
+        }
+    }
+
+    public static function dropApiProductsPricesTable()
+    {
+        if (Capsule::schema()->hasTable(self::TABLE_NAME)) {
+            Capsule::schema()->dropIfExists(self::TABLE_NAME);
+        }
     }
 }

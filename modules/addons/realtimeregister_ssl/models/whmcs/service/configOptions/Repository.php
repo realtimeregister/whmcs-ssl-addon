@@ -68,7 +68,7 @@ class Repository
                 $join->on('tblhosting.packageid', '=', 'tblproductconfiglinks.pid');
                 $join->on('tblhosting.id', '=', 'hco.relid');
             })
-            ->where('hco.id', '=', $this->serviceID)
+            ->where('hco.relid', '=', $this->serviceID)
             ->get();
 
         foreach ($result as $row) {

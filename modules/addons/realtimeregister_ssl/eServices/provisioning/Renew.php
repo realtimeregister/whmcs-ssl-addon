@@ -7,12 +7,12 @@ use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL as SSLModel;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use RealtimeRegister\Api\AcmeApi;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Exceptions\BadRequestException;
-use WHMCS\Database\Capsule;
 
 class Renew
 {
@@ -22,7 +22,7 @@ class Renew
 
     /**
      *
-     * @var \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @var SSLModel
      */
     private $sslService;
 
@@ -40,7 +40,13 @@ class Renew
     {
         $logs = new LogsRepo();
         try {
-            $this->renewCertificate();
+            $this->loadSslService();
+            $this->loadApiProduct();
+            if ($this->apiProduct->isAcmeProduct()) {
+                $this->renewAcmeSubscription();
+            } else {
+                $this->renewCertificate();
+            }
         } catch (Exception $ex) {
             $logs->addLog(
                 $this->p['userid'],
@@ -119,11 +125,25 @@ class Renew
         }
     }
 
+    private function renewAcmeSubscription(): void {
+        $logs = new LogsRepo();
+
+        $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();
+
+        /* @var AcmeApi $api */
+        $api = ApiProvider::getInstance()
+            ->getApi(AcmeApi::class);
+        $api->renew($this->sslService->getRemoteId(), $this->parsePeriod($service->billingcycle));
+        $logs->addLog(
+            $this->p['userid'],
+            $this->p['serviceid'],
+            'success',
+            sprintf('The ACME subscription %s has been renewed.', $this->sslService->getRemoteId())
+        );
+    }
+
     private function renewCertificate() : void
     {
-        $this->loadSslService();
-        $this->loadApiProduct();
-
         $logs = new LogsRepo();
 
         $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();
@@ -214,8 +234,7 @@ class Renew
 
     private function loadSslService()
     {
-        $ssl = new SSL();
-        $this->sslService = $ssl->getByServiceId($this->p['serviceid']);
+        $this->sslService = SSLModel::getByServiceId($this->p['serviceid']);
 
         if (is_null($this->sslService)) {
             throw new Exception('Create has not been initialized');

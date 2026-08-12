@@ -14,6 +14,7 @@ use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiCon
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
+use DateTimeImmutable;
 use Exception;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Domain\Product;
@@ -360,5 +361,12 @@ trait SSLUtils
             return 'FILE';
         }
         return strtoupper($type);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function formatDate(string $date): string {
+        return (new DateTimeImmutable($date))->format('Y-m-d H:i:s');
     }
 }

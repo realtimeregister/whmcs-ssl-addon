@@ -203,6 +203,7 @@ class ReissueCertificates extends BaseTask
         $sslOrder->setRemoteId($reissueData->processId);
         $sslOrder->status = SSL::CONFIGURATION_SUBMITTED;
         $sslOrder->setConfigdataKey('csr', $csr);
+        $sslOrder->setCertificateSent(false);
         if ($privateKey) {
             $sslOrder->setPrivateKey($privateKey);
         }

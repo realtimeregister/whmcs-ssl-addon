@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\controllers\server\clientarea\Traits\AcmeTrait;
 use AddonModule\RealtimeRegisterSsl\eHelpers\ZipFileHelper;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -19,12 +20,19 @@ class UpdateConfigData
 {
     private SSL $sslService;
     private array $orderdata;
-    
+
+    use AcmeTrait;
+
     public function __construct(SSL $sslService, $orderdata = [])
     {
         $this->orderdata = [];
         try {
             $this->sslService = $sslService;
+            if ($sslService->isAcmeProduct()) {
+                $this->updateAcmeConfigData($sslService);
+                return;
+            }
+
             if (empty($orderdata)) {
                 $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
                 if ($sslService->getRemoteId()) {

@@ -16,12 +16,8 @@ use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
 use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
-use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use Exception;
-use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
-use RealtimeRegister\Exceptions\BadRequestException;
 
 class ClientReissueCertificate
 {
@@ -312,6 +308,7 @@ class ClientReissueCertificate
         $this->sslService->setCa(null);
         $this->sslService->status = SSL::CONFIGURATION_SUBMITTED;
         $this->sslService->setConfigdataKey('csr', $csr);
+        $this->sslService->setCertificateSent(false);
 
         if (isset($_POST['privateKey']) && $_POST['privateKey'] != null) {
             $this->sslService->setPrivateKey($_POST['privateKey']);
