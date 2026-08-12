@@ -78,6 +78,22 @@
                     </td>
                 </tr>
             {/if}
+            {if $statusDetail}
+            <tr>
+                <td class="text-left">{$ADDONLANG->T('statusDetail')}</td>
+                <td class="text-left">
+                    {if $statusDetail === 'pendingRenew'}
+                        {$ADDONLANG->T('pendingRenew')}
+                    {elseif $statusDetail === 'pendingReissue'}
+                        {$ADDONLANG->T('pendingReissue')}
+                    {elseif $statusDetail === 'issued'}
+                        {$ADDONLANG->T('issued')}
+                    {else}
+                        {$statusDetail}
+                    {/if}
+                </td>
+            </tr>
+            {/if}
             {if $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
                 <tr>
                     <td class="text-left">{$ADDONLANG->T('validFrom')}</td>

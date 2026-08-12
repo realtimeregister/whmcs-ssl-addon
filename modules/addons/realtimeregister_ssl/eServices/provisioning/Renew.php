@@ -3,7 +3,7 @@
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
 use AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
-use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL as SSLModel;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
@@ -22,7 +22,7 @@ class Renew
 
     /**
      *
-     * @var \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @var SSLModel
      */
     private $sslService;
 
@@ -147,27 +147,28 @@ class Renew
         $logs = new LogsRepo();
 
         $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();
-        $sslData = Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->first();
-        $configData = json_decode($sslData->configdata, true);
+        $sslData = $this->sslService;
+        $configData = (array) $sslData->configdata;
         $order = Capsule::table('REALTIMEREGISTERSSL_orders')->where('service_id', $this->p['serviceid'])->first();
         $orderDetails = json_decode($order->data, true);
-        $commonName = $orderDetails['commonName'] ?? $orderDetails['domain'];
+        $commonName = $this->sslService->getDomain() ?? ($orderDetails['commonName'] ?? $orderDetails['domain']);
 
         $dcv = [];
-        foreach ($orderDetails['validations']['dcv'] as $validation) {
-            $dcvEntry = [
-                'commonName' => $validation['commonName'],
-                'type' => $validation['type'],
-            ];
-            if ($validation['type'] === 'EMAIL') {
-                $dcvEntry['email'] = $validation['email'];
-            }
-            $dcv[] = $dcvEntry;
-        }
-        if (empty($dcv) && $orderDetails['dcv_method']) {
+        // Main domain DCV
+        $dcv[] = [
+            'commonName' => $commonName,
+            'type' => $this->mapDcvType($this->sslService->getDcvMethod() ?? $this->sslService->getApproverMethod()),
+            'email' => $this->getApproverEmail($this->sslService, $commonName)
+        ];
+
+        // SANs DCV
+        $mainDcvType = $dcv[0]['type'];
+        $allSans = $this->sslService->getSanDetails() ?? [];
+        foreach ($allSans as $san) {
             $dcv[] = [
-                'commonName' => $commonName,
-                'type' => $orderDetails['dcv_method'] == 'HTTP' ? 'FILE' : $orderDetails['dcv_method']
+                'commonName' => $san->san_name,
+                'type' => $this->mapDcvType($san->method) ?? $mainDcvType,
+                'email' => $san->email ?? $this->getApproverEmail($this->sslService, $commonName)
             ];
         }
 
@@ -199,9 +200,6 @@ class Renew
         $addSSLRenewOrder = $this->tryOrder($configData['certificateId'], $orderFields, $commonName, $authKey);
 
         $this->sslService->setRemoteId($addSSLRenewOrder->processId);
-        $this->sslService->setOrderStatusDescription("Pending");
-        $this->sslService->setSSLStatus("SUSPENDED");
-        $this->sslService->setCertificateSent(false);
         $this->sslService->save();
 
         $this->processDcvEntries($addSSLRenewOrder->validations?->dcv?->toArray() ?? [], $this->p['userid'], $this->p['serviceid']);
@@ -225,9 +223,18 @@ class Renew
         }
     }
 
+    private function getApproverEmail(SSLModel $sslOrder, string $domainName) : ?string
+    {
+        return array_filter($sslOrder->getApproverEmails() ?? [], function($email) use ($domainName) {
+            return str_ends_with($email, '@' . $domainName);
+        })[0]
+            ?? $sslOrder->getApproverEmail()
+            ?? null;
+    }
+
     private function loadSslService()
     {
-        $this->sslService = SSL::getByServiceId($this->p['serviceid']);
+        $this->sslService = SSLModel::getByServiceId($this->p['serviceid']);
 
         if (is_null($this->sslService)) {
             throw new Exception('Create has not been initialized');

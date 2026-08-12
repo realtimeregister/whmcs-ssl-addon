@@ -354,6 +354,9 @@ trait SSLUtils
 
     public function mapDcvType($type)
     {
+        if ($type == null) {
+            return null;
+        }
         if (strtoupper($type) === 'HTTP') {
             return 'FILE';
         }

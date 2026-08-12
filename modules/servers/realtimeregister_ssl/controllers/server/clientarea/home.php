@@ -114,8 +114,8 @@ class home extends AbstractController
                 /** @var ProcessesApi $processesApi */
                 $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
                 $infoProcess = [];
-                $apicertdata = $processesApi->get($sslService->getRemoteId())->toArray();
-                if (!in_array($apicertdata['status'], [
+                $process = $processesApi->get($sslService->getRemoteId());
+                if (!in_array($process->status, [
                     ProcessStatusEnum::STATUS_COMPLETED,
                     ProcessStatusEnum::STATUS_FAILED,
                     ProcessStatusEnum::STATUS_CANCELLED
@@ -127,8 +127,9 @@ class home extends AbstractController
                 }
 
                 $configDataUpdate = new UpdateConfigData($sslService, [
-                    'status' => $apicertdata['status'],
-                    'dcv' => $infoProcess['validations']['dcv']
+                    'status' => $process->status,
+                    'dcv' => $infoProcess['validations']['dcv'] ?? [],
+                    'action' => $process->action
                 ]);
 
                 $configDataUpdate->run();
@@ -202,6 +203,8 @@ class home extends AbstractController
                     if (!empty($certificateDetails['domain'])) {
                         $vars['domain'] = $certificateDetails['domain'];
                     }
+
+                    $vars['statusDetail'] = $sslService->getStatusDetail();
 
                     if (!empty($certificateDetails['san_details'])) {
                         foreach ($certificateDetails['san_details'] as $san) {
@@ -688,34 +691,13 @@ class home extends AbstractController
             ApiProvider::getInstance()->getApi(CertificatesApi::class)
                 ->resendDcv($sslService->getRemoteId(), ResendDcvCollection::fromArray($data));
         } catch (Exception $ex) {
-            if (strpos($ex->getMessage(), 'Function is locked for') !== false) {
-                if (strpos($domain, '___') !== false) {
-                    $domain = str_replace('___', '*', $domain);
-                }
-                $message = substr($ex->getMessage(), 0, -1) . ' for the domain: ' . $domain . '.';
-            } else {
-                $message = $domain . ': ' . $ex->getMessage();
-            }
-
             return [
                 'success' => 0,
-                'msg' => $message
+                'msg' => $ex->getMessage()
             ];
         }
 
-        $sslorder = (array)Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
-
-        $sslorderconfigdata = json_decode($sslorder['configdata'], true);
-
-        $sslorderconfigdata['dcv_method'] = $newDcvMethodArray[0];
-
-        if ($data['new_method'] != 'email') {
-            $sslorderconfigdata['approveremail'] = '';
-        }
-
-        Capsule::table('tblsslorders')->where('serviceid', $serviceId)->update([
-            'configdata' => json_encode($sslorderconfigdata)
-        ]);
+        (new UpdateConfigData($sslService))->run();
 
         return [
             'success' => 1,

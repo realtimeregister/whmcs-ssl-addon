@@ -149,6 +149,7 @@ class ReissueCertificates extends BaseTask
         ];
 
         // SANs DCV
+        $mainDcvType = $dcv[0]['type'];
         $sans = [];
         $allSans = $sslOrder->getSanDetails() ?? [];
 
@@ -156,7 +157,7 @@ class ReissueCertificates extends BaseTask
             $sans[] = $san->san_name;
             $dcv[] = [
                 'commonName' => $san->san_name,
-                'type' => $this->mapDcvType($san->method),
+                'type' => $this->mapDcvType($san->method) ?? $mainDcvType,
                 'email' => $san->email ?? $this->getApproverEmail($sslOrder, $commonName)
             ];
         }
