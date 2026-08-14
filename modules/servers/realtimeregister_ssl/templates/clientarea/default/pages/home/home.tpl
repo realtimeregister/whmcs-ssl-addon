@@ -327,7 +327,7 @@
             sidebarItem.hide();
 
             let serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1',
-                    renewBtnrenewBtn = $('#btnRenew'),
+                    renewBtn = $('#btnRenew'),
                     renewForm,
                     renewModal,
                     renewBody,
@@ -531,7 +531,6 @@
                                         <tr>
                                             <th>{$ADDONLANG->T('revalidateModalDomainLabel')}</th>
                                             <th style="width:35%;">{$ADDONLANG->T('revalidateModalMethodLabel')}</th>
-                                            <th> {if 'email'|in_array:$disabledValidationMethods} {else}{$ADDONLANG->T('revalidateModalEmailLabel')}{/if}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -541,16 +540,9 @@
                                                 <div class="form-group">
                                                     <select style="width:70%;" type="text" name="newDcvMethod_0" class="form-control modalRevalidateInput" >
                                                         <option value="" selected>{$ADDONLANG->T('pleaseChooseOne')}</option>
-                                                        {if !'email'|in_array:$disabledValidationMethods}
-                                                            <option value="email">{$ADDONLANG->T('revalidateModalMethodEmail')}</option>
-                                                        {/if}
-                                                        {if !'http'|in_array:$disabledValidationMethods}
-                                                            <option value="http">{$ADDONLANG->T('revalidateModalMethodHttp')}</option>
-                                                        {/if}
-                                                        {if !'dns'|in_array:$disabledValidationMethods}
+                                                        <option value="email">{$ADDONLANG->T('revalidateModalMethodEmail')}</option>
+                                                        <option value="http">{$ADDONLANG->T('revalidateModalMethodHttp')}</option>
                                                         <option value="dns">{$ADDONLANG->T('revalidateModalMethodDns')}</option>
-                                                        {/if}
-                                                        
                                                     </select>
                                                 </div>
                                             </td>

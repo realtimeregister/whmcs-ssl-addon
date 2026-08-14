@@ -24,6 +24,7 @@ use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\Server;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use WHMCS\Module\Server as ServiceParams;
 use WHMCS\Service\Service;
 use WHMCS\View\Formatter\Price;
 use WHMCS\View\Menu\Item;
@@ -579,39 +580,6 @@ function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
 }
 add_hook('ClientAreaSecondarySidebar', 1, 'realtimeregister_ssl_displaySSLSummaryInSidebar');
 
-
-add_hook('InvoiceCreation', 1, function($vars) {
-    $invoiceid = $vars['invoiceid'];
-
-    $items = Capsule::table('tblinvoiceitems')->where('invoiceid', $invoiceid)->where('type', 'Upgrade')->get();
-
-    foreach ($items as $item) {
-        $description = $item->description;
-
-        $upgradeid = $item->relid;
-        $upgrade = Capsule::table('tblupgrades')->where('id', $upgradeid)->first();
-
-        $serviceid = $upgrade->relid;
-        $service = Capsule::table('tblhosting')->where('id', $serviceid)->first();
-
-        $productid = $service->packageid;
-        $product = Capsule::table('tblproducts')->where('id', $productid)
-            ->where('paytype', 'onetime')->where('servertype', 'realtimeregister_ssl')->first();
-
-        if (isset($product->configoption7) && !empty($product->configoption7)) {
-            if (strpos($description, '00/00/0000') !== false) {
-                $description = str_replace('- 00/00/0000', '', $description);
-                $length = strlen($description);
-                $description = substr($description, 0, $length-13);
-
-                Capsule::table('tblinvoiceitems')->where('id', $item->id)->update(
-                    ['description' => trim($description)]
-                );
-            }
-        }
-    }
-});
-
 add_hook('ClientAreaHeadOutput', 1, function($vars) {
     return <<<HTML
     <style>
@@ -621,6 +589,73 @@ add_hook('ClientAreaHeadOutput', 1, function($vars) {
     </style>
 HTML;
 
+});
+
+
+// We do not credit downgrades
+add_hook('ClientAreaPageUpgrade', 1, function($vars) {
+    $service = Service::findOrFail($vars['id']);
+    if(!$service->product->servertype === 'realtimeregister_ssl') {
+        return [];
+    }
+
+    $newVars = [];
+    $taxRate1 = ($vars['taxrate'] ?? 0) / 100;
+    $taxRate2 = ($vars['taxrate2'] ?? 0) / 100;
+    $taxRate = 1 + ($taxRate1 + $taxRate2);
+
+    if ($vars['upgrades']) {
+        $upgrades = [];
+        $addToPrice = 0.0;
+        foreach ($vars['upgrades'] as $upgrade) {
+            $price = $upgrade['price']->getValue();
+            if ($price < 0) {
+                FlashService::set(sprintf('newPrice_%s_%s' , $vars['id'], $upgrade['configname']), 0.0);
+                $addToPrice -= $price;
+                $upgrade['price'] = formatCurrency(0.0);
+            }
+            $upgrades[] = $upgrade;
+        }
+
+        $newVars['upgrades'] = $upgrades;
+        $subTotal = $vars['subtotal']->getValue();
+        $total = $vars['total']->getValue();
+
+        if ($addToPrice > 0.0) {
+            $newVars['subtotal'] = formatCurrency($subTotal + $addToPrice);
+            $newVars['total'] = formatCurrency($total + $addToPrice * $taxRate);
+        }
+
+        if ($taxRate1 && $vars['tax']) {
+            $newVars['tax'] = formatCurrency($vars['tax']->getValue() + $addToPrice * $taxRate1);
+        }
+
+        if ($taxRate1 && $vars['tax2']) {
+            $newVars['tax2'] = formatCurrency($vars['tax2']->getValue() + $addToPrice * $taxRate2);
+        }
+
+
+    }
+
+    return $newVars;
+});
+
+add_hook('PreUpgradeCheckout', 1, function ($vars) {
+    $upgrade = Capsule::table('tblupgrades')
+        ->where('id', $vars['upgradeId'])
+        ->first();
+    $configOption = Capsule::table('tblproductconfigoptions')
+        ->where('id', explode('=>', $upgrade->originalvalue)[0])
+        ->first();
+    $newPrice = FlashService::getAndUnset(
+        sprintf('newPrice_%s_%s', $vars['serviceId'],
+        explode('|', $configOption->optionname)[1])
+    );
+    if ($newPrice !== null) {
+        return ['amount' => $newPrice];
+    }
+
+    return [];
 });
 
 add_hook('AdminAreaFooterOutput', 1, function($vars)
