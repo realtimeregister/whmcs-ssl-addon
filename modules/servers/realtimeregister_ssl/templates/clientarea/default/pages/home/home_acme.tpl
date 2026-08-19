@@ -138,6 +138,7 @@
                 <h4 class="modal-title" id="addDomainsModalLabel">{$ADDONLANG->T('addDomains')}</h4>
             </div>
             <div class="modal-body">
+                <div class="alert alert-danger hidden" id="addDomainsError"><strong>Error!</strong> <span></span></div>
                 <textarea id="addDomainsInput" rows="6" class="form-control" placeholder="{$ADDONLANG->T('acmeDomainsPlaceholder')}"></textarea>
             </div>
             <div class="modal-footer">
@@ -186,16 +187,22 @@
 
 <script type="text/javascript">
     $(function () {
+        $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').hide();
         const serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1';
 
-        function runAction(action, data, onSuccess) {
+        function runAction(action, data, onSuccess, $modalErrorTarget) {
             data['addon-action'] = action;
             $.post(serviceUrl, data, function (ret) {
                 ret = ret.replace("<JSONRESPONSE#", "").replace("#ENDJSONRESPONSE>", "");
                 const payload = JSON.parse(ret);
                 if (payload.result === 'error') {
                     const errorMessage = payload.error || 'Error';
-                    $('#AddonAlerts').alerts('error', errorMessage);
+                    if ($modalErrorTarget && $modalErrorTarget.length) {
+                        $modalErrorTarget.find('span').text(errorMessage);
+                        $modalErrorTarget.removeClass('hidden');
+                    } else {
+                        $('#AddonAlerts').alerts('error', errorMessage);
+                    }
                     return;
                 }
                 const msg = payload.data?.message ?? '{$ADDONLANG->T('acmeConfigurationDone')}';
@@ -259,7 +266,8 @@
                 .map(domain => domain.trim())
                 .filter(Boolean);
 
-            runAction('addDomains', { domains });
+            $('#addDomainsError').addClass('hidden');
+            runAction('addDomains', { domains }, null, $('#addDomainsError'));
         });
 
         $('#btnRenew').on('click', function () {
@@ -267,11 +275,12 @@
         });
 
         $('#modalRenewSubmit').on('click', function () {
+            $('#modalRenewDanger').addClass('hidden');
             runAction('renew', {} , payload => {
                 const msg = payload.data?.message ?? '{$ADDONLANG->T('acmeConfigurationDone')}';
                 $('#AddonAlerts').alerts('success', msg);
                 setTimeout(function(){ location.replace('viewinvoice.php?id=' + payload.data.invoiceID) }, 2000);
-            });
+            }, $('#modalRenewDanger'));
         });
     });
 </script>
