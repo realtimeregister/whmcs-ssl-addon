@@ -232,7 +232,7 @@ trait AcmeTrait
             );
         } catch (Exception $e) {
             $message = $e->getMessage();
-            if (preg_match("/The field '(.+)' is required .*/", $message, $matches)) {
+            if (preg_match("/.*field '(.+)' is required .*/", $message, $matches)) {
                 throw new Exception("'$matches[1]' is a required field");
             }
             throw $e;
