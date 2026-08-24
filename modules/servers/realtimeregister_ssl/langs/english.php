@@ -320,3 +320,7 @@ $_LANG['serverCA']['home']['usedDomains']           = 'Used domains';
 $_LANG['serverCA']['home']['domains']           = 'Domains';
 $_LANG['serverCA']['home']['wildcardDomains']           = 'Wildcard domains';
 $_LANG['serverCA']['home']['totalDomains']           = 'Total domains';
+$_LANG['serverCA']['home']['domainLimitExceededWarning1'] = 'This subscription cannot be renewed. You have exceeded the allowed domain limit by';
+$_LANG['serverCA']['home']['domainLimitExceededWarning2'] = 'domain(s). Please remove the excess domains from the subscription before renewing.';
+$_LANG['serverCA']['home']['wildcardLimitExceededWarning1'] = 'This subscription cannot be renewed. You have exceeded the allowed wildcard domain limit by';
+$_LANG['serverCA']['home']['wildcardLimitExceededWarning2'] = 'wildcard domain(s). Please remove the excess wildcard domains from the subscription before renewing.';

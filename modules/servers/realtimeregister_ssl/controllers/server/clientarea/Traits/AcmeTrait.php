@@ -2,13 +2,13 @@
 
 namespace AddonModule\RealtimeRegisterSsl\controllers\server\clientarea\Traits;
 
-use AddonModule\RealtimeRegisterSsl\addonLibs\exceptions\System;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use DateTime;
+use Exception;
 use InvalidArgumentException;
 use RealtimeRegister\Api\AcmeApi;
 use RealtimeRegister\Domain\Approver;
@@ -47,9 +47,6 @@ trait AcmeTrait
     {
         $apiProduct = (new Products())->getProduct(KeyToIdMapping::getIdByKey($input['params'][C::API_PRODUCT_ID]));
         $features = $apiProduct->getFeatures() ?? [];
-        if (count($domains) == 0) {
-            throw new InvalidArgumentException('No domains provided');
-        }
 
         list($singleLimit, $wildcardLimit) = $this->getDomainLimits($input);
         list($singleDomains, $wildcardDomains) = self::splitDomains($domains);
@@ -111,11 +108,11 @@ trait AcmeTrait
     }
 
     /**
-     * @throws System
-     * @throws \Exception
+     * @throws Exception
      */
-    private function acmeIndex($input, $product, SSL $sslService, $vars = [])
+    private function acmeIndex($input, $product, SSL $sslService, $vars = []) : array
     {
+        $this->updateAcmeConfigData($sslService);
         $domains = $sslService->getDomains();
         list($domainLimits, $wildcardLimits) = $this->getDomainLimits($input);
         list($domainCount, $wildcardDomainCount) = $this->splitCurrentDomains($domains);
@@ -185,6 +182,9 @@ trait AcmeTrait
         return str_contains($product->{C::API_PRODUCT_ID}, 'acme');
     }
 
+    /**
+     * @throws Exception
+     */
     public function createSubscriptionJSON($input)
     {
         $domains = $input['domains'] ?? [];
@@ -215,7 +215,8 @@ trait AcmeTrait
             ]);
         }
 
-        $response = $api->create(
+        try {
+            $response = $api->create(
             customer: $customer,
             product: $product,
             period: $period,
@@ -228,20 +229,27 @@ trait AcmeTrait
             city: $input['city'] ?? null,
             autoRenew: false, // Let WHMCS handle renewals
             approver: $approver
-        );
+            );
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            if (preg_match("/The field '(.+)' is required .*/", $message, $matches)) {
+                throw new Exception("'$matches[1]' is a required field");
+            }
+            throw $e;
+        }
+
 
         $sslService->setRemoteId($response->id);
         $sslService->setAcmeCredentials($response->accountKey, $response->hmacKey);
         $sslService->setDirectoryUrl($response->directoryUrl);
         $this->updateAcmeConfigData($sslService, $domains, $paidNames);
 
-
         $sslService->save();
 
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function addDomainsJSON(array $input): void
     {
@@ -268,7 +276,7 @@ trait AcmeTrait
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function removeDomainJSON(array $input): void
     {
@@ -301,7 +309,7 @@ trait AcmeTrait
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function showCredentialsJSON(array $input): array
     {
