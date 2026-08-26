@@ -594,15 +594,17 @@ HTML;
 
 // We do not credit downgrades
 add_hook('ClientAreaPageUpgrade', 1, function($vars) {
+    global $CONFIG;
+    $inclusiveTax = $CONFIG['TaxType'] == 'Inclusive';
     $service = Service::findOrFail($vars['id']);
-    if(!$service->product->servertype === 'realtimeregister_ssl') {
+    if($service->product->servertype !== 'realtimeregister_ssl') {
         return [];
     }
 
     $newVars = [];
     $taxRate1 = ($vars['taxrate'] ?? 0) / 100;
     $taxRate2 = ($vars['taxrate2'] ?? 0) / 100;
-    $taxRate = 1 + ($taxRate1 + $taxRate2);
+    $taxRate = 1 + $taxRate1 + $taxRate2;
 
     if ($vars['upgrades']) {
         $upgrades = [];
@@ -618,23 +620,39 @@ add_hook('ClientAreaPageUpgrade', 1, function($vars) {
         }
 
         $newVars['upgrades'] = $upgrades;
-        $subTotal = $vars['subtotal']->getValue();
+        $newSubTotal = $vars['subtotal']->getValue();
         $total = $vars['total']->getValue();
 
         if ($addToPrice > 0.0) {
-            $newVars['subtotal'] = formatCurrency($subTotal + $addToPrice);
-            $newVars['total'] = formatCurrency($total + $addToPrice * $taxRate);
+            $newSubTotal = $newSubTotal + $addToPrice;
+            $newVars['subtotal'] = formatCurrency($newSubTotal);
+            if ($inclusiveTax) {
+                $newVars['total'] = formatCurrency($total + $addToPrice);
+            } else {
+                $newVars['total'] = formatCurrency($total + $addToPrice * $taxRate);
+            }
         }
 
+        $tax = 0.0;
+
         if ($taxRate1 && $vars['tax']) {
-            $newVars['tax'] = formatCurrency($vars['tax']->getValue() + $addToPrice * $taxRate1);
+            if ($inclusiveTax) {
+                $addToBasePrice = $addToPrice / (1 + $taxRate1);
+                $tax = $addToBasePrice * $taxRate1;
+            } else {
+                $tax = $addToPrice * $taxRate1;
+            }
+            $newVars['tax'] = formatCurrency($vars['tax']->getValue() + $tax);
         }
 
         if ($taxRate1 && $vars['tax2']) {
-            $newVars['tax2'] = formatCurrency($vars['tax2']->getValue() + $addToPrice * $taxRate2);
+            if ($inclusiveTax) {
+                $tax2 = $tax - $addToPrice * $taxRate2;
+                $newVars['tax2'] = formatCurrency($vars['tax2']->getValue() + $tax2);
+            } else {
+                $newVars['tax2'] = formatCurrency($vars['tax2']->getValue() + $addToPrice * $taxRate2);
+            }
         }
-
-
     }
 
     return $newVars;

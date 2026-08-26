@@ -107,6 +107,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+            $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').hide();
             const serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1';
 
             $('#acmeConfigurationForm').on('submit', function (e) {

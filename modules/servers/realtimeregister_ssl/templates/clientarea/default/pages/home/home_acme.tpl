@@ -87,6 +87,17 @@
             </tbody>
         </table>
 
+        {if $domainCount > $domainLimits}
+        <div class="alert alert-warning" style="margin-top: 10px;">
+            {$ADDONLANG->T('domainLimitExceededWarning1')} {$domainCount - $domainLimits} {$ADDONLANG->T('domainLimitExceededWarning2')}
+        </div>
+        {/if}
+        {if $wildcardDomainCount > $wildcardLimits}
+        <div class="alert alert-warning" style="margin-top: 10px;">
+            {$ADDONLANG->T('wildcardLimitExceededWarning1')} {$wildcardDomainCount - $wildcardLimits} {$ADDONLANG->T('wildcardLimitExceededWarning2')}
+        </div>
+        {/if}
+
         <div class="row" style="margin-top: 10px;">
             <div class="col-xs-12">
                 <a href="/upgrade.php?type=configoptions&id={$serviceid}" class="btn btn-primary">

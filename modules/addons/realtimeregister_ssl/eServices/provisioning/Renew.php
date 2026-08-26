@@ -2,6 +2,7 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\controllers\server\clientarea\Traits\AcmeTrait;
 use AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL as SSLModel;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
@@ -13,10 +14,13 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\AcmeApi;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Exceptions\BadRequestException;
+use WHMCS\Module\Server;
 
 class Renew
 {
     use SSLUtils;
+
+    use AcmeTrait;
 
     private $p;
 
@@ -57,6 +61,18 @@ class Renew
             return $ex->getMessage();
         }
         return "success";
+    }
+
+    private function validateAcmeRenew(): void
+    {
+        $server = new Server();
+        $server->loadByServiceID($this->p['serviceid']);
+        $serviceParams = $server->buildParams();
+        $input = [];
+        $currentDomains = $this->sslService->getDomains();
+        $input['params']['configoptions'] = $serviceParams['configoptions'];
+        $input['params'][ConfigOptions::API_PRODUCT_ID] = $this->p[ConfigOptions::API_PRODUCT_ID];
+        $this->validateDomainLimits($input, [], $currentDomains);
     }
 
     private function updateOneTime()
@@ -127,8 +143,8 @@ class Renew
 
     private function renewAcmeSubscription(): void {
         $logs = new LogsRepo();
-
         $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();
+        $this->validateAcmeRenew();
 
         /* @var AcmeApi $api */
         $api = ApiProvider::getInstance()

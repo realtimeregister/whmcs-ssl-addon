@@ -17,3 +17,9 @@
         </tr>
     </tbody>
 </table>
+
+<script type="text/javascript">
+        $(function () {
+            $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').hide();
+        });
+</script>
