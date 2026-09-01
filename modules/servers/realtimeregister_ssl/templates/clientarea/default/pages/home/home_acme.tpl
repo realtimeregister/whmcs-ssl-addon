@@ -29,32 +29,6 @@
                     <td class="text-left"><strong>{$ADDONLANG->T('directoryUrl')}</strong></td>
                     <td class="text-left">{$directoryUrl}</td>
                 </tr>
-                {if $organizationDetails}
-                <tr>
-                    <td class="text-left"><strong>{$ADDONLANG->absoluteT('clientareacompanyname')}</strong></td>
-                    <td class="text-left">{$organizationDetails.organization}</td>
-                </tr>
-                <tr>
-                    <td class="text-left"><strong>{$ADDONLANG->T('addressLabel')}</strong></td>
-                    <td class="text-left">{$organizationDetails.address}</td>
-                </tr>
-                <tr>
-                    <td class="text-left"><strong>{$ADDONLANG->absoluteT('clientareacity')}</strong></td>
-                    <td class="text-left">{$organizationDetails.city}</td>
-                </tr>
-                <tr>
-                    <td class="text-left"><strong>{$ADDONLANG->absoluteT('clientareastate')}</strong></td>
-                    <td class="text-left">{$organizationDetails.state}</td>
-                </tr>
-                <tr>
-                    <td class="text-left"><strong>{$ADDONLANG->absoluteT('clientareapostcode')}</strong></td>
-                    <td class="text-left">{$organizationDetails.postalCode}</td>
-                </tr>
-                <tr>
-                    <td class="text-left"><strong>{$ADDONLANG->T('countryLabel')}</strong></td>
-                    <td class="text-left">{$organizationDetails.country}</td>
-                </tr>
-                {/if}
                 <tr>
                     <td class="text-left"><strong>{$ADDONLANG->T('accountKey')}</strong></td>
                     <td class="text-left">
@@ -180,10 +154,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">{$ADDONLANG->T('cancel')}</button>
-                <button type="button" class="btn btn-primary" id="addDomainsSubmit">
-                    <i id="addDomainsSpinner" class="fa fa-spinner fa-spin" style="display:none; margin-right:5px;"></i>
-                    {$ADDONLANG->T('addDomains')}
-                </button>
+                <button type="button" class="btn btn-primary" id="addDomainsSubmit">{$ADDONLANG->T('addDomains')}</button>
             </div>
         </div>
     </div>
@@ -230,17 +201,12 @@
         $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').hide();
         const serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1';
 
-        function runAction(action, data, onSuccess, $modalErrorTarget, $loadingBtn, $loadingSpinner) {
-            if ($loadingBtn) $loadingBtn.prop('disabled', true);
-            if ($loadingSpinner) $loadingSpinner.show();
-
+        function runAction(action, data, onSuccess, $modalErrorTarget) {
             data['addon-action'] = action;
             $.post(serviceUrl, data, function (ret) {
                 ret = ret.replace("<JSONRESPONSE#", "").replace("#ENDJSONRESPONSE>", "");
                 const payload = JSON.parse(ret);
                 if (payload.result === 'error') {
-                    if ($loadingBtn) $loadingBtn.prop('disabled', false);
-                    if ($loadingSpinner) $loadingSpinner.hide();
                     const errorMessage = payload.error || 'Error';
                     if ($modalErrorTarget && $modalErrorTarget.length) {
                         $modalErrorTarget.find('span').text(errorMessage);
@@ -250,8 +216,6 @@
                     }
                     return;
                 }
-                if ($loadingBtn) $loadingBtn.prop('disabled', false);
-                if ($loadingSpinner) $loadingSpinner.hide();
                 const msg = payload.data?.message ?? '{$ADDONLANG->T('acmeConfigurationDone')}';
                 if (onSuccess) {
                     onSuccess(payload);
@@ -314,7 +278,7 @@
                 .filter(Boolean);
 
             $('#addDomainsError').addClass('hidden');
-            runAction('addDomains', { domains }, null, $('#addDomainsError'), $('#addDomainsSubmit'), $('#addDomainsSpinner'));
+            runAction('addDomains', { domains }, null, $('#addDomainsError'));
         });
 
         $('#btnRenew').on('click', function () {

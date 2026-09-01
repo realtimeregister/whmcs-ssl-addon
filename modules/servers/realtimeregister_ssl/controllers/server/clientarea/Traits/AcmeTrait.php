@@ -137,8 +137,6 @@ trait AcmeTrait
 
         $vars['directoryUrl'] = $sslService->getDirectoryUrl();
 
-        $vars['organizationDetails'] = $sslService->getOrganizationDetails();
-
         return [
             'tpl' => 'home_acme',
             'vars' => $vars
@@ -190,10 +188,6 @@ trait AcmeTrait
     public function createSubscriptionJSON($input)
     {
         $domains = $input['domains'] ?? [];
-        $domains = array_map('trim', $domains);
-        if (!array_filter($domains)) {
-            throw new InvalidArgumentException('At least one domain is required');
-        }
 
         $paidNames = $this->validateDomainLimits($input, $domains);
 
@@ -238,8 +232,8 @@ trait AcmeTrait
             );
         } catch (Exception $e) {
             $message = $e->getMessage();
-            if (preg_match("/.*field '(.+)' is required .*/i", $message, $matches)) {
-                throw new InvalidArgumentException("'$matches[1]' is a required field");
+            if (preg_match("/.*field '(.+)' is required .*/", $message, $matches)) {
+                throw new Exception("'$matches[1]' is a required field");
             }
             throw $e;
         }
@@ -345,17 +339,6 @@ trait AcmeTrait
         } else {
             $sslService->setStatus(SSL::ACTIVE);
             $sslService->setSSLStatus(AcmeSubscriptionStatusEnum::ACTIVE);
-        }
-
-        if ($acmeSubscription->organization) {
-            $sslService->setOrganizationDetails([
-                'organization' => $acmeSubscription->organization,
-                'address' => $acmeSubscription->address,
-                'city' => $acmeSubscription->city,
-                'state' => $acmeSubscription->state,
-                'postalCode' => $acmeSubscription->postalCode,
-                'country' => $acmeSubscription->country,
-            ]);
         }
 
         $sslService->setValidTill($acmeSubscription->expiryDate);
