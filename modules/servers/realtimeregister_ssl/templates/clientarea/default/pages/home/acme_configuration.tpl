@@ -100,7 +100,10 @@
             </table>
                 {/if}
 
-            <button type="submit" class="btn btn-primary">{$ADDONLANG->T('acmeSubmitConfiguration')}</button>
+            <button type="submit" class="btn btn-primary" id="acmeSubmitBtn">
+                <i id="addDomainsSpinner" class="fa fa-spinner fa-spin" style="display:none; margin-right:5px;"></i>
+                {$ADDONLANG->T('acmeSubmitConfiguration')}
+            </button>
         </form>
         </div>
     </div>
@@ -136,9 +139,15 @@
                 postData.approverVoice     = $('#approverVoice').val();
                 {/if}
 
+                const $btn = $('#acmeSubmitBtn');
+                $btn.prop('disabled', true);
+                $('#acmeSubmitSpinner').show();
+
                 $.post(serviceUrl, postData, function (result) {
                     const payload = JSON.parse(result.replace("<JSONRESPONSE#", "").replace("#ENDJSONRESPONSE>", ""));
                     if (payload.result === 'error') {
+                        $btn.prop('disabled', false);
+                        $('#acmeSubmitSpinner').hide();
                         $('#AddonAlerts').alerts('error', payload.error || '{$ADDONLANG->T('anErrorOccurred')}');
                         return;
                     }

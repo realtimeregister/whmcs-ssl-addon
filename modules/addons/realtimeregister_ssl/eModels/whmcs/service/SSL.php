@@ -473,4 +473,14 @@ class SSL extends Model
         $this->setConfigdataKey('certificateSent', $sent);
     }
 
+    public function setOrganizationDetails(array $details)
+    {
+        $this->setConfigdataKey('organizationDetails', $details);
+    }
+
+    public function getOrganizationDetails(): array
+    {
+        return (array) $this->getConfigdataKey('organizationDetails') ?? [];
+    }
+
 }
