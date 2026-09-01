@@ -291,12 +291,13 @@ $_LANG['acmeOrganizationFieldsTitle']          = 'Organization Details';
 $_LANG['acmeOrganizationFieldsDescription']    = 'This product requires organization details for OV/EV validation.';
 $_LANG['acmeOrganizationLabel']                = 'Organization Name';
 $_LANG['acmeAddressLabel']                     = 'Address';
-$_LANG['countryLabel']                     = 'Country (2-letter code)';
+
 $_LANG['acmeApproverFieldsTitle']              = 'Approver Details';
 $_LANG['acmeApproverFieldsDescription']        = 'Please provide the details of the person who will approve this certificate request.';
 
 // ACME home page translations
 $_LANG['serverCA']['home']['configurationStatus']       = 'Configuration Status';
+$_LANG['serverCA']['home']['countryLabel']              = 'Country (2-letter code)';
 $_LANG['serverCA']['home']['validTill']                 = 'Valid Till';
 $_LANG['serverCA']['home']['nextInvoiceDate']           = 'Next Invoice Date';
 $_LANG['serverCA']['home']['directoryUrl']              = 'Directory URL';
