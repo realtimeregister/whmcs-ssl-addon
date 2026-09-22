@@ -138,6 +138,7 @@ trait AcmeTrait
         $vars['directoryUrl'] = $sslService->getDirectoryUrl();
 
         $vars['organizationDetails'] = $sslService->getOrganizationDetails();
+        $vars['approverDetails'] = $sslService->getApproverDetails();
 
         return [
             'tpl' => 'home_acme',
@@ -355,6 +356,16 @@ trait AcmeTrait
                 'state' => $acmeSubscription->state,
                 'postalCode' => $acmeSubscription->postalCode,
                 'country' => $acmeSubscription->country,
+            ]);
+        }
+
+        if ($acmeSubscription->approver) {
+            $sslService->setApproverDetails([
+                'firstName' => $acmeSubscription->approver->firstName,
+                'lastName' => $acmeSubscription->approver->lastName,
+                'jobTitle' => $acmeSubscription->approver->jobTitle,
+                'email' => $acmeSubscription->approver->email,
+                'voice' => $acmeSubscription->approver->voice,
             ]);
         }
 
