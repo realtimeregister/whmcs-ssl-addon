@@ -309,6 +309,7 @@ $_LANG['serverCA']['home']['remove']                    = 'Remove';
 $_LANG['serverCA']['home']['buyDomainSpace']            = 'Buy Domains';
 $_LANG['serverCA']['home']['addDomains']                = 'Add Domains';
 $_LANG['serverCA']['home']['showCertbotCommand']        = 'Show Certbot Command';
+$_LANG['serverCA']['home']['showApproverDetails']       = 'Show Approver Details';
 $_LANG['serverCA']['home']['copyToClipboard']           = 'Copy to Clipboard';
 $_LANG['serverCA']['home']['cancel']                    = 'Cancel';
 $_LANG['serverCA']['home']['acmeDomainsPlaceholder']    = 'Enter one domain per line, e.g. example.com or *.example.com';

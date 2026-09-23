@@ -135,6 +135,11 @@
                 <button type="button" class="btn btn-default" id="showCertbotCommandBtn">
                     {$ADDONLANG->T('showCertbotCommand')}
                 </button>
+                {if $approverDetails}
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#approverDetailsModal">
+                    {$ADDONLANG->T('showApproverDetails')}
+                </button>
+                {/if}
                 {if $showRenewButton}
                     <button type="button" id="btnRenew" class="btn btn-default">{$ADDONLANG->T('renew')}</button>
                 {/if}
@@ -142,6 +147,55 @@
         </div>
     </div>
 </div>
+
+{if $approverDetails}
+<!-- Approver Details Modal -->
+<div class="modal fade" id="approverDetailsModal" tabindex="-1" role="dialog" aria-labelledby="approverDetailsModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="approverDetailsModalLabel">{$ADDONLANG->T('acmeApproverFieldsTitle')}</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered" style="margin-bottom: 0;">
+                    <colgroup>
+                        <col style="width: 40%"/>
+                        <col style="width: 60%"/>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td class="text-left"><strong>{$ADDONLANG->absoluteT('clientareafirstname')}</strong></td>
+                            <td class="text-left">{$approverDetails.firstName}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><strong>{$ADDONLANG->absoluteT('clientarealastname')}</strong></td>
+                            <td class="text-left">{$approverDetails.lastName}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><strong>{$ADDONLANG->T('approverJobTitleLabel')}</strong></td>
+                            <td class="text-left">{$approverDetails.jobTitle}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><strong>{$ADDONLANG->absoluteT('clientareaemail')}</strong></td>
+                            <td class="text-left">{$approverDetails.email}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><strong>{$ADDONLANG->absoluteT('clientareaphonenumber')}</strong></td>
+                            <td class="text-left">{$approverDetails.voice}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$ADDONLANG->T('Close')}</button>
+            </div>
+        </div>
+    </div>
+</div>
+{/if}
 
 <!-- Certbot Command Modal -->
 <div class="modal fade" id="certbotCommandModal" tabindex="-1" role="dialog" aria-labelledby="certbotCommandModalLabel">

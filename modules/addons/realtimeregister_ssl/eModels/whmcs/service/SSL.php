@@ -483,4 +483,14 @@ class SSL extends Model
         return (array) $this->getConfigdataKey('organizationDetails') ?? [];
     }
 
+    public function setApproverDetails(array $details)
+    {
+        $this->setConfigdataKey('approverDetails', $details);
+    }
+
+    public function getApproverDetails(): array
+    {
+        return (array) ($this->getConfigData()['approverDetails'] ?? []);
+    }
+
 }
