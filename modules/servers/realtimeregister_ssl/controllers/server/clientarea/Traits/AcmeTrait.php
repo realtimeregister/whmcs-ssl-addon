@@ -173,6 +173,7 @@ trait AcmeTrait
         $vars['prefillFirstName'] = $client['firstname'] ?? '';
         $vars['prefillLastName'] = $client['lastname'] ?? '';
         $vars['prefillEmail'] = $client['email'] ?? '';
+        $vars['prefillVoice'] = $client['phonenumberformatted'] ?? $client['telephoneNumber'] ?? '';
 
         return [
             'tpl' => 'acme_configuration',
@@ -240,6 +241,9 @@ trait AcmeTrait
         } catch (Exception $e) {
             $message = $e->getMessage();
             if (preg_match("/.*field '(.+)' is required .*/i", $message, $matches)) {
+                if ($matches[1] === 'approver') {
+                    throw new InvalidArgumentException("Approver information is incomplete");
+                }
                 throw new InvalidArgumentException("'$matches[1]' is a required field");
             }
             throw $e;
