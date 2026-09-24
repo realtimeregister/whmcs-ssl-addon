@@ -94,7 +94,7 @@
                     </tr>
                     <tr>
                         <td style="width: 25%;"><label for="approverVoice">{$ADDONLANG->absoluteT('clientareaphonenumber')}</label></td>
-                        <td><input type="text" id="approverVoice" class="form-control" /></td>
+                        <td><input type="text" id="approverVoice" class="form-control" value="{$prefillVoice}" /></td>
                     </tr>
                 </tbody>
             </table>
