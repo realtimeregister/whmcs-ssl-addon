@@ -16,12 +16,8 @@ use AddonModule\RealtimeRegisterSsl\eServices\ScriptService;
 use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
-use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use Exception;
-use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
-use RealtimeRegister\Exceptions\BadRequestException;
 
 class ClientReissueCertificate
 {
@@ -409,7 +405,7 @@ class ClientReissueCertificate
             throw new Exception(Lang::getInstance()->T('createNotInitialized'));
         }
 
-        if (!in_array($this->sslService->configdata->ssl_status, ['ACTIVE', 'COMPLETED'])) {
+        if (!in_array($this->sslService->configdata->ssl_status, ['ACTIVE', 'COMPLETED', 'EXPIRED'])) {
             throw new Exception(Lang::getInstance()->T('notAllowToReissue'));
         }
     }

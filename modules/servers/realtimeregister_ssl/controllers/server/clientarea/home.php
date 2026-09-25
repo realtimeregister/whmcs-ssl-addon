@@ -213,6 +213,7 @@ class home extends AbstractController
 
                     if (self::hasReissueWindow($certificateDetails)) {
                         $vars['subscriptionEnds'] = self::formatDate($certificateDetails['end_date']->date);
+                        $vars['showReissueButton'] = true;
                         $daysUntilExpired = $now->diff(new \DateTime($certificateDetails['end_date']->date))
                             ->format('%a');
                     }
