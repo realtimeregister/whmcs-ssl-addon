@@ -9,11 +9,11 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSLTemporary;
 use AddonModule\RealtimeRegisterSsl\eServices\FlashService;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\service\Service;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
-use function Symfony\Component\Translation\t;
 
 class SSLStepTwo
 {
@@ -24,11 +24,22 @@ class SSLStepTwo
     private array $csrDecode = [];
     private string $productName;
 
+    /**
+     * @throws Exception
+     */
     public function __construct($params)
     {
         $this->p = $params;
-        $this->pid = $params['productId'] ?: (new Service($this->p['serviceid']))->productID;
-        $this->productName = $params[ConfigOptions::API_PRODUCT_ID];
+        $service = (new Service($this->p['serviceid']));
+        $this->pid = $params['productId'] ?: $service->productID;
+        if (!$params[ConfigOptions::API_PRODUCT_ID]) {
+            if (!$service->productID) {
+                throw new Exception('No product name and product ID present');
+            }
+            $product = new Product($service->productID);
+            $this->p = array_merge($this->p, $product->configuration()->getConfigOptions());
+        }
+        $this->productName = $this->p[ConfigOptions::API_PRODUCT_ID];
     }
 
     public function run()
