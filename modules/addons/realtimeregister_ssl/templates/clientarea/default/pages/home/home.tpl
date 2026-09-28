@@ -225,7 +225,7 @@
     </style>
     <script type="text/javascript">
         jQuery(document).ready(function () {
-            var addonDataTable;
+            let addonDataTable;
 
             jQuery(document).ready(function () {
                addonDataTable = $('#addon-data-list').dataTable({
@@ -235,7 +235,7 @@
                     "serverSide": false,
                     "order": [[0, "desc"]],
                     ajax: function (data, callback, settings) {
-                        var filter = {
+                        const filter = {
                             //    serverID: $('#pm-filters-server').val(),
                         };
                         JSONParser.request(
@@ -277,7 +277,7 @@
 
                 $('#addon-categories-content').AddonModalActions();
                 $('#addon-modal-delete-entity, #addon-form-add-new').on('hidden.bs.modal', function () {
-                    var api = addonDataTable.api();
+                    const api = addonDataTable.api();
                     api.ajax.reload(function () {
                     }, false);
                 });
@@ -286,7 +286,7 @@
             //show password
             $("#addon-categories-content").on("click",".addon-show-password",function(e){
                 e.preventDefault();
-                var inputPassword = $(this).closest("div").find(".form-control");
+                const inputPassword = $(this).closest("div").find(".form-control");
                 JSONParser.request(
                 'getPassword'
                 , { id: $(this).attr('data-target') }
