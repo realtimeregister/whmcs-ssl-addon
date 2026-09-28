@@ -21,10 +21,10 @@ use AddonModule\RealtimeRegisterSsl\eServices\TemplateService;
 use AddonModule\RealtimeRegisterSsl\Loader;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
-use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\Server;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use WHMCS\Module\Server as ServiceParams;
 use WHMCS\Service\Service;
 use WHMCS\View\Formatter\Price;
 use WHMCS\View\Menu\Item;
@@ -580,103 +580,6 @@ function realtimeregister_ssl_displaySSLSummaryInSidebar($secondarySidebar)
 }
 add_hook('ClientAreaSecondarySidebar', 1, 'realtimeregister_ssl_displaySSLSummaryInSidebar');
 
-function realtimeregister_ssl_overideProductPricingBasedOnDiscount($vars)
-{
-    require_once __DIR__ . DS . 'Loader.php';
-    new Loader();
-    AddonModule\RealtimeRegisterSsl\Addon::I(true);
-    //load module products
-    $products     = [];
-    $productModel = new Repository();
-    $properties = ["msetupfee", "asetupfee", "bsetupfee", "tsetupfee", "monthly", "annually", "biennially", "triennially"];
-
-    if(isset($_SESSION['uid']) && !empty($_SESSION['uid'])) {
-        $clientCurrency = getCurrency($_SESSION['uid'])['id'];
-    } else {
-        $currency = Capsule::table('tblcurrencies')->where('default', '1')->first();
-        $clientCurrency['id'] = isset($_SESSION['currency']) && !empty($_SESSION['currency']) ? $_SESSION['currency']
-            : $currency->id;
-    }
-    // get Realtime Register Ssl all products
-    foreach ($productModel->getModuleProducts() as $product) {
-        if($product->servertype != 'realtimeregister_ssl') {
-            continue;
-        }
-
-        if ($product->id == $vars['pid']) {
-            $percentage = AddonModule\RealtimeRegisterSsl\eHelpers\Discount::getDiscountValue($vars);
-            if (!$percentage) {
-                return [];
-            }
-
-            $configoptions = $vars['proddata']['configoptions'];
-            $discount = 0;
-
-            foreach ($configoptions as $optionId => $value) {
-                $option = ConfigurableOptionService::getConfigOptionById($optionId);
-                if (str_contains($option->optionname, 'sans')) {
-                    $optionSub = ConfigurableOptionService::getConfigOptionSubByOptionId($optionId);
-                    $pricing = Capsule::table("tblpricing")
-                        ->where("relid", "=", $optionSub->id)
-                        ->where("currency", "=", $clientCurrency)
-                        ->first();
-                    $quantity = $value;
-                } else {
-                    $pricing = Capsule::table("tblpricing")
-                        ->where("relid", "=", $value)
-                        ->where("currency", "=", $clientCurrency)
-                        ->first();
-                    $quantity = 1;
-                }
-                foreach($properties as $property) {
-                    $discount -= floatval($pricing->{$property}) * $quantity;
-                }
-            }
-
-            if ($discount) {
-                return ['recurring' => $discount / 100 * $percentage];
-            }
-        }
-    }
-
-    return [];
-}
-
-add_hook('OrderProductPricingOverride', 1, 'realtimeregister_ssl_overideProductPricingBasedOnDiscount');
-
-
-add_hook('InvoiceCreation', 1, function($vars) {
-    $invoiceid = $vars['invoiceid'];
-
-    $items = Capsule::table('tblinvoiceitems')->where('invoiceid', $invoiceid)->where('type', 'Upgrade')->get();
-
-    foreach ($items as $item) {
-        $description = $item->description;
-
-        $upgradeid = $item->relid;
-        $upgrade = Capsule::table('tblupgrades')->where('id', $upgradeid)->first();
-
-        $serviceid = $upgrade->relid;
-        $service = Capsule::table('tblhosting')->where('id', $serviceid)->first();
-
-        $productid = $service->packageid;
-        $product = Capsule::table('tblproducts')->where('id', $productid)
-            ->where('paytype', 'onetime')->where('servertype', 'realtimeregister_ssl')->first();
-
-        if (isset($product->configoption7) && !empty($product->configoption7)) {
-            if (strpos($description, '00/00/0000') !== false) {
-                $description = str_replace('- 00/00/0000', '', $description);
-                $length = strlen($description);
-                $description = substr($description, 0, $length-13);
-
-                Capsule::table('tblinvoiceitems')->where('id', $item->id)->update(
-                    ['description' => trim($description)]
-                );
-            }
-        }
-    }
-});
-
 add_hook('ClientAreaHeadOutput', 1, function($vars) {
     return <<<HTML
     <style>
@@ -686,6 +589,91 @@ add_hook('ClientAreaHeadOutput', 1, function($vars) {
     </style>
 HTML;
 
+});
+
+
+// We do not credit downgrades
+add_hook('ClientAreaPageUpgrade', 1, function($vars) {
+    global $CONFIG;
+    $inclusiveTax = $CONFIG['TaxType'] == 'Inclusive';
+    $service = Service::findOrFail($vars['id']);
+    if($service->product->servertype !== 'realtimeregister_ssl') {
+        return [];
+    }
+
+    $newVars = [];
+    $taxRate1 = ($vars['taxrate'] ?? 0) / 100;
+    $taxRate2 = ($vars['taxrate2'] ?? 0) / 100;
+    $taxRate = 1 + $taxRate1 + $taxRate2;
+
+    if ($vars['upgrades']) {
+        $upgrades = [];
+        $addToPrice = 0.0;
+        foreach ($vars['upgrades'] as $upgrade) {
+            $price = $upgrade['price']->getValue();
+            if ($price < 0) {
+                FlashService::set(sprintf('newPrice_%s_%s' , $vars['id'], $upgrade['configname']), 0.0);
+                $addToPrice -= $price;
+                $upgrade['price'] = formatCurrency(0.0);
+            }
+            $upgrades[] = $upgrade;
+        }
+
+        $newVars['upgrades'] = $upgrades;
+        $newSubTotal = $vars['subtotal']->getValue();
+        $total = $vars['total']->getValue();
+
+        if ($addToPrice > 0.0) {
+            $newSubTotal = $newSubTotal + $addToPrice;
+            $newVars['subtotal'] = formatCurrency($newSubTotal);
+            if ($inclusiveTax) {
+                $newVars['total'] = formatCurrency($total + $addToPrice);
+            } else {
+                $newVars['total'] = formatCurrency($total + $addToPrice * $taxRate);
+            }
+        }
+
+        $tax = 0.0;
+
+        if ($taxRate1 && $vars['tax']) {
+            if ($inclusiveTax) {
+                $addToBasePrice = $addToPrice / (1 + $taxRate1);
+                $tax = $addToBasePrice * $taxRate1;
+            } else {
+                $tax = $addToPrice * $taxRate1;
+            }
+            $newVars['tax'] = formatCurrency($vars['tax']->getValue() + $tax);
+        }
+
+        if ($taxRate1 && $vars['tax2']) {
+            if ($inclusiveTax) {
+                $tax2 = $tax - $addToPrice * $taxRate2;
+                $newVars['tax2'] = formatCurrency($vars['tax2']->getValue() + $tax2);
+            } else {
+                $newVars['tax2'] = formatCurrency($vars['tax2']->getValue() + $addToPrice * $taxRate2);
+            }
+        }
+    }
+
+    return $newVars;
+});
+
+add_hook('PreUpgradeCheckout', 1, function ($vars) {
+    $upgrade = Capsule::table('tblupgrades')
+        ->where('id', $vars['upgradeId'])
+        ->first();
+    $configOption = Capsule::table('tblproductconfigoptions')
+        ->where('id', explode('=>', $upgrade->originalvalue)[0])
+        ->first();
+    $newPrice = FlashService::getAndUnset(
+        sprintf('newPrice_%s_%s', $vars['serviceId'],
+        explode('|', $configOption->optionname)[1])
+    );
+    if ($newPrice !== null) {
+        return ['amount' => $newPrice];
+    }
+
+    return [];
 });
 
 add_hook('AdminAreaFooterOutput', 1, function($vars)

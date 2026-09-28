@@ -129,6 +129,8 @@ $_LANG['addonAA']['productsConfiguration']['status']              = 'Status:';
 
 $_LANG['addonAA']['productsConfiguration']['statusEnable']  = 'Aktiver';
 $_LANG['addonAA']['productsConfiguration']['statusDisable'] = 'Deaktiver';
+$_LANG['addonAA']['productsConfiguration']['sslProducts']   = 'SSL-produkter';
+$_LANG['addonAA']['productsConfiguration']['acmeProducts']  = 'ACME-produkter';
 
 
 $_LANG['addonAA']['productsConfiguration']['paymentType']          = 'Betalingstype:';

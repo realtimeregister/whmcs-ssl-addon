@@ -107,14 +107,12 @@ class Products
         /** @var CertificatesApi $certificatesApi */
         $certificatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
 
-        while ($apiProducts = $certificatesApi->listProducts(
-            10, $i, null, ["certificateType:ne" => "ACME_SUBSCRIPTION"])
-        ) {
-            foreach ($apiProducts->toArray() as $apiProduct) {
+        while ($apiProducts = $certificatesApi->listProducts(10, $i)) {
+            foreach ($apiProducts->entities as $apiProduct) {
                 Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->insert([
-                    'pid' => KeyToIdMapping::getIdByKey($apiProduct['product']),
-                    'pid_identifier' => $apiProduct['product'],
-                    'brand' => $apiProduct['brand'],
+                    'pid' => KeyToIdMapping::getIdByKey($apiProduct->product),
+                    'pid_identifier' => $apiProduct->product,
+                    'brand' => $apiProduct->brand,
                     'data' => json_encode($apiProduct)
                 ]);
             }

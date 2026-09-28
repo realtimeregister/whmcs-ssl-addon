@@ -45,6 +45,11 @@ class AutomaticSynchronisation extends BaseTask
                     continue;
                 }
 
+                if ($sslService->isAcmeProduct()) {
+                    // TODO
+                    continue;
+                }
+
                 $configdata = json_decode(json_encode($sslService->configdata), true);
                 if (!empty($configdata['domain'])) {
                     Capsule::table('tblhosting')->where('id', $serviceID)->update(['domain' => $configdata['domain']]);
@@ -78,7 +83,7 @@ class AutomaticSynchronisation extends BaseTask
 
                 /** @var Certificate $sslOrder */
                 $sslOrder = $certificateApi
-                    ->listCertificates(1, null, null, ['process:eq' => $order->id])[0];
+                    ->listCertificates(1, null, null, ['process:eq' => $order->id])[0] ?? null;
 
                 //if certificate is active
                 if ($sslOrder) {
@@ -96,6 +101,8 @@ class AutomaticSynchronisation extends BaseTask
                      * If the status is suspended, we need some more data of the customer, so we send this person
                      * an email
                      */
+
+                    //TODO acme subscripions OV template
                     if (!$customerNotified) {
                         sendMessage(
                             EmailTemplateService::VALIDATION_INFORMATION_TEMPLATE_ID,
@@ -120,8 +127,9 @@ class AutomaticSynchronisation extends BaseTask
             );
 
             $this->output("synced")->write($updatedServices);
-            return $this;
         }
+
+        return $this;
     }
 
     private function checkIfSynchronized($serviceID): bool

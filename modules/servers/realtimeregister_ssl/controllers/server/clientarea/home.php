@@ -4,6 +4,7 @@ namespace AddonModule\RealtimeRegisterSsl\controllers\server\clientarea;
 
 use AddonModule\RealtimeRegisterSsl\addonLibs\Lang;
 use AddonModule\RealtimeRegisterSsl\addonLibs\process\AbstractController;
+use AddonModule\RealtimeRegisterSsl\controllers\server\clientarea\Traits\AcmeTrait;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Invoice;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
@@ -21,11 +22,11 @@ use AddonModule\RealtimeRegisterSsl\models\whmcs\product\Product;
 use AddonModule\RealtimeRegisterSsl\Server;
 use DateTimeImmutable;
 use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
 use RealtimeRegister\Domain\Enum\ProcessStatusEnum;
 use RealtimeRegister\Domain\ResendDcvCollection;
-use WHMCS\Database\Capsule;
 
 /**
  * Description of home
@@ -35,6 +36,7 @@ class home extends AbstractController
 {
 
     use SSLUtils;
+    use AcmeTrait;
 
     public function indexHTML($input, $vars = [])
     {
@@ -45,13 +47,43 @@ class home extends AbstractController
                 return true;
             }
 
-            $disabledValidationMethods = [];
-
             $serviceId = $input['params']['serviceid'];
             $serviceBillingCycle = $input['params']['templatevars']['billingcycle'];
             $userid = $input['params']['userid'];
             $ssl = new SSLRepo();
             $sslService = $ssl->getByServiceId($serviceId);
+            $product = Capsule::table('tblproducts')
+                ->where('id', (int) $input['params']['pid'])
+                ->first();
+
+            $vars['configurationURL'] = self::isAcmeProduct($product)
+                ? 'clientarea.php?action=productdetails&id=' . $serviceId . '&acmeconfig=1'
+                : Config::getInstance()->getConfigureSSLUrl($sslService->id, $serviceId);
+            $vars['productName'] = $product->name;
+            $vars['configurationStatus'] = $sslService->status;
+            $vars['assetsURL'] = Server::I()->getAssetsURL();
+
+
+
+            if (self::isAcmeProduct($product)) {
+                if (isset($_GET['acmeconfig']) && $_GET['acmeconfig'] == '1')
+                {
+                    return $this->acmeConfiguration($input, $product, $vars);
+                }
+
+                if ($sslService->status !== SSL::AWAITING_CONFIGURATION) {
+                    (new UpdateConfigData($sslService))->run();
+                    return $this->acmeIndex($input, $product, $sslService, $vars);
+                }
+            }
+
+            if ($sslService->status === SSL::AWAITING_CONFIGURATION)
+            {
+                return [
+                    'tpl' => 'awaiting_configuration',
+                    'vars' => $vars
+                ];
+            }
 
             $sslStatus = $sslService->configdata->ssl_status;
             $vars['isEndState'] = true;
@@ -82,8 +114,8 @@ class home extends AbstractController
                 /** @var ProcessesApi $processesApi */
                 $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
                 $infoProcess = [];
-                $apicertdata = $processesApi->get($sslService->getRemoteId())->toArray();
-                if (!in_array($apicertdata['status'], [
+                $process = $processesApi->get($sslService->getRemoteId());
+                if (!in_array($process->status, [
                     ProcessStatusEnum::STATUS_COMPLETED,
                     ProcessStatusEnum::STATUS_FAILED,
                     ProcessStatusEnum::STATUS_CANCELLED
@@ -95,8 +127,9 @@ class home extends AbstractController
                 }
 
                 $configDataUpdate = new UpdateConfigData($sslService, [
-                    'status' => $apicertdata['status'],
-                    'dcv' => $infoProcess['validations']['dcv']
+                    'status' => $process->status,
+                    'dcv' => $infoProcess['validations']['dcv'] ?? [],
+                    'action' => $process->action
                 ]);
 
                 $configDataUpdate->run();
@@ -108,8 +141,6 @@ class home extends AbstractController
             if (is_null($sslService)) {
                 throw new Exception('An error occurred please contact support');
             }
-
-            $url = Config::getInstance()->getConfigureSSLUrl($sslService->id, $serviceId);
 
             $vars['privateKey'] = $sslService->getPrivateKey() ?? '';
             $vars['san_revalidate'] = false;
@@ -173,6 +204,8 @@ class home extends AbstractController
                         $vars['domain'] = $certificateDetails['domain'];
                     }
 
+                    $vars['statusDetail'] = $sslService->getStatusDetail();
+
                     if (!empty($certificateDetails['san_details'])) {
                         foreach ($certificateDetails['san_details'] as $san) {
                             $vars['sans'][$san->san_name]['san_name'] = $san->san_name;
@@ -229,8 +262,6 @@ class home extends AbstractController
                     //service billing cycle
                     $vars['serviceBillingCycle'] = $serviceBillingCycle;
 
-                    $disabledValidationMethods = [];
-
                     $product = new Product($input['params']['pid']);
                     $productssl = false;
                     $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
@@ -253,9 +284,6 @@ class home extends AbstractController
 
             $vars['custom_guide'] = $apiConf->custom_guide;
             $vars['visible_renew_button'] = $apiConf->visible_renew_button;
-            $vars['disabledValidationMethods'] = $disabledValidationMethods;
-            $vars['configurationStatus'] = $sslService->status;
-            $vars['configurationURL'] = $url;
             $vars['allOk'] = true;
             $vars['assetsURL'] = Server::I()->getAssetsURL();
             $vars['serviceid'] = $serviceId;
@@ -432,7 +460,7 @@ class home extends AbstractController
             $errorInvoiceExist = false;
             // TODO fix the following lines
             $service = \WHMCS\Service\Service::where('id', $input['id'])->first();
-            $result = $this->createAutoInvoice($input['params']['pid'], $service, true);
+            $result = $this->createAutoInvoice($input['params']['pid'], $service);
             if (is_array($result) && isset($result['invoiceID'])) {
                 $existInvoiceID = $result['invoiceID'];
                 $errorInvoiceExist = Lang::getInstance()->T('Related invoice already exist.');
@@ -664,34 +692,13 @@ class home extends AbstractController
             ApiProvider::getInstance()->getApi(CertificatesApi::class)
                 ->resendDcv($sslService->getRemoteId(), ResendDcvCollection::fromArray($data));
         } catch (Exception $ex) {
-            if (strpos($ex->getMessage(), 'Function is locked for') !== false) {
-                if (strpos($domain, '___') !== false) {
-                    $domain = str_replace('___', '*', $domain);
-                }
-                $message = substr($ex->getMessage(), 0, -1) . ' for the domain: ' . $domain . '.';
-            } else {
-                $message = $domain . ': ' . $ex->getMessage();
-            }
-
             return [
                 'success' => 0,
-                'msg' => $message
+                'msg' => $ex->getMessage()
             ];
         }
 
-        $sslorder = (array)Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
-
-        $sslorderconfigdata = json_decode($sslorder['configdata'], true);
-
-        $sslorderconfigdata['dcv_method'] = $newDcvMethodArray[0];
-
-        if ($data['new_method'] != 'email') {
-            $sslorderconfigdata['approveremail'] = '';
-        }
-
-        Capsule::table('tblsslorders')->where('serviceid', $serviceId)->update([
-            'configdata' => json_encode($sslorderconfigdata)
-        ]);
+        (new UpdateConfigData($sslService))->run();
 
         return [
             'success' => 1,
@@ -710,13 +717,6 @@ class home extends AbstractController
         }
 
         return 'EMAIL';
-    }
-
-    /**
-     * @throws Exception
-     */
-    private static function formatDate(string $date): string {
-        return  (new DateTimeImmutable($date))->format('Y-m-d H:i:s');
     }
 
     public function getApprovalEmailsForDomainJSON($input, $vars = [])
@@ -793,7 +793,7 @@ class home extends AbstractController
         return $this->installCertificate($sslService, $privateKey);
     }
 
-    private function createAutoInvoice($productId, $service, $jsonAction = false)
+    private function createAutoInvoice($productId, $service)
     {
         if ($productId == null) {
             return null;
@@ -802,20 +802,14 @@ class home extends AbstractController
         $product             = \WHMCS\Product\Product::where('id', '=' ,$productId)->first();
         $invoiceGenerator     = new Invoice();
         $servicesAlreadyAdded = $invoiceGenerator->checkInvoiceAlreadyCreated($service->id);
-        $getInvoiceID         = false;
-        if ($jsonAction) {
-            $getInvoiceID = true;
-        }
-        $invoiceCounter = 0;
-                //have product, service
+
+        //Invoice already exists
         if ($servicesAlreadyAdded) {
-            if ($jsonAction) {
-                return [
-                    'invoiceID' => $invoiceGenerator->getLatestCreatedInvoiceInfo($service->id)['invoice_id']
-                ];
-            }
+             return [
+                 'invoiceID' => $invoiceGenerator->getLatestCreatedInvoiceInfo($service->id)['invoice_id']
+             ];
         }
 
-        return $invoiceGenerator->createInvoice($service, $product, $getInvoiceID);
+        return $invoiceGenerator->createInvoice($service, $product, true);
     }
 }

@@ -308,6 +308,7 @@ class ClientReissueCertificate
         $this->sslService->setCa(null);
         $this->sslService->status = SSL::CONFIGURATION_SUBMITTED;
         $this->sslService->setConfigdataKey('csr', $csr);
+        $this->sslService->setCertificateSent(false);
 
         if (isset($_POST['privateKey']) && $_POST['privateKey'] != null) {
             $this->sslService->setPrivateKey($_POST['privateKey']);

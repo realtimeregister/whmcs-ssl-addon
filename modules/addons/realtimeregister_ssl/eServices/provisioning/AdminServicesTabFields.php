@@ -69,7 +69,7 @@ class AdminServicesTabFields
             $sslData['Domain'] = $orderDetails->getDomain();
             $sslData['Order Status'] = $orderDetails->getSSLStatus();
             $sslData['Approver email'] = $orderDetails->getApproverEmail() ?? 'N/A';
-            $sslData['Order Status Description'] = $orderDetails->getOrderStatusDescription();
+            $sslData['Status Detail'] = $orderDetails->getStatusDetail();
 
             if ($orderDetails->getSSLStatus() === 'ACTIVE' || $orderDetails->getSSLStatus() === 'COMPLETED') {
                 $sslData['Valid From'] = self::formatDate($orderDetails->getValidFrom());

@@ -3,7 +3,7 @@
 namespace AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl;
 
 use AddonModule\RealtimeRegisterSsl\eHelpers\Fill;
-use AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\ProductPrice;
+use AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\ProductPriceHelper;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use RealtimeRegister\Api\CustomersApi;
 use RealtimeRegister\Domain\PriceCollection;
@@ -29,7 +29,7 @@ class ProductsPrices
         return self::$instance;
     }
 
-    public function getAllProductsPrices()
+    public function getAllProductsPrices() : array
     {
         $this->fetchAllProductsPrices();
         return $this->prices;
@@ -49,7 +49,7 @@ class ProductsPrices
         $this->prices = [];
         foreach ($apiProducts->toArray() as $apiProductPrice) {
             if (str_contains($apiProductPrice['product'], 'ssl')) {
-                $pp = new ProductPrice();
+                $pp = new ProductPriceHelper();
                 Fill::fill($pp, $apiProductPrice);
                 $this->prices[] = $pp;
             }

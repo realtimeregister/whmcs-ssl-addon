@@ -78,6 +78,22 @@
                     </td>
                 </tr>
             {/if}
+            {if $statusDetail}
+            <tr>
+                <td class="text-left">{$ADDONLANG->T('statusDetail')}</td>
+                <td class="text-left">
+                    {if $statusDetail === 'pendingRenew'}
+                        {$ADDONLANG->T('pendingRenew')}
+                    {elseif $statusDetail === 'pendingReissue'}
+                        {$ADDONLANG->T('pendingReissue')}
+                    {elseif $statusDetail === 'issued'}
+                        {$ADDONLANG->T('issued')}
+                    {else}
+                        {$statusDetail}
+                    {/if}
+                </td>
+            </tr>
+            {/if}
             {if $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
                 <tr>
                     <td class="text-left">{$ADDONLANG->T('validFrom')}</td>
@@ -246,7 +262,7 @@
                             {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default m-1">{$ADDONLANG->T('downloadca')}</button></a>{/if}
                             {if $downloadcrt}<a href="{$downloadcrt}"><button type="button" id="download-crt" class="btn btn-default m-1">{$ADDONLANG->T('downloadcrt')}</button></a>{/if}
                             {if $downloadcsr}<a href="{$downloadcsr}"><button type="button" id="download-csr" class="btn btn-default m-1">{$ADDONLANG->T('downloadcsr')}</button></a>{/if}
-                            {if $downloadpem}<a href="{$downloadpem}"><button type="button" id="download-ca" class="btn btn-default m-1">{$ADDONLANG->T('downloadpem')}</button></a>{/if}
+                            {if $downloadpem}<a href="{$downloadpem}"><button type="button" id="download-pem" class="btn btn-default m-1">{$ADDONLANG->T('downloadpem')}</button></a>{/if}
                             {if $downloadbundle}<a href="{$downloadbundle}"><button type="button" id="download-bundle" class="btn btn-default m-1">{$ADDONLANG->T('downloadbundle')}</button></a>{/if}
                         {/if}
                         {if $showReissueButton}
@@ -517,7 +533,6 @@
                                         <tr>
                                             <th>{$ADDONLANG->T('revalidateModalDomainLabel')}</th>
                                             <th style="width:35%;">{$ADDONLANG->T('revalidateModalMethodLabel')}</th>
-                                            <th> {if 'email'|in_array:$disabledValidationMethods} {else}{$ADDONLANG->T('revalidateModalEmailLabel')}{/if}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -527,16 +542,9 @@
                                                 <div class="form-group">
                                                     <select style="width:70%;" type="text" name="newDcvMethod_0" class="form-control modalRevalidateInput" >
                                                         <option value="" selected>{$ADDONLANG->T('pleaseChooseOne')}</option>
-                                                        {if !'email'|in_array:$disabledValidationMethods}
-                                                            <option value="email">{$ADDONLANG->T('revalidateModalMethodEmail')}</option>
-                                                        {/if}
-                                                        {if !'http'|in_array:$disabledValidationMethods}
-                                                            <option value="http">{$ADDONLANG->T('revalidateModalMethodHttp')}</option>
-                                                        {/if}
-                                                        {if !'dns'|in_array:$disabledValidationMethods}
+                                                        <option value="email">{$ADDONLANG->T('revalidateModalMethodEmail')}</option>
+                                                        <option value="http">{$ADDONLANG->T('revalidateModalMethodHttp')}</option>
                                                         <option value="dns">{$ADDONLANG->T('revalidateModalMethodDns')}</option>
-                                                        {/if}
-                                                        
                                                     </select>
                                                 </div>
                                             </td>
