@@ -248,16 +248,18 @@ class ProductsCreator extends AbstractController
     {
         switch ($apiProduct->certificateType) {
             case "MULTI_DOMAIN":
-                $certificateType = 'Multi Domain';
+                $certificateType = ' Multi Domain';
                 break;
             case "WILDCARD":
-                $certificateType = 'Wildcard';
+                $certificateType = ' Wildcard';
+                break;
+            case "ACME_SUBSCRIPTION":
+                $certificateType = '';
                 break;
             default:
-                $certificateType = 'Single Domain';
+                $certificateType = ' Single Domain';
                 break;
         }
-        return $apiProduct->brand . " " . $apiProduct->name . " " .
-            $certificateType;
+        return $apiProduct->brand . " " . $apiProduct->name . $certificateType;
     }
 }

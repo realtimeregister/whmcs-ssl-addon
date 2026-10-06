@@ -79,7 +79,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public const VERSION = '2.0.2';
+    public const VERSION = '2.0.3';
     public $tablePrefix = '';
     public $modelRegister = [];
 
@@ -114,8 +114,8 @@ class Configuration extends AbstractConfiguration
         $configOptions = Capsule::table('tblproductconfigoptions')
             ->select()
             ->where('gid', '=', $optionGroupResult->id)
-            ->orderBy('gid', 'asc')
-            ->orderBy('id', 'asc')
+            ->orderBy('gid')
+            ->orderBy('id')
             ->get();
 
         $currentSansOptionSubId = 0;

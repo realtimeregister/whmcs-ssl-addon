@@ -63,7 +63,13 @@
                     </tr>
                     <tr>
                         <td style="width: 25%;"><label for="country">{$ADDONLANG->T('countryLabel')}</label></td>
-                        <td><input type="text" id="country" class="form-control" placeholder="e.g. US" maxlength="2" value="{$prefillCountry}" /></td>
+                        <td>
+                            <select id="country" class="form-control">
+                                {foreach $countries as $code => $name}
+                                    <option value="{$code}" {if $code == $prefillCountry}selected{/if}>{$name}</option>
+                                {/foreach}
+                            </select>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -94,7 +100,7 @@
                     </tr>
                     <tr>
                         <td style="width: 25%;"><label for="approverVoice">{$ADDONLANG->absoluteT('clientareaphonenumber')}</label></td>
-                        <td><input type="text" id="approverVoice" class="form-control" value="{$prefillVoice}" /></td>
+                        <td><input type="tel" id="approverVoice" class="form-control" value="{$prefillVoice}" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -112,6 +118,45 @@
         $(document).ready(function () {
             $('#Primary_Sidebar-Service_Details_Actions-Custom_Module_Button_Reissue_Certificate').hide();
             const serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1';
+            const $approverVoice = $('#approverVoice');
+            const hasPhonePicker = $approverVoice.length && typeof $.fn.intlTelInput === 'function';
+            const $country = $('#country');
+
+            if (hasPhonePicker) {
+                const initialCountry = ($country.val() || 'us').toLowerCase();
+                $approverVoice.intlTelInput({
+                    initialCountry: initialCountry,
+                    preferredCountries: [initialCountry, 'us', 'gb'].filter((v, i, a) => a.indexOf(v) === i),
+                    autoPlaceholder: 'polite',
+                    separateDialCode: true
+                });
+
+                $country.on('change', function () {
+                    if ($approverVoice.val() === '') {
+                        $approverVoice.intlTelInput('setCountry', $(this).val().toLowerCase());
+                    }
+                });
+            }
+
+            // Convert the approver phone number to E.164a (+CC.NNNNNNNN), as expected by the API
+            function getApproverVoice() {
+                const raw = $.trim($approverVoice.val());
+                if (!raw || !hasPhonePicker) {
+                    return raw;
+                }
+                const dialCode = $approverVoice.intlTelInput('getSelectedCountryData').dialCode;
+                if (!dialCode) {
+                    return raw;
+                }
+                // getNumber() defaults to E.164, but returns an empty string when the utils script isn't loaded
+                let digits = $approverVoice.intlTelInput('getNumber').replace(/\D/g, '');
+                if (digits) {
+                    digits = digits.indexOf(dialCode) === 0 ? digits.substring(dialCode.length) : digits;
+                } else {
+                    digits = raw.replace(/\D/g, '').replace(/^0+/, '');
+                }
+                return digits ? '+' + dialCode + '.' + digits : '';
+            }
 
             $('#acmeConfigurationForm').on('submit', function (e) {
                 e.preventDefault();
@@ -136,7 +181,7 @@
                 postData.approverLastName  = $('#approverLastName').val();
                 postData.approverJobTitle  = $('#approverJobTitle').val();
                 postData.approverEmail     = $('#approverEmail').val();
-                postData.approverVoice     = $('#approverVoice').val();
+                postData.approverVoice     = getApproverVoice();
                 {/if}
 
                 const $btn = $('#acmeSubmitBtn');
