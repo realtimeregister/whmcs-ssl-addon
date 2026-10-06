@@ -2,26 +2,31 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\controllers\server\clientarea\Traits\AcmeTrait;
 use AddonModule\RealtimeRegisterSsl\eModels\RealtimeRegisterSsl\Product;
+use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL as SSLModel;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
 use Exception;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use RealtimeRegister\Api\AcmeApi;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Exceptions\BadRequestException;
-use WHMCS\Database\Capsule;
+use WHMCS\Module\Server;
 
 class Renew
 {
     use SSLUtils;
 
+    use AcmeTrait;
+
     private $p;
 
     /**
      *
-     * @var \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL
+     * @var SSLModel
      */
     private $sslService;
 
@@ -39,7 +44,13 @@ class Renew
     {
         $logs = new LogsRepo();
         try {
-            $this->renewCertificate();
+            $this->loadSslService();
+            $this->loadApiProduct();
+            if ($this->apiProduct->isAcmeProduct()) {
+                $this->renewAcmeSubscription();
+            } else {
+                $this->renewCertificate();
+            }
         } catch (Exception $ex) {
             $logs->addLog(
                 $this->p['userid'],
@@ -50,6 +61,18 @@ class Renew
             return $ex->getMessage();
         }
         return "success";
+    }
+
+    private function validateAcmeRenew(): void
+    {
+        $server = new Server();
+        $server->loadByServiceID($this->p['serviceid']);
+        $serviceParams = $server->buildParams();
+        $input = [];
+        $currentDomains = $this->sslService->getDomains();
+        $input['params']['configoptions'] = $serviceParams['configoptions'];
+        $input['params'][ConfigOptions::API_PRODUCT_ID] = $this->p[ConfigOptions::API_PRODUCT_ID];
+        $this->validateDomainLimits($input, [], $currentDomains);
     }
 
     private function updateOneTime()
@@ -118,35 +141,50 @@ class Renew
         }
     }
 
+    private function renewAcmeSubscription(): void {
+        $logs = new LogsRepo();
+        $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();
+        $this->validateAcmeRenew();
+
+        /* @var AcmeApi $api */
+        $api = ApiProvider::getInstance()
+            ->getApi(AcmeApi::class);
+        $api->renew($this->sslService->getRemoteId(), $this->parsePeriod($service->billingcycle));
+        $logs->addLog(
+            $this->p['userid'],
+            $this->p['serviceid'],
+            'success',
+            sprintf('The ACME subscription %s has been renewed.', $this->sslService->getRemoteId())
+        );
+    }
+
     private function renewCertificate() : void
     {
-        $this->loadSslService();
-        $this->loadApiProduct();
-
         $logs = new LogsRepo();
 
         $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();
-        $sslData = Capsule::table('tblsslorders')->where('serviceid', $this->p['serviceid'])->first();
-        $configData = json_decode($sslData->configdata, true);
+        $sslData = $this->sslService;
+        $configData = (array) $sslData->configdata;
         $order = Capsule::table('REALTIMEREGISTERSSL_orders')->where('service_id', $this->p['serviceid'])->first();
         $orderDetails = json_decode($order->data, true);
-        $commonName = $orderDetails['commonName'] ?? $orderDetails['domain'];
+        $commonName = $this->sslService->getDomain() ?? ($orderDetails['commonName'] ?? $orderDetails['domain']);
 
         $dcv = [];
-        foreach ($orderDetails['validations']['dcv'] as $validation) {
-            $dcvEntry = [
-                'commonName' => $validation['commonName'],
-                'type' => $validation['type'],
-            ];
-            if ($validation['type'] === 'EMAIL') {
-                $dcvEntry['email'] = $validation['email'];
-            }
-            $dcv[] = $dcvEntry;
-        }
-        if (empty($dcv) && $orderDetails['dcv_method']) {
+        // Main domain DCV
+        $dcv[] = [
+            'commonName' => $commonName,
+            'type' => $this->mapDcvType($this->sslService->getDcvMethod() ?? $this->sslService->getApproverMethod()),
+            'email' => $this->getApproverEmail($this->sslService, $commonName)
+        ];
+
+        // SANs DCV
+        $mainDcvType = $dcv[0]['type'];
+        $allSans = $this->sslService->getSanDetails() ?? [];
+        foreach ($allSans as $san) {
             $dcv[] = [
-                'commonName' => $commonName,
-                'type' => $orderDetails['dcv_method'] == 'HTTP' ? 'FILE' : $orderDetails['dcv_method']
+                'commonName' => $san->san_name,
+                'type' => $this->mapDcvType($san->method) ?? $mainDcvType,
+                'email' => $san->email ?? $this->getApproverEmail($this->sslService, $commonName)
             ];
         }
 
@@ -178,8 +216,6 @@ class Renew
         $addSSLRenewOrder = $this->tryOrder($configData['certificateId'], $orderFields, $commonName, $authKey);
 
         $this->sslService->setRemoteId($addSSLRenewOrder->processId);
-        $this->sslService->setOrderStatusDescription("Pending");
-        $this->sslService->setSSLStatus("SUSPENDED");
         $this->sslService->save();
 
         $this->processDcvEntries($addSSLRenewOrder->validations?->dcv?->toArray() ?? [], $this->p['userid'], $this->p['serviceid']);
@@ -203,10 +239,18 @@ class Renew
         }
     }
 
+    private function getApproverEmail(SSLModel $sslOrder, string $domainName) : ?string
+    {
+        return array_filter($sslOrder->getApproverEmails() ?? [], function($email) use ($domainName) {
+            return str_ends_with($email, '@' . $domainName);
+        })[0]
+            ?? $sslOrder->getApproverEmail()
+            ?? null;
+    }
+
     private function loadSslService()
     {
-        $ssl = new SSL();
-        $this->sslService = $ssl->getByServiceId($this->p['serviceid']);
+        $this->sslService = SSLModel::getByServiceId($this->p['serviceid']);
 
         if (is_null($this->sslService)) {
             throw new Exception('Create has not been initialized');

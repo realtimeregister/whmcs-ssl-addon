@@ -164,6 +164,8 @@ $_LANG['addonAA']['productsConfiguration']['pricingInclude']       = "Prices inc
 
 $_LANG['addonAA']['productsConfiguration']['statusEnable']  = 'Enable';
 $_LANG['addonAA']['productsConfiguration']['statusDisable'] = 'Disable';
+$_LANG['addonAA']['productsConfiguration']['sslProducts']   = 'SSL Products';
+$_LANG['addonAA']['productsConfiguration']['acmeProducts']  = 'ACME Products';
 
 
 $_LANG['addonAA']['productsConfiguration']['paymentType']          = 'Payment Type:';
@@ -192,7 +194,8 @@ $_LANG['addonAA']['productsConfiguration']['save']         = 'Save';
 $_LANG['addonAA']['productsConfiguration']['messages'][''] = '';
 
 
-$_LANG['addonAA']['productsCreator']['singleProductCreator'] = 'Single Product Importer';
+$_LANG['addonAA']['productsCreator']['singleProductCreator'] = 'Product Importer';
+$_LANG['addonAA']['productsCreator']['singleAcmeProductCreator'] = 'ACME Product Importer';
 $_LANG['addonAA']['productsCreator']['realtimeRegisterSSLProduct']     = 'RealtimeRegisterSSL Product:';
 $_LANG['addonAA']['productsCreator']['productName']          = 'Product Name:';
 $_LANG['addonAA']['productsCreator']['customguide']          = 'Processing SSL message:';
@@ -237,65 +240,7 @@ $_LANG['addonAA']['productsConfiguration']['messages']['configurable_generated']
 
 $_LANG['addonAA']['productsConfiguration']['messages']['api_configuration_empty'] = 'API configuration are empty';
 
-$_LANG['addonAA']['userDiscounts']['integrationCode']['header']         = 'Integration Code';
-$_LANG['addonAA']['userDiscounts']['pleaseNote']                        = 'Please Note';
-$_LANG['addonAA']['userDiscounts']['info']                              = 'To display product prices with additional commission in the Client Area: ';
-$_LANG['addonAA']['userDiscounts']['info1']                             = '1. Open the file';
-$_LANG['addonAA']['userDiscounts']['info2']                             = '2. Add this code on the top of file';
-$_LANG['addonAA']['userDiscounts']['info3']                             = '3. Open the file';
-$_LANG['addonAA']['userDiscounts']['info4']                             = '4. Add this code on the top of file';
-$_LANG['addonAA']['pagesLabels']['label']['userDiscounts']              = 'Discount Rules';
 $_LANG['addonAA']['pagesLabels']['label']['crons']              = 'Crons';
-$_LANG['addonAA']['userDiscounts']['title']                             = 'Discount Rules';
-$_LANG['addonAA']['userDiscounts']['addNewDiscountRule']              = 'Add New Rule';
-$_LANG['addonAA']['userDiscounts']['editItem']                          = 'Edit';
-$_LANG['addonAA']['userDiscounts']['deleteItem']                        = 'Remove';
-$_LANG['addonAA']['userDiscounts']['messages']['addSuccess']            = 'Discount rule added successfully.';
-$_LANG['addonAA']['userDiscounts']['messages']['removeSuccess']         = 'Discount rule removed successfully.';
-$_LANG['addonAA']['userDiscounts']['messages']['updateSuccess']         = 'Discount rule updated successfully.';
-$_LANG['addonAA']['userDiscounts']['messages']['clientIDNotProvided']   = 'Client ID has been not provided.';
-$_LANG['addonAA']['userDiscounts']['messages']['ruleIDNotProvided']     = 'Rule ID has been not provided.';
-$_LANG['addonAA']['userDiscounts']['messages']['productIDNotProvided']  = 'Product ID has been not provided.';
-$_LANG['addonAA']['userDiscounts']['messages']['discountNotProvided'] = 'Discount has been not provided.';
-
-$_LANG['addonAA']['userDiscounts']['table']['client']                       = 'Client';
-$_LANG['addonAA']['userDiscounts']['table']['product']                      = 'Product';
-$_LANG['addonAA']['userDiscounts']['table']['discount']                   = 'Discount[%]';
-$_LANG['addonAA']['userDiscounts']['table']['monthly/onetime']              = 'Monthly/One Time';
-$_LANG['addonAA']['userDiscounts']['table']['quarterly']                    = 'Quarterly';
-$_LANG['addonAA']['userDiscounts']['table']['semiannually']                 = 'Semiannually';
-$_LANG['addonAA']['userDiscounts']['table']['annually']                     = 'Annually';
-$_LANG['addonAA']['userDiscounts']['table']['biennially']                   = 'Biennially';
-$_LANG['addonAA']['userDiscounts']['table']['triennially']                  = 'Triennially';
-$_LANG['addonAA']['userDiscounts']['table']['actions']                      = 'Actions';
-$_LANG['addonAA']['userDiscounts']['modal']['pleaseSelecetOnePlaceholder']  = 'Please select one...';
-$_LANG['addonAA']['userDiscounts']['modal']['selectClientFirstPlaceholder'] = 'Please select a client first...';
-$_LANG['addonAA']['userDiscounts']['modal']['pleaseSelectProductFirst']     = 'Please select a product first...';
-$_LANG['addonAA']['userDiscounts']['modal']['noDataAvailable']              = 'No data available.';
-$_LANG['addonAA']['userDiscounts']['modal']['noClientAvailable']            = 'No client available.';
-$_LANG['addonAA']['userDiscounts']['modal']['noProductAvailable']           = 'No product available.';
-$_LANG['addonAA']['userDiscounts']['table']['basePrice']                    = 'Price 1 year: ';
-$_LANG['addonAA']['userDiscounts']['table']['priceWithDiscount']          = 'With Discount: ';
-
-$_LANG['addonAA']['userDiscounts']['modal']['addCommissionRule']          = 'Add New Commission Rule';
-$_LANG['addonAA']['userDiscounts']['modal']['client']                     = 'Client';
-$_LANG['addonAA']['userDiscounts']['modal']['product']                    = 'Product';
-$_LANG['addonAA']['userDiscounts']['modal']['discount']                   = 'Discount[%]';
-$_LANG['addonAA']['userDiscounts']['modal']['add']                        = 'Add';
-$_LANG['addonAA']['userDiscounts']['modal']['edit']                       = 'Save Changes';
-$_LANG['addonAA']['userDiscounts']['modal']['close']                      = 'Close';
-$_LANG['addonAA']['userDiscounts']['modal']['productPrice']               = 'Price 1 Year';
-$_LANG['addonAA']['userDiscounts']['modal']['productPriceWithDiscount'] = 'Price 1 Year with discounts';
-$_LANG['addonAA']['userDiscounts']['modal']['monthly/onetime']            = 'Monthly/One Time';
-$_LANG['addonAA']['userDiscounts']['modal']['quarterly']                  = 'Quarterly';
-$_LANG['addonAA']['userDiscounts']['modal']['semiannually']               = 'Semiannually';
-$_LANG['addonAA']['userDiscounts']['modal']['annually']                   = 'Annually';
-$_LANG['addonAA']['userDiscounts']['modal']['biennially']                 = 'Biennially';
-$_LANG['addonAA']['userDiscounts']['modal']['triennially']                = 'Triennially';
-$_LANG['addonAA']['userDiscounts']['modal']['removeRule']                 = 'Remove Commission Rule';
-$_LANG['addonAA']['userDiscounts']['modal']['remove']                     = 'Remove';
-$_LANG['addonAA']['userDiscounts']['modal']['removeRuleInfo']             = 'You are about to remove commission rule, this procedure is irreversible.';
-
 
 $_LANG['anErrorOccurred'] = 'An error occurred';
 
@@ -356,9 +301,6 @@ $_LANG['addonAA']['productsConfiguration']['products_saved']       = 'Products h
 $_LANG['additionalSingleDomainInfo'] = 'This product has %s additional single domain SAN\'s included.';
 $_LANG['additionalSingleDomainWildcardInfo'] = 'This product has %s additional wildcard domain SAN\'s included.';
 
-$_LANG['addonAA']['userDiscounts']['modal']['noClientAvailablePlaceholder'] = 'No Client Available Placeholder';
-$_LANG['addonAA']['userDiscounts']['modal']['noProductAvailablePlaceholder'] = 'No Product Available Placeholder';
-$_LANG['addonAA']['userDiscounts']['modal']['editCommissionRule'] = 'Edit Commission Rule';
 $_LANG['addonAA']['pagesLabels']['label']['logs'] = 'Logs';
 
 $_LANG['addonAA']['logs']['title'] = 'Logs';

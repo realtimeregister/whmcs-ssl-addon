@@ -19,7 +19,6 @@ use RealtimeRegister\Api\ProcessesApi;
 use RealtimeRegister\Domain\Product;
 use RealtimeRegister\Exceptions\BadRequestException;
 use WHMCS\Database\Capsule;
-use function Symfony\Component\Translation\t;
 
 class SSLStepThree
 {
@@ -212,7 +211,6 @@ class SSLStepThree
         }
         $this->sslConfig->setCsr(trim($this->p['configdata']['csr']));
         $this->sslConfig->setDomain($orderDetails->identifier);
-        $this->sslConfig->setOrderStatusDescription($orderDetails->status);
         $this->sslConfig->setApproverMethod($this->p['approvalmethod']);
         $this->sslConfig->setDcvMethod($this->p['dcvmethodMainDomain'] == 'http'?'FILE':$this->p['dcvmethodMainDomain']);
         $this->sslConfig->setProductId($this->p['configoption1']);

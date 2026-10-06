@@ -10,7 +10,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eServices\ConfigurableOptionService;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository as ProductsRepo;
-use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ApiProductPriceRepo;
+use AddonModule\RealtimeRegisterSsl\models\productPrice\ProductPrice;
 use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -85,6 +85,12 @@ class ProductsCreator extends AbstractController
             C::PRODUCT_ENABLE_SAN_WILDCARD => $input[C::PRODUCT_ENABLE_SAN_WILDCARD] ?: '',
         ];
 
+        $apiProduct = $this->apiProductsRepo->getProduct(KeyToIdMapping::getIdByKey($input[C::API_PRODUCT_ID]));
+
+        if ($apiProduct->isAcmeProduct()) {
+            $productData['configoptionsupgrade'] = 1;
+        }
+
         if (!empty($input['issued_ssl_message'])) {
             $productData[C::OPTION_ISSUED_SSL_MESSAGE] = $input['issued_ssl_message'];
         }
@@ -94,13 +100,14 @@ class ProductsCreator extends AbstractController
         }
 
         $productModel = new ProductsRepo();
+        
         $newProductId = $productModel->createNewProduct($productData);
 
-        $apiProduct = $this->apiProductsRepo->getProduct(KeyToIdMapping::getIdByKey($input[C::API_PRODUCT_ID]));
-
         self::insertPricing($input[C::API_PRODUCT_ID], $productData['paytype'], $newProductId, $apiProduct->getPeriods());
-        ConfigurableOptionService::createHiddenField($newProductId);
 
+        if (!$apiProduct->isAcmeProduct()) {
+            ConfigurableOptionService::createHiddenField($newProductId);
+        }
 
         if ($apiProduct->isSanEnabled() && $input[C::PRODUCT_ENABLE_SAN] === 'on') {
             ConfigurableOptionService::createForProduct(
@@ -166,14 +173,12 @@ class ProductsCreator extends AbstractController
 
     private function insertPricing($apiProductId, $payType, $productId, $periods)
     {
-        $priceRepo = new ApiProductPriceRepo();
-
         $productModel = new ProductsRepo();
         $currencies = $productModel->getAllCurrencies();
         $defaultCurrency = $currencies->filter(fn($currency) => $currency->default === 1)->first();
 
         // The prices are sometimes not imported yet, so we force an import when there is no data
-        ConfigurableOptionService::loadPrices($priceRepo, $apiProductId);
+        ConfigurableOptionService::loadPrices($apiProductId);
 
         $basePricing = [
             'relid' => $productId,
@@ -192,11 +197,14 @@ class ProductsCreator extends AbstractController
         ];
 
         foreach ($periods as $period) {
-            $price = $priceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($apiProductId))
-                ->onlyPeriod($period)
-                ->onlyAction("REQUEST")
-                ->fetchOne();
-            $basePrice = ConfigurableOptionService::getBasePrice($currencies, $price, $defaultCurrency);
+            $price = ProductPrice::query()
+                ->where('api_product_id', '=', KeyToIdMapping::getIdByKey($productId))
+                ->where('period', '=', $period)
+                ->where('action', '=', "REQUEST")
+                ->first();
+            $basePrice = $price == null
+                ? 0.00
+                : ConfigurableOptionService::getBasePrice($currencies, $price, $defaultCurrency);
 
             switch ($period) {
                 case 12:
@@ -215,9 +223,6 @@ class ProductsCreator extends AbstractController
                     break;
             }
         }
-
-
-
 
         foreach ($currencies as $currency) {
             $pricing = $basePricing;

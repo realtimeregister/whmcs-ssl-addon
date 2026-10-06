@@ -2,15 +2,14 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
-use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
+use AddonModule\RealtimeRegisterSsl\controllers\server\clientarea\Traits\AcmeTrait;
 use AddonModule\RealtimeRegisterSsl\eHelpers\ZipFileHelper;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
-use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use AddonModule\RealtimeRegisterSsl\models\logs\Repository as LogsRepo;
-
+use AddonModule\RealtimeRegisterSsl\models\orders\Repository as OrderRepo;
 use DateTime;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
@@ -22,12 +21,19 @@ class UpdateConfigData
 {
     private SSL $sslService;
     private array $orderdata;
-    
+
+    use AcmeTrait;
+
     public function __construct(SSL $sslService, $orderdata = [])
     {
         $this->orderdata = [];
         try {
             $this->sslService = $sslService;
+            if ($sslService->isAcmeProduct()) {
+                $this->updateAcmeConfigData($sslService);
+                return;
+            }
+
             if (empty($orderdata)) {
                 $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
                 if ($sslService->getRemoteId()) {
@@ -47,6 +53,7 @@ class UpdateConfigData
                     $this->orderdata = [
                         'status' => $process->status,
                         'dcv' => $infoProcess['validations']['dcv'],
+                        'action' => $process->action,
                         'domain' => $process->identifier
                     ];
                 } else {
@@ -103,13 +110,10 @@ class UpdateConfigData
             /** @var CertificatesApi $certificatesApi */
             $order = $certificateResults[0];
             $apiRepo = new Products();
+            $brandName = $this->sslService->getProductBrand();
 
-            if (
-                !isset($this->sslService->configdata->product_brand) || empty($this->sslService->configdata->product_brand)
-            ) {
+            if (!$brandName) {
                 $checkTable = Capsule::schema()->hasTable(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND);
-
-                $brandName = null;
                 if ($checkTable !== false) {
                     $id = KeyToIdMapping::getIdByKey($order->product);
                     $productData = Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->where([
@@ -133,14 +137,13 @@ class UpdateConfigData
             $sslOrder->setCrt($order->certificate);
             $sslOrder->setCsr($order->csr);
             $sslOrder->setSSLStatus($order->status);
-            $sslOrder->setOrderStatusDescription($order->status);
             $sslOrder->setPartnerOrderId($order->providerId);
 
             if ($sslOrder->status === SSL::CONFIGURATION_SUBMITTED || $sslOrder->status === SSL::AWAITING_CONFIGURATION) {
                 $sslOrder->status = SSL::PENDING_INSTALLATION;
                 $orderRepo->updateStatus($this->sslService->serviceid, SSL::PENDING_INSTALLATION);
             }
-            
+
             $sslOrder->setCertificateId($order->id);
 
             $sslOrder->setValidFrom($order->startDate);
@@ -167,13 +170,7 @@ class UpdateConfigData
             }
 
             $sslOrder->setProductId($order->product);
-
-            if (
-                !isset($this->sslService->configdata->product_brand)
-                || empty($this->sslService->configdata->product_brand)
-            ) {
-                $sslOrder->setProductBrand($brandName);
-            }
+            $sslOrder->setProductBrand($brandName);
 
             if (isset($order->san)) {
                 $sslOrder->setSanDetails(array_map(fn($sanEntry) => ["san_name" => $sanEntry], $order->san));
@@ -182,6 +179,8 @@ class UpdateConfigData
             if ($sslOrder->getCompletionDate() == '0000-00-00 00:00:00') {
                 $sslOrder->setCompletionDate(new DateTime());
             }
+
+            $sslOrder->setStatusDetail('issued');
 
             $sslOrder->save();
             return $sslOrder;
@@ -192,10 +191,19 @@ class UpdateConfigData
         $sslOrder->configdata = array_merge(json_decode($currentOrder->data ?? '{}', true), (array) $sslOrder->configdata);
         $sslOrder->setDomain($sslOrder->getDomain() ?? $this->orderdata['domain']);
 
+
+        if ($this->orderdata['action'] === 'reissue') {
+            $sslOrder->setStatusDetail('pendingReissue');
+        } elseif ($this->orderdata['action'] == 'renew') {
+            $sslOrder->setStatusDetail('pendingRenew');
+        }
+
         if (isset($this->orderdata['status'])) {
             $sslOrder->setSSLStatus($this->orderdata['status']);
-            $sslOrder->setOrderStatusDescription($this->orderdata['status']);
         }
+
+        $sslOrder->setStatus(SSL::CONFIGURATION_SUBMITTED);
+
         if (isset($this->orderdata['dcv'])) {
             $this->handleDcvMethod();
         }

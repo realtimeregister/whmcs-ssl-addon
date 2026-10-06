@@ -2,9 +2,10 @@
 
 namespace AddonModule\RealtimeRegisterSsl\eServices\provisioning;
 
+use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL;
 use Exception;
-use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
+use RealtimeRegister\Api\AcmeApi;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
 
@@ -50,6 +51,9 @@ class TerminateAccount
             /** @var CertificatesApi $certficatesApi */
             $certficatesApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
             $certficatesApi->revokeCertificate($serviceSSL->getCertificateId());
+        } else if ($serviceSSL->isAcmeProduct()) {
+            $acmeApi = ApiProvider::getInstance()->getApi(AcmeApi::class);
+            $acmeApi->delete($serviceSSL->remoteid);
         } else {
             /** @var ProcessesApi processesApi */
             $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);

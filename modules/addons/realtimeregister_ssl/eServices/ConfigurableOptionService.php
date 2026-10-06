@@ -7,7 +7,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMappi
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\ProductsPrices;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository as ProductRepository;
-use AddonModule\RealtimeRegisterSsl\models\productPrice\Repository as ApiProductPriceRepo;
+use AddonModule\RealtimeRegisterSsl\models\productPrice\ProductPrice;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class ConfigurableOptionService
@@ -39,12 +39,21 @@ class ConfigurableOptionService
 
         $optionGroupId = self::getOptionGroup($name, $productId);
 
-        self::insertOptions($apiProductId, $apiProduct, $payType, [
-            "optionGroupId" => $optionGroupId,
-            "optionName" => provisioning\ConfigOptions::OPTION_SANS_COUNT . "|Additional Single domain SANs",
-            "action" => "EXTRA_DOMAIN",
-            "maximum" => $apiProduct->getMaxDomains() - $apiProduct->getIncludedDomains(),
-        ]);
+        if ($apiProduct->isAcmeProduct()) {
+            self::insertOptions($apiProductId, $apiProduct, $payType, [
+                "optionGroupId" => $optionGroupId,
+                "optionName" => provisioning\ConfigOptions::OPTION_SANS_COUNT . "|Domain",
+                "action" => "DOMAIN",
+                "maximum" => 0
+            ]);
+        } else {
+            self::insertOptions($apiProductId, $apiProduct, $payType, [
+                "optionGroupId" => $optionGroupId,
+                "optionName" => provisioning\ConfigOptions::OPTION_SANS_COUNT . "|Additional Single domain SANs",
+                "action" => "EXTRA_DOMAIN",
+                "maximum" => $apiProduct->getMaxDomains() - $apiProduct->getIncludedDomains(),
+            ]);
+        }
     }
 
     public static function createForProductWildCard($productId, $apiProductId, $name, $apiProduct, $payType)
@@ -54,13 +63,21 @@ class ConfigurableOptionService
         }
 
         $optionGroupId = self::getOptionGroup($name, $productId);
-
-        self::insertOptions($apiProductId, $apiProduct, $payType, [
-            "optionGroupId" => $optionGroupId,
-            "optionName" => provisioning\ConfigOptions::OPTION_SANS_WILDCARD_COUNT . "|Additional Wildcard domain SANs",
-            "action" => "EXTRA_WILDCARD",
-            "maximum" => $apiProduct->getMaxDomains() - $apiProduct->getIncludedDomains()
-        ]);
+        if ($apiProduct->isAcmeProduct()) {
+            self::insertOptions($apiProductId, $apiProduct, $payType, [
+                "optionGroupId" => $optionGroupId,
+                "optionName" => provisioning\ConfigOptions::OPTION_SANS_WILDCARD_COUNT . "|Wildcard",
+                "action" => "WILDCARD",
+                "maximum" => 0
+            ]);
+        } else {
+            self::insertOptions($apiProductId, $apiProduct, $payType, [
+                "optionGroupId" => $optionGroupId,
+                "optionName" => provisioning\ConfigOptions::OPTION_SANS_WILDCARD_COUNT . "|Additional Wildcard domain SANs",
+                "action" => "EXTRA_WILDCARD",
+                "maximum" => $apiProduct->getMaxDomains() - $apiProduct->getIncludedDomains()
+            ]);
+        }
     }
 
     public static function createHiddenField($productId) {
@@ -177,10 +194,8 @@ class ConfigurableOptionService
 
         sort($periods);
 
-        $priceRepo = new ApiProductPriceRepo();
-
         // The prices are sometimes not imported yet, so we force an import when there is no data
-        self::loadPrices($priceRepo, $apiProductId);
+        self::loadPrices($apiProductId);
 
         $currencies = $productModel->getAllCurrencies();
         $defaultCurrency = $currencies->filter(fn($currency) => $currency->default === 1)->first();
@@ -204,7 +219,7 @@ class ConfigurableOptionService
         ];
         $optionSubId = Capsule::table('tblproductconfigoptionssub')->insertGetId($optionsSub);
 
-        $pricing = [
+        $basePricing = [
             'type' => 'configoptions',
             'currency' => 'xxxx',
             'relid' => $optionSubId,
@@ -223,24 +238,25 @@ class ConfigurableOptionService
         ];
 
         foreach($periods as $period) {
-            $price = $priceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($apiProductId))
-                    ->onlyPeriod($period)
-                    ->onlyAction($options['action'])
-                    ->fetchOne();
+            $price = ProductPrice::query()
+                ->where('api_product_id', '=', KeyToIdMapping::getIdByKey($apiProductId))
+                ->where('period', '=', $period)
+                ->where('action', '=', $options['action'])
+                ->first();
             $basePrice = self::getBasePrice($currencies, $price, $defaultCurrency);
 
             switch ($period) {
                 case 12:
                     if ($payType === 'onetime') {
-                        $pricing['monthly'] = $basePrice;
+                        $basePricing['monthly'] = $basePrice;
                     }
-                    $pricing['annually'] = $basePrice;
+                    $basePricing['annually'] = $basePrice;
                     break;
                 case 24:
-                    $pricing['biennially'] = $basePrice;
+                    $basePricing['biennially'] = $basePrice;
                     break;
                 case 36:
-                    $pricing['triennially'] = $basePrice;
+                    $basePricing['triennially'] = $basePrice;
                     break;
                 default:
                     break;
@@ -248,6 +264,7 @@ class ConfigurableOptionService
         }
 
         foreach ($currencies as $currency) {
+            $pricing = $basePricing;
             $pricing['currency'] = $currency->id;
             $pricing['monthly'] = $pricing['monthly'] === -1.00
                 ? $pricing['monthly']
@@ -266,15 +283,15 @@ class ConfigurableOptionService
     }
 
     /**
-     * @param ApiProductPriceRepo $priceRepo
      * @param $apiProductId
      * @return void
      */
-    public static function loadPrices(ApiProductPriceRepo $priceRepo, $apiProductId): void
+    public static function loadPrices($apiProductId): void
     {
-        try {
-            $priceRepo->onlyApiProductID(KeyToIdMapping::getIdByKey($apiProductId))->fetchOne();
-        } catch (\Exception $e) {
+        $price = ProductPrice::query()
+            ->where('api_product_id', '=', KeyToIdMapping::getIdByKey($apiProductId))
+            ->first();
+        if ($price == null) {
             Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: loaded prices because they weren't available.");
 
             $apiProductsPrices = ProductsPrices::getInstance();
