@@ -6,6 +6,7 @@ use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
+use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\config\Countries;
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions as C;
 use DateTime;
 use Exception;
@@ -169,11 +170,13 @@ trait AcmeTrait
         $vars['prefillCity'] = $client['city'] ?? '';
         $vars['prefillState'] = $client['fullstate'] ?? '';
         $vars['prefillPostalCode'] = $client['postcode'] ?? '';
-        $vars['prefillCountry'] = $client['country'] ?? '';
+        $vars['prefillCountry'] = strtoupper($client['country'] ?? '');
+        $vars['countries'] = Countries::getInstance()->getCountriesForAddonDropdown();
         $vars['prefillFirstName'] = $client['firstname'] ?? '';
         $vars['prefillLastName'] = $client['lastname'] ?? '';
         $vars['prefillEmail'] = $client['email'] ?? '';
-        $vars['prefillVoice'] = $client['phonenumberformatted'] ?? $client['telephoneNumber'] ?? '';
+        // Strip the E.164a dot so the phone picker can detect the country from the number
+        $vars['prefillVoice'] = str_replace('.', '', $client['phonenumberformatted'] ?? $client['telephoneNumber'] ?? '');
 
         return [
             'tpl' => 'acme_configuration',

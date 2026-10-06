@@ -195,6 +195,9 @@ add_hook('ClientAreaPage', 1, function($params) {
                 $product = Capsule::table('tblproducts')
                     ->where('id', '=', $productId)
                     ->first();
+                if (str_contains($product->{ConfigOptions::API_PRODUCT_ID}, 'acme')) {
+                    return;
+                }
 
                 $currentDomain = $_SESSION['cart']['products'][$_GET['i']]['domain'];
                 $csrData = FlashService::parseSavedData($params['client'], $currentDomain);

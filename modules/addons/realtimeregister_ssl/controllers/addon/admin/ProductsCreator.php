@@ -246,18 +246,20 @@ class ProductsCreator extends AbstractController
 
     public static function displayName($apiProduct)
     {
+        $nameParts = [$apiProduct->brand, $apiProduct->name];
         switch ($apiProduct->certificateType) {
             case "MULTI_DOMAIN":
-                $certificateType = 'Multi Domain';
+                $nameParts[] = 'Multi Domain';
                 break;
             case "WILDCARD":
-                $certificateType = 'Wildcard';
+                $nameParts[] = 'Wildcard';
+                break;
+            case "ACME_SUBSCRIPTION":
                 break;
             default:
-                $certificateType = 'Single Domain';
+                $nameParts[] = 'Single Domain';
                 break;
         }
-        return $apiProduct->brand . " " . $apiProduct->name . " " .
-            $certificateType;
+        return implode(' ', $nameParts);
     }
 }
