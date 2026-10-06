@@ -244,7 +244,11 @@ class home extends AbstractController
 
                     $vars['displayRenewButton'] = false;
 
-                    if (self::hasReissueWindow($certificateDetails)) {
+                    $hasReissueWindow = self::hasReissueWindow($certificateDetails);
+                    $vars['showReissueButton'] = in_array($vars['activationStatus'], ['ACTIVE', 'COMPLETED'])
+                        || ($vars['activationStatus'] === 'EXPIRED' && $hasReissueWindow);
+
+                    if ($hasReissueWindow) {
                         $vars['subscriptionEnds'] = self::formatDate($certificateDetails['end_date']->date);
                         $daysUntilExpired = $now->diff(new \DateTime($certificateDetails['end_date']->date))
                             ->format('%a');

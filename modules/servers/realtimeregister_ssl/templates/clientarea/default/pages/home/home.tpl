@@ -32,7 +32,7 @@
             <col style="width: 80%"/>
         </colgroup>
         <tbody>
-            {if $activationStatus === 'ACTIVE' || $activationStatus === 'COMPETED'}
+            {if $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
                 {if $configoption23}
                     <tr>
                         <td class="text-left">{$ADDONLANG->T('issued_ssl_message')}</td>
@@ -258,13 +258,15 @@
                         {if $activationStatus === 'processing' || $activationStatus === 'SUSPENDED'}
                             <button type="button" id="btnRevalidate" class="btn btn-default m-1">{$ADDONLANG->T('domainvalidationmethod')}</button>
                         {elseif $activationStatus === 'ACTIVE' || $activationStatus === 'COMPLETED'}
-                            <a class="btn btn-default m-1" role="button" id="Action_Custom_Module_Button_Reissue_Certificate">{$ADDONLANG->T('reissueCertificate')}</a>
                             <button type="button" id="send-certificate-email" class="btn btn-default" style="margin:2px">{$ADDONLANG->T('sendCertificate')}</button>
                             {if $downloadca}<a href="{$downloadca}"><button type="button" id="download-ca" class="btn btn-default m-1">{$ADDONLANG->T('downloadca')}</button></a>{/if}
                             {if $downloadcrt}<a href="{$downloadcrt}"><button type="button" id="download-crt" class="btn btn-default m-1">{$ADDONLANG->T('downloadcrt')}</button></a>{/if}
                             {if $downloadcsr}<a href="{$downloadcsr}"><button type="button" id="download-csr" class="btn btn-default m-1">{$ADDONLANG->T('downloadcsr')}</button></a>{/if}
                             {if $downloadpem}<a href="{$downloadpem}"><button type="button" id="download-pem" class="btn btn-default m-1">{$ADDONLANG->T('downloadpem')}</button></a>{/if}
                             {if $downloadbundle}<a href="{$downloadbundle}"><button type="button" id="download-bundle" class="btn btn-default m-1">{$ADDONLANG->T('downloadbundle')}</button></a>{/if}
+                        {/if}
+                        {if $showReissueButton}
+                            <a class="btn btn-default m-1" role="button" id="Action_Custom_Module_Button_Reissue_Certificate">{$ADDONLANG->T('reissueCertificate')}</a>
                         {/if}
                         {if $privateKey}
                             <button type="button" id="getPrivateKey" class="btn btn-default m-1">{$ADDONLANG->T('getPrivateKeyBtn')}</button>
@@ -367,7 +369,7 @@
                 renewModal.remove();
             }
 
-            function unbindOnClickForrenewBtn() {
+            function unbindOnClickForRenewBtn() {
                 renewBtn.attr('onclick', '');
             }
 
@@ -382,12 +384,12 @@
 
             function bindSubmitBtn() {
                 renewSubmitBtn.off().on('click', function () {
-                    submitrenewModal();
+                    submitRenewModal();
                 });
             }
 
             function showSuccessAlert(msg) {
-                var reloadInfo = '{$ADDONLANG->T('redirectToInvoiceInformation')}'
+                const reloadInfo = '{$ADDONLANG->T('redirectToInvoiceInformation')}'
                 show(renewSuccessAlert);
                 hide(renewDangerAlert);
                 renewSuccessAlert.children('span').html(msg + ' ' + reloadInfo);
@@ -447,11 +449,11 @@
                 element.css('height', "");
             }
 
-            function submitrenewModal() {
+            function submitRenewModal() {
                 addSpinner(renewSubmitBtn);
                 disable(renewSubmitBtn);
 
-                var data = {
+                const data = {
                     renewModal: 'yes',
                     serviceId: {$serviceid},
                     userID: {$userid},
@@ -462,7 +464,7 @@
                     data: data,
                     json: 1,
                     success: function (ret) {
-                        var data;
+                        let data;
                         ret = ret.replace("<JSONRESPONSE#", "");
                         ret = ret.replace("#ENDJSONRESPONSE>", "");
                         if (!isJsonString(ret)) {
@@ -479,7 +481,7 @@
                         } else {
                             if(typeof data.data.invoiceID !== 'undefined')
                             {
-                                var reloadInfo = '{$ADDONLANG->T('redirectToInvoiceInformation')}'
+                                const reloadInfo = '{$ADDONLANG->T('redirectToInvoiceInformation')}'
                                 showDangerAlert(data.error + ' ' + reloadInfo);
                                 window.setTimeout(function(){ window.location.replace('viewinvoice.php?id=' + data.data.invoiceID) }, 5000);
                             } else {
@@ -500,7 +502,7 @@
             assignModalElements(true);
             moveModalToBody();
             renewForm.trigger("reset");
-            unbindOnClickForrenewBtn();
+            unbindOnClickForRenewBtn();
             bindModalForRenewBtn();
             bindSubmitBtn();
         });
@@ -610,11 +612,11 @@
     <script type="text/javascript">
         $(document).ready(function () {
             
-            var wildcard = false;
+            let wildcard = false;
             
             $('.revalidateTable tbody tr').each(function() {
-                var string = $(this).find('td:first-child').text();
-                var substring = '*.';
+                const string = $(this).find('td:first-child').text();
+                const substring = '*.';
                 if(string.indexOf(substring) !== -1)
                 {
                     wildcard = true;
@@ -622,18 +624,19 @@
             });
 
             $('.revalidateTable tbody tr').each(function() {
-                var string = $(this).find('td:first-child').text();
-                var substring = '*.';
+                const string = $(this).find('td:first-child').text();
+                const substring = '*.';
                 if(string.indexOf(substring) !== -1)
                 {
                     $(this).find('option[value="http"]').remove();
                 }
             });
-            var serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1',
+            let serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1',
                     revalidateBtn = $('#btnRevalidate'),
                     revalidateForm,
                     revalidateModal,
                     revalidateBody,
+                    revalidateEmail,
                     revalidateInput,
                     revalidateDangerAlert,
                     revalidateSuccessAlert,
@@ -672,11 +675,11 @@
                 revalidateModal.remove();
             }
 
-            function unbindOnClickForrevalidateBtn() {
+            function unbindOnClickForRevalidateBtn() {
                 revalidateBtn.attr('onclick', '');
             }
 
-            function bindModalFrorevalidateBtn() {
+            function bindModalForRevalidateBtn() {
                 revalidateBtn.off().on('click', function () {
                     revalidateModal.modal('show');
                     show(revalidateSubmitBtn);
@@ -687,12 +690,12 @@
 
             function bindSubmitBtn() {
                 revalidateSubmitBtn.off().on('click', function () {
-                    submitrevalidateModal();
+                    submitRevalidateModal();
                 });
             }
 
             function showSuccessAlert(msg) {
-                var reloadInfo = '{$ADDONLANG->T('reloadInformation')}'
+                const reloadInfo = '{$ADDONLANG->T('reloadInformation')}'
                 show(revalidateSuccessAlert);
                 hide(revalidateDangerAlert);
                 revalidateSuccessAlert.children('span').html(msg + ' ' + reloadInfo);
@@ -704,11 +707,11 @@
                 revalidateDangerAlert.children('span').html(msg);
             }
 
-            function addSpiner(element) {
+            function addSpinner(element) {
                 element.append('<i class="fa fa-spinner fa-spin"></i>');
             }
 
-            function removeSpiner(element) {
+            function removeSpinner(element) {
                 element.find('.fa-spinner').remove();
             }
 
@@ -752,21 +755,21 @@
                 element.css('height', "");
             }
 
-            function submitrevalidateModal() {
-                addSpiner(revalidateSubmitBtn);
+            function submitRevalidateModal() {
+                addSpinner(revalidateSubmitBtn);
                 disable(revalidateSubmitBtn);
-                var newMethods = {};
-                var newdomains = {};
+                const newMethods = {};
+                const newDomains = {};
                 
                 $('.revalidateTable tbody tr').each(function(key,value){
-                    var domaintemp = $(this).find('td:first-child').text();
-                    domaintemp = domaintemp.replace("*", "___");
-                    newdomains[domaintemp] = domaintemp;
+                    let domainTemp = $(this).find('td:first-child').text();
+                    domainTemp = domainTemp.replace("*", "___");
+                    newDomains[domainTemp] = domainTemp;
                 });
                 
-                
+                let domain;
                 revalidateInput.each(function(key,value){
-                    var node = $('.revalidateTable>tbody').find('tr:eq('+key+')').find('td:eq(0)')[1];
+                    const node = $('.revalidateTable>tbody').find('tr:eq('+key+')').find('td:eq(0)')[1];
                     if(typeof node !== 'undefined') {
                         domain = node.textContent;
                     }
@@ -786,11 +789,11 @@
                 });
                 if(jQuery.isEmptyObject(newMethods)) {
                     showDangerAlert('{$ADDONLANG->T('noValidationMethodSelected')}');
-                    removeSpiner(revalidateSubmitBtn);
+                    removeSpinner(revalidateSubmitBtn);
                     enable(revalidateSubmitBtn);
                     return;
                 }
-                var noEmailError = '';
+                let noEmailError = '';
                 $.each(newMethods,function(key, value){
                     if(value === '{$ADDONLANG->T('pleaseChooseOne')}' || value === '{$ADDONLANG->T('loading')}') {
                         noEmailError = '{$ADDONLANG->T('noEmailSelectedForDomain')}' + key.replace("___", "*");
@@ -799,14 +802,14 @@
                 });
                 if(noEmailError !== '') {
                     showDangerAlert(noEmailError);
-                    removeSpiner(revalidateSubmitBtn);
+                    removeSpinner(revalidateSubmitBtn);
                     enable(revalidateSubmitBtn);
                     return;
                 }
-                var data = {
+                const data = {
                     revalidateModal: 'yes',
                     newDcvMethods: newMethods,
-                    newdomains: newdomains,
+                    newdomains: newDomains,
                     serviceId: {$serviceid},
                     userID: {$userid},
                     brand: '{$brand}',
@@ -817,7 +820,7 @@
                     data: data,
                     json: 1,
                     success: function (ret) {
-                        var data;
+                        let data;
                         ret = ret.replace("<JSONRESPONSE#", "");
                         ret = ret.replace("#ENDJSONRESPONSE>", "");
                         if (!isJsonString(ret)) {
@@ -840,7 +843,7 @@
                         anErrorOccurred();
                     },
                     complete: function () {
-                        removeSpiner(revalidateSubmitBtn);
+                        removeSpinner(revalidateSubmitBtn);
                         enable(revalidateSubmitBtn);
                     }
                 });
@@ -849,13 +852,13 @@
             assignModalElements(true);
             moveModalToBody();
             revalidateForm.trigger("reset");
-            unbindOnClickForrevalidateBtn();
-            bindModalFrorevalidateBtn();
+            unbindOnClickForRevalidateBtn();
+            bindModalForRevalidateBtn();
             bindSubmitBtn();
             revalidateInput.on("change", function() {
-                    var fieldIndex = this.name.replace('newDcvMethod_', '');
-                    var domain = $(this).closest('td').prev('td').text();
-                    var selectedMethod = '';
+                    const fieldIndex = this.name.replace('newDcvMethod_', '');
+                    const domain = $(this).closest('td').prev('td').text();
+                    let selectedMethod = '';
                     selectedMethod = $(this).find(":selected").val();
                     if(selectedMethod === 'email') {
                         $(".newApproverEmailFormGroup_"+fieldIndex).css('display', 'block');
@@ -905,7 +908,7 @@
     </div>
     <script type="text/javascript">
         $(document).ready(function () {
-            var serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}',
+            let serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}',
                     changeEmailBtn = $('#btnChange_Approver_Email'),
                     changeEmailForm,
                     changeEmailModal,
@@ -949,7 +952,7 @@
                 changeEmailBtn.attr('onclick', '');
             }
 
-            function bindModalFroChangeEmailBtn() {
+            function bindModalForChangeEmailBtn() {
                 changeEmailBtn.off().on('click', function () {
                     changeEmailModal.modal('show');
                     show(changeEmailSubmitBtn);
@@ -965,7 +968,7 @@
             }
 
             function showSuccessAlert(msg) {
-                var reloadInfo = '{$ADDONLANG->T('reloadInformation')}'
+                const reloadInfo = '{$ADDONLANG->T('reloadInformation')}'
                 show(changeEmailSuccessAlert);
                 hide(changeEmailDangerAlert);
                 changeEmailSuccessAlert.children('span').html(msg + ' ' + reloadInfo);
@@ -977,11 +980,11 @@
                 changeEmailDangerAlert.children('span').html(msg);
             }
 
-            function addSpiner(element) {
+            function addSpinner(element) {
                 element.append('<i class="fa fa-spinner fa-spin"></i>');
             }
 
-            function removeSpiner(element) {
+            function removeSpinner(element) {
                 element.find('.fa-spinner').remove();
             }
 
@@ -1022,10 +1025,10 @@
             }
 
             function submitChangeEmailModal() {
-                addSpiner(changeEmailSubmitBtn);
+                addSpinner(changeEmailSubmitBtn);
                 disable(changeEmailSubmitBtn);
 
-                var data = {
+                const data = {
                     newEmail: changeEmailInput.val(),
                     serviceId: {$serviceid},
                     userID: {$userid},
@@ -1037,7 +1040,7 @@
                     url: serviceUrl,
                     data: data,
                     success: function (ret) {
-                        var data;
+                        let data;
                         ret = ret.replace("<JSONRESPONSE#", "");
                         ret = ret.replace("#ENDJSONRESPONSE>", "");
                         if (!isJsonString(ret)) {
@@ -1059,7 +1062,7 @@
                         anErrorOccurred();
                     },
                     complete: function () {
-                        removeSpiner(changeEmailSubmitBtn);
+                        removeSpinner(changeEmailSubmitBtn);
                         enable(changeEmailSubmitBtn);
                     }
                 });
@@ -1068,7 +1071,7 @@
             assignModalElements(true);
             moveModalToBody();
             unbindOnClickForChangeEmailBtn();
-            bindModalFroChangeEmailBtn();
+            bindModalForChangeEmailBtn();
             bindSubmitBtn();
         });
     </script>
@@ -1149,9 +1152,9 @@
             {/literal}
         }
 
-        function getDomainEmails(serviceid = null, domain, index){
-                var brand = '{$brand}'
-                var serviceUrl = 'clientarea.php?action=productdetails&json=1&addon-action=getApprovalEmailsForDomain&brand=' + brand + '&domain=' + domain;
+        function getDomainEmails(serviceId = null, domain, index){
+                const brand = '{$brand}'
+                let serviceUrl = 'clientarea.php?action=productdetails&json=1&addon-action=getApprovalEmailsForDomain&brand=' + brand + '&domain=' + domain;
 
                 serviceUrl += '&id=' + '{$serviceid}'
 
@@ -1159,17 +1162,17 @@
                         type: "POST",
                         url: serviceUrl,
                         success: function (ret) {
-                            var data;
+                            let data;
                             $('select[name="newApproverEmailInput_'+index+'"]').empty();
                             ret = ret.replace("<JSONRESPONSE#", "");
                             ret = ret.replace("#ENDJSONRESPONSE>", "");
 
                             data = JSON.parse(ret);
                             if (data.success === 1) {
-                                var  htmlOptions = [];
+                                let htmlOptions = [];
                                 htmlOptions += '<option>'+'{$ADDONLANG->T('pleaseChooseOne')}'+'</option>';
-                                var domainEmails = data.data.domainEmails;
-                                for (var i = 0; i < domainEmails.length; i++) {
+                                const domainEmails = data.data.domainEmails;
+                                for (let i = 0; i < domainEmails.length; i++) {
                                      htmlOptions += '<option value="' + domainEmails[i] + '">' + domainEmails[i] + '</option>';
                                 }
 
@@ -1204,12 +1207,12 @@
                     navigator.clipboard.writeText(key);
                 })
 
-                var serviceid = '{$serviceid}';
-                var domain =   '{$domain}';
+                const serviceId = '{$serviceid}';
+                const domain =   '{$domain}';
                 jQuery('#btnChange_Approver_Email').on("click", function(){
-                    getDomainEmails(serviceid, domain, 0);
+                    getDomainEmails(serviceId, domain, 0);
                 });
-                var additionalActions = $('#additionalActionsTd').html().trim();
+                const additionalActions = $('#additionalActionsTd').html().trim();
                 if(additionalActions.length == 0) {
                     $('#additionalActionsTr').remove();
                 }
@@ -1217,7 +1220,7 @@
                 jQuery('#resend-validation-email').on("click",function(){
                     $('#resend-validation-email').append(' <i id="resendSpinner" class="fa fa-spinner fa-spin"></i>');
 
-                    JSONParser.request('resendValidationEmail',{json: 1, id: serviceid}, function (data) {
+                    JSONParser.request('resendValidationEmail',{json: 1, id: serviceId}, function (data) {
 
                         if (data.success == true) {
                             $('#AddonAlerts>div[data-prototype="success"]').show();
@@ -1233,7 +1236,7 @@
                 jQuery('#send-certificate-email').on("click",function(){
                     $('#send-certificate-email').find('.fa-spinner').remove();
                     $('#send-certificate-email').append(' <i id="resendSpinner" class="fa fa-spinner fa-spin"></i>');
-                    JSONParser.request('sendCertificateEmail',{json: 1, id: serviceid}, function (data) {
+                    JSONParser.request('sendCertificateEmail',{json: 1, id: serviceId}, function (data) {
                         if (data.success == true) {
                             $('#AddonAlerts>div[data-prototype="success"]').show();
                             $('#AddonAlerts>div[data-prototype="success"] strong').html(data.message);
@@ -1248,7 +1251,7 @@
                 jQuery('#getPrivateKey').on("click",function(){
 
                     $('#getPrivateKey').append(' <i class="fa fa-spinner fa-spin"></i>');
-                    JSONParser.request('getPrivateKey',{json: 1,id: serviceid}, function (data) {
+                    JSONParser.request('getPrivateKey',{json: 1,id: serviceId}, function (data) {
                         if (data.success == true) {
                             $('#AddonAlerts>div').css('display', 'none');
                             $('#getPrivateKey').find('.fa-spinner').remove();
@@ -1269,7 +1272,7 @@
                     $('#modalPrivateKeyForm').off('submit').on('submit', function(e) {
                         e.preventDefault();
                         const formData = $(this).serializeArray();
-                        submitPrivateKeyModal(serviceid, formData[0].value);
+                        submitPrivateKeyModal(serviceId, formData[0].value);
                     })
                 })
 
@@ -1281,10 +1284,10 @@
                         $('#modalPrivateKeyForm').off('submit').on('submit', function(e) {
                             e.preventDefault();
                             const formData = $(this).serializeArray();
-                            installCertificate(serviceid, formData[0].value);
+                            installCertificate(serviceId, formData[0].value);
                         })
                     } else {
-                        installCertificate(serviceid);
+                        installCertificate(serviceId);
                     }
                 });
                 {literal}
