@@ -42,15 +42,3 @@ function realtimeregister_ssl_output($params){
 
     echo AddonModule\RealtimeRegisterSsl\Addon::getHTMLAdminPage($_REQUEST);
 }
-
-function realtimeregister_ssl_clientarea(){
-
-    if (!empty($_REQUEST['json'])) {
-        ob_clean();
-        header('Content-Type: text/plain');
-        echo AddonModule\RealtimeRegisterSsl\Addon::getJSONClientAreaPage($_REQUEST);
-        die();
-    }
-    
-    return AddonModule\RealtimeRegisterSsl\Addon::getHTMLClientAreaPage($_REQUEST);
-}

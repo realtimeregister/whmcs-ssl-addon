@@ -103,6 +103,7 @@ class AdminServicesTabFields
     private function getServiceVars()
     {
         global $CONFIG;
+        global $customadminpath;
         $includedSans = (int)$this->p[ConfigOptions::PRODUCT_INCLUDED_SANS];
         $boughtSans = (int)$this->p['configoptions'][ConfigOptions::OPTION_SANS_COUNT];
         $sansLimit = $boughtSans + $includedSans;
