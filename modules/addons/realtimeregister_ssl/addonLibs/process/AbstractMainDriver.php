@@ -170,7 +170,7 @@ abstract class AbstractMainDriver
      * @throws main\addonLibs\exceptions\System
      * @throws main\addonLibs\exceptions\System
      */
-    function runController($controller,$action = 'index',$input = [], $type = 'HTML')
+    function runController($controller, $action = 'index',$input = [], $type = 'HTML')
     {
         try {
             $className = $this->getMainNamespace() . "\\controllers\\" . $this->getType(
@@ -225,7 +225,6 @@ abstract class AbstractMainDriver
         } catch (\Exception $ex) {
             main\addonLibs\Lang::unstagContext('generate'.$controller);
             throw $ex;
-            return false;
         }
     }
     

@@ -62,7 +62,7 @@
                         <td><input type="text" id="postalCode" class="form-control" value="{$prefillPostalCode}" /></td>
                     </tr>
                     <tr>
-                        <td style="width: 25%;"><label for="country">{$ADDONLANG->T('countryLabel')}</label></td>
+                        <td style="width: 25%;"><label for="country">{$ADDONLANG->absoluteT('clientareacountry')}</label></td>
                         <td>
                             <select id="country" class="form-control">
                                 {foreach $countries as $code => $name}
