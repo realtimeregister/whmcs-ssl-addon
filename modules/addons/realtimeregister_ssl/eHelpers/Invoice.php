@@ -164,8 +164,13 @@ class Invoice
                 . ' - Renewal';
         } else {
             $timeShift = 'P' . BillingCycle::convertStringToPeriod($billingCycle) . 'M';
-            $startDate = $service->nextduedate;
-            $endDate = $this->getNextDueDate($service->nextduedate, $dateFormat, $timeShift);
+            // Display dates in the client's configured date format
+            $startDate = fromMySQLDate($service->nextduedate, false, true);
+            $endDate = fromMySQLDate(
+                $this->getNextDueDate($service->nextduedate, $dateFormat, $timeShift),
+                false,
+                true
+            );
             $invoiceItemDescription = $product->name . ($service->domain ? ' - ' . $service->domain : '')
                 . ' (' . $startDate . ' - ' . $endDate . ') - Renewal';
         }

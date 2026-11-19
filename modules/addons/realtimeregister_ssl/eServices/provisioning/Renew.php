@@ -149,7 +149,7 @@ class Renew
         /* @var AcmeApi $api */
         $api = ApiProvider::getInstance()
             ->getApi(AcmeApi::class);
-        $api->renew($this->sslService->getRemoteId(), $this->parsePeriod($service->billingcycle));
+        $api->renew((int) $this->sslService->getRemoteId(), $this->parsePeriod($service->billingcycle));
         $logs->addLog(
             $this->p['userid'],
             $this->p['serviceid'],
