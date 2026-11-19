@@ -96,51 +96,6 @@ class Renew
         }
     }
 
-    private function createRenewTable()
-    {
-        $checkTable = Capsule::schema()->hasTable('REALTIMEREGISTERSSL_renew');
-        if ($checkTable === false) {
-            Capsule::schema()->create('REALTIMEREGISTERSSL_renew', function ($table) {
-                $table->increments('id');
-                $table->integer('serviceid');
-                $table->dateTime('date');
-            });
-        }
-    }
-
-    private function checkRenew($serviceid)
-    {
-        $this->createRenewTable();
-
-        $renew = Capsule::table('REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->where(
-            'date',
-            'like',
-            date('Y-m-d H') . '%'
-        )->first();
-
-        if (isset($renew->id) && !empty($renew->id)) {
-            throw new Exception('Block double renew.');
-        }
-    }
-
-    private function addRenew($serviceid)
-    {
-        $this->createRenewTable();
-
-        $renew = Capsule::table('REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->first();
-
-        if (isset($renew->id) && !empty($renew->id)) {
-            Capsule::table('REALTIMEREGISTERSSL_renew')->where('serviceid', $serviceid)->update([
-                'date' => date('Y-m-d H:i:s')
-            ]);
-        } else {
-            Capsule::table('REALTIMEREGISTERSSL_renew')->insert([
-                'serviceid' => $serviceid,
-                'date' => date('Y-m-d H:i:s')
-            ]);
-        }
-    }
-
     private function renewAcmeSubscription(): void {
         $logs = new LogsRepo();
         $service = Capsule::table('tblhosting')->where('id', $this->p['serviceid'])->first();

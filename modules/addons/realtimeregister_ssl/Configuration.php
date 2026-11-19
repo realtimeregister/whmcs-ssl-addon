@@ -79,7 +79,7 @@ class Configuration extends AbstractConfiguration
      * Module version
      * @var string
      */
-    public const VERSION = '2.0.4';
+    public const VERSION = '2.1.0';
     public $tablePrefix = '';
     public $modelRegister = [];
 
@@ -471,6 +471,7 @@ class Configuration extends AbstractConfiguration
         self::updateRenewConfiguration();
         self::updateProducts();
         Capsule::schema()->dropIfExists('REALTIMEREGISTERSSL_user_discount');
+        Capsule::schema()->dropIfExists('REALTIMEREGISTERSSL_renew');
     }
 
     private static function updateRenewConfiguration(): void
