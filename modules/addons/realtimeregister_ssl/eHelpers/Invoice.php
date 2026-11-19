@@ -63,22 +63,81 @@ class Invoice
         }
     }
 
-    public function checkInvoiceAlreadyCreated($serviceId)
+    /**
+     * Returns a record (with invoice_id) when a renewal invoice for the current period already exists,
+     * either one created by this module that is still open, or any invoice (ours or WHMCS core) that
+     * covers the service's current next due date. Returns null when a new invoice may be created.
+     *
+     * @param object|int $service tblhosting row (preferred) or service id
+     */
+    public function checkInvoiceAlreadyCreated($service)
     {
-        $service = Capsule::table(self::INVOICE_INFOS_TABLE_NAME)
+        $serviceId = is_object($service) ? $service->id : (int)$service;
+
+        $latestInfo = Capsule::table(self::INVOICE_INFOS_TABLE_NAME)
             ->where('service_id', '=', $serviceId)
+            ->orderBy('id', 'desc')
             ->first();
 
-        if ($service != null) {
+        if ($latestInfo != null) {
             $invoice = Capsule::table('tblinvoices')
-                ->where('id', $service->invoice_id)
-                ->where('status', 'Paid')->first();
-            if (!isset($invoice->id)) {
-                return $service;
+                ->where('id', $latestInfo->invoice_id)
+                ->whereIn('status', ['Unpaid', 'Draft', 'Payment Pending', 'Collections'])
+                ->first();
+            if (isset($invoice->id)) {
+                return $latestInfo;
+            }
+        }
+
+        // Mirror WHMCS core: never invoice the same service twice for the same due date
+        $nextDueDate = is_object($service) ? self::normalizeDueDate($service->nextduedate ?? null) : null;
+        if ($nextDueDate !== null) {
+            $item = Capsule::table('tblinvoiceitems')
+                ->where('type', 'Hosting')
+                ->where('relid', $serviceId)
+                ->where('duedate', $nextDueDate)
+                ->orderBy('invoiceid', 'desc')
+                ->first(['invoiceid as invoice_id']);
+            if ($item != null) {
+                return $item;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Invoices created before the due date fix have their items dated on the invoice date instead of the
+     * service's next due date, so WHMCS core does not see them as the renewal invoice. Fix those in place.
+     */
+    public function syncRenewalItemDueDate($invoiceId, $service): void
+    {
+        $nextDueDate = self::normalizeDueDate($service->nextduedate ?? null);
+        if ($nextDueDate === null) {
+            return;
+        }
+
+        $invoice = Capsule::table('tblinvoices')
+            ->where('id', $invoiceId)
+            ->where('status', 'Unpaid')
+            ->first();
+        if ($invoice == null) {
+            return;
+        }
+
+        $updated = Capsule::table('tblinvoiceitems')
+            ->where('invoiceid', $invoiceId)
+            ->where('relid', $service->id)
+            ->where('duedate', $invoice->duedate)
+            ->where('duedate', '!=', $nextDueDate)
+            ->update(['duedate' => $nextDueDate]);
+
+        if ($updated) {
+            Whmcs::savelogActivityRealtimeRegisterSsl(
+                'Realtime Register SSL WHMCS: Updated renewal item due date of invoice ' . $invoiceId
+                . ' to ' . $nextDueDate . ' (service ' . $service->id . ')'
+            );
+        }
     }
 
     public function getInvoiceCreatedInfo($invoiceId, $orderIdNull = true)
@@ -108,6 +167,22 @@ class Invoice
         return Query::query(
             'SELECT invoice_id FROM ' . self::INVOICE_INFOS_TABLE_NAME . $wherePart . ' ORDER BY id DESC LIMIT 1'
         )->fetch();
+    }
+
+    /**
+     * nextduedate is a 'Y-m-d' string on raw tblhosting rows and a date object on Eloquent models.
+     */
+    private static function normalizeDueDate($date): ?string
+    {
+        if ($date instanceof \DateTimeInterface) {
+            $date = $date->format('Y-m-d');
+        }
+        $date = substr(trim((string)$date), 0, 10);
+        if ($date === '' || $date === '0000-00-00' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)
+            || (int)substr($date, 0, 4) < 1000) {
+            return null;
+        }
+        return $date;
     }
 
     protected function getNextDueDate($nextduedate, $dateFormat = 'Y-m-d', $timeShift = 'P12M')
@@ -164,8 +239,13 @@ class Invoice
                 . ' - Renewal';
         } else {
             $timeShift = 'P' . BillingCycle::convertStringToPeriod($billingCycle) . 'M';
-            $startDate = $service->nextduedate;
-            $endDate = $this->getNextDueDate($service->nextduedate, $dateFormat, $timeShift);
+            // Display dates in the client's configured date format
+            $startDate = fromMySQLDate($service->nextduedate, false, true);
+            $endDate = fromMySQLDate(
+                $this->getNextDueDate($service->nextduedate, $dateFormat, $timeShift),
+                false,
+                true
+            );
             $invoiceItemDescription = $product->name . ($service->domain ? ' - ' . $service->domain : '')
                 . ' (' . $startDate . ' - ' . $endDate . ') - Renewal';
         }
@@ -239,29 +319,31 @@ class Invoice
 
         $this->saveInvoiceInfo($service->userid, $invoiceId, $service->id, $product->id);
 
-        Capsule::table('tblinvoiceitems')
-            ->where('invoiceid', '=', $invoiceId)
-            ->update(['type' => 'Hosting']);
-
         /*
-         * add relid to invoiceitem entry in the tblinvoiceitems table -> WHMCS does not fill this column
-         * via local API CreateInvoice command
+         * WHMCS does not fill type/relid via the local API CreateInvoice command, and sets the item due date
+         * to the invoice date. Link the items to the service and its next due date, so WHMCS core recognises
+         * this as the renewal invoice for that period and does not generate a duplicate one.
          */
+        $itemUpdate = ['type' => 'Hosting', 'relid' => $service->id];
+        $nextDueDate = self::normalizeDueDate($service->nextduedate ?? null);
+        if ($nextDueDate !== null) {
+            $itemUpdate['duedate'] = $nextDueDate;
+        }
         Capsule::table('tblinvoiceitems')
             ->where('invoiceid', '=', $invoiceId)
-            ->update(['relid' => $service->id]);
+            ->update($itemUpdate);
 
         if ($boughtSans > 0) {
             Capsule::table('tblinvoiceitems')
                 ->where('description', 'like', '%' . $configOptions['single']['friendlyName'] . '%')
                 ->where('invoiceid', '=', $invoiceId)
-                ->update(['relid' => $service->id, 'type' => '']);
+                ->update(['type' => '']);
         }
         if ($boughtSansWildcard > 0) {
             Capsule::table('tblinvoiceitems')
                 ->where('description', 'like', '%' . $configOptions['wildcard']['friendlyName'] . '%')
                 ->where('invoiceid', '=', $invoiceId)
-                ->update(['relid' => $service->id, 'type' => '']);
+                ->update(['type' => '']);
         }
 
         if ($returnInvoiceID) {

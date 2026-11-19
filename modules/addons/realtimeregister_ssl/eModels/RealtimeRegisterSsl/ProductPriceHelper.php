@@ -30,12 +30,18 @@ class ProductPriceHelper
         $productPrice->save();
     }
     
-    public function loadSavedPriceData($productID = null)
+    public function loadSavedPriceData($productID = null) : array
     {
         if ($productID !== null) {
-            return ProductPrice::query()->where("api_product_id", '=', $productID);
+            return ProductPrice::query()
+                ->where("api_product_id", '=', $productID)
+                ->get()
+                ->all();
         }
-        return ProductPrice::query()->where("api_product_id", "=", $this->id);
+        return ProductPrice::query()
+            ->where("api_product_id", "=", $this->id)
+            ->get()
+            ->all();
     }
 
     private function getPeriodFromName(string $name): int

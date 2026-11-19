@@ -804,12 +804,12 @@ class home extends AbstractController
 
         $product             = \WHMCS\Product\Product::where('id', '=' ,$productId)->first();
         $invoiceGenerator     = new Invoice();
-        $servicesAlreadyAdded = $invoiceGenerator->checkInvoiceAlreadyCreated($service->id);
+        $existingInvoice = $invoiceGenerator->checkInvoiceAlreadyCreated($service);
 
         //Invoice already exists
-        if ($servicesAlreadyAdded) {
+        if ($existingInvoice) {
              return [
-                 'invoiceID' => $invoiceGenerator->getLatestCreatedInvoiceInfo($service->id)['invoice_id']
+                 'invoiceID' => $existingInvoice->invoice_id
              ];
         }
 

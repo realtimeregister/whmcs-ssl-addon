@@ -105,6 +105,10 @@ class UpdateConfigData
         );
 
         $currentOrder = $orderRepo->getByServiceId($this->sslService->serviceid);
+        $this->sslService->configdata = array_merge(
+            json_decode($currentOrder->data ?? '{}', true),
+            (array)$this->sslService->configdata->configdata
+        );
 
         if ($certificateResults->count() === 1) {
             /** @var CertificatesApi $certificatesApi */
@@ -188,7 +192,6 @@ class UpdateConfigData
 
         $sslOrder = $this->sslService;
         $sslOrder->setCsr(trim($sslOrder->getCsr()));
-        $sslOrder->configdata = array_merge(json_decode($currentOrder->data ?? '{}', true), (array) $sslOrder->configdata);
         $sslOrder->setDomain($sslOrder->getDomain() ?? $this->orderdata['domain']);
 
 

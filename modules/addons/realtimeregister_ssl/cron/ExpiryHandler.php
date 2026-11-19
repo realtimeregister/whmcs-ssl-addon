@@ -131,8 +131,13 @@ class ExpiryHandler extends BaseTask
 
         try {
             $invoiceGenerator = new Invoice();
-            if ($createAutoInvoice && !$invoiceGenerator->checkInvoiceAlreadyCreated($service->id)) {
-                $invoiceGenerator->createInvoice($service, $product);
+            if ($createAutoInvoice) {
+                $existingInvoice = $invoiceGenerator->checkInvoiceAlreadyCreated($service);
+                if ($existingInvoice) {
+                    $invoiceGenerator->syncRenewalItemDueDate($existingInvoice->invoice_id, $service);
+                } else {
+                    $invoiceGenerator->createInvoice($service, $product);
+                }
             }
 
             if ($autoRenewSetting == 'renew_always') {
