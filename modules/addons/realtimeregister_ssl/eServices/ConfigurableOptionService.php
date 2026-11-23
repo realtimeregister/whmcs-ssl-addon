@@ -8,6 +8,7 @@ use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\ProductsPric
 use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use AddonModule\RealtimeRegisterSsl\models\productConfiguration\Repository as ProductRepository;
 use AddonModule\RealtimeRegisterSsl\models\productPrice\ProductPrice;
+use AddonModule\RealtimeRegisterSsl\models\whmcs\pricing\BillingCycle;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class ConfigurableOptionService
@@ -115,10 +116,39 @@ class ConfigurableOptionService
         return $optionGroupId;
     }
 
+    /**
+     * WHMCS stores one time prices in the monthly column, so it has to follow the payment type of the product
+     */
+    public static function syncPayType($productId, string $oldPayType, string $newPayType): void
+    {
+        $optionIds = self::getForProduct($productId)
+            ->merge(self::getForProductWildcard($productId))
+            ->pluck('id');
+
+        $optionSubIds = Capsule::table('tblproductconfigoptionssub')
+            ->whereIn('configid', $optionIds)
+            ->pluck('id');
+
+        $pricing = Capsule::table('tblpricing')
+            ->where('type', '=', 'configoptions')
+            ->whereIn('relid', $optionSubIds);
+
+        if ($newPayType === BillingCycle::ONE_TIME) {
+            // Keep manually set prices when the product already was one time
+            if ($oldPayType === BillingCycle::ONE_TIME) {
+                $pricing->where('monthly', '<', 0);
+            }
+            $pricing->update(['monthly' => Capsule::raw('annually')]);
+        } elseif ($newPayType === 'recurring') {
+            $pricing->update(['monthly' => '-1.00']);
+        }
+    }
+
     public static function generateNewPricesBasedOnCommission($commission, $product)
     {
         $pricings = Capsule::table('tblpricing')
             ->where('relid', '=', $product->id)
+            ->where('type', '=', 'product')
             ->get()
             ->toArray();
 
@@ -162,6 +192,7 @@ class ConfigurableOptionService
             foreach ($configOptionSubs as $configOptionSub) {
                 $pricings = Capsule::table('tblpricing')
                     ->where('relid', '=', $configOptionSub->id)
+                    ->where('type', '=', 'configoptions')
                     ->get()
                     ->toArray();
 

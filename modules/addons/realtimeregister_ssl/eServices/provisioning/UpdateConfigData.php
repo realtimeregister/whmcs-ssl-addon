@@ -107,7 +107,7 @@ class UpdateConfigData
         $currentOrder = $orderRepo->getByServiceId($this->sslService->serviceid);
         $this->sslService->configdata = array_merge(
             json_decode($currentOrder->data ?? '{}', true),
-            (array)$this->sslService->configdata->configdata
+            (array)$this->sslService->configdata
         );
 
         if ($certificateResults->count() === 1) {

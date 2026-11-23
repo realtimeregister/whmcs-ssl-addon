@@ -198,7 +198,7 @@ class ProductsCreator extends AbstractController
 
         foreach ($periods as $period) {
             $price = ProductPrice::query()
-                ->where('api_product_id', '=', KeyToIdMapping::getIdByKey($productId))
+                ->where('api_product_id', '=', KeyToIdMapping::getIdByKey($apiProductId))
                 ->where('period', '=', $period)
                 ->where('action', '=', "REQUEST")
                 ->first();
