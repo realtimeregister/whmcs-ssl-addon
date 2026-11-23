@@ -171,6 +171,7 @@ class ProductsConfiguration extends AbstractController
 
         $currentProduct = $productModel->getById($product['id']);
         $productModel->updateProductDetails($product['id'], $product);
+        ConfigurableOptionService::syncPayType($product['id'], $currentProduct->paytype, $product['paytype']);
         $this->recalculatePrices(
             $currentProduct,
             $product[C::COMMISSION] ? $product[C::COMMISSION] / 100 : 0
