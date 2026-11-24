@@ -56,12 +56,12 @@ class AutomaticSynchronisation extends BaseTask
                 }
 
                 //if service is synchronized skip it
-                if ($this->checkIfSynchronized($serviceID)) {
+                if ($this->checkIfSynchronized($sslService)) {
                     continue;
                 }
 
                 //set ssl certificate as synchronized
-                $this->setSSLServiceAsSynchronized($serviceID);
+                $sslService->setConfigdataKey('synchronized', date('Y-m-d'));
 
                 try {
                     /** @var ProcessesApi $processesApi */
@@ -81,15 +81,15 @@ class AutomaticSynchronisation extends BaseTask
                 /** @var CertificatesApi $certificateApi */
                 $certificateApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
 
-                /** @var Certificate $sslOrder */
-                $sslOrder = $certificateApi
+                /** @var Certificate $certificate */
+                $certificate = $certificateApi
                     ->listCertificates(1, null, null, ['process:eq' => $order->id])[0] ?? null;
 
                 //if certificate is active
-                if ($sslOrder) {
+                if ($certificate) {
 
                     //set ssl status as expired if expired
-                    if ($sslOrder->expiryDate < new DateTime()) {
+                    if ($certificate->expiryDate < new DateTime()) {
                         $sslService->setStatus(SSL::EXPIRED);
                     }
 
@@ -132,25 +132,15 @@ class AutomaticSynchronisation extends BaseTask
         return $this;
     }
 
-    private function checkIfSynchronized($serviceID): bool
+    private function checkIfSynchronized(SSL $sslService): bool
     {
-        $result = false;
-        $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
-
         $date = date('Y-m-d');
         $date = strtotime("-5 day", strtotime($date));
 
         if (strtotime($sslService->getConfigdataKey('synchronized')) > $date) {
-            $result = true;
+            return true;
         }
 
-        return $result;
-    }
-
-    private function setSSLServiceAsSynchronized($serviceID)
-    {
-        $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
-        $sslService->setConfigdataKey('synchronized', date('Y-m-d'));
-        $sslService->save();
+        return false;
     }
 }

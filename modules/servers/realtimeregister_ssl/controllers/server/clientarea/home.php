@@ -206,6 +206,7 @@ class home extends AbstractController
                     }
 
                     $vars['statusDetail'] = $sslService->getStatusDetail();
+                    $vars['sans'] = [];
 
                     if (!empty($certificateDetails['san_details'])) {
                         foreach ($certificateDetails['san_details'] as $san) {

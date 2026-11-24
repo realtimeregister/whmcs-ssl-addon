@@ -8,7 +8,6 @@ use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiConfigRepo;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
@@ -38,17 +37,20 @@ class CertificateSender extends BaseTask
             foreach ($services->get() as $service) {
                 $product = $service->product();
                 //check if product is Realtime Register Ssl
-                if ($product->serverType != 'realtimeregister_ssl' || str_contains($product->{ConfigOptions::API_PRODUCT_ID}, 'acme')) {
+                if ($product->serverType != 'realtimeregister_ssl') {
                     continue;
                 }
 
-                $SSLOrder = new \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL();
                 /** @var SSL $ssl */
-                $ssl = $SSLOrder->getWhere(['serviceid' => $service->id, 'userid' => $service->clientID])->first();
+                $ssl = SSL::query()
+                    ->where('serviceid', $service->id)
+                    ->where('userid', $service->clientID)
+                    ->first();
 
-                if ($ssl == null || $ssl->remoteid == '') {
+                if ($ssl == null || !$ssl->getRemoteId() || $ssl->isAcmeProduct()) {
                     continue;
                 }
+
                 /** @var ProcessesApi $processesApi */
                 $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
                 $apiOrder = $processesApi->get($ssl->remoteid);
