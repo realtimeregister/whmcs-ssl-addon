@@ -70,7 +70,7 @@ class SSL extends Model
     public function getConfigdataKey($key)
     {
         $c = (array)$this->configdata;
-        return $c[$key];
+        return $c[$key] ?? null;
     }
 
     public function getConfigData()

@@ -22,13 +22,14 @@ class ProcessingOrders extends BaseTask
             Addon::I();
 
             $this->sslRepo = new SSLRepo();
-            $sslOrders = $this->getSSLOrders([SSL::CONFIGURATION_SUBMITTED]);
+            $status = [SSL::CONFIGURATION_SUBMITTED];
+            $sslOrderIds = $this->getSSLOrders($status);
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 "Realtime Register SSL WHMCS: Certificates (ssl status Processing) Data Updater started."
             );
 
-            $this->checkOrdersStatus($sslOrders);
+            $this->checkOrdersStatus($sslOrderIds, $status);
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 "Realtime Register SSL WHMCS: Certificates (ssl status Processing) Data Updater completed."

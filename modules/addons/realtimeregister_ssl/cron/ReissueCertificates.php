@@ -53,40 +53,55 @@ class ReissueCertificates extends BaseTask
         Addon::I();
 
         $this->sslRepo = new SSLRepo();
-        $sslOrders = $this->getSSLOrders([SSL::PENDING_INSTALLATION, SSL::FAILED_INSTALLATION, SSL::ACTIVE]);
+        $status = [SSL::PENDING_INSTALLATION, SSL::FAILED_INSTALLATION, SSL::ACTIVE];
         $reissuedCount = 0;
 
-        foreach ($sslOrders as $sslOrder) {
-            try {
-                $configData = $sslOrder->configdata;
-                
-                $expiryDate = null;
-                $subscriptionEndDate = null;
-                if (!empty($configData->end_date?->date)) {
-                    $subscriptionEndDate = new DateTime($configData->end_date->date);
-                }
-
-                if (!empty($configData->valid_till?->date)) {
-                    $expiryDate = new DateTime($configData->valid_till->date);
-                }
-
-                if (!$subscriptionEndDate || !$expiryDate || $expiryDate >= $subscriptionEndDate) {
-                    continue;
-                }
-
-                $daysLeft = $this->checkOrderExpiryDate($expiryDate);
-
-                if ($daysLeft <= $reissueDays) {
-                    $this->reissue($sslOrder, $apiConf);
-                    $reissuedCount++;
-                }
-            } catch (Exception $ex) {
-                $logsRepo->addLog($sslOrder->userid, $sslOrder->serviceid, 'error', "Error when reissuing certificate:" . $ex->getMessage());
-            }
+        foreach ($this->getSSLOrders($status) as $sslOrderId) {
+            $this->processSSLOrder(
+                $sslOrderId,
+                function (SSL $sslOrder) use ($apiConf, $reissueDays, $logsRepo, &$reissuedCount) {
+                    try {
+                        if ($this->needsReissue($sslOrder, $reissueDays)) {
+                            $this->reissue($sslOrder, $apiConf);
+                            $reissuedCount++;
+                        }
+                    } catch (Exception $ex) {
+                        $logsRepo->addLog(
+                            $sslOrder->userid,
+                            $sslOrder->serviceid,
+                            'error',
+                            "Error when reissuing certificate:" . $ex->getMessage()
+                        );
+                    }
+                },
+                $status,
+                self::DAILY_LOCK_WAIT
+            );
         }
 
         logActivity('Automatic Reissue completed. Number of certificates reissued: ' . $reissuedCount, 0);
         $this->output("reissued", $reissuedCount);
+    }
+
+    private function needsReissue(SSL $sslOrder, int $reissueDays): bool
+    {
+        $configData = $sslOrder->configdata;
+
+        $expiryDate = null;
+        $subscriptionEndDate = null;
+        if (!empty($configData->end_date?->date)) {
+            $subscriptionEndDate = new DateTime($configData->end_date->date);
+        }
+
+        if (!empty($configData->valid_till?->date)) {
+            $expiryDate = new DateTime($configData->valid_till->date);
+        }
+
+        if (!$subscriptionEndDate || !$expiryDate || $expiryDate >= $subscriptionEndDate) {
+            return false;
+        }
+
+        return $this->checkOrderExpiryDate($expiryDate) <= $reissueDays;
     }
 
     private function checkOrderExpiryDate(DateTime $expiryDate): int

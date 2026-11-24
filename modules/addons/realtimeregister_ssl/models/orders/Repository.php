@@ -35,7 +35,7 @@ class Repository extends MainRepository
     public function getOrdersInstallation()
     {
         return Capsule::table($this->tableName)
-            ->select([$this->tableName.'.*', 'tblsslorders.configdata', 'tblhosting.domain'])
+            ->select([$this->tableName.'.*', 'tblsslorders.id as tblsslorder_id', 'tblhosting.domain'])
             ->join('tblhosting', 'tblhosting.id', '=', $this->tableName.'.service_id')
             ->join('tblsslorders', 'tblsslorders.serviceid', '=', $this->tableName.'.service_id')
             ->where('tblsslorders.status', '=', SSL::PENDING_INSTALLATION)

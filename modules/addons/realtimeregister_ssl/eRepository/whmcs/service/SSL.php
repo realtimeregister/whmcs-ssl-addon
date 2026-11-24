@@ -44,14 +44,27 @@ class SSL
         return Model::getWhere($where, $realtimeregisterssl)->get();
     }
 
-    public function getOrdersWithStatus($status) {
+    /**
+     * @return array<int>
+     */
+    public function getOrderIdsWithStatus(array $status): array
+    {
+        return $this->queryWithStatus($status)->pluck('tblsslorders.id')->all();
+    }
+
+    public function getOrderWithStatus(int $id, array $status): ?Model
+    {
+        return $this->queryWithStatus($status)->where('tblsslorders.id', '=', $id)->first();
+    }
+
+    private function queryWithStatus(array $status)
+    {
         return Model::query()
             ->select(['tblsslorders.*'])
             ->join('tblhosting', 'tblhosting.id', '=', 'serviceid')
             ->where('tblhosting.domainstatus', '=', 'Active')
             ->where('module', '=', 'realtimeregister_ssl')
-            ->whereIn('status', $status)
-            ->get();
+            ->whereIn('status', $status);
     }
 
     public function getOrderByRemoteId($remoteId) {
