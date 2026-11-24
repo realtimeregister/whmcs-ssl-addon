@@ -734,7 +734,7 @@ class home extends AbstractController
             'success' => 1,
             'domainEmails' => ApiProvider::getInstance()
                 ->getApi(CertificatesApi::class)
-                ->listDcvEmailAddresses($input['domain'], $sslService->getProductId())
+                ->listDcvEmailAddresses(str_replace('*.', '', $input['domain']), $sslService->getProductId())
         ];
     }
 
