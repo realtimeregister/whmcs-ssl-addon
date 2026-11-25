@@ -30,7 +30,6 @@ class UpdateConfigData
         try {
             $this->sslService = $sslService;
             if ($sslService->isAcmeProduct()) {
-                $this->updateAcmeConfigData($sslService);
                 return;
             }
 
@@ -92,6 +91,11 @@ class UpdateConfigData
 
         if (!$this->sslService->getRemoteId()) {
             return null;
+        }
+
+        if ($this->sslService->isAcmeProduct()) {
+            $this->updateAcmeConfigData($this->sslService);
+            return $this->sslService;
         }
 
         $orderRepo = new OrderRepo();
