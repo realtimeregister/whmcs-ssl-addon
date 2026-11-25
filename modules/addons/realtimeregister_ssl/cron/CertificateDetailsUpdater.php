@@ -8,7 +8,6 @@ use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\KeyToIdMapping;
 use AddonModule\RealtimeRegisterSsl\eRepository\RealtimeRegisterSsl\Products;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
-use AddonModule\RealtimeRegisterSsl\eServices\provisioning\UpdateConfigData;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Domain\Product;
 use RealtimeRegister\Domain\ProductCollection;
@@ -46,12 +45,7 @@ class CertificateDetailsUpdater extends BaseTask
             Capsule::table(Products::REALTIMEREGISTERSSL_PRODUCT_BRAND)->truncate();
             Products::fetchProducts();
 
-            $sslOrders = $this->getSSLOrders();
-
-            foreach ($sslOrders as $sslService) {
-                $configDataUpdate = new UpdateConfigData($sslService);
-                $configDataUpdate->run();
-            }
+            $this->checkOrdersStatus($this->getSSLOrders(), self::DEFAULT_STATUSES, self::DAILY_LOCK_WAIT);
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 "Realtime Register SSL WHMCS: Certificate Details Updating completed."

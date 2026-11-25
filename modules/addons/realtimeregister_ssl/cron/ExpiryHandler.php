@@ -50,26 +50,23 @@ class ExpiryHandler extends BaseTask
             $this->sslRepo = new SSLRepo();
 
             //get all completed ssl orders
-            $sslOrders = $this->getSSLOrders(SSL::ACTIONS_AVAILABLE);
+            $sslOrderIds = $this->getSSLOrders(SSL::ACTIONS_AVAILABLE);
 
             $emailSendsCount = 0;
             $emailSendsCountReissue = 0;
 
-            foreach ($sslOrders as $sslOrder) {
+            foreach ($sslOrderIds as $sslOrderId) {
+                $sslOrder = $this->getSSLOrder($sslOrderId, SSL::ACTIONS_AVAILABLE);
+                if ($sslOrder === null) {
+                    continue;
+                }
+
                 $serviceId = $sslOrder->serviceid;
                 $service = Capsule::table('tblhosting')->where('id', $serviceId)->first();
-                $daysLeft = -1;
-                $daysReissue = -1;
 
                 //get days left to expire
-                $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first();
-                $configData = json_decode($sslOrder->configdata);
-                if ($configData->end_date?->date) {
-                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->end_date->date));
-                    $daysReissue = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
-                } else if ($configData->valid_till?->date) {
-                    $daysLeft = $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date));
-                }
+                $daysLeft = $this->getDaysLeft($sslOrder);
+                $daysReissue = $this->getDaysReissue($sslOrder);
 
                 $product = Capsule::table('tblproducts')->where('id', $service->packageid)->first();
 
@@ -100,7 +97,24 @@ class ExpiryHandler extends BaseTask
 
                 // Handle auto-renew based on settings
                 if ($daysLeft < $renewWithinRecurring && $service->billingcycle != 'One Time') {
-                    $this->handleAutoRenew($service, $product, $createAutoInvoice, $autoRenewSetting);
+                    $this->processSSLOrder(
+                        $sslOrderId,
+                        function (SSL $sslOrder) use (
+                            $service,
+                            $product,
+                            $createAutoInvoice,
+                            $autoRenewSetting,
+                            $renewWithinRecurring
+                        ) {
+                            // Might have been renewed while waiting for the lock
+                            $daysLeft = $this->getDaysLeft($sslOrder);
+                            if ($daysLeft >= 0 && $daysLeft < $renewWithinRecurring) {
+                                $this->handleAutoRenew($service, $product, $createAutoInvoice, $autoRenewSetting);
+                            }
+                        },
+                        SSL::ACTIONS_AVAILABLE,
+                        self::DAILY_LOCK_WAIT
+                    );
                 }
             }
 
@@ -113,6 +127,23 @@ class ExpiryHandler extends BaseTask
             $this->output("sent")->write($emailSendsCount + $emailSendsCountReissue);
         }
         return $this;
+    }
+
+    private function getDaysLeft(SSL $sslOrder): int
+    {
+        $configData = $sslOrder->configdata;
+        $expiryDate = $configData->end_date?->date ?: $configData->valid_till?->date;
+
+        return $expiryDate ? $this->checkOrderExpiryDate(new DateTime($expiryDate)) : -1;
+    }
+
+    private function getDaysReissue(SSL $sslOrder): int
+    {
+        $configData = $sslOrder->configdata;
+
+        return $configData->end_date?->date
+            ? $this->checkOrderExpiryDate(new DateTime($configData->valid_till->date))
+            : -1;
     }
 
     private static function getExpiryMailRange($renewWithin)

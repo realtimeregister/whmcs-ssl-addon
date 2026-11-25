@@ -4,7 +4,6 @@ namespace AddonModule\RealtimeRegisterSsl\cron;
 
 use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
-use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 
 class DailyStatusUpdater extends BaseTask
@@ -21,13 +20,13 @@ class DailyStatusUpdater extends BaseTask
             Addon::I();
 
             $this->sslRepo = new SSLRepo();
-            $sslOrders = $this->getSSLOrders();
+            $sslOrderIds = $this->getSSLOrders();
 
             Whmcs::savelogActivityRealtimeRegisterSsl(
                 "Realtime Register SSL WHMCS: Certificates (ssl status Completed) Data Updater started."
             );
 
-            $this->checkOrdersStatus($sslOrders);
+            $this->checkOrdersStatus($sslOrderIds, self::DEFAULT_STATUSES, self::DAILY_LOCK_WAIT);
 
             logActivity('Realtime Register SSL: Certificates (ssl status Completed) Data Updater completed.');
             Whmcs::savelogActivityRealtimeRegisterSsl(

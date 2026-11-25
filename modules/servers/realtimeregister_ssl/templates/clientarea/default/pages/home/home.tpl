@@ -543,7 +543,7 @@
                                                     <select style="width:70%;" type="text" name="newDcvMethod_0" class="form-control modalRevalidateInput" >
                                                         <option value="" selected>{$ADDONLANG->T('pleaseChooseOne')}</option>
                                                         <option value="email">{$ADDONLANG->T('revalidateModalMethodEmail')}</option>
-                                                        <option value="http">{$ADDONLANG->T('revalidateModalMethodHttp')}</option>
+                                                        <option value="http"{if $domain|substr:0:2 === '*.'} disabled{/if}>{$ADDONLANG->T('revalidateModalMethodHttp')}</option>
                                                         <option value="dns">{$ADDONLANG->T('revalidateModalMethodDns')}</option>
                                                     </select>
                                                 </div>
@@ -556,43 +556,29 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        {*if $sans && !$brand|in_array:$brandsWithOnlyEmailValidation*}
-                                            {$i = 1}
-                                            {foreach $sans as $san}
-                                                <tr>
-                                                    {if $brand == 'digicert' || $brand == 'thawte' || $brand == 'rapidssl'}
-                                                        <td>{$san.san_name}</td>
-                                                        <td></td>
-                                                        <td></td>
-                                                    {else}
-                                                        <td>{$san.san_name}</td>
-                                                        <td>
-                                                            <div class="form-group">
-                                                                <select style="width:70%;" type="text" name="newDcvMethod_{$i}" class="form-control modalRevalidateInput">
-                                                                    <option value="" selected>{$ADDONLANG->T('pleaseChooseOne')}</option>
-                                                                    {if !'email'|in_array:$disabledValidationMethods}
-                                                                        <option value="email">{$ADDONLANG->T('revalidateModalMethodEmail')}</option>
-                                                                    {/if}
-                                                                    {if !'http'|in_array:$disabledValidationMethods}
-                                                                        <option value="http">{$ADDONLANG->T('revalidateModalMethodHttp')}</option>
-                                                                    {/if}
-                                                                    {if !'dns'|in_array:$disabledValidationMethods}
-                                                                        <option value="dns">{$ADDONLANG->T('revalidateModalMethodDns')}</option>
-                                                                    {/if}
-                                                                </select>
-                                                            </div>
-                                                        <td>
-                                                            <div style="display:none;" class="form-group newApproverEmailFormGroup_{$i}">
-                                                                <select type="text" name="newApproverEmailInput_{$i}" class="form-control newApproverEmailInputValidation"/>
-                                                                    <option id="loadingDomainEmails">{$ADDONLANG->T('loading')}</option>
-                                                                </select>
-                                                            </div>
-                                                        </td>
-                                                    {/if}
-                                                </tr>
+                                        {$i = 1}
+                                        {foreach $sans as $san}
+                                             <tr>
+                                                 <td>{$san.san_name}</td>
+                                                 <td>
+                                                     <div class="form-group">
+                                                         <select style="width:70%;" type="text" name="newDcvMethod_{$i}" class="form-control modalRevalidateInput">
+                                                             <option value="" selected>{$ADDONLANG->T('pleaseChooseOne')}</option>
+                                                             <option value="email">{$ADDONLANG->T('revalidateModalMethodEmail')}</option>
+                                                             <option value="http"{if $san.san_name|substr:0:2 === '*.'} disabled{/if}>{$ADDONLANG->T('revalidateModalMethodHttp')}</option>
+                                                             <option value="dns">{$ADDONLANG->T('revalidateModalMethodDns')}</option>
+                                                         </select>
+                                                     </div>
+                                                 <td>
+                                                     <div style="display:none;" class="form-group newApproverEmailFormGroup_{$i}">
+                                                         <select type="text" name="newApproverEmailInput_{$i}" class="form-control newApproverEmailInputValidation"/>
+                                                             <option id="loadingDomainEmails">{$ADDONLANG->T('loading')}</option>
+                                                         </select>
+                                                     </div>
+                                                 </td>
+                                             </tr>
                                             {$i=$i+1}
-                                            {/foreach}
-                                        {*/if*}
+                                        {/foreach}
                                     </tbody>
                                 </table>
                             </div>
@@ -611,26 +597,6 @@
     </div>
     <script type="text/javascript">
         $(document).ready(function () {
-            
-            let wildcard = false;
-            
-            $('.revalidateTable tbody tr').each(function() {
-                const string = $(this).find('td:first-child').text();
-                const substring = '*.';
-                if(string.indexOf(substring) !== -1)
-                {
-                    wildcard = true;
-                }
-            });
-
-            $('.revalidateTable tbody tr').each(function() {
-                const string = $(this).find('td:first-child').text();
-                const substring = '*.';
-                if(string.indexOf(substring) !== -1)
-                {
-                    $(this).find('option[value="http"]').remove();
-                }
-            });
             let serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1',
                     revalidateBtn = $('#btnRevalidate'),
                     revalidateForm,

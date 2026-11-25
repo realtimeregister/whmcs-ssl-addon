@@ -6,9 +6,7 @@ use AddonModule\RealtimeRegisterSsl\Addon;
 use AddonModule\RealtimeRegisterSsl\eHelpers\Whmcs;
 use AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL;
 use AddonModule\RealtimeRegisterSsl\eProviders\ApiProvider;
-use AddonModule\RealtimeRegisterSsl\eRepository\whmcs\service\SSL as SSLRepo;
 use AddonModule\RealtimeRegisterSsl\eServices\EmailTemplateService;
-use AddonModule\RealtimeRegisterSsl\eServices\provisioning\ConfigOptions;
 use AddonModule\RealtimeRegisterSsl\models\apiConfiguration\Repository as ApiConfigRepo;
 use RealtimeRegister\Api\CertificatesApi;
 use RealtimeRegister\Api\ProcessesApi;
@@ -30,7 +28,6 @@ class CertificateSender extends BaseTask
             Whmcs::savelogActivityRealtimeRegisterSsl("Realtime Register SSL WHMCS: Certificate Sender started.");
 
             $emailSendsCount = 0;
-            $this->sslRepo = new SSLRepo();
 
             $services = new \AddonModule\RealtimeRegisterSsl\models\whmcs\service\Repository();
             $services->onlyStatus(['Active']);
@@ -38,52 +35,25 @@ class CertificateSender extends BaseTask
             foreach ($services->get() as $service) {
                 $product = $service->product();
                 //check if product is Realtime Register Ssl
-                if ($product->serverType != 'realtimeregister_ssl' || str_contains($product->{ConfigOptions::API_PRODUCT_ID}, 'acme')) {
+                if ($product->serverType != 'realtimeregister_ssl') {
                     continue;
                 }
 
-                $SSLOrder = new \AddonModule\RealtimeRegisterSsl\eModels\whmcs\service\SSL();
-                /** @var SSL $ssl */
-                $ssl = $SSLOrder->getWhere(['serviceid' => $service->id, 'userid' => $service->clientID])->first();
+                $sslOrderId = SSL::query()
+                    ->where('serviceid', $service->id)
+                    ->where('userid', $service->clientID)
+                    ->value('id');
 
-                if ($ssl == null || $ssl->remoteid == '') {
-                    continue;
-                }
-                /** @var ProcessesApi $processesApi */
-                $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
-                $apiOrder = $processesApi->get($ssl->remoteid);
-
-                /** @var CertificatesApi $certificateApi */
-                $certificateApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
-                $certificateInfo = $certificateApi->listCertificates(1, null, null, ['process:eq' => $ssl->remoteid]);
-
-                if ($apiOrder->status !== 'COMPLETED' || empty($certificateInfo[0]->certificate)) {
+                if ($sslOrderId === null) {
                     continue;
                 }
 
-                if ($this->checkIfCertificateSent($service->id)) {
-                    continue;
-                }
-
-                $apiConf = (new ApiConfigRepo())->get();
-
-                $sendCertificateTemplate = $apiConf->send_certificate_template;
-                if ($sendCertificateTemplate == null) {
-                    sendMessage(EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID, $service->id, [
-                        'domain' => $certificateInfo[0]->domainName,
-                        'ssl_certificate' => nl2br($certificateInfo[0]->certificate),
-                        'crt_code' => null,
-                    ]);
-                } else {
-                    $templateName = EmailTemplateService::getTemplateName($sendCertificateTemplate);
-                    sendMessage($templateName, $service->id, [
-                        'domain' => $certificateInfo[0]->domainName,
-                        'ssl_certificate' => nl2br($certificateInfo[0]->certificate),
-                        'crt_code' => null,
-                    ]);
-                }
-                $this->setSSLCertificateAsSent($service->id);
-                $emailSendsCount++;
+                $this->lockSSLOrder($sslOrderId, function () use ($sslOrderId, &$emailSendsCount) {
+                    $ssl = SSL::query()->find($sslOrderId);
+                    if ($ssl !== null && $this->sendCertificate($ssl)) {
+                        $emailSendsCount++;
+                    }
+                });
             }
 
             $this->output("messages")->write($emailSendsCount);
@@ -96,28 +66,45 @@ class CertificateSender extends BaseTask
         }
     }
 
-    private function checkIfCertificateSent($serviceID): bool
+    /**
+     * @return bool true if the certificate has been sent
+     */
+    private function sendCertificate(SSL $ssl): bool
     {
-        $result = false;
-        if ($this->sslRepo === null) {
-            $this->sslRepo = new SSLRepo();
+        if (!$ssl->getRemoteId() || $ssl->isAcmeProduct() || $ssl->getConfigdataKey('certificateSent')) {
+            return false;
         }
 
-        $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
-        if ($sslService->getConfigdataKey('certificateSent')) {
-            $result = true;
+        /** @var ProcessesApi $processesApi */
+        $processesApi = ApiProvider::getInstance()->getApi(ProcessesApi::class);
+        $apiOrder = $processesApi->get($ssl->getRemoteId());
+
+        /** @var CertificatesApi $certificateApi */
+        $certificateApi = ApiProvider::getInstance()->getApi(CertificatesApi::class);
+        $certificateInfo = $certificateApi->listCertificates(1, null, null, ['process:eq' => $ssl->getRemoteId()]);
+
+        if ($apiOrder->status !== 'COMPLETED' || empty($certificateInfo[0]->certificate)) {
+            return false;
         }
 
-        return $result;
-    }
+        $apiConf = (new ApiConfigRepo())->get();
 
-    private function setSSLCertificateAsSent($serviceID)
-    {
-        if ($this->sslRepo === null) {
-            $this->sslRepo = new SSLRepo();
+        $sendCertificateTemplate = $apiConf->send_certificate_template;
+        if ($sendCertificateTemplate == null) {
+            $templateName = EmailTemplateService::SEND_CERTIFICATE_TEMPLATE_ID;
+        } else {
+            $templateName = EmailTemplateService::getTemplateName($sendCertificateTemplate);
         }
-        $sslService = $this->sslRepo->getByServiceId((int)$serviceID);
-        $sslService->setCertificateSent(true);
-        $sslService->save();
+
+        sendMessage($templateName, $ssl->getServiceId(), [
+            'domain' => $certificateInfo[0]->domainName,
+            'ssl_certificate' => nl2br($certificateInfo[0]->certificate),
+            'crt_code' => null,
+        ]);
+
+        $ssl->setCertificateSent(true);
+        $ssl->save();
+
+        return true;
     }
 }

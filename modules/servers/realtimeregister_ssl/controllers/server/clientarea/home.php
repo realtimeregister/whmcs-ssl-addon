@@ -206,6 +206,7 @@ class home extends AbstractController
                     }
 
                     $vars['statusDetail'] = $sslService->getStatusDetail();
+                    $vars['sans'] = [];
 
                     if (!empty($certificateDetails['san_details'])) {
                         foreach ($certificateDetails['san_details'] as $san) {
@@ -733,7 +734,7 @@ class home extends AbstractController
             'success' => 1,
             'domainEmails' => ApiProvider::getInstance()
                 ->getApi(CertificatesApi::class)
-                ->listDcvEmailAddresses($input['domain'], $sslService->getProductId())
+                ->listDcvEmailAddresses(str_replace('*.', '', $input['domain']), $sslService->getProductId())
         ];
     }
 
