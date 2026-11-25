@@ -94,7 +94,7 @@ class UpdateConfigData
         }
 
         if ($this->sslService->isAcmeProduct()) {
-            $this->updateAcmeConfigData($this->sslServic);
+            $this->updateAcmeConfigData($this->sslService);
             return $this->sslService;
         }
 
