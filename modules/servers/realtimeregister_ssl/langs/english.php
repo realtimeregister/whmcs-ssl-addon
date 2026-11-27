@@ -199,7 +199,8 @@ $_LANG['serverCA']['home']['acmeApproverFieldsDescription']       = 'Please prov
 $_LANG['serverCA']['home']['approverJobTitleLabel']               = 'Job Title';
 $_LANG['serverCA']['home']['acmeSubmitConfiguration']             = 'Submit Configuration';
 $_LANG['serverCA']['home']['acmeConfigurationDone']               = 'Configuration saved successfully.';
-$_LANG['serverCA']['home']['awaitingConfiguration']               = 'Awaiting Configuration';$_LANG['serverCA']['home']['addedOn']                             = 'Added On';
+$_LANG['serverCA']['home']['awaitingConfiguration']               = 'Awaiting Configuration';
+$_LANG['serverCA']['home']['addedOn']                             = 'Added On';
 $_LANG['serverCA']['home']['productName']                             = 'Product Name';
 
 $_LANG['sslcertSelectVerificationMethodTitle']       = 'Certificate Verification';
