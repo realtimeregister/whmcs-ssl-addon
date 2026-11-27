@@ -51,6 +51,10 @@ class InstallCertificates extends BaseTask
             return;
         }
 
+        if (!$details['domain']) {
+            return;
+        }
+
         $tries = $details['tries_to_install'] ?? 0;
 
         // We don't want to continue trying installing the certificate if it has been tried more than 5 times
@@ -71,9 +75,7 @@ class InstallCertificates extends BaseTask
         $cert = $details['crt'];
         $caBundle = $details['ca'];
         $key = decrypt($details['private_key']);
-        if (!$details['domain']) {
-            return;
-        }
+
         $panelData = $this->getPanelData($details['domain']);
         if (!$panelData) {
             return;
@@ -93,7 +95,7 @@ class InstallCertificates extends BaseTask
                 $order->client_id,
                 $order->service_id,
                 'success',
-                'The certificate for the ' . $order->domain . ' domain has been installed correctly.'
+                'The certificate for the ' . $details['domain'] . ' domain has been installed correctly.'
             );
             $orderRepo->updateStatus($order->service_id, 'Success');
         } catch (\Exception $e) {
@@ -101,7 +103,7 @@ class InstallCertificates extends BaseTask
                 $order->client_id,
                 $order->service_id,
                 'error',
-                '[' . $order->domain . '] Error: ' . $e->getMessage()
+                '[' . $details['domain']. '] Error: ' . $e->getMessage()
             );
 
             // Update the number of tries, so we can stop trying after $maxFailureNumber
