@@ -43,8 +43,13 @@ class home extends AbstractController
         try {
             global $CONFIG;
 
+            // WHMCS discards module client area output for non-active services,
+            // so render an empty template instead of building the full page.
             if ($input['params']['status'] != 'Active') {
-                return true;
+                return [
+                    'tpl' => 'inactive',
+                    'vars' => []
+                ];
             }
 
             $serviceId = $input['params']['serviceid'];
